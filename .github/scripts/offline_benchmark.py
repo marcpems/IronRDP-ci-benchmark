@@ -117,7 +117,7 @@ def run(source, output):
         ).strip(),
         "os": platform.platform(), "machine": platform.machine(),
         "logical_cpus": os.cpu_count(),
-        "environment": {key: env.get(key) for key in (
+        "environment": {key: os.environ.get(key) for key in (
             "BENCHMARK_PLATFORM", "BENCHMARK_REPLICATE", "RUNNER_OS", "RUNNER_ARCH",
             "ImageOS", "ImageVersion", "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT",
             "RUSTUP_TOOLCHAIN", "CARGO_INCREMENTAL", "CARGO_PROFILE_DEV_DEBUG",
@@ -170,17 +170,27 @@ def run(source, output):
     save_json(output / "results.json", {"metadata": metadata, "measurements": rows})
 
 
-def summarize(root):
+def summarize(root, source=None):
     results = [json.loads(p.read_text(encoding="utf-8"))
                for p in root.rglob("results.json")]
     if not results:
         raise RuntimeError("no successful benchmark results found")
     identities = {
-        (r["metadata"]["source_sha"], r["metadata"]["lock_sha256"],
-         r["metadata"]["cargo"]) for r in results
+        (r["metadata"]["source_sha"], r["metadata"]["cargo"]) for r in results
     }
     if len(identities) != 1:
-        raise RuntimeError("cannot aggregate different revisions, locks, or Cargo versions")
+        raise RuntimeError("cannot aggregate different revisions or Cargo versions")
+    lock_hashes = {r["metadata"]["lock_sha256"] for r in results}
+    if len(lock_hashes) != 1:
+        if source is None:
+            raise RuntimeError("different lock hashes; provide --source to verify checkout line endings")
+        sha = results[0]["metadata"]["source_sha"]
+        blob = subprocess.check_output(["git", "-C", str(source), "show", f"{sha}:Cargo.lock"])
+        lf = blob.replace(b"\r\n", b"\n")
+        accepted = {hashlib.sha256(data).hexdigest()
+                    for data in (blob, lf, lf.replace(b"\n", b"\r\n"))}
+        if not lock_hashes <= accepted:
+            raise RuntimeError("lock hashes do not match the pinned Git blob with LF/CRLF endings")
     samples = {}
     seen = set()
     for result in results:
@@ -225,11 +235,12 @@ def main():
     execute.add_argument("--output", type=Path, required=True)
     aggregate = commands.add_parser("summarize")
     aggregate.add_argument("artifacts", type=Path)
+    aggregate.add_argument("--source", type=Path, help="verify LF/CRLF hashes against the pinned Git lockfile")
     args = parser.parse_args()
     if args.action == "run":
         run(args.source, args.output)
     else:
-        print(summarize(args.artifacts))
+        print(summarize(args.artifacts, args.source))
 
 
 if __name__ == "__main__":

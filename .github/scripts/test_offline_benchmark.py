@@ -1,4 +1,5 @@
 import contextlib
+import hashlib
 import importlib.util
 import io
 import json
@@ -86,9 +87,22 @@ class BenchmarkTests(unittest.TestCase):
             summary = benchmark.summarize(root)
             self.assertIn("Windows/Linux x64 native-total: 2.000x", summary)
             self.assertIn("Windows/Linux arm64 wasm: 2.000x", summary)
-            (root / "linux-x64-1" / "results.json").unlink()
-            with self.assertRaisesRegex(RuntimeError, "invalid matrix"):
+            for path in root.glob("*/results.json"):
+                result = json.loads(path.read_text())
+                blob = b"lock\r\n" if "windows" in path.parent.name else b"lock\n"
+                result["metadata"]["lock_sha256"] = hashlib.sha256(blob).hexdigest()
+                path.write_text(json.dumps(result))
+            with self.assertRaisesRegex(RuntimeError, "provide --source"):
                 benchmark.summarize(root)
+            with patch.object(benchmark.subprocess, "check_output", return_value=b"lock\n"):
+                self.assertIn("2.000x", benchmark.summarize(root, root))
+            with patch.object(benchmark.subprocess, "check_output", return_value=b"different\n"):
+                with self.assertRaisesRegex(RuntimeError, "do not match"):
+                    benchmark.summarize(root, root)
+            (root / "linux-x64-1" / "results.json").unlink()
+            with patch.object(benchmark.subprocess, "check_output", return_value=b"lock\n"):
+                with self.assertRaisesRegex(RuntimeError, "invalid matrix"):
+                    benchmark.summarize(root, root)
 
     def test_compile_only_commands_do_not_execute_tests(self):
         for _, command in benchmark.NATIVE_COMMANDS:

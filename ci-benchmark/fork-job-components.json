@@ -1,0 +1,347 @@
+[
+  {
+    "platform": "windows-arm64",
+    "replicate": "1",
+    "job_id": 110055925213,
+    "job_seconds": 1078.0,
+    "native_seconds": 746.6872480999999,
+    "common_seconds": 68.16575940000007,
+    "wasm_seconds": 131.64427799999999,
+    "outside_cargo_seconds": 131.50271450000002,
+    "steps": {
+      "Set up job": 3.0,
+      "Checkout benchmark revision": 21.0,
+      "Install native Python": 1.0,
+      "Install pinned native Rust and WASM target": 19.0,
+      "Fetch dependencies outside measurement": 65.0,
+      "Measure offline compilation": 956.0,
+      "Verify unchanged lockfile outside measurement": 1.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 1.0,
+      "Post Checkout benchmark revision": 5.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "windows-11-vs2026-arm64",
+      "Version": "20260924.168.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/win11-vs2026-arm64/20260924.168/images/windows/Windows11-VS2026-Arm64-Readme.md"
+    }
+  },
+  {
+    "platform": "linux-arm64",
+    "replicate": "2",
+    "job_id": 110055925479,
+    "job_seconds": 589.0,
+    "native_seconds": 429.3583577350001,
+    "common_seconds": 43.61541860099999,
+    "wasm_seconds": 81.52775464900002,
+    "outside_cargo_seconds": 34.49846901499991,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 2.0,
+      "Install native Python": 0.0,
+      "Install native dependencies": 12.0,
+      "Install pinned native Rust and WASM target": 8.0,
+      "Fetch dependencies outside measurement": 6.0,
+      "Measure offline compilation": 556.0,
+      "Verify unchanged lockfile outside measurement": 1.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 0.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "ubuntu-24.04-arm",
+      "Version": "20260927.135.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24-arm64/20260927.135/images/ubuntu/Ubuntu2404-Arm64-Readme.md"
+    }
+  },
+  {
+    "platform": "windows-arm64",
+    "replicate": "2",
+    "job_id": 110055925530,
+    "job_seconds": 1039.0,
+    "native_seconds": 678.9425521000002,
+    "common_seconds": 71.83309369999995,
+    "wasm_seconds": 137.78563479999997,
+    "outside_cargo_seconds": 150.4387193999999,
+    "steps": {
+      "Set up job": 2.0,
+      "Checkout benchmark revision": 11.0,
+      "Install native Python": 1.0,
+      "Install pinned native Rust and WASM target": 14.0,
+      "Fetch dependencies outside measurement": 104.0,
+      "Measure offline compilation": 895.0,
+      "Verify unchanged lockfile outside measurement": 0.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 5.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "windows-11-vs2026-arm64",
+      "Version": "20260920.164.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/win11-vs2026-arm64/20260920.164/images/windows/Windows11-VS2026-Arm64-Readme.md"
+    }
+  },
+  {
+    "platform": "windows-x64",
+    "replicate": "1",
+    "job_id": 110055925554,
+    "job_seconds": 1698.0,
+    "native_seconds": 1231.0429674000002,
+    "common_seconds": 137.0957753,
+    "wasm_seconds": 219.2926771,
+    "outside_cargo_seconds": 110.56858019999981,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 7.0,
+      "Install native Python": 0.0,
+      "Install native dependencies": 13.0,
+      "Install pinned native Rust and WASM target": 19.0,
+      "Fetch dependencies outside measurement": 54.0,
+      "Measure offline compilation": 1592.0,
+      "Verify unchanged lockfile outside measurement": 0.0,
+      "Upload evidence outside measurement": 3.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 2.0,
+      "Complete job": 1.0
+    },
+    "image": {
+      "Image": "windows-2025-vs2026",
+      "Version": "20260922.246.2",
+      "Included Software": "https://github.com/actions/runner-images/blob/win25-vs2026/20260922.246/images/windows/Windows2025-VS2026-Readme.md"
+    }
+  },
+  {
+    "platform": "windows-x64",
+    "replicate": "3",
+    "job_id": 110055925573,
+    "job_seconds": 1142.0,
+    "native_seconds": 774.1039671999999,
+    "common_seconds": 83.23630449999996,
+    "wasm_seconds": 133.4070953999999,
+    "outside_cargo_seconds": 151.2526329000002,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 10.0,
+      "Install native Python": 0.0,
+      "Install native dependencies": 31.0,
+      "Install pinned native Rust and WASM target": 19.0,
+      "Fetch dependencies outside measurement": 77.0,
+      "Measure offline compilation": 997.0,
+      "Verify unchanged lockfile outside measurement": 0.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 2.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "windows-2025-vs2026",
+      "Version": "20260925.250.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/win25-vs2026/20260925.250/images/windows/Windows2025-VS2026-Readme.md"
+    }
+  },
+  {
+    "platform": "linux-arm64",
+    "replicate": "3",
+    "job_id": 110055925590,
+    "job_seconds": 562.0,
+    "native_seconds": 406.478640129,
+    "common_seconds": 41.92901616500001,
+    "wasm_seconds": 76.78051256999998,
+    "outside_cargo_seconds": 36.81183113600002,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 1.0,
+      "Install native Python": 0.0,
+      "Install native dependencies": 12.0,
+      "Install pinned native Rust and WASM target": 11.0,
+      "Fetch dependencies outside measurement": 6.0,
+      "Measure offline compilation": 526.0,
+      "Verify unchanged lockfile outside measurement": 1.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 0.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "ubuntu-24.04-arm",
+      "Version": "20260927.135.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24-arm64/20260927.135/images/ubuntu/Ubuntu2404-Arm64-Readme.md"
+    }
+  },
+  {
+    "platform": "linux-arm64",
+    "replicate": "1",
+    "job_id": 110055925618,
+    "job_seconds": 587.0,
+    "native_seconds": 424.2450957689996,
+    "common_seconds": 44.28391388599994,
+    "wasm_seconds": 79.48712338299993,
+    "outside_cargo_seconds": 38.98386696200055,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 1.0,
+      "Install native Python": 0.0,
+      "Install native dependencies": 15.0,
+      "Install pinned native Rust and WASM target": 8.0,
+      "Fetch dependencies outside measurement": 6.0,
+      "Measure offline compilation": 550.0,
+      "Verify unchanged lockfile outside measurement": 1.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 0.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "ubuntu-24.04-arm",
+      "Version": "20260927.135.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24-arm64/20260927.135/images/ubuntu/Ubuntu2404-Arm64-Readme.md"
+    }
+  },
+  {
+    "platform": "linux-x64",
+    "replicate": "1",
+    "job_id": 110055925620,
+    "job_seconds": 782.0,
+    "native_seconds": 572.7382158730001,
+    "common_seconds": 62.54320070199992,
+    "wasm_seconds": 105.24642900000003,
+    "outside_cargo_seconds": 41.472154424999985,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 2.0,
+      "Install native Python": 0.0,
+      "Install native dependencies": 11.0,
+      "Install pinned native Rust and WASM target": 12.0,
+      "Fetch dependencies outside measurement": 7.0,
+      "Measure offline compilation": 742.0,
+      "Verify unchanged lockfile outside measurement": 1.0,
+      "Upload evidence outside measurement": 2.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 0.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "ubuntu-24.04",
+      "Version": "20260927.320.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md"
+    }
+  },
+  {
+    "platform": "windows-arm64",
+    "replicate": "3",
+    "job_id": 110055925624,
+    "job_seconds": 1017.0,
+    "native_seconds": 714.9545850000001,
+    "common_seconds": 68.24424859999999,
+    "wasm_seconds": 133.00492299999996,
+    "outside_cargo_seconds": 100.79624339999998,
+    "steps": {
+      "Set up job": 2.0,
+      "Checkout benchmark revision": 12.0,
+      "Install native Python": 0.0,
+      "Install pinned native Rust and WASM target": 14.0,
+      "Fetch dependencies outside measurement": 53.0,
+      "Measure offline compilation": 922.0,
+      "Verify unchanged lockfile outside measurement": 0.0,
+      "Upload evidence outside measurement": 2.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 5.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "windows-11-vs2026-arm64",
+      "Version": "20260920.164.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/win11-vs2026-arm64/20260920.164/images/windows/Windows11-VS2026-Arm64-Readme.md"
+    }
+  },
+  {
+    "platform": "windows-x64",
+    "replicate": "2",
+    "job_id": 110055925634,
+    "job_seconds": 1416.0,
+    "native_seconds": 1008.8877186,
+    "common_seconds": 112.28285219999998,
+    "wasm_seconds": 182.64304220000002,
+    "outside_cargo_seconds": 112.18638700000002,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 9.0,
+      "Install native Python": 0.0,
+      "Install native dependencies": 23.0,
+      "Install pinned native Rust and WASM target": 16.0,
+      "Fetch dependencies outside measurement": 51.0,
+      "Measure offline compilation": 1310.0,
+      "Verify unchanged lockfile outside measurement": 0.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 2.0,
+      "Complete job": 1.0
+    },
+    "image": {
+      "Image": "windows-2025-vs2026",
+      "Version": "20260925.250.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/win25-vs2026/20260925.250/images/windows/Windows2025-VS2026-Readme.md"
+    }
+  },
+  {
+    "platform": "linux-x64",
+    "replicate": "2",
+    "job_id": 110055925653,
+    "job_seconds": 684.0,
+    "native_seconds": 493.06627898,
+    "common_seconds": 56.42157591700001,
+    "wasm_seconds": 91.74794099299999,
+    "outside_cargo_seconds": 42.76420411000001,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 2.0,
+      "Install native Python": 0.0,
+      "Install native dependencies": 13.0,
+      "Install pinned native Rust and WASM target": 15.0,
+      "Fetch dependencies outside measurement": 6.0,
+      "Measure offline compilation": 643.0,
+      "Verify unchanged lockfile outside measurement": 0.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 1.0,
+      "Post Checkout benchmark revision": 0.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "ubuntu-24.04",
+      "Version": "20260927.320.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md"
+    }
+  },
+  {
+    "platform": "linux-x64",
+    "replicate": "3",
+    "job_id": 110055926099,
+    "job_seconds": 762.0,
+    "native_seconds": 555.029875378,
+    "common_seconds": 63.237483390999955,
+    "wasm_seconds": 104.94964418400002,
+    "outside_cargo_seconds": 38.78299704699998,
+    "steps": {
+      "Set up job": 1.0,
+      "Checkout benchmark revision": 1.0,
+      "Install native Python": 1.0,
+      "Install native dependencies": 9.0,
+      "Install pinned native Rust and WASM target": 11.0,
+      "Fetch dependencies outside measurement": 8.0,
+      "Measure offline compilation": 725.0,
+      "Verify unchanged lockfile outside measurement": 1.0,
+      "Upload evidence outside measurement": 1.0,
+      "Post Install native Python": 0.0,
+      "Post Checkout benchmark revision": 0.0,
+      "Complete job": 0.0
+    },
+    "image": {
+      "Image": "ubuntu-24.04",
+      "Version": "20260920.314.1",
+      "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20260920.314/images/ubuntu/Ubuntu2404-Readme.md"
+    }
+  }
+]

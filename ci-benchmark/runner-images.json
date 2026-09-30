@@ -1,0 +1,62 @@
+{
+  "windows-arm64 / replicate 1": {
+    "Image": "windows-11-vs2026-arm64",
+    "Version": "20260924.168.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/win11-vs2026-arm64/20260924.168/images/windows/Windows11-VS2026-Arm64-Readme.md"
+  },
+  "linux-arm64 / replicate 2": {
+    "Image": "ubuntu-24.04-arm",
+    "Version": "20260927.135.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24-arm64/20260927.135/images/ubuntu/Ubuntu2404-Arm64-Readme.md"
+  },
+  "windows-arm64 / replicate 2": {
+    "Image": "windows-11-vs2026-arm64",
+    "Version": "20260920.164.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/win11-vs2026-arm64/20260920.164/images/windows/Windows11-VS2026-Arm64-Readme.md"
+  },
+  "windows-x64 / replicate 1": {
+    "Image": "windows-2025-vs2026",
+    "Version": "20260922.246.2",
+    "Included Software": "https://github.com/actions/runner-images/blob/win25-vs2026/20260922.246/images/windows/Windows2025-VS2026-Readme.md"
+  },
+  "windows-x64 / replicate 3": {
+    "Image": "windows-2025-vs2026",
+    "Version": "20260925.250.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/win25-vs2026/20260925.250/images/windows/Windows2025-VS2026-Readme.md"
+  },
+  "linux-arm64 / replicate 3": {
+    "Image": "ubuntu-24.04-arm",
+    "Version": "20260927.135.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24-arm64/20260927.135/images/ubuntu/Ubuntu2404-Arm64-Readme.md"
+  },
+  "linux-arm64 / replicate 1": {
+    "Image": "ubuntu-24.04-arm",
+    "Version": "20260927.135.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24-arm64/20260927.135/images/ubuntu/Ubuntu2404-Arm64-Readme.md"
+  },
+  "linux-x64 / replicate 1": {
+    "Image": "ubuntu-24.04",
+    "Version": "20260927.320.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md"
+  },
+  "windows-arm64 / replicate 3": {
+    "Image": "windows-11-vs2026-arm64",
+    "Version": "20260920.164.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/win11-vs2026-arm64/20260920.164/images/windows/Windows11-VS2026-Arm64-Readme.md"
+  },
+  "windows-x64 / replicate 2": {
+    "Image": "windows-2025-vs2026",
+    "Version": "20260925.250.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/win25-vs2026/20260925.250/images/windows/Windows2025-VS2026-Readme.md"
+  },
+  "linux-x64 / replicate 2": {
+    "Image": "ubuntu-24.04",
+    "Version": "20260927.320.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20260927.320/images/ubuntu/Ubuntu2404-Readme.md"
+  },
+  "linux-x64 / replicate 3": {
+    "Image": "ubuntu-24.04",
+    "Version": "20260920.314.1",
+    "Included Software": "https://github.com/actions/runner-images/blob/ubuntu24/20260920.314/images/ubuntu/Ubuntu2404-Readme.md"
+  }
+}
