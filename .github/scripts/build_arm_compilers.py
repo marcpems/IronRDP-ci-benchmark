@@ -101,6 +101,7 @@ def configuration(root, msvc, variant, jobs):
     archiver = clang / "llvm-lib.exe" if variant != "baseline-msvc" else (
         msvc / "bin" / "Hostarm64" / "arm64" / "lib.exe"
     )
+    llvm_linker_setting = "" if optimized else 'use-linker = "lld"'
     # Literal TOML strings preserve Windows path separators.
     text = f"""profile = "dist"
 [build]
@@ -127,7 +128,7 @@ link-jobs = 2
 thin-lto = {str(optimized).lower()}
 link-shared = false
 static-libstdcpp = true
-use-linker = "lld"
+{llvm_linker_setting}
 [llvm.build-config]
 LLVM_ENABLE_DIA_SDK = "OFF"
 [rust]

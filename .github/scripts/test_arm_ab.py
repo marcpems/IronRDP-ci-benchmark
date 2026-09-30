@@ -38,6 +38,7 @@ class ArmAbTests(unittest.TestCase):
         self.assertEqual(b["target"], c["target"])
         self.assertTrue(c["llvm"]["thin-lto"])
         self.assertEqual(c["rust"]["lto"], "thin")
+        self.assertNotIn("use-linker", c["llvm"])
 
     def test_custom_compiler_verification_rejects_tampering(self):
         with tempfile.TemporaryDirectory() as temp:
