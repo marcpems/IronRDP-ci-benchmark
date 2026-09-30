@@ -1,0 +1,102 @@
+name: Offline Cargo benchmark
+
+on:
+  push:
+    branches: [ci/offline-cargo-benchmark]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_INCREMENTAL: "0"
+  CARGO_PROFILE_DEV_DEBUG: "0"
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+  CARGO_BUILD_JOBS: "4"
+  RUST_BACKTRACE: short
+
+jobs:
+  benchmark:
+    if: github.repository != 'Devolutions/IronRDP'
+    name: ${{ matrix.platform }} / replicate ${{ matrix.replicate }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        replicate: [1, 2, 3]
+        platform: [linux-x64, windows-x64, linux-arm64, windows-arm64]
+        include:
+          - platform: linux-x64
+            runner: ubuntu-24.04
+            host: x86_64-unknown-linux-gnu
+            python-arch: x64
+          - platform: windows-x64
+            runner: windows-2025
+            host: x86_64-pc-windows-msvc
+            python-arch: x64
+          - platform: linux-arm64
+            runner: ubuntu-24.04-arm
+            host: aarch64-unknown-linux-gnu
+            python-arch: arm64
+          - platform: windows-arm64
+            runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+            python-arch: arm64
+    env:
+      BENCHMARK_HOST: ${{ matrix.host }}
+      BENCHMARK_PLATFORM: ${{ matrix.platform }}
+      BENCHMARK_REPLICATE: ${{ matrix.replicate }}
+    steps:
+      - name: Checkout benchmark revision
+        uses: actions/checkout@v6
+
+      - name: Install native Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: ${{ matrix.python-arch }}
+
+      - name: Install native dependencies
+        if: runner.os != 'Windows' || runner.arch != 'ARM64'
+        uses: ./.github/actions/install-build-deps
+
+      - name: Install pinned native Rust and WASM target
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $channel = python -c "import pathlib,tomllib; print(tomllib.loads(pathlib.Path('rust-toolchain.toml').read_text())['toolchain']['channel'])"
+          if ($LASTEXITCODE -ne 0) { throw 'Cannot read Rust toolchain' }
+          $toolchain = "$channel-${{ matrix.host }}"
+          rustup toolchain install $toolchain --profile minimal --component clippy --target wasm32-unknown-unknown
+          if ($LASTEXITCODE -ne 0) { throw 'Rust toolchain installation failed' }
+          "RUSTUP_TOOLCHAIN=$toolchain" >> $env:GITHUB_ENV
+
+      - name: Fetch dependencies outside measurement
+        shell: pwsh
+        run: |
+          cargo fetch --locked
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency fetch failed' }
+
+      - name: Measure offline compilation
+        shell: pwsh
+        env:
+          CARGO_NET_OFFLINE: "true"
+        run: |
+          python .github/scripts/offline_benchmark.py run --source . --output benchmark-results
+          if ($LASTEXITCODE -ne 0) { throw 'Offline benchmark failed; inspect uploaded evidence' }
+
+      - name: Verify unchanged lockfile outside measurement
+        shell: pwsh
+        run: |
+          git diff --exit-code -- Cargo.lock
+          if ($LASTEXITCODE -ne 0) { throw 'Benchmark changed Cargo.lock' }
+
+      - name: Upload evidence outside measurement
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: offline-${{ matrix.platform }}-${{ matrix.replicate }}
+          path: benchmark-results
+          if-no-files-found: warn
+          retention-days: 30
