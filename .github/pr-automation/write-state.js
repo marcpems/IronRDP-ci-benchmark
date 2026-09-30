@@ -8,6 +8,7 @@ const {
   reducedCoverageText, reviewBody,
 } = require("./review-render");
 const { reviewPolicyEligible } = require("./routing");
+const { ownsActiveLease } = require("./automation-lease");
 const { assertCurrentHead } = require("./current-head");
 const { matchesGeneration, readLatestExactHeadCiRun } = require("./ci-state");
 const { ACTOR_LABELS } = require("./resolve-state");
@@ -48,7 +49,9 @@ function markerBody(comment, owner, repo) {
   throw new Error("unsupported issue comment");
 }
 
-async function upsertMarkedComment(github, owner, repo, prNumber, expectedSha, botLogin, comment) {
+async function upsertMarkedComment(
+  github, owner, repo, prNumber, expectedSha, botLogin, comment, canMutate,
+) {
   if (!botLogin || typeof botLogin !== "string") throw new Error("botLogin is required for comment ownership");
   const body = markerBody(comment, owner, repo);
   const existing = (await comments(github, owner, repo, prNumber)).find((item) =>
@@ -56,6 +59,7 @@ async function upsertMarkedComment(github, owner, repo, prNumber, expectedSha, b
   if (existing?.body === body) return false;
   await issueLabels(github, owner, repo, prNumber);
   await assertCurrentHead({ github, owner, repo, pullNumber: prNumber, expectedHeadSha: expectedSha });
+  if (canMutate && !await canMutate()) return false;
   if (existing) {
     await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
   } else {
@@ -64,12 +68,15 @@ async function upsertMarkedComment(github, owner, repo, prNumber, expectedSha, b
   return true;
 }
 
-async function deleteMarkedComment(github, owner, repo, prNumber, expectedSha, botLogin, marker) {
+async function deleteMarkedComment(
+  github, owner, repo, prNumber, expectedSha, botLogin, marker, canMutate,
+) {
   if (!botLogin || typeof botLogin !== "string") throw new Error("botLogin is required for comment ownership");
   const existing = (await comments(github, owner, repo, prNumber)).find((item) =>
     item.user?.login === botLogin && typeof item.body === "string" && item.body.includes(marker));
   if (!existing) return false;
   await assertCurrentHead({ github, owner, repo, pullNumber: prNumber, expectedHeadSha: expectedSha });
+  if (canMutate && !await canMutate()) return false;
   await github.rest.issues.deleteComment({ owner, repo, comment_id: existing.id });
   return true;
 }
@@ -117,7 +124,7 @@ async function assertFreshCi(github, owner, repo, state) {
   }
 }
 
-async function publishReview(github, owner, repo, prNumber, state, botLogin, comment) {
+async function publishReview(github, owner, repo, prNumber, state, botLogin, comment, canMutate) {
   if (!botLogin || typeof botLogin !== "string") throw new Error("botLogin is required for review ownership");
   const review = comment.review;
   const reducedCoverage = comment.reducedCoverage ?? [];
@@ -150,6 +157,7 @@ async function publishReview(github, owner, repo, prNumber, state, botLogin, com
     github, owner, repo, pullNumber: prNumber, expectedHeadSha: state.expectedSha,
   });
   assertReviewPolicy(await issueLabels(github, owner, repo, prNumber), state);
+  if (canMutate && !await canMutate()) return false;
   await github.rest.pulls.createReview({
     owner, repo, pull_number: prNumber, commit_id: state.expectedSha, event: "COMMENT",
     body, comments: inline,
@@ -157,31 +165,45 @@ async function publishReview(github, owner, repo, prNumber, state, botLogin, com
   return true;
 }
 
-async function findCheck(github, owner, repo, expectedSha, check) {
+async function findChecks(github, owner, repo, expectedSha, check) {
   const runs = await readCheckRuns({
     github, owner, repo, ref: expectedSha, checkName: check.name,
   });
-  return runs
-    .filter((run) => run.external_id === check.externalId)
-    .reduce((found, run) => !found || run.id > found.id ? run : found, null);
+  const matching = runs.filter((run) => run.external_id === check.externalId);
+  if (matching.some((run) => run.app?.slug !== "github-actions")) {
+    throw new Error("canonical check is ambiguous");
+  }
+  return matching;
 }
 
-async function ensureClassificationCheck(github, owner, repo, prNumber, expectedSha, check) {
+async function findCheck(github, owner, repo, expectedSha, check) {
+  const matching = await findChecks(github, owner, repo, expectedSha, check);
+  return matching.reduce((found, run) => !found || run.id > found.id ? run : found, null);
+}
+
+async function ensureClassificationCheck(github, owner, repo, prNumber, expectedSha, check, state) {
   const summary = `${check.summary}\n\n${encodeCheckState(check.machineState)}`;
   const conclusion = check.conclusion ?? "success";
-  const existing = await findCheck(github, owner, repo, expectedSha, check);
-  if (existing?.conclusion === conclusion && existing.output?.title === check.title &&
-      existing.output?.summary === summary) return false;
+  const runs = await findChecks(github, owner, repo, expectedSha, check);
+  const existing = state.lease ? { id: state.lease.checkRunId } :
+    runs.reduce((found, run) => !found || run.id > found.id ? run : found, null);
+  if (runs.some((run) => run.conclusion === "success") ||
+      (existing?.conclusion === conclusion && existing.output?.title === check.title &&
+      existing.output?.summary === summary)) return false;
   await assertCurrentHead({
     github, owner, repo, pullNumber: prNumber, expectedHeadSha: expectedSha,
   });
+  if (state.canMutate && !await state.canMutate()) return false;
   const payload = {
     owner, repo, name: check.name, head_sha: expectedSha, external_id: check.externalId,
     status: "completed", conclusion,
     output: { title: check.title, summary },
   };
   if (existing) {
-    await github.rest.checks.update({ ...payload, check_run_id: existing.id });
+    const { owner, repo, status, conclusion, output } = payload;
+    await github.rest.checks.update({
+      owner, repo, check_run_id: existing.id, status, conclusion, output,
+    });
   } else {
     await github.rest.checks.create(payload);
   }
@@ -192,9 +214,12 @@ async function ensureReviewCheck(github, owner, repo, prNumber, expectedSha, che
   const conclusion = check.conclusion ?? "success";
   const title = check.title ?? "Automated review complete";
   const summary = check.summary ?? "Validated automated review is bound to this commit.";
-  const existing = await findCheck(github, owner, repo, expectedSha, check);
-  if (existing?.conclusion === conclusion && existing.output?.title === title &&
-      existing.output?.summary === summary) return false;
+  const runs = await findChecks(github, owner, repo, expectedSha, check);
+  const existing = state.lease ? { id: state.lease.checkRunId } :
+    runs.reduce((found, run) => !found || run.id > found.id ? run : found, null);
+  if (runs.some((run) => run.conclusion === "success") ||
+      (existing?.conclusion === conclusion && existing.output?.title === title &&
+      existing.output?.summary === summary)) return false;
   if (state.failed !== true && state.blocked !== true) {
     await assertFreshCi(github, owner, repo, state);
     assertReviewPolicy(await issueLabels(github, owner, repo, prNumber), state);
@@ -202,31 +227,37 @@ async function ensureReviewCheck(github, owner, repo, prNumber, expectedSha, che
   await assertCurrentHead({
     github, owner, repo, pullNumber: prNumber, expectedHeadSha: expectedSha,
   });
+  if (state.canMutate && !await state.canMutate()) return false;
   const payload = {
     owner, repo, name: check.name, head_sha: expectedSha, external_id: check.externalId,
     status: "completed", conclusion, output: { title, summary },
   };
   if (existing) {
-    await github.rest.checks.update({ ...payload, check_run_id: existing.id });
+    const { owner, repo, status, conclusion, output } = payload;
+    await github.rest.checks.update({
+      owner, repo, check_run_id: existing.id, status, conclusion, output,
+    });
   } else {
     await github.rest.checks.create(payload);
   }
   return true;
 }
 
-async function dispatchClassificationComplete(github, owner, repo, prNumber, expectedSha) {
+async function dispatchClassificationComplete(github, owner, repo, prNumber, expectedSha, canMutate) {
   await assertCurrentHead({
     github, owner, repo, pullNumber: prNumber, expectedHeadSha: expectedSha,
   });
+  if (canMutate && !await canMutate()) return false;
   await github.rest.repos.createDispatchEvent({
     owner, repo, event_type: "pr-automation-classified",
     client_payload: { pr_number: prNumber, head_sha: expectedSha },
   });
+  return true;
 }
 
 // Computes the whole label delta from a single read, so a state with two label sets plus additions
 // and removals costs one issue read instead of one per candidate label.
-async function applyLabels(github, owner, repo, prNumber, state, currentLabels) {
+async function applyLabels(github, owner, repo, prNumber, state, currentLabels, canMutate) {
   const current = currentLabels ?? await issueLabels(github, owner, repo, prNumber);
   const add = new Set();
   const remove = new Set();
@@ -253,6 +284,7 @@ async function applyLabels(github, owner, repo, prNumber, state, currentLabels) 
     }
   }
   const removeLabel = async (label) => {
+    if (canMutate && !await canMutate()) return false;
     try {
       await github.rest.issues.removeLabel({ owner, repo, issue_number: prNumber, name: label });
     } catch (error) {
@@ -261,6 +293,7 @@ async function applyLabels(github, owner, repo, prNumber, state, currentLabels) 
   };
   for (const label of actorRemovals) await removeLabel(label);
   if (additions.length > 0) {
+    if (canMutate && !await canMutate()) return false;
     await github.rest.issues.addLabels({ owner, repo, issue_number: prNumber, labels: additions });
   }
   for (const label of removals.filter((label) => !ACTOR_LABELS.includes(label))) {
@@ -269,55 +302,104 @@ async function applyLabels(github, owner, repo, prNumber, state, currentLabels) 
   return true;
 }
 
+async function completeLeaseNeutral(github, owner, repo, state, canMutate, title) {
+  if (!state.lease || !await canMutate()) return false;
+  await github.rest.checks.update({
+    owner, repo, check_run_id: state.lease.checkRunId, status: "completed", conclusion: "neutral",
+    output: { title, summary: state.lease.marker },
+  });
+  return true;
+}
+
 async function writeState({ github, owner, repo, prNumber, state, botLogin, reviewRequested = false }) {
   if (!state?.ok || !["classification", "review"].includes(state.mode) ||
       typeof state.expectedSha !== "string" || !Number.isSafeInteger(prNumber) || prNumber <= 0) {
     throw new Error("invalid normalized state");
   }
+  const canMutate = async () => !state.lease || state.forced === true || await ownsActiveLease({ github, owner, repo, lease: state.lease });
+  if (state.superseded === true) {
+    await completeLeaseNeutral(
+      github, owner, repo, state, canMutate, "Automation superseded");
+    return { ok: true, superseded: true };
+  }
   await assertCurrentHead({
     github, owner, repo, pullNumber: prNumber, expectedHeadSha: state.expectedSha,
   });
+  const check = state.check;
+  let existingCheck = null;
+  let successfulCheck = null;
+  if (check) {
+    const checks = await findChecks(github, owner, repo, state.expectedSha, check);
+    existingCheck = checks.reduce((found, run) => !found || run.id > found.id ? run : found, null);
+    successfulCheck = checks.find((run) => run.conclusion === "success") ?? null;
+    const nonSuccess = state.failed === true || state.blocked === true ||
+      (check.conclusion ?? "success") !== "success";
+    if (successfulCheck && nonSuccess) {
+      return { ok: true, superseded: true };
+    }
+  }
+  if (!await canMutate()) return { ok: true, superseded: true };
+  const guardedState = { ...state, canMutate };
   if (state.mode === "review") {
     const comments = state.comments || [];
     for (const comment of comments.filter((comment) => comment.kind === "review")) {
-      await publishReview(github, owner, repo, prNumber, state, botLogin, comment);
-    }
-    if (state.check) {
-      await ensureReviewCheck(github, owner, repo, prNumber, state.expectedSha, state.check, state);
+      if (!await canMutate()) return { ok: true, superseded: true };
+      await publishReview(github, owner, repo, prNumber, guardedState, botLogin, comment, canMutate);
     }
     const latestLabels = state.failed === true || state.blocked === true
       ? undefined
       : await issueLabels(github, owner, repo, prNumber);
     if (latestLabels) {
-      await assertFreshCi(github, owner, repo, state);
-      assertReviewPolicy(latestLabels, state);
+      await assertFreshCi(github, owner, repo, guardedState);
+      assertReviewPolicy(latestLabels, guardedState);
     }
-    await applyLabels(github, owner, repo, prNumber, state, latestLabels);
+    if (!await canMutate()) return { ok: true, superseded: true };
+    await applyLabels(github, owner, repo, prNumber, guardedState, latestLabels, canMutate);
     for (const comment of comments.filter((comment) => comment.kind !== "review")) {
+      if (!await canMutate()) return { ok: true, superseded: true };
       await upsertMarkedComment(
-        github, owner, repo, prNumber, state.expectedSha, botLogin, comment);
+        github, owner, repo, prNumber, state.expectedSha, botLogin, comment, canMutate);
     }
     for (const marker of new Set(state.removeCommentMarkers || [])) {
+      if (!await canMutate()) return { ok: true, superseded: true };
       await deleteMarkedComment(
-        github, owner, repo, prNumber, state.expectedSha, botLogin, marker);
-    }
-  } else {
-    await applyLabels(github, owner, repo, prNumber, state);
-    for (const comment of state.comments || []) await upsertMarkedComment(
-      github, owner, repo, prNumber, state.expectedSha, botLogin, comment);
-    for (const comment of state.auditComments || []) await upsertMarkedComment(
-      github, owner, repo, prNumber, state.expectedSha, botLogin, comment);
-    for (const marker of new Set(state.removeCommentMarkers || [])) {
-      await deleteMarkedComment(
-        github, owner, repo, prNumber, state.expectedSha, botLogin, marker);
+        github, owner, repo, prNumber, state.expectedSha, botLogin, marker, canMutate);
     }
     if (state.check) {
-      const changed = await ensureClassificationCheck(
-        github, owner, repo, prNumber, state.expectedSha, state.check);
-      if ((changed || reviewRequested) &&
+      if (!await canMutate()) return { ok: true, superseded: true };
+      await ensureReviewCheck(
+        github, owner, repo, prNumber, state.expectedSha, state.check, guardedState);
+    } else if (state.lease && !await completeLeaseNeutral(
+      github, owner, repo, state, canMutate, "Automation blocked",
+    )) {
+      return { ok: true, superseded: true };
+    }
+  } else {
+    if (!await canMutate()) return { ok: true, superseded: true };
+    await applyLabels(github, owner, repo, prNumber, guardedState, undefined, canMutate);
+    for (const comment of state.comments || []) await upsertMarkedComment(
+      github, owner, repo, prNumber, state.expectedSha, botLogin, comment, canMutate);
+    for (const comment of state.auditComments || []) await upsertMarkedComment(
+      github, owner, repo, prNumber, state.expectedSha, botLogin, comment, canMutate);
+    for (const marker of new Set(state.removeCommentMarkers || [])) {
+      await deleteMarkedComment(
+        github, owner, repo, prNumber, state.expectedSha, botLogin, marker, canMutate);
+    }
+    if (state.check) {
+      const shouldDispatch = (state.lease || reviewRequested || existingCheck === null) &&
+          successfulCheck === null &&
           ["Classification complete", "Automation stopped"].includes(state.check.title) &&
-          state.dispatchReview !== false) {
-        await dispatchClassificationComplete(github, owner, repo, prNumber, state.expectedSha);
+          state.dispatchReview !== false;
+      if (!await canMutate()) return { ok: true, superseded: true };
+      const changed = await ensureClassificationCheck(
+        github, owner, repo, prNumber, state.expectedSha, state.check, guardedState);
+      const dispatchAfterCompletion = state.lease
+        ? changed
+        : changed || reviewRequested || state.check.title === "Automation stopped";
+      if (shouldDispatch && dispatchAfterCompletion) {
+        await dispatchClassificationComplete(
+          github, owner, repo, prNumber, state.expectedSha, null,
+        );
       }
     }
   }
