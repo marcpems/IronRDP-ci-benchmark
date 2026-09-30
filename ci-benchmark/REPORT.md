@@ -1,5 +1,8 @@
 # IronRDP offline CI benchmark: native compilation breakdown
 
+For the concise combined conclusion and compiler CPU validation, see
+[COMBINED-REPORT.md](COMBINED-REPORT.md).
+
 ## Result
 
 **The Windows slowdown is reproduced, but a universal 2x multiplier is not.**
