@@ -5,7 +5,7 @@ import tomllib
 import unittest
 
 from arm_ab_probe import variant_order, verify_custom
-from build_arm_compilers import configuration, digest, HOST, RUST_SHA
+from build_arm_compilers import configuration, digest, HOST, OFFICIAL_STD, RUST_SHA
 
 
 class ArmAbTests(unittest.TestCase):
@@ -45,12 +45,14 @@ class ArmAbTests(unittest.TestCase):
             path.parent.mkdir(parents=True)
             path.write_bytes(b"fixture")
             manifest = {"variant": "optimized", "rust_sha": RUST_SHA,
+                        "evaluation_stdlib_sha256": OFFICIAL_STD,
                         "files": {"bin/rustc.exe": digest(path)}}
             (root / "optimized.json").write_text(json.dumps(manifest))
-            self.assertEqual(verify_custom(root, "optimized", {"rust_sha": RUST_SHA}), path)
+            protocol = {"rust_sha": RUST_SHA, "evaluation_stdlib_sha256": OFFICIAL_STD}
+            self.assertEqual(verify_custom(root, "optimized", protocol), path)
             path.write_bytes(b"modified")
             with self.assertRaises(RuntimeError):
-                verify_custom(root, "optimized", {"rust_sha": RUST_SHA})
+                verify_custom(root, "optimized", protocol)
 
 
 if __name__ == "__main__":

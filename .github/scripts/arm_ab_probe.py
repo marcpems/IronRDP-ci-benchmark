@@ -22,6 +22,8 @@ def verify_custom(root, variant, protocol):
     metadata = json.loads((root / f"{variant}.json").read_text(encoding="utf-8"))
     if metadata["variant"] != variant or metadata["rust_sha"] != protocol["rust_sha"]:
         raise RuntimeError(f"Wrong compiler provenance: {variant}")
+    if metadata["evaluation_stdlib_sha256"] != protocol["evaluation_stdlib_sha256"]:
+        raise RuntimeError(f"Wrong evaluation standard libraries: {variant}")
     sysroot = root / variant
     for relative, expected in metadata["files"].items():
         path = sysroot / relative

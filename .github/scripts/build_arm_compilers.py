@@ -8,6 +8,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import zipfile
 
@@ -16,6 +17,10 @@ LLVM_SHA = "00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7"
 PERF_SHA = "c0301bc44d175b9b2c5442b25049475c39d7700c"
 HOST = "aarch64-pc-windows-msvc"
 VARIANTS = ("baseline-msvc", "baseline-lld", "optimized")
+OFFICIAL_STD = {
+    HOST: "9b3237662e22bd337f1dafbbf0c07178bb2907b6d2b3008c7f1dabbec68990b2",
+    "wasm32-unknown-unknown": "26b8953083b942aeaf870de742962e4ba17c0da2095725fbf4ab5ab85a4d5fd5",
+}
 
 
 def save(path, value):
@@ -100,7 +105,7 @@ def configuration(root, msvc, variant, jobs):
 [build]
 build = "{HOST}"
 host = ["{HOST}"]
-target = ["{HOST}", "wasm32-unknown-unknown"]
+target = ["{HOST}"]
 build-dir = "{build_dir}"
 jobs = {jobs}
 extended = false
@@ -157,7 +162,25 @@ def execute(command, source, env, log):
 
 
 def package(source, root, variant, build_dir, provenance, env):
-    sysroot = source / build_dir / HOST / "stage2"
+    original = source / build_dir / HOST / "stage2"
+    with tempfile.TemporaryDirectory(prefix=f"package-{variant}-", dir=root) as tmp:
+        sysroot = Path(tmp) / "sysroot"
+        shutil.copytree(original, sysroot)
+        for target, checksum in OFFICIAL_STD.items():
+            archive = root / "tools" / f"rust-std-{target}.tar.xz"
+            if digest(archive) != checksum:
+                raise RuntimeError(f"Official standard library checksum mismatch: {target}")
+            std = (root / "tools" / f"rust-std-1.94.1-{target}" / f"rust-std-{target}"
+                   / "lib" / "rustlib" / target / "lib")
+            destination = sysroot / "lib" / "rustlib" / target / "lib"
+            if destination.exists():
+                shutil.rmtree(destination)
+            shutil.copytree(std, destination)
+        provenance["evaluation_stdlib_sha256"] = OFFICIAL_STD
+        package_contents(source, root, variant, build_dir, provenance, env, sysroot)
+
+
+def package_contents(source, root, variant, build_dir, provenance, env, sysroot):
     compiler = sysroot / "bin" / "rustc.exe"
     version = subprocess.check_output([str(compiler), "-vV"], env=env, text=True)
     if RUST_SHA not in version or f"host: {HOST}" not in version or "LLVM version: 21.1.8" not in version:
