@@ -65,7 +65,7 @@ def replay_arguments(original, output, mode):
     return arguments
 
 
-def run(source, output, wrapper):
+def run(source, output, wrapper, compiler=None, temporary=None):
     source, output, wrapper = source.resolve(), output.resolve(), wrapper.resolve()
     output.mkdir(parents=True, exist_ok=False)
     validate_meter(output / "meter-validation")
@@ -79,10 +79,10 @@ def run(source, output, wrapper):
         "CARGO_PROFILE_DEV_CODEGEN_UNITS": "16", "RUSTC_WRAPPER": str(wrapper),
     })
     # Bypass rustup proxies: Windows proxies spawn rustc as a separate process.
-    env["RUSTC"] = subprocess.check_output(
+    env["RUSTC"] = str(compiler.resolve()) if compiler is not None else subprocess.check_output(
         ["rustup", "which", "rustc"], cwd=source, env=env, text=True,
     ).strip()
-    rustc = subprocess.check_output(["rustc", "-vV"], cwd=source, env=env, text=True)
+    rustc = subprocess.check_output([env["RUSTC"], "-vV"], cwd=source, env=env, text=True)
     if f"host: {env['BENCHMARK_HOST']}\n" not in rustc or os.cpu_count() != 4:
         raise RuntimeError("wrong native compiler host or standard runner CPU count")
     sha = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=source, text=True).strip()
@@ -116,7 +116,8 @@ def run(source, output, wrapper):
     if check["user_seconds"] + check["kernel_seconds"] < 0.25:
         raise RuntimeError("native wrapper CPU accounting failed validation")
 
-    temporary = Path(env["RUNNER_TEMP"]) / f"compiler-validation-{env['GITHUB_RUN_ID']}"
+    temporary = (temporary.resolve() if temporary is not None else
+                 Path(env["RUNNER_TEMP"]) / f"compiler-validation-{env['GITHUB_RUN_ID']}")
     temporary.mkdir(exist_ok=False)
     rows = []
     invocations = {}

@@ -1,0 +1,102 @@
+name: Arm64 compiler optimization A-B
+
+on:
+  push:
+    branches:
+      - ci/arm64-ab-pilot
+      - ci/arm64-ab-baseline
+      - ci/arm64-ab-full
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ matrix.platform }} / VM ${{ matrix.vm }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix:
+        vm: ${{ fromJSON(github.ref_name == 'ci/arm64-ab-full' && '[1,2,3,4,5]' || '[1]') }}
+        platform: [linux-arm64, windows-arm64]
+        include:
+          - platform: linux-arm64
+            runner: ubuntu-24.04-arm
+            host: aarch64-unknown-linux-gnu
+          - platform: windows-arm64
+            runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+    env:
+      BENCHMARK_HOST: ${{ matrix.host }}
+      BENCHMARK_PLATFORM: ${{ matrix.platform }}
+      BENCHMARK_REPLICATE: ${{ matrix.vm }}
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Install official reference toolchain
+        shell: pwsh
+        run: |
+          $toolchain = '1.94.1-${{ matrix.host }}'
+          rustup toolchain install $toolchain --profile minimal --target wasm32-unknown-unknown
+          if ($LASTEXITCODE -ne 0) { throw 'Official toolchain installation failed' }
+          "RUSTUP_TOOLCHAIN=$toolchain" >> $env:GITHUB_ENV
+      - name: Fetch fixed workload dependencies outside measurements
+        shell: pwsh
+        working-directory: workload
+        run: |
+          cargo fetch --locked
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency preparation failed' }
+      - name: Compile and validate CPU meters
+        shell: pwsh
+        run: |
+          $meter = Join-Path $env:RUNNER_TEMP 'rustc-metrics'
+          if ($IsWindows) { $meter += '.exe' }
+          rustc .github/scripts/rustc_metrics.rs --edition=2024 -O -o $meter
+          if ($LASTEXITCODE -ne 0) { throw 'Compiler meter build failed' }
+          $env:COMPILER_METER = $meter
+          python -m unittest discover -s .github/scripts -p test_compiler_probe.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Native meter validation failed' }
+          python -m unittest discover -s .github/scripts -p test_arm_ab.py -v
+          if ($LASTEXITCODE -ne 0) { throw 'Experiment control validation failed' }
+          "COMPILER_METER=$meter" >> $env:GITHUB_ENV
+      - name: Validate compilers and measure paired blocks
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $extra = @()
+          if ('${{ github.ref_name }}' -eq 'ci/arm64-ab-pilot') {
+            $extra += @('--official-only', '--pilot')
+          } elseif ('${{ github.ref_name }}' -eq 'ci/arm64-ab-baseline') {
+            $extra += @('--baseline-only', '--pilot')
+          }
+          python .github/scripts/arm_ab_probe.py --source workload --output arm-ab-results `
+            --wrapper "$env:COMPILER_METER" --protocol ci-benchmark/arm64-ab-protocol.json `
+            --compilers (Join-Path $env:RUNNER_TEMP 'arm-compilers') `
+            --release-tag arm64-compiler-ab-v1 @extra
+          if ($LASTEXITCODE -ne 0) { throw 'Paired measurements failed; inspect evidence' }
+      - name: Verify fixed workload remains unchanged
+        shell: pwsh
+        working-directory: workload
+        run: |
+          git diff --exit-code
+          if ($LASTEXITCODE -ne 0) { throw 'Workload changed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: arm-ab-${{ matrix.platform }}-${{ matrix.vm }}
+          path: arm-ab-results
+          if-no-files-found: warn
+          retention-days: 30
