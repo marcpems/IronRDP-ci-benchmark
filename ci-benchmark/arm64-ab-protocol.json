@@ -3,7 +3,7 @@
   "rust_version": "1.94.1",
   "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
   "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
-  "evaluation_stdlib": "Identical official Rust 1.94.1 native and WASM standard-library components in every evaluated compiler sysroot",
+  "evaluation_stdlib": "All Windows variants use identical official Windows Arm64 and WASM target standard libraries; Linux uses official Linux Arm64 and the same WASM components",
   "evaluation_stdlib_sha256": {
     "aarch64-pc-windows-msvc": "9b3237662e22bd337f1dafbbf0c07178bb2907b6d2b3008c7f1dabbec68990b2",
     "wasm32-unknown-unknown": "26b8953083b942aeaf870de742962e4ba17c0da2095725fbf4ab5ab85a4d5fd5"
