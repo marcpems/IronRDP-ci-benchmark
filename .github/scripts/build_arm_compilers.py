@@ -36,7 +36,7 @@ def clean_environment(root, msvc):
     sdk_bin = sdk / "bin" / sdk_version / "arm64"
     vc_bin = msvc / "bin" / "Hostarm64" / "arm64"
     required = [
-        clang / "clang-cl.exe", clang / "lld-link.exe", vc_bin / "cl.exe",
+        clang / "clang-cl.exe", clang / "lld-link.exe", clang / "llvm-lib.exe", vc_bin / "cl.exe",
         vc_bin / "link.exe", sdk_bin / "rc.exe",
         sdk / "Include" / sdk_version / "ucrt" / "stdlib.h",
         libs / "um" / "arm64" / "kernel32.lib",
@@ -92,6 +92,9 @@ def configuration(root, msvc, variant, jobs):
     build_dir = "build-ab-optimized" if optimized else "build-ab-baseline"
     clang = root / "tools" / "clang20" / "bin"
     linker = clang / "lld-link.exe" if variant != "baseline-msvc" else "link.exe"
+    archiver = clang / "llvm-lib.exe" if variant != "baseline-msvc" else (
+        msvc / "bin" / "Hostarm64" / "arm64" / "lib.exe"
+    )
     # Literal TOML strings preserve Windows path separators.
     text = f"""profile = "dist"
 [build]
@@ -107,6 +110,7 @@ profiler = true
 optimized-compiler-builtins = true
 metrics = true
 print-step-timings = true
+verbose = 2
 [llvm]
 download-ci-llvm = false
 clang-cl = '{clang / "clang-cl.exe"}'
@@ -138,7 +142,7 @@ lto = "{'thin' if optimized else 'thin-local'}"
 linker = '{linker}'
 cc = '{msvc / "bin" / "Hostarm64" / "arm64" / "cl.exe"}'
 cxx = '{msvc / "bin" / "Hostarm64" / "arm64" / "cl.exe"}'
-ar = '{msvc / "bin" / "Hostarm64" / "arm64" / "lib.exe"}'
+ar = '{archiver}'
 """
     return build_dir, text
 
@@ -161,6 +165,45 @@ def package(source, root, variant, build_dir, provenance, env):
     for target in (HOST, "wasm32-unknown-unknown"):
         if not list((sysroot / "lib" / "rustlib" / target / "lib").glob("libstd-*.rlib")):
             raise RuntimeError(f"Missing standard library: {target}")
+    cache_path = source / build_dir / HOST / "llvm" / "build" / "CMakeCache.txt"
+    cache = {}
+    for line in cache_path.read_text(encoding="utf-8").splitlines():
+        if line and not line.startswith(("#", "//")) and ":" in line and "=" in line:
+            key, value = line.split("=", 1)
+            key = key.split(":", 1)[0]
+            if key.startswith(("LLVM_", "CMAKE_CXX_COMPILER", "CMAKE_BUILD_TYPE", "CMAKE_AR")):
+                cache[key] = value
+    expected_lto = "Thin" if variant == "optimized" else "OFF"
+    if cache.get("LLVM_ENABLE_LTO", "OFF").lower() != expected_lto.lower():
+        raise RuntimeError("Actual LLVM LTO configuration differs from the experiment")
+    if cache.get("LLVM_BUILD_INSTRUMENTED", "OFF") not in ("", "OFF"):
+        raise RuntimeError("Final LLVM build is still instrumented")
+    if variant == "optimized":
+        if "llvm-pgo.profdata" not in cache.get("LLVM_PROFDATA_FILE", ""):
+            raise RuntimeError("Final LLVM build did not use its PGO profile")
+        log = (root / "logs" / "optimized-pipeline.log").read_text(encoding="utf-8", errors="replace")
+        for flag in ("-Cprofile-use=", "-Clto=thin", "-Zdylib-lto"):
+            if flag not in log:
+                raise RuntimeError(f"Missing actual rustc build flag evidence: {flag}")
+    elif cache.get("LLVM_PROFDATA_FILE"):
+        raise RuntimeError("Baseline LLVM unexpectedly used a PGO profile")
+    provenance["llvm_cmake_cache"] = cache
+    probe = root / "final-compiler-check.rs"
+    probe.write_text("pub fn add(a: u64, b: u64) -> u64 { a.wrapping_add(b) }\n")
+    prefix = f"final-{variant}-{time.time_ns()}-"
+    probe_env = {**env, "LLVM_PROFILE_FILE": str(root / "temp" / f"{prefix}%p.profraw")}
+    subprocess.run([str(compiler), "--crate-type", "lib", "--emit=llvm-ir",
+                    str(probe), "-o", str(root / "temp" / f"{variant}.ll")],
+                   env=probe_env, check=True)
+    if list((root / "temp").glob(f"{prefix}*.profraw")):
+        raise RuntimeError("Final compiler is still PGO-instrumented")
+    provenance["final_instrumentation_check"] = "Code generation produced no profiling output"
+    provenance["tool_archive_sha256"] = {
+        name: digest(root / "tools" / name) for name in (
+            "LLVM-20.1.3-woa64.exe", "microsoft.windows.sdk.cpp.10.0.26100.9169.zip",
+            "microsoft.windows.sdk.cpp.arm64.10.0.26100.9169.zip", "rustc-official.tar.xz",
+        )
+    }
     notices = (root / "tools" / f"rustc-1.94.1-{HOST}" / "rustc" / "share" / "doc" / "rust")
     if not (notices / "COPYRIGHT.html").is_file():
         raise FileNotFoundError("Extract official Rust 1.94.1 compiler license notices before packaging")

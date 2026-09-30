@@ -14,7 +14,7 @@
   "secondary_endpoints": "All original graphics and direct yuv native/WASM metadata/full endpoints, CPU and wall, one/four CPUs",
   "order": "Deterministic counterbalanced rotation by VM and round; reverse alternate rounds; all variants on the same Windows VM",
   "primary_optimization_contrast": "baseline-lld minus optimized: combined rustc PGO, LLVM PGO, cross-crate Rust ThinLTO and LLVM ThinLTO",
-  "linker_control": "baseline-msvc minus baseline-lld",
+  "linker_control": "baseline-msvc minus baseline-lld; LLD plus LLVM's bitcode-capable librarian",
   "official_build_bridge": "official minus baseline-msvc",
   "attribution": "(mean baseline-lld time - mean optimized time) / (mean official Windows time - mean official Linux time)",
   "historical_translation": "Paired optimization saving as fraction of contemporary official Windows time, divided by historical Arm64 excess fraction; explicitly conditional on effect transfer",
