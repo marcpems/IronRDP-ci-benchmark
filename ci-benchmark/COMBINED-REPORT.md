@@ -74,8 +74,77 @@ The large difference is predominantly user-mode CPU.
 **This narrows the investigation to the compiler/code-generation path, but does
 not separately measure LLVM passes.** Metadata/full differencing is not an LLVM
 phase timer. Compiler builds, allocator behavior, OS services and hardware
-throughput remain possible explanations; LLVM self-profiling is the next
-discriminating experiment, not a conclusion already established.
+throughput remain possible explanations. The release-build audit below identifies
+specific optimization differences to test; it does not establish their impact.
+
+## Rust release-build audit: Windows is not optimization-equivalent
+
+Scope: official **Rust 1.94.1**, commit
+`e408947bfd200af42db322daf0fadfe7e26d3bd1`, matching the measured compiler.
+These settings optimize **the compiler binaries themselves**, not the user's
+Cargo project.
+
+| Release setting | Windows x64 MSVC | Windows Arm64 MSVC |
+|---|---|---|
+| LLVM backend | Rust's LLVM **21.1.8** fork | Same revision/version |
+| C++ compiler building LLVM | **clang-cl 20.1.3**, win64 package | **clang-cl 20.1.3**, woa64 package |
+| LLVM linkage | Static into compiler, not a separate shared LLVM library | Same |
+| LLVM ThinLTO | **No** | **No** |
+| Cross-crate ThinLTO for rustc | **No**; default `thin-local` mode | **No**; default `thin-local` mode |
+| rustc PGO / LLVM PGO | **Yes / Yes**, generated in the distribution job | **No / No** |
+| BOLT | No | No |
+
+The backend is built from
+[`rust-lang/llvm-project@00d23d10`](https://github.com/rust-lang/llvm-project/tree/00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7);
+its [version file](https://github.com/rust-lang/llvm-project/blob/00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7/cmake/Modules/LLVMVersion.cmake#L3-L10)
+specifies 21.1.8. Do not confuse this with the separate
+[20.1.3 clang-cl installation](https://github.com/rust-lang/rust/blob/1.94.1/src/ci/scripts/install-clang.sh#L12-L14)
+used to build it; the script selects
+[native x64/Arm64 installer packages](https://github.com/rust-lang/rust/blob/1.94.1/src/ci/scripts/install-clang.sh#L47-L83).
+MSVC shared-LLVM builds are
+[explicitly rejected](https://github.com/rust-lang/rust/blob/1.94.1/src/bootstrap/src/core/build_steps/llvm.rs#L307-L309).
+
+The [Windows release jobs](https://github.com/rust-lang/rust/blob/1.94.1/src/ci/github-actions/jobs.yml#L623-L660)
+send only x64 through `opt-dist windows-ci`; Arm64 runs `x.py dist` directly.
+Tracing shared CI setup, the `dist` defaults and bootstrap confirms
+[`llvm.thin-lto=false`](https://github.com/rust-lang/rust/blob/1.94.1/src/bootstrap/src/core/config/config.rs#L1394)
+and [`rust.lto=thin-local`](https://github.com/rust-lang/rust/blob/1.94.1/src/bootstrap/src/core/config/mod.rs#L403-L410).
+**Thin-local is within a crate, not cross-crate ThinLTO.** x64 also explicitly
+sets one compiler codegen unit; that is not an LTO switch. Bootstrap's
+[Cargo/compiler-tool LTO override](https://github.com/rust-lang/rust/blob/1.94.1/src/bootstrap/src/core/build_steps/tool.rs#L124-L138)
+likewise does not request cross-crate LTO in this mode.
+`--enable-profiler` enables the profiling runtime, not PGO optimization of rustc.
+
+**PGO training project: `rust-lang/rustc-perf`, not IronRDP or one standalone
+application.** The release pins
+[`rustc-perf@c0301bc4`](https://github.com/rust-lang/rustc-perf/tree/c0301bc44d175b9b2c5442b25049475c39d7700c).
+Its collector compiles these
+[exact workload sets](https://github.com/rust-lang/rust/blob/1.94.1/src/build_helper/src/lib.rs#L14-L36):
+
+| Instrumented component | Training workloads | Compilation modes / scenarios |
+|---|---|---|
+| LLVM | `syn-2.0.101`, `cargo-0.87.1`, `serde-1.0.219`, `ripgrep-14.1.1`, `regex-automata-0.4.8`, `clap_derive-4.5.32`, `hyper-1.6.0` | `Debug,Opt` / `Full` |
+| rustc | `externs`, `ctfe-stress-5`, `cargo-0.87.1`, `token-stream-stress`, `match-stress`, `tuple-stress`, `diesel-2.2.10`, `bitmaps-3.2.1`, `serde-1.0.219-new-solver` | `Check,Debug,Opt` / `All` |
+
+The [training code](https://github.com/rust-lang/rust/blob/1.94.1/src/tools/opt-dist/src/training.rs#L105-L177)
+merges separately collected data into `rustc-pgo.profdata` and
+`llvm-pgo.profdata`; the
+[pipeline applies both to the final distribution build](https://github.com/rust-lang/rust/blob/1.94.1/src/tools/opt-dist/src/main.rs#L233-L385).
+Windows x64 generates its own profiles in that build. **There is no corresponding
+Windows Arm64 PGO training/profile-use stage, nor reuse of the x64 profile.**
+Current main's
+[Windows job definitions at `21b707e3`](https://github.com/rust-lang/rust/blob/21b707e3f97e0b522ebd2f277a862339625ad83f/src/ci/github-actions/jobs.yml#L793-L828)
+still show this same PGO pipeline split; the detailed settings above are pinned
+to 1.94.1.
+
+**Relevant Linux contrast:** both
+[x64](https://github.com/rust-lang/rust/blob/1.94.1/src/ci/docker/host-x86_64/dist-x86_64-linux/Dockerfile#L85-L103)
+and [Arm64](https://github.com/rust-lang/rust/blob/1.94.1/src/ci/docker/host-aarch64/dist-aarch64-linux/Dockerfile#L83-L105)
+explicitly enable LLVM ThinLTO and `rust.lto=thin`. Both use rustc/LLVM PGO
+through `opt-dist linux-ci`; its
+[environment enables BOLT on x64 but not Arm64](https://github.com/rust-lang/rust/blob/1.94.1/src/tools/opt-dist/src/main.rs#L174-L219).
+These are confirmed release-configuration differences, **not measured
+explanations of the 1.5-2x compiler CPU gap**.
 
 ## Controls and limitations
 
@@ -123,7 +192,20 @@ Expand-Archive ci-benchmark\compiler-raw-36771187101.zip -DestinationPath compil
 python ci-benchmark\analyze_compiler.py compiler-evidence --output compiler-results
 ```
 
-**Prioritize compiler profiling on the common-target `yuv` replay**, followed by
-an optimization/codegen A/B on matched CPU strata. Keep native crypto/Opus
-build-script profiling as a separate track for full-workspace CI. Cargo cache
-tuning may improve CI latency, but it does not explain this isolated CPU gap.
+**Next investigations, ranked by likely impact and directness:**
+
+1. **Windows Arm64 PGO A/B:** rebuild the same revision with native rustc/LLVM
+   PGO training, preserving other settings. Replay `yuv` and the graphics suite
+   on the same VMs; measure wall and CPU again. This addresses a concrete missing
+   optimization stage.
+2. **Windows ThinLTO A/B on both architectures:** test Rust cross-crate LTO and
+   LLVM ThinLTO independently, preserving PGO and codegen-unit settings. Do not
+   copy Linux's shared-LLVM configuration onto MSVC; bootstrap rejects it.
+3. **Profile the remaining common-target gap:** sample rustc/LLVM execution and
+   separate compiler phases on matched CPU strata. x64 already has PGO, so
+   missing PGO cannot explain its gap. Investigate hot passes, allocation and
+   hardware throughput; Linux x64's BOLT is another controlled-build variable.
+
+No optimized compiler rebuild/A-B has yet been run. Native crypto/Opus build-script
+profiling remains a separate full-workspace track. Cargo cache tuning may improve
+CI latency, but it does not explain this isolated CPU gap.
