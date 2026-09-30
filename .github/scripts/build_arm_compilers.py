@@ -188,6 +188,8 @@ def package(source, root, variant, build_dir, provenance, env):
     elif cache.get("LLVM_PROFDATA_FILE"):
         raise RuntimeError("Baseline LLVM unexpectedly used a PGO profile")
     provenance["llvm_cmake_cache"] = cache
+    if variant != "baseline-msvc" and not cache.get("CMAKE_AR", "").lower().endswith("llvm-lib.exe"):
+        raise RuntimeError("LLVM build did not use the bitcode-capable librarian")
     probe = root / "final-compiler-check.rs"
     probe.write_text("pub fn add(a: u64, b: u64) -> u64 { a.wrapping_add(b) }\n")
     prefix = f"final-{variant}-{time.time_ns()}-"
@@ -284,6 +286,9 @@ def main():
     }
     x = [sys.executable, "x.py"]
     build = x + ["build", "--stage", "2", "library/std"]
+    if args.variant == "baseline-lld":
+        # Bootstrap's LLVM stamp tracks source changes, not archiver configuration.
+        (source / build_dir / HOST / "llvm" / ".llvm-stamp").unlink(missing_ok=True)
     if args.variant == "optimized":
         execute(x + ["build", "--set", "rust.debug=true", "opt-dist"], source, env,
                 logs / "optimized-helper.log")
