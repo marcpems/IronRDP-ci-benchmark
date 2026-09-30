@@ -1,11 +1,12 @@
 import json
 from pathlib import Path
+import shutil
 import tempfile
 import tomllib
 import unittest
 
 from arm_ab_probe import variant_order, verify_custom
-from build_arm_compilers import configuration, digest, HOST, OFFICIAL_STD, RUST_SHA
+from build_arm_compilers import configuration, digest, excluded_sysroot_entries, HOST, OFFICIAL_STD, RUST_SHA
 
 
 class ArmAbTests(unittest.TestCase):
@@ -53,6 +54,23 @@ class ArmAbTests(unittest.TestCase):
             path.write_bytes(b"modified")
             with self.assertRaises(RuntimeError):
                 verify_custom(root, "optimized", protocol)
+
+    def test_packaging_excludes_build_tree_source_links(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "stage2"
+            for name in ("src", "rustc-src", "aarch64-pc-windows-msvc"):
+                directory = source / "lib" / "rustlib" / name
+                directory.mkdir(parents=True)
+                (directory / "fixture").write_text("fixture")
+            destination = root / "package"
+            shutil.copytree(
+                source, destination,
+                ignore=lambda directory, names: excluded_sysroot_entries(source, directory, names),
+            )
+            self.assertFalse((destination / "lib" / "rustlib" / "src").exists())
+            self.assertFalse((destination / "lib" / "rustlib" / "rustc-src").exists())
+            self.assertTrue((destination / "lib" / "rustlib" / "aarch64-pc-windows-msvc" / "fixture").is_file())
 
 
 if __name__ == "__main__":

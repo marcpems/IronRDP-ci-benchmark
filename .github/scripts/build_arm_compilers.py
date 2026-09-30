@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -161,11 +162,29 @@ def execute(command, source, env, log):
     print(f"DONE {log.name}: {time.time() - started:.1f}s", flush=True)
 
 
+def excluded_sysroot_entries(original, directory, names):
+    directory = Path(directory)
+    excluded = set()
+    if directory == original / "lib" / "rustlib":
+        excluded = {"src", "rustc-src"} & set(names)
+    for name in set(names) - excluded:
+        path = directory / name
+        info = path.lstat()
+        if stat.S_ISLNK(info.st_mode) or (
+            getattr(info, "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT
+        ):
+            raise RuntimeError(f"Unexpected sysroot link: {path}")
+    return excluded
+
+
 def package(source, root, variant, build_dir, provenance, env):
     original = source / build_dir / HOST / "stage2"
     with tempfile.TemporaryDirectory(prefix=f"package-{variant}-", dir=root) as tmp:
         sysroot = Path(tmp) / "sysroot"
-        shutil.copytree(original, sysroot)
+        shutil.copytree(
+            original, sysroot,
+            ignore=lambda directory, names: excluded_sysroot_entries(original, directory, names),
+        )
         for target, checksum in OFFICIAL_STD.items():
             archive = root / "tools" / f"rust-std-{target}.tar.xz"
             if digest(archive) != checksum:
