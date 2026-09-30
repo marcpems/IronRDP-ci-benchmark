@@ -6,7 +6,7 @@ import sys
 import tempfile
 import unittest
 
-from compiler_probe import replay_arguments, select_yuv, validate_meter
+from compiler_probe import compiler_accounting, replay_arguments, select_yuv, validate_meter
 from process_metrics import measure
 
 
@@ -40,6 +40,15 @@ class CompilerProbeTests(unittest.TestCase):
         for rows in ([], [unit, unit]):
             with self.assertRaises(RuntimeError):
                 select_yuv(rows)
+
+    def test_expected_capability_probes_are_accounted_not_discarded(self):
+        result = compiler_accounting([
+            {"user_seconds": 1, "kernel_seconds": 0.2, "exit_code": 0},
+            {"user_seconds": 0.1, "kernel_seconds": 0.02, "exit_code": 1},
+        ])
+        self.assertAlmostEqual(result["rustc_user_seconds"], 1.1)
+        self.assertAlmostEqual(result["rustc_kernel_seconds"], 0.22)
+        self.assertEqual(result["compiler_probe_failures"], 1)
 
     @unittest.skipUnless(os.environ.get("COMPILER_METER"), "native meter is built on runners")
     def test_native_wrapper_counts_self_not_descendant_cpu(self):

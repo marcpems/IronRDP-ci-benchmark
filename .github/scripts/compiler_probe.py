@@ -32,7 +32,27 @@ def validate_meter(output):
         raise RuntimeError("invalid wall timer")
     if len(busy["affinity"]) != 1:
         raise RuntimeError("single-CPU affinity was not applied")
-    save(output / "self-test.json", {"busy_descendant": busy, "sleep": sleepy})
+    affinity_check = (
+        "import os,ctypes as c\n"
+        "if os.name=='nt':\n"
+        " a=c.c_size_t();b=c.c_size_t();k=c.WinDLL('kernel32',use_last_error=True)\n"
+        " assert k.GetProcessAffinityMask(c.c_void_p(-1),c.byref(a),c.byref(b))\n"
+        " print(a.value.bit_count())\n"
+        "else: print(len(os.sched_getaffinity(0)))"
+    )
+    affinity = measure([sys.executable, "-c", affinity_check], output, env, 1, output / "affinity")
+    if affinity["exit_code"] or (output / "affinity.stdout").read_text().strip() != "1":
+        raise RuntimeError("child did not observe the requested single-CPU affinity")
+    save(output / "self-test.json", {"busy_descendant": busy, "sleep": sleepy, "affinity": affinity})
+
+
+def compiler_accounting(rows):
+    return {
+        "rustc_user_seconds": sum(r["user_seconds"] for r in rows),
+        "rustc_kernel_seconds": sum(r["kernel_seconds"] for r in rows),
+        "rustc_processes": len(rows),
+        "compiler_probe_failures": sum(r["exit_code"] != 0 for r in rows),
+    }
 
 
 def replay_arguments(original, output, mode):
@@ -119,15 +139,13 @@ def run(source, output, wrapper):
         ]
         row.update({
             "name": name, "cores": cores, "workload": "graphics-project",
-            "rustc_user_seconds": sum(r["user_seconds"] for r in actual_compiles),
-            "rustc_kernel_seconds": sum(r["kernel_seconds"] for r in actual_compiles),
+            **compiler_accounting(compiler_rows),
             "compiler_invocations": len(actual_compiles),
         })
         save(output / f"{name}.measurement.json", row)
         if row["exit_code"]:
             raise RuntimeError(f"{name} failed; inspect stderr and measurement")
-        if any(r["exit_code"] for r in compiler_rows):
-            raise RuntimeError("compiler invocation failed")
+        # Successful Cargo builds can contain deliberately failing build-script capability probes.
         invocations["native"] = select_yuv(actual_compiles)
         rows.append(row)
         print(f"{name}: wall={row['wall_seconds']:.3f}s CPU={row['cpu_seconds']:.3f}s", flush=True)
