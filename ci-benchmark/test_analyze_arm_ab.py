@@ -89,6 +89,7 @@ class ArmAnalysisTests(unittest.TestCase):
                         },
                     }
                     for variant in variants:
+                        compiler = f"/compilers/{variant}/bin/rustc.exe"
                         for round_index in range(4):
                             rows = []
                             for workload, cores in sorted(ENDPOINTS):
@@ -97,6 +98,7 @@ class ArmAnalysisTests(unittest.TestCase):
                                     "affinity": list(range(cores)), "cpu_seconds": 10,
                                     "wall_seconds": 10 / cores, "user_seconds": 9,
                                     "kernel_seconds": 1, "processes": 1,
+                                    "command": [compiler],
                                 })
                             name = f"{variant}-{round_index}.json"
                             result_path = folder / name
@@ -104,6 +106,7 @@ class ArmAnalysisTests(unittest.TestCase):
                                 "metadata": {
                                     "source_sha": PROTOCOL["source_sha"],
                                     "rustc": PROTOCOL["rust_sha"],
+                                    "compiler_executable": compiler,
                                     "lock_lf_sha256": "same",
                                     "profile": {"opt_level": 1, "codegen_units": 16,
                                                 "debug": 0, "incremental": False},

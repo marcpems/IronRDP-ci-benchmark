@@ -69,6 +69,10 @@ def load_matrix(root, protocol):
             metadata = result["metadata"]
             if metadata["source_sha"] != protocol["source_sha"] or protocol["rust_sha"] not in metadata["rustc"]:
                 raise ValueError("Wrong source/compiler revision")
+            compiler = metadata["compiler_executable"]
+            if entry["variant"] != "official":
+                if compiler.replace("\\", "/").split("/")[-3:] != [entry["variant"], "bin", "rustc.exe"]:
+                    raise ValueError("Trial used the wrong custom compiler")
             environment = metadata["environment"]
             if (environment["BENCHMARK_PLATFORM"], int(environment["BENCHMARK_REPLICATE"])) != key:
                 raise ValueError("Trial does not belong to its declared VM")
@@ -93,6 +97,8 @@ def load_matrix(root, protocol):
                     raise ValueError("CPU use exceeds affinity budget")
                 if platform == "windows-arm64" and endpoint[0].startswith("yuv-") and row["processes"] != 1:
                     raise ValueError("Direct replay spawned unexpected child processes")
+                if endpoint[0].startswith("yuv-") and row["command"][0] != compiler:
+                    raise ValueError("Direct replay did not use the declared compiler")
                 if not warmup:
                     for metric in METRICS:
                         observations[endpoint][entry["variant"]][metric].append(row[metric])
