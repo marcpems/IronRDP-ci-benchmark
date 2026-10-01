@@ -11,6 +11,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import tomllib
 import zipfile
 
 RUST_SHA = "e408947bfd200af42db322daf0fadfe7e26d3bd1"
@@ -178,6 +179,22 @@ def excluded_sysroot_entries(original, directory, names):
     return excluded
 
 
+def prepare_training_lockfile(source, build_dir, env, logs):
+    directory = source / "src" / "tools" / "rustc-perf" / "collector" / "compile-benchmarks" / "token-stream-stress"
+    lockfile = directory / "Cargo.lock"
+    before = tomllib.loads(lockfile.read_text(encoding="utf-8"))
+    if before.get("package") != [{"name": "token-stream-stress", "version": "0.0.0"}]:
+        raise RuntimeError("Unexpected dependencies in token-stream-stress training fixture")
+    cargo = source / build_dir / HOST / "stage0" / "bin" / "cargo.exe"
+    execute([str(cargo), "generate-lockfile", "--offline"], directory, env,
+            logs / "training-lockfile-migration.log")
+    after = tomllib.loads(lockfile.read_text(encoding="utf-8"))
+    if after.get("package") != before["package"]:
+        raise RuntimeError("Training lockfile migration changed dependency resolution")
+    return {"workload": "token-stream-stress", "change": "Legacy lockfile format to Cargo v4; no dependency changes",
+            "sha256": digest(lockfile)}
+
+
 def package(source, root, variant, build_dir, provenance, env):
     original = source / build_dir / HOST / "stage2"
     with tempfile.TemporaryDirectory(prefix=f"package-{variant}-", dir=root) as tmp:
@@ -335,6 +352,7 @@ def main():
     if args.variant == "optimized":
         execute(x + ["build", "--set", "rust.debug=true", "opt-dist"], source, env,
                 logs / "optimized-helper.log")
+        provenance["training_lockfile_migration"] = prepare_training_lockfile(source, build_dir, env, logs)
         helper = source / build_dir / HOST / "stage1-tools-bin" / "opt-dist.exe"
         command = [
             str(helper), "local", "--target-triple", HOST, "--checkout-dir", str(source),
