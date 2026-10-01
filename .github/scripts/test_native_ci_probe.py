@@ -12,10 +12,41 @@ from arm_ab_probe import extract_compiler
 from install_optimized_rust import check_hash, install
 from native_ci_probe import COMMANDS, PROFILE_ENV, build_environment, paired_order
 from offline_benchmark import NATIVE_COMMANDS, COMMON_COMMAND, WASM_COMMAND
-from process_metrics import measure
+from process_metrics import measure, measurement_session
 
 
 class NativeCiTests(unittest.TestCase):
+    @unittest.skipUnless(os.name == "nt", "Windows persistent descendant validation")
+    def test_shared_job_rejects_unapproved_persistent_child(self):
+        parent = "import subprocess,sys;subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)'])"
+        with tempfile.TemporaryDirectory() as tmp, measurement_session() as session:
+            with self.assertRaisesRegex(RuntimeError, "left running descendants"):
+                measure([sys.executable, "-c", parent], Path(tmp), dict(os.environ), 1,
+                        Path(tmp) / "unexpected", session=session)
+
+    @unittest.skipUnless(os.name == "nt", "Windows shared Job Object accounting")
+    def test_shared_job_counts_active_helper_cpu_without_waiting_for_its_lifetime(self):
+        worker = "import time;time.sleep(0.2);t=time.process_time();\nwhile time.process_time()-t<0.3: pass\ntime.sleep(30)"
+        parent = f"import subprocess,sys;subprocess.Popen([sys.executable,'-c',{worker!r}])"
+        with tempfile.TemporaryDirectory() as tmp, measurement_session([sys.executable]) as session:
+            root, env = Path(tmp), dict(os.environ)
+            first = measure([sys.executable, "-c", parent], root, env, 1, root / "first", session=session)
+            self.assertTrue(first["background_processes_at_completion"])
+            second = measure([sys.executable, "-c", "import time;time.sleep(0.8)"],
+                             root, env, 1, root / "second", session=session)
+            self.assertGreaterEqual(second["cpu_seconds"], 0.25)
+            self.assertLess(second["wall_seconds"], 2)
+            self.assertEqual(second["processes"], 1)
+            with self.assertRaisesRegex(RuntimeError, "Cannot change affinity"):
+                measure([sys.executable, "-c", "pass"], root, env, 2, root / "wrong", session=session)
+
+    def test_correctness_timeout_is_explicit(self):
+        with tempfile.TemporaryDirectory() as tmp, measurement_session() as session:
+            import subprocess
+            with self.assertRaises(subprocess.TimeoutExpired):
+                measure([sys.executable, "-c", "import time;time.sleep(30)"],
+                        Path(tmp), dict(os.environ), 1, Path(tmp) / "timeout", session=session, timeout=0.1)
+
     @unittest.skipUnless(os.name == "nt", "Windows Job Object shutdown accounting")
     def test_cpu_meter_waits_for_short_lived_descendants(self):
         burn = "import time;t=time.process_time();\nwhile time.process_time()-t<0.3: pass"

@@ -9,12 +9,11 @@ import platform
 import shutil
 import subprocess
 import tempfile
-import time
 
 from compiler_probe import save, validate_meter
 from install_optimized_rust import verify_installation
 from offline_benchmark import NATIVE_COMMANDS, COMMON_COMMAND, WASM_COMMAND
-from process_metrics import measure
+from process_metrics import measure, measurement_session
 
 COMMANDS = [*NATIVE_COMMANDS, ("common", COMMON_COMMAND), ("wasm", WASM_COMMAND)]
 PROFILE_ENV = {"CARGO_INCREMENTAL": "0", "CARGO_PROFILE_DEV_DEBUG": "0",
@@ -35,6 +34,17 @@ def build_environment(env, compiler):
             raise RuntimeError(f"Unexpected compiler override: {key}")
     return {**{k: v for k, v in env.items() if k not in ("GH_TOKEN", "GITHUB_TOKEN")},
             **PROFILE_ENV, "RUSTC": str(compiler)}
+
+
+def telemetry_executables():
+    if os.name != "nt":
+        return []
+    vswhere = Path(os.environ["ProgramFiles(x86)"]) / "Microsoft Visual Studio" / "Installer" / "vswhere.exe"
+    found = subprocess.check_output([
+        str(vswhere), "-latest", "-products", "*", "-find",
+        r"VC\Tools\MSVC\*\bin\Hostarm64\arm64\vctip.exe",
+    ], text=True).splitlines()
+    return [str(Path(p).resolve()) for p in found if p]
 
 
 def run_block(source, output, compiler, protocol, identity, verify_tests):
@@ -62,8 +72,11 @@ def run_block(source, output, compiler, protocol, identity, verify_tests):
                  "NumberOfLogicalProcessors | ConvertTo-Json"]
                 if os.name == "nt" else ["lscpu", "--json"])
     metadata["hardware"] = subprocess.check_output(hardware, text=True)
+    background = telemetry_executables()
+    metadata["approved_background_executables"] = background
     rows, checks = [], []
-    with tempfile.TemporaryDirectory(prefix="native-ci-", dir=os.environ["RUNNER_TEMP"]) as tmp:
+    with tempfile.TemporaryDirectory(prefix="native-ci-", dir=os.environ["RUNNER_TEMP"]) as tmp, \
+            measurement_session(background) as session:
         targets = {name: Path(tmp) / name for name in ("native", "common", "wasm")}
         metadata["cold_target_directories"] = {k: str(p) for k, p in targets.items()}
         save(output / "environment.json", metadata)
@@ -71,7 +84,7 @@ def run_block(source, output, compiler, protocol, identity, verify_tests):
             target = targets[name if name in targets else "native"]
             child_env = {**env, "CARGO_TARGET_DIR": str(target)}
             command = ["cargo", *args, "--frozen", "--timings", "--message-format=json"]
-            row = measure(command, source, child_env, protocol["cores"], output / name)
+            row = measure(command, source, child_env, protocol["cores"], output / name, session=session)
             row.update({"name": name, "seconds": row["wall_seconds"],
                         "target_directory": str(target), "fresh_artifacts": 0, "compiled_artifacts": 0})
             for line in (output / f"{name}.stdout").read_text(encoding="utf-8").splitlines():
@@ -90,18 +103,17 @@ def run_block(source, output, compiler, protocol, identity, verify_tests):
         if verify_tests:
             for name, args in NATIVE_COMMANDS[1:]:
                 command = ["cargo", *(a for a in args if a != "--no-run"), "--frozen"]
-                started = time.perf_counter()
-                with (output / f"{name}.correctness.log").open("wb") as log:
-                    result = subprocess.run(
-                        command, cwd=source, env={**env, "CARGO_TARGET_DIR": str(targets["native"])},
-                        stdout=log, stderr=subprocess.STDOUT, timeout=1200, check=False,
-                    )
-                check = {"name": name, "command": command, "exit_code": result.returncode,
-                         "seconds_outside_measurement": time.perf_counter() - started}
+                result = measure(
+                    command, source, {**env, "CARGO_TARGET_DIR": str(targets["native"])},
+                    protocol["cores"], output / f"{name}-correctness", session=session, timeout=1200,
+                )
+                check = {"name": name, "command": command, "exit_code": result["exit_code"],
+                         "seconds_outside_measurement": result["wall_seconds"],
+                         "cpu_seconds_outside_measurement": result["cpu_seconds"]}
                 checks.append(check)
                 save(output / "correctness.json", checks)
-                if result.returncode:
-                    raise RuntimeError(f"Original native tests failed: {name}; see correctness log")
+                if result["exit_code"]:
+                    raise RuntimeError(f"Original native tests failed: {name}; see correctness stdout/stderr")
     if (source / "Cargo.lock").read_bytes().replace(b"\r\n", b"\n") != lock:
         raise RuntimeError("Workload lockfile changed")
     save(output / "results.json", {"metadata": metadata, "measurements": rows, "correctness": checks})

@@ -78,6 +78,9 @@ def load_matrix(root, protocol):
             if set(targets) != {"native", "common", "wasm"} or len(set(targets.values())) != 3 or used_targets.intersection(targets.values()):
                 raise ValueError("Target directories reused across compiler/round blocks")
             used_targets.update(targets.values())
+            approved = {p.replace("\\", "/").lower() for p in meta["approved_background_executables"]}
+            if any("/vc/tools/msvc/" not in p or not p.endswith("/bin/hostarm64/arm64/vctip.exe") for p in approved):
+                raise ValueError("Unexpected allowed background executable")
             rows = result["measurements"]
             if [r["name"] for r in rows] != NAMES:
                 raise ValueError("Wrong or incomplete original command sequence")
@@ -90,6 +93,9 @@ def load_matrix(root, protocol):
                     raise ValueError("Wrong target directory")
                 if len(set(row["affinity"])) != protocol["cores"]:
                     raise ValueError("Wrong CPU affinity")
+                if any(p["image"].replace("\\", "/").lower() not in approved
+                       for p in row.get("background_processes_at_completion", [])):
+                    raise ValueError("Unexpected surviving process")
                 if any(not math.isfinite(row[m]) or row[m] <= 0 for m in METRICS):
                     raise ValueError("Invalid measured duration")
                 if abs(row["cpu_seconds"] - row["user_seconds"] - row["kernel_seconds"]) > 1e-6:

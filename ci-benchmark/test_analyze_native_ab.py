@@ -42,6 +42,7 @@ def evidence(root):
                         "round": r, "lock_lf_sha256": "lock", "cargo": "cargo 1.94.1",
                         "compiler_executable": f"/tools/{variant}/bin/rustc.exe",
                         "cold_target_directories": targets,
+                        "approved_background_executables": [],
                         "environment": {"BENCHMARK_PLATFORM": platform, "BENCHMARK_REPLICATE": str(vm),
                                         "GITHUB_RUN_ID": "run", "GITHUB_RUN_ATTEMPT": "1"},
                     }
@@ -87,6 +88,7 @@ class NativeAnalysisTests(unittest.TestCase):
             for mutation, message in (
                 (lambda d: d["measurements"][0]["command"].append("--release"), "build command"),
                 (lambda d: d["measurements"][0].update(cpu_seconds=100), "CPU accounting"),
+                (lambda d: d["measurements"][0].update(background_processes_at_completion=[{"image": "unknown.exe"}]), "surviving process"),
                 (lambda d: d["metadata"]["profile_environment"].update(CARGO_PROFILE_DEV_OPT_LEVEL="3"), "profile"),
             ):
                 changed = copy.deepcopy(original)

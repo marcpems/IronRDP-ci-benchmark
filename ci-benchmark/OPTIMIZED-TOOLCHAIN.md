@@ -68,6 +68,11 @@ not a claim about warm dependency-cache hits or every upstream CI job.
 
 The benchmark alone disables optional MSVC telemetry on its disposable runners
 using the [documented VSCEIP policy](https://learn.microsoft.com/en-us/visualstudio/ide/visual-studio-experience-improvement-program#registry-settings).
-A pilot identified `vctip.exe` outliving a completed native link. The CPU meter
-still rejects persistent descendants; it does not silently drop their CPU.
+A pilot identified `vctip.exe` outliving a completed native link even with that
+policy. The meter therefore retains only the exact SDK telemetry executables
+reported by `vswhere` in a shared, owned Job Object across each command block.
+Per-command counter deltas include **all** CPU consumed during the build window,
+including those helpers; nothing is subtracted. Their idle/post-build lifetime
+is not compilation time. Other persistent descendants remain an error. The job
+is closed after the block and its untimed correctness checks.
 The reusable installer does not change telemetry policies on consumers' machines.
