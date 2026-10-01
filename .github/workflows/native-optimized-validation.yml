@@ -1,0 +1,97 @@
+name: Original IronRDP CI with optimized Arm64 Rust
+on:
+  push:
+    branches: [ci/native-optimized-pilot, ci/native-optimized-full]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ matrix.platform }} / VM ${{ matrix.vm }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 330
+    strategy:
+      fail-fast: false
+      matrix:
+        vm: ${{ fromJSON(github.ref_name == 'ci/native-optimized-full' && '[1,2,3,4,5]' || '[1]') }}
+        platform: [windows-arm64, linux-arm64]
+        include:
+          - platform: windows-arm64
+            runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+          - platform: linux-arm64
+            runner: ubuntu-24.04-arm
+            host: aarch64-unknown-linux-gnu
+    env:
+      BENCHMARK_HOST: ${{ matrix.host }}
+      BENCHMARK_PLATFORM: ${{ matrix.platform }}
+      BENCHMARK_REPLICATE: ${{ matrix.vm }}
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_BUILD_JOBS: "4"
+      CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+      RUST_BACKTRACE: short
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Install original native build dependencies
+        if: runner.os == 'Linux'
+        uses: ./.github/actions/install-build-deps
+      - name: Install pinned official reference tools
+        shell: pwsh
+        run: |
+          $toolchain = '1.94.1-${{ matrix.host }}'
+          rustup toolchain install $toolchain --profile minimal --target wasm32-unknown-unknown
+          if ($LASTEXITCODE -ne 0) { throw 'Official toolchain installation failed' }
+          "RUSTUP_TOOLCHAIN=$toolchain" >> $env:GITHUB_ENV
+      - name: Set up productized optimized compiler without activating it globally
+        id: optimized
+        if: runner.os == 'Windows'
+        uses: ./.github/actions/setup-optimized-rust
+        with:
+          activate: "false"
+      - name: Fetch dependencies outside measurement
+        shell: pwsh
+        working-directory: workload
+        run: |
+          cargo fetch --locked
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency preparation failed' }
+      - name: Validate measurement harness
+        shell: pwsh
+        run: |
+          python -m unittest discover -s .github/scripts -p test_native_ci_probe.py
+          if ($LASTEXITCODE -ne 0) { throw 'Native harness validation failed' }
+      - name: Measure original offline build commands and verify original tests
+        shell: pwsh
+        env:
+          OPTIMIZED_INSTALLATION: ${{ steps.optimized.outputs.installation }}
+        run: |
+          $extra = @()
+          if ('${{ github.ref_name }}' -ne 'ci/native-optimized-full') { $extra += '--pilot' }
+          if ($env:OPTIMIZED_INSTALLATION) { $extra += @('--installation', $env:OPTIMIZED_INSTALLATION) }
+          python .github/scripts/native_ci_probe.py --source workload --output native-ab-results `
+            --protocol ci-benchmark/native-ab-protocol.json @extra
+          if ($LASTEXITCODE -ne 0) { throw 'Native build/test validation failed; inspect uploaded evidence' }
+      - name: Verify unchanged workload
+        shell: pwsh
+        working-directory: workload
+        run: |
+          git diff --exit-code
+          if ($LASTEXITCODE -ne 0) { throw 'Workload changed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: native-ab-${{ matrix.platform }}-${{ matrix.vm }}
+          path: native-ab-results
+          if-no-files-found: warn
+          retention-days: 30

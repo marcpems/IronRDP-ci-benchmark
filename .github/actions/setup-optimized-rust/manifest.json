@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "rust-1.94.1-windows-arm64-pgo-thinlto-v2",
+  "repository": "marcpems/IronRDP-ci-benchmark",
+  "release": "arm64-compiler-ab-v2",
+  "rust_version": "1.94.1",
+  "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+  "host": "aarch64-pc-windows-msvc",
+  "llvm_version": "21.1.8",
+  "metadata_sha256": "fd416c60da731153739ba323edc0fdfab733224f70798163e9c3f64e57910f1e",
+  "compiler_archive_sha256": {
+    "optimized": "a1f1b683efa54e798323c534edcdb83e9bedcebd933d0648339373e0433d7d07"
+  },
+  "evaluation_stdlib_sha256": {
+    "aarch64-pc-windows-msvc": "9b3237662e22bd337f1dafbbf0c07178bb2907b6d2b3008c7f1dabbec68990b2",
+    "wasm32-unknown-unknown": "26b8953083b942aeaf870de742962e4ba17c0da2095725fbf4ab5ab85a4d5fd5"
+  },
+  "llvm_profile_coverage_required": true
+}

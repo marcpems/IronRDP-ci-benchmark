@@ -1,0 +1,50 @@
+name: Setup optimized Windows Arm64 Rust
+description: Install and verify the pinned experimental Rust compiler; preserve official Cargo and target libraries.
+inputs:
+  activate:
+    description: Set RUSTC and RUSTUP_TOOLCHAIN for subsequent steps.
+    default: "true"
+outputs:
+  rustc:
+    description: Verified absolute rustc executable path.
+    value: ${{ steps.install.outputs.rustc }}
+  installation:
+    description: Installation directory including checksummed compiler provenance.
+    value: ${{ steps.install.outputs.installation }}
+  id:
+    description: Immutable compiler package identifier.
+    value: ${{ steps.install.outputs.id }}
+runs:
+  using: composite
+  steps:
+    - name: Require native Windows Arm64
+      shell: pwsh
+      run: |
+        if ($env:RUNNER_OS -ne 'Windows' -or $env:RUNNER_ARCH -ne 'ARM64') {
+          throw 'The optimized compiler supports native Windows Arm64 only'
+        }
+    - uses: actions/setup-python@v6
+      with:
+        python-version: "3.13"
+        architecture: arm64
+    - name: Install matching official support tools
+      shell: pwsh
+      run: |
+        rustup toolchain install 1.94.1-aarch64-pc-windows-msvc --profile minimal --target wasm32-unknown-unknown
+        if ($LASTEXITCODE -ne 0) { throw 'Official support toolchain installation failed' }
+    - name: Install verified optimized compiler
+      id: install
+      shell: pwsh
+      env:
+        ACTION_DIRECTORY: ${{ github.action_path }}
+        ACTIVATE_COMPILER: ${{ inputs.activate }}
+        PYTHONDONTWRITEBYTECODE: "1"
+      run: |
+        $extra = @()
+        if ($env:ACTIVATE_COMPILER -eq 'true') { $extra += '--activate' }
+        elseif ($env:ACTIVATE_COMPILER -ne 'false') { throw 'activate must be true or false' }
+        python (Join-Path $env:ACTION_DIRECTORY '..\..\scripts\install_optimized_rust.py') `
+          --manifest (Join-Path $env:ACTION_DIRECTORY 'manifest.json') `
+          --destination (Join-Path $env:RUNNER_TEMP 'optimized-rust-1.94.1-arm64-v2') `
+          --github-outputs @extra
+        if ($LASTEXITCODE -ne 0) { throw 'Optimized toolchain installation or validation failed' }

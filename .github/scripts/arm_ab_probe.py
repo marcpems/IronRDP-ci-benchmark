@@ -78,14 +78,18 @@ def download_compilers(root, variants, tag):
             checksum = hashlib.file_digest(stream, "sha256").hexdigest()
         if checksum != metadata["archive_sha256"]:
             raise RuntimeError(f"Archive checksum mismatch: {variant}")
-        destination = root / variant
-        destination.mkdir(exist_ok=False)
-        with zipfile.ZipFile(archive) as package:
-            for entry in package.infolist():
-                if not (destination / entry.filename).resolve().is_relative_to(destination):
-                    raise RuntimeError("Compiler archive contains an unsafe path")
-            package.extractall(destination)
+        extract_compiler(archive, root / variant)
         archive.unlink()
+
+
+def extract_compiler(archive, destination):
+    destination = destination.resolve()
+    with zipfile.ZipFile(archive) as package:
+        for entry in package.infolist():
+            if not (destination / entry.filename).resolve().is_relative_to(destination):
+                raise RuntimeError("Compiler archive contains an unsafe path")
+        destination.mkdir(exist_ok=False)
+        package.extractall(destination)
 
 
 def correctness(source, compiler, output, temporary):
