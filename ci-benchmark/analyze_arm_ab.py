@@ -224,7 +224,8 @@ def markdown(data):
             f"**{row['metric']}:** optimization-only saving {fraction:.1%} "
             f"(95% interval {bounds[0]:.1%} to {bounds[1]:.1%}).",
             f"Rebuilt MSVC / official ratio: {point['baseline_ratio']:.3f}; "
-            f"90% interval {row['baseline_ratio_ci90']}; equivalence gate: {row['baseline_equivalent']}.",
+            f"90% interval {row['baseline_ratio_ci90'][0]:.3f} to {row['baseline_ratio_ci90'][1]:.3f}; "
+            f"equivalence gate: {row['baseline_equivalent']}.",
         ]
         if row["attribution_warning"]:
             lines.append(f"**{row['attribution_warning']}**")

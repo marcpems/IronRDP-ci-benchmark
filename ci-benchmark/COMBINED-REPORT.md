@@ -2,9 +2,16 @@
 
 ## Answer
 
-**Yes: for the graphics workload, the Windows gap is predominantly CPU consumed
+**Controlled Arm64 result: adding rustc/LLVM PGO and Rust/LLVM ThinLTO recovers
+44.7% of the observed Windows/Linux CPU-time gap (95% interval 38.0-50.6%),
+and 45.6% of the wall-time gap (37.8-53.4%).** Windows compilation uses **18.0%
+less CPU time and 18.8% less wall time**, measured against the matched LLD
+control. This is the combined optimization bundle on the graphics workload,
+not separate LLVM attribution, an x64 result, or a full-workspace CI estimate.
+
+For the graphics workload, the Windows gap is predominantly CPU consumed
 inside rustc, including its code-generation backend, rather than Cargo, external
-linking or off-CPU waiting.** Approximately **99.3-99.6% of the additional
+linking or off-CPU waiting. Approximately **99.3-99.6% of the additional
 process-tree CPU time** on Windows is accounted for by rustc processes themselves.
 This is evidence about compiler execution cost, **not proof of an LLVM-specific
 defect** or attribution of every second in the full IronRDP workspace.
@@ -14,7 +21,7 @@ compile ratios of **1.82x on x64** and **1.69x on Arm64**. The new isolation sui
 reproduces approximately **2.0x / 1.7x** on a meaningful subset and retains a
 substantial gap when the same WASM target is compiled directly.
 
-## Real-project validation
+## Initial real-project validation
 
 Workload: cold `cargo build -p ironrdp-graphics --lib --frozen`, including real
 RDP graphics/PDU code, crypto/parsing dependencies and `yuv 0.8.16` SIMD image
@@ -74,8 +81,8 @@ The large difference is predominantly user-mode CPU.
 **This narrows the investigation to the compiler/code-generation path, but does
 not separately measure LLVM passes.** Metadata/full differencing is not an LLVM
 phase timer. Compiler builds, allocator behavior, OS services and hardware
-throughput remain possible explanations. The release-build audit below identifies
-specific optimization differences to test; it does not establish their impact.
+throughput remain possible explanations. The release-build audit identifies
+optimization differences; the controlled Arm64 A/B below measures their combined impact.
 
 ## Rust release-build audit: Windows is not optimization-equivalent
 
@@ -143,17 +150,59 @@ and [Arm64](https://github.com/rust-lang/rust/blob/1.94.1/src/ci/docker/host-aar
 explicitly enable LLVM ThinLTO and `rust.lto=thin`. Both use rustc/LLVM PGO
 through `opt-dist linux-ci`; its
 [environment enables BOLT on x64 but not Arm64](https://github.com/rust-lang/rust/blob/1.94.1/src/tools/opt-dist/src/main.rs#L174-L219).
-These are confirmed release-configuration differences, **not measured
-explanations of the 1.5-2x compiler CPU gap**.
+The configuration audit alone does not quantify their impact; the following
+experiment measures the combined bundle on Windows Arm64.
 
-## Controlled Windows Arm64 A/B: validation in progress
+## Controlled Windows Arm64 A/B: approximately 45% of the gap recovered
 
-Matched MSVC and LLD baseline compilers are built. An excluded portability pilot
-put rebuilt-MSVC graphics/four-CPU time within approximately 1% of official Rust,
-but the preregistered five-VM equivalence gate has not yet been evaluated.
-The treatment combines rustc/LLVM PGO and Rust/LLVM ThinLTO; it does not separate
-their individual effects. All Windows variants use byte-identical official
-native/WASM standard libraries. See the [protocol](arm64-ab-protocol.json).
+[Successful run 36811145829](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36811145829):
+**five standard VMs per OS, three measured rounds, 750 measured commands**,
+plus excluded warmups. Four Windows variants are paired on each VM; Linux runs
+the official reference. Same compiler/LLVM source revisions and workload settings;
+all Windows variants use byte-identical official native/WASM target libraries.
+Compiler builds/training, downloads, setup and correctness checks are outside
+the measured intervals. See the [preregistered protocol](arm64-ab-protocol.json).
+
+**Graphics workload, four allowed CPUs; seconds, equal-weight VM means:**
+
+| Compiler | Wall | Total CPU | rustc-own CPU |
+|---|---:|---:|---:|
+| Linux official | 35.69 | 127.34 | 124.43 |
+| Windows official | 60.77 | 213.61 | 210.44 |
+| Windows rebuilt MSVC baseline | 60.85 | 215.31 | 212.02 |
+| Windows rebuilt LLD control | 60.93 | 214.34 | 211.08 |
+| Windows PGO + ThinLTO | **49.49** | **175.74** | **172.43** |
+
+| Controlled result | CPU time | Wall time |
+|---|---:|---:|
+| Optimization-only reduction versus LLD control | **18.0%** (16.1-19.4%) | **18.8%** (16.6-20.6%) |
+| Equivalent fraction of official Windows/Linux gap recovered | **44.7%** (38.0-50.6%) | **45.6%** (37.8-53.4%) |
+
+Parentheses are 95% VM-cluster bootstrap intervals, not independent-trial intervals.
+The CPU attribution is `(214.34 - 175.74) / (213.61 - 127.34)`.
+The preregistered baseline-equivalence gate passed: rebuilt-MSVC/official CPU
+ratio **1.008**, 90% interval **0.994-1.023**, wholly inside 0.95-1.05.
+The linker/librarian-only control saves just **0.97 CPU seconds**
+(95% interval -2.05 to 3.79) and has no clear wall-time benefit.
+Approximately **38.65 CPU seconds are saved inside rustc itself**;
+other process-tree CPU remains approximately 3.3 seconds.
+
+Single-core compilation agrees: **18.8% less CPU / 18.3% less wall time**.
+Direct four-CPU `yuv` compilation saves **17.3% native / 17.4% WASM CPU**,
+without Cargo or external linker processes. This is not merely better parallel
+scaling. Optimized Windows remains approximately **1.38x Linux CPU / 1.39x wall**
+time on the primary endpoint, versus official Windows at 1.68x CPU / 1.70x wall.
+
+**Scope:** this identifies the recoverable effect of the **combined PGO/ThinLTO
+bundle**, not each optimization separately or an LLVM defect. Standard OS runners
+are not guaranteed hardware-identical; the causal compiler contrast is paired
+within Windows VMs. The earlier graphics-gap equivalent is **44.7% CPU / 46.0%
+wall**, conditional on the relative saving transferring to that earlier sample.
+Do not generalize the percentage to the entire native IronRDP CI or to x64.
+Custom compilers share the local SDK/toolchain and disabled DIA reader; the
+equivalence gate checks their bridge to official Rust. The corrected build also
+omits unused LLVM utility executables, with identical LLVM library components,
+and applies a bootstrap-only runtime-lookup fix; compiler/LLVM source is unchanged.
 
 **The first treatment is invalid for attribution.** Its nominal LLVM training
 profile recorded target initialization but no meaningful Arm64 code generation.
@@ -161,14 +210,28 @@ The static-LLVM training path retains stage 1 instead of relinking rustc against
 instrumented LLVM. Run
 [36805183652](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36805183652)
 was cancelled; all its samples and the v1 optimized artifact are excluded.
-The corrected build explicitly relinks rustc and requires nonzero
+The corrected build explicitly relinks rustc and verifies nonzero
 `AArch64TargetLowering` and `InstCombine` counters, first from a standalone
 compiler smoke test and then from the exact upstream training corpus.
+The accepted profile contains **179 / 595 active functions** in these groups;
+specific return-lowering and instruction-combining counters also confirm execution.
 This demonstrates why configured PGO is not proof of effective training;
 **it does not establish that official Windows x64 profiles have the same defect**.
-No defensible optimization-attribution percentage is available yet.
 
-## Controls and limitations
+**Reproducible evidence:** [all endpoint tables](ARM64-AB-RESULTS.md),
+[machine-readable estimates and intervals](ARM64-AB-RESULTS.json),
+[compiler artifacts, PGO profiles, build logs and raw measurements](https://github.com/marcpems/IronRDP-ci-benchmark/releases/tag/arm64-compiler-ab-v2).
+Measured harness commit: `ae78965f7240aad40925c6c03f46bf388f17f614`.
+Raw archive SHA-256: `d11aae980de745de0128ef5ab065c827c9c31d9d1c74740ff6cf9c8ddd8b0685`.
+No failed run, pilot, warmup or post-hoc slow-sample trimming enters these estimates.
+
+```powershell
+gh release download arm64-compiler-ab-v2 --repo marcpems/IronRDP-ci-benchmark --pattern arm64-ab-raw-36811145829.zip
+Expand-Archive arm64-ab-raw-36811145829.zip -DestinationPath arm64-ab-evidence
+python ci-benchmark\analyze_arm_ab.py arm64-ab-evidence --output arm64-ab-results
+```
+
+## Initial isolation-suite controls and limitations
 
 - **12 successful jobs, 120 measured commands**, three fresh VMs per platform.
   Standard labels: `ubuntu-24.04`, `windows-2025`, `ubuntu-24.04-arm`,
@@ -216,18 +279,19 @@ python ci-benchmark\analyze_compiler.py compiler-evidence --output compiler-resu
 
 **Next investigations, ranked by likely impact and directness:**
 
-1. **Windows Arm64 PGO A/B:** rebuild the same revision with native rustc/LLVM
-   PGO training, preserving other settings. Replay `yuv` and the graphics suite
-   on the same VMs; measure wall and CPU again. This addresses a concrete missing
-   optimization stage.
-2. **Windows ThinLTO A/B on both architectures:** test Rust cross-crate LTO and
-   LLVM ThinLTO independently, preserving PGO and codegen-unit settings. Do not
-   copy Linux's shared-LLVM configuration onto MSVC; bootstrap rejects it.
+1. **Productionize and broaden the validated Windows Arm64 bundle:** preserve
+   static-LLVM relinking and real profile-coverage gates, then verify the gain on
+   the original full-workspace native CI before claiming whole-CI attribution.
+   The measured subset already saves approximately 18-19% of compilation time.
+2. **Separate PGO/ThinLTO contributions and extend the controlled test to x64:**
+   ablate rustc PGO, LLVM PGO and both ThinLTO settings to find the best benefit
+   versus compiler-build cost. Verify actual x64 training coverage, not just flags.
+   Do not copy Linux's shared-LLVM configuration onto MSVC; bootstrap rejects it.
 3. **Profile the remaining common-target gap:** sample rustc/LLVM execution and
    separate compiler phases on matched CPU strata. x64 configures PGO, but
    actual backend-training coverage should also be checked. Investigate hot passes, allocation and
    hardware throughput; Linux x64's BOLT is another controlled-build variable.
 
-The corrected optimized compiler A/B is underway. Native crypto/Opus build-script
-profiling remains a separate full-workspace track. Cargo cache tuning may improve
+Native crypto/Opus build-script profiling remains a separate full-workspace track.
+Cargo cache tuning may improve
 CI latency, but it does not explain this isolated CPU gap.

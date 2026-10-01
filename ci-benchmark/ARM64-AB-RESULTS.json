@@ -1,0 +1,1469 @@
+{
+  "protocol": {
+    "schema": 2,
+    "llvm_profile_coverage_required": true,
+    "compiler_archive_sha256": {
+      "baseline-msvc": "6b7dde84f44b348197b86cc3df3ebe6c988bac071dcfe90c21f5745bc845f488",
+      "baseline-lld": "4e45b946b4ff381d2ead4b47f2531939f69d862e6e81bfcfe20d22a5edb89276",
+      "optimized": "a1f1b683efa54e798323c534edcdb83e9bedcebd933d0648339373e0433d7d07"
+    },
+    "rust_version": "1.94.1",
+    "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+    "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+    "evaluation_stdlib": "All Windows variants use identical official Windows Arm64 and WASM target standard libraries; Linux uses official Linux Arm64 and the same WASM components",
+    "evaluation_stdlib_sha256": {
+      "aarch64-pc-windows-msvc": "9b3237662e22bd337f1dafbbf0c07178bb2907b6d2b3008c7f1dabbec68990b2",
+      "wasm32-unknown-unknown": "26b8953083b942aeaf870de742962e4ba17c0da2095725fbf4ab5ab85a4d5fd5"
+    },
+    "windows_variants": [
+      "official",
+      "baseline-msvc",
+      "baseline-lld",
+      "optimized"
+    ],
+    "linux_variants": [
+      "official"
+    ],
+    "windows_runner": "windows-11-arm",
+    "linux_runner": "ubuntu-24.04-arm",
+    "independent_vms_per_os": 5,
+    "warmup_rounds": 1,
+    "measured_rounds": 3,
+    "primary_endpoint": "graphics-project-4/cpu_seconds",
+    "secondary_endpoints": "All original graphics and direct yuv native/WASM metadata/full endpoints, CPU and wall, one/four CPUs",
+    "order": "Deterministic counterbalanced rotation by VM and round; reverse alternate rounds; all variants on the same Windows VM",
+    "primary_optimization_contrast": "baseline-lld minus optimized: combined rustc PGO, LLVM PGO, cross-crate Rust ThinLTO and LLVM ThinLTO",
+    "linker_control": "baseline-msvc minus baseline-lld; LLD plus LLVM's bitcode-capable librarian",
+    "official_build_bridge": "official minus baseline-msvc",
+    "attribution": "(mean baseline-lld time - mean optimized time) / (mean official Windows time - mean official Linux time)",
+    "historical_translation": "Paired optimization saving as fraction of contemporary official Windows time, divided by historical Arm64 excess fraction; explicitly conditional on effect transfer",
+    "historical_graphics_4_cpu": {
+      "windows_seconds": 212.09,
+      "linux_seconds": 126.36
+    },
+    "historical_graphics_4_wall": {
+      "windows_seconds": 60.92,
+      "linux_seconds": 35.99
+    },
+    "aggregation": "Arithmetic mean of measured rounds within VM, then equal-weight mean across VMs; retain pairings",
+    "uncertainty": "10000 seeded cluster bootstrap draws, resampling whole Windows VMs and independently whole Linux VMs; 95% percentile intervals",
+    "baseline_equivalence_gate": "90% cluster-bootstrap interval for baseline-msvc/official lies wholly inside [0.95,1.05] for primary CPU endpoint; otherwise do not claim original-official-gap attribution",
+    "exclusions": "Only failed/incomplete runs; no post-hoc slow-sample trimming. Warmups excluded by predeclared round index.",
+    "limitations": "Optimization bundle, not separate PGO-versus-LTO attribution; Linux/Windows hardware not guaranteed identical; local SDK/tool versions and disabled DIA reader shared by custom compilers"
+  },
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 9412026,
+  "primary_attribution_gate_passed": true,
+  "results": [
+    {
+      "workload": "graphics-project",
+      "cores": 1,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 201.853125,
+        "baseline-msvc": 201.678125,
+        "baseline-lld": 203.53020833333332,
+        "optimized": 165.20833333333331
+      },
+      "linux_mean_seconds": 122.34709233333334,
+      "contrasts": {
+        "baseline_ratio": 0.9991330329911909,
+        "optimization_seconds": 38.321875000000006,
+        "optimization_saving_fraction": 0.18828593216608921,
+        "linker_seconds": -1.8520833333333258,
+        "build_bridge_seconds": 0.17500000000001137,
+        "official_gap_seconds": 79.50603266666667,
+        "gap_equivalent_fraction": 0.4819995881402677,
+        "saving_fraction_of_official": 0.18985029337544318,
+        "total_official_to_optimized_fraction": 0.18154185954102364
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.996756871980186,
+          1.0017577097147667
+        ],
+        "optimization_seconds": [
+          35.73437499999997,
+          40.65937499999998
+        ],
+        "optimization_saving_fraction": [
+          0.17644789630696417,
+          0.19997642935467658
+        ],
+        "linker_seconds": [
+          -3.440624999999983,
+          -0.15312500000001705
+        ],
+        "build_bridge_seconds": [
+          -0.34791666666663446,
+          0.6656249999999773
+        ],
+        "official_gap_seconds": [
+          74.84342531166666,
+          84.22075532833331
+        ],
+        "gap_equivalent_fraction": [
+          0.43725014402632306,
+          0.5238742907545523
+        ],
+        "saving_fraction_of_official": [
+          0.17637350772742683,
+          0.2030625624375622
+        ],
+        "total_official_to_optimized_fraction": [
+          0.17659417789701884,
+          0.18698496959970395
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.996940313275387,
+        1.0015391995108298
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "graphics-project",
+      "cores": 1,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 206.3511347666667,
+        "baseline-msvc": 206.76824532666674,
+        "baseline-lld": 207.81976481333322,
+        "optimized": 169.84558252000005
+      },
+      "linux_mean_seconds": 122.39444647586667,
+      "contrasts": {
+        "baseline_ratio": 1.002021363054154,
+        "optimization_seconds": 37.97418229333317,
+        "optimization_saving_fraction": 0.18272651943111448,
+        "linker_seconds": -1.0515194866664785,
+        "build_bridge_seconds": -0.4171105600000544,
+        "official_gap_seconds": 83.95668829080002,
+        "gap_equivalent_fraction": 0.452306815173585,
+        "saving_fraction_of_official": 0.18402700976795114,
+        "total_official_to_optimized_fraction": 0.17690986913130186
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9929223631916497,
+          1.0143662965745541
+        ],
+        "optimization_seconds": [
+          33.918960499999656,
+          41.01093853333316
+        ],
+        "optimization_saving_fraction": [
+          0.16409471437126175,
+          0.1970117916809989
+        ],
+        "linker_seconds": [
+          -3.295665459999782,
+          0.9595099000003415
+        ],
+        "build_bridge_seconds": [
+          -2.9081007066665734,
+          1.4869391533332248
+        ],
+        "official_gap_seconds": [
+          79.1317542182817,
+          88.64152730046672
+        ],
+        "gap_equivalent_fraction": [
+          0.39501509313494537,
+          0.4983849084172147
+        ],
+        "saving_fraction_of_official": [
+          0.1640177284020495,
+          0.1992262543313945
+        ],
+        "total_official_to_optimized_fraction": [
+          0.1641591329137194,
+          0.18721276326300168
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.993236477315283,
+        1.0125865209268092
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "graphics-project",
+      "cores": 4,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 213.60833333333335,
+        "baseline-msvc": 215.31041666666664,
+        "baseline-lld": 214.33854166666669,
+        "optimized": 175.74166666666667
+      },
+      "linux_mean_seconds": 127.34440513333334,
+      "contrasts": {
+        "baseline_ratio": 1.0079682440603908,
+        "optimization_seconds": 38.59687500000001,
+        "optimization_saving_fraction": 0.18007435666901567,
+        "linker_seconds": 0.9718749999999545,
+        "build_bridge_seconds": -1.7020833333332916,
+        "official_gap_seconds": 86.26392820000001,
+        "gap_equivalent_fraction": 0.4474277465143305,
+        "saving_fraction_of_official": 0.1806899309483869,
+        "total_official_to_optimized_fraction": 0.17727148597511022
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9923561129489944,
+          1.0245118241585711
+        ],
+        "optimization_seconds": [
+          34.197916666666686,
+          41.80937499999996
+        ],
+        "optimization_saving_fraction": [
+          0.16103920558154278,
+          0.1942806718125753
+        ],
+        "linker_seconds": [
+          -2.046875,
+          3.79374999999996
+        ],
+        "build_bridge_seconds": [
+          -5.2041666666666515,
+          1.6583333333333314
+        ],
+        "official_gap_seconds": [
+          80.69222780833331,
+          91.66616445666664
+        ],
+        "gap_equivalent_fraction": [
+          0.3804526055757409,
+          0.5058226534942287
+        ],
+        "saving_fraction_of_official": [
+          0.1577230879733657,
+          0.19785309395429695
+        ],
+        "total_official_to_optimized_fraction": [
+          0.17325827629287677,
+          0.18174330680532674
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9936414105568139,
+        1.0228311166024662
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null,
+      "historical_gap_equivalent_fraction": 0.44701420103631606,
+      "historical_gap_equivalent_ci95": [
+        0.3901958442583825,
+        0.48947466110774335
+      ]
+    },
+    {
+      "workload": "graphics-project",
+      "cores": 4,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 60.767086300000095,
+        "baseline-msvc": 60.853061799999885,
+        "baseline-lld": 60.929951293333396,
+        "optimized": 49.48694621333352
+      },
+      "linux_mean_seconds": 35.69140596813331,
+      "contrasts": {
+        "baseline_ratio": 1.0014148366366513,
+        "optimization_seconds": 11.443005079999878,
+        "optimization_saving_fraction": 0.1878059121516466,
+        "linker_seconds": -0.07688949333351047,
+        "build_bridge_seconds": -0.08597549999979037,
+        "official_gap_seconds": 25.075680331866785,
+        "gap_equivalent_fraction": 0.4563387684224794,
+        "saving_fraction_of_official": 0.18830926043593865,
+        "total_official_to_optimized_fraction": 0.1856291090044671
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9804124274105764,
+          1.022541536443634
+        ],
+        "optimization_seconds": [
+          10.044979379999965,
+          12.707414006666681
+        ],
+        "optimization_saving_fraction": [
+          0.16602075366524383,
+          0.20558853704374866
+        ],
+        "linker_seconds": [
+          -0.9806100466666408,
+          0.8268310599996056
+        ],
+        "build_bridge_seconds": [
+          -1.3676152533328363,
+          1.210224506666762
+        ],
+        "official_gap_seconds": [
+          23.24319216893337,
+          27.017731973643333
+        ],
+        "gap_equivalent_fraction": [
+          0.37848811533161525,
+          0.5340031258784236
+        ],
+        "saving_fraction_of_official": [
+          0.1614238105376099,
+          0.21208641619982002
+        ],
+        "total_official_to_optimized_fraction": [
+          0.17858550354896763,
+          0.19206102328341632
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9836129314328453,
+        1.0196960792381358
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null,
+      "historical_gap_equivalent_fraction": 0.46016045510458814,
+      "historical_gap_equivalent_ci95": [
+        0.3944620352166544,
+        0.5182633162813091
+      ]
+    },
+    {
+      "workload": "yuv-native-codegen",
+      "cores": 1,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 109.81458333333333,
+        "baseline-msvc": 109.8125,
+        "baseline-lld": 109.58020833333333,
+        "optimized": 90.04375000000002
+      },
+      "linux_mean_seconds": 74.23088446666667,
+      "contrasts": {
+        "baseline_ratio": 0.9999810286278007,
+        "optimization_seconds": 19.536458333333314,
+        "optimization_saving_fraction": 0.1782845518408318,
+        "linker_seconds": 0.23229166666666856,
+        "build_bridge_seconds": 0.0020833333333314386,
+        "official_gap_seconds": 35.583698866666666,
+        "gap_equivalent_fraction": 0.5490283178973915,
+        "saving_fraction_of_official": 0.17790404279941552,
+        "total_official_to_optimized_fraction": 0.1800383221718425
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9857602762095833,
+          1.0182358452177038
+        ],
+        "optimization_seconds": [
+          18.480208333333337,
+          20.463541666666657
+        ],
+        "optimization_saving_fraction": [
+          0.1671307103148934,
+          0.18714434020301424
+        ],
+        "linker_seconds": [
+          -1.0510416666666487,
+          2.0802083333333314
+        ],
+        "build_bridge_seconds": [
+          -2.007291666666646,
+          1.5895833333333371
+        ],
+        "official_gap_seconds": [
+          31.972351936666676,
+          39.14954599999997
+        ],
+        "gap_equivalent_fraction": [
+          0.49081962562536097,
+          0.620390395353261
+        ],
+        "saving_fraction_of_official": [
+          0.16704677726150022,
+          0.18823358793386805
+        ],
+        "total_official_to_optimized_fraction": [
+          0.16770003513136286,
+          0.1917297119496264
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9863760728608372,
+        1.0146799255394054
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-native-codegen",
+      "cores": 1,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 110.90029356666682,
+        "baseline-msvc": 110.7886437133333,
+        "baseline-lld": 111.29233043333325,
+        "optimized": 91.16043796000022
+      },
+      "linux_mean_seconds": 74.2474937778,
+      "contrasts": {
+        "baseline_ratio": 0.9989932411381184,
+        "optimization_seconds": 20.131892473333025,
+        "optimization_saving_fraction": 0.1808920021258114,
+        "linker_seconds": -0.5036867199999477,
+        "build_bridge_seconds": 0.11164985333351751,
+        "official_gap_seconds": 36.652799788866815,
+        "gap_equivalent_fraction": 0.5492593359661444,
+        "saving_fraction_of_official": 0.18153146241430732,
+        "total_official_to_optimized_fraction": 0.17799642338007104
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9838024297434933,
+          1.0183451879035095
+        ],
+        "optimization_seconds": [
+          19.198146273333208,
+          21.065638673332856
+        ],
+        "optimization_saving_fraction": [
+          0.17178572014078153,
+          0.18992556592211268
+        ],
+        "linker_seconds": [
+          -2.061022786666811,
+          1.2535642933333264
+        ],
+        "build_bridge_seconds": [
+          -2.038368813332994,
+          1.8270138600001786
+        ],
+        "official_gap_seconds": [
+          32.990582967206755,
+          40.231238803311754
+        ],
+        "gap_equivalent_fraction": [
+          0.49051501174699613,
+          0.6244466147497446
+        ],
+        "saving_fraction_of_official": [
+          0.17113384822542446,
+          0.1927648135595705
+        ],
+        "total_official_to_optimized_fraction": [
+          0.1667157572598024,
+          0.18971664966905946
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9851605792103472,
+        1.0147122941146134
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-native-codegen",
+      "cores": 4,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 107.98854166666668,
+        "baseline-msvc": 107.94791666666667,
+        "baseline-lld": 107.27708333333332,
+        "optimized": 88.73229166666667
+      },
+      "linux_mean_seconds": 69.55840326666667,
+      "contrasts": {
+        "baseline_ratio": 0.9996238026796824,
+        "optimization_seconds": 18.544791666666654,
+        "optimization_saving_fraction": 0.1728681568368515,
+        "linker_seconds": 0.6708333333333485,
+        "build_bridge_seconds": 0.040625000000005684,
+        "official_gap_seconds": 38.430138400000004,
+        "gap_equivalent_fraction": 0.4825585449014842,
+        "saving_fraction_of_official": 0.17172925368239286,
+        "total_official_to_optimized_fraction": 0.17831752983051835
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9867358094445678,
+          1.0126017780590961
+        ],
+        "optimization_seconds": [
+          17.402083333333337,
+          19.623958333333334
+        ],
+        "optimization_saving_fraction": [
+          0.1616292569659443,
+          0.18440663321911416
+        ],
+        "linker_seconds": [
+          -0.7447916666666714,
+          2.0864583333333258
+        ],
+        "build_bridge_seconds": [
+          -1.36562499999998,
+          1.4281250000000227
+        ],
+        "official_gap_seconds": [
+          35.22527813333335,
+          41.564192888333345
+        ],
+        "gap_equivalent_fraction": [
+          0.4234630561489338,
+          0.5477975940984764
+        ],
+        "saving_fraction_of_official": [
+          0.15871439918302507,
+          0.18480512641433455
+        ],
+        "total_official_to_optimized_fraction": [
+          0.1720725673446947,
+          0.1826350515062031
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9881795111526644,
+        1.0123157251137918
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-native-codegen",
+      "cores": 4,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 32.28103326666678,
+        "baseline-msvc": 32.1876926266667,
+        "baseline-lld": 32.229598366666686,
+        "optimized": 26.38580939333333
+      },
+      "linux_mean_seconds": 20.47647088066667,
+      "contrasts": {
+        "baseline_ratio": 0.9971084989991178,
+        "optimization_seconds": 5.843788973333357,
+        "optimization_saving_fraction": 0.1813174618824065,
+        "linker_seconds": -0.04190573999998293,
+        "build_bridge_seconds": 0.09334064000007913,
+        "official_gap_seconds": 11.80456238600011,
+        "gap_equivalent_fraction": 0.49504494806719235,
+        "saving_fraction_of_official": 0.1810285601783268,
+        "total_official_to_optimized_fraction": 0.1826219075651717
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9824391189665745,
+          1.0113550180798991
+        ],
+        "optimization_seconds": [
+          5.471994593333694,
+          6.300775046666299
+        ],
+        "optimization_saving_fraction": [
+          0.16908678032056426,
+          0.19501142599355623
+        ],
+        "linker_seconds": [
+          -0.4891207333331593,
+          0.39918174666660633
+        ],
+        "build_bridge_seconds": [
+          -0.3657412466663672,
+          0.5787619599998877
+        ],
+        "official_gap_seconds": [
+          10.811925457801818,
+          12.806728226798482
+        ],
+        "gap_equivalent_fraction": [
+          0.435385554420258,
+          0.5624900404401217
+        ],
+        "saving_fraction_of_official": [
+          0.16669428443837425,
+          0.1976539794707215
+        ],
+        "total_official_to_optimized_fraction": [
+          0.17538409969690866,
+          0.1894890563155732
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9836718774879251,
+        1.0093802168653896
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-native-metadata",
+      "cores": 1,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 2.96875,
+        "baseline-msvc": 2.947916666666667,
+        "baseline-lld": 3.002083333333333,
+        "optimized": 2.2333333333333334
+      },
+      "linux_mean_seconds": 1.6448795333333333,
+      "contrasts": {
+        "baseline_ratio": 0.992982456140351,
+        "optimization_seconds": 0.7687499999999998,
+        "optimization_saving_fraction": 0.2560721721027064,
+        "linker_seconds": -0.05416666666666625,
+        "build_bridge_seconds": 0.020833333333333037,
+        "official_gap_seconds": 1.3238704666666667,
+        "gap_equivalent_fraction": 0.5806836993166047,
+        "saving_fraction_of_official": 0.2589473684210526,
+        "total_official_to_optimized_fraction": 0.247719298245614
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9682539682539683,
+          1.0157013258897418
+        ],
+        "optimization_seconds": [
+          0.7135416666666665,
+          0.8229166666666665
+        ],
+        "optimization_saving_fraction": [
+          0.24543174489430322,
+          0.2656355077336918
+        ],
+        "linker_seconds": [
+          -0.10624999999999973,
+          -0.002083333333333215
+        ],
+        "build_bridge_seconds": [
+          -0.046875,
+          0.09583333333333321
+        ],
+        "official_gap_seconds": [
+          1.2142098666666667,
+          1.4351560666666665
+        ],
+        "gap_equivalent_fraction": [
+          0.5506785643780875,
+          0.6121635733804799
+        ],
+        "saving_fraction_of_official": [
+          0.24615934262236536,
+          0.2711050102951269
+        ],
+        "total_official_to_optimized_fraction": [
+          0.23274937432963894,
+          0.2639029322548029
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9742621825669183,
+        1.0113676731793961
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-native-metadata",
+      "cores": 1,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 3.005975273333479,
+        "baseline-msvc": 2.99351973999995,
+        "baseline-lld": 3.053053340000194,
+        "optimized": 2.270901513333441
+      },
+      "linux_mean_seconds": 1.6457529638666528,
+      "contrasts": {
+        "baseline_ratio": 0.9958564085859175,
+        "optimization_seconds": 0.7821518266667531,
+        "optimization_saving_fraction": 0.2561867545578825,
+        "linker_seconds": -0.05953360000024421,
+        "build_bridge_seconds": 0.012455533333529,
+        "official_gap_seconds": 1.360222309466826,
+        "gap_equivalent_fraction": 0.5750176432360807,
+        "saving_fraction_of_official": 0.2601990221294752,
+        "total_official_to_optimized_fraction": 0.2445375271450178
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9767243461127816,
+          1.0164426787233805
+        ],
+        "optimization_seconds": [
+          0.7339577000000652,
+          0.8293724000001017
+        ],
+        "optimization_saving_fraction": [
+          0.24804882695162822,
+          0.2631334524022387
+        ],
+        "linker_seconds": [
+          -0.09514990666724144,
+          -0.02255903999997244
+        ],
+        "build_bridge_seconds": [
+          -0.04959279333288613,
+          0.0710934933335623
+        ],
+        "official_gap_seconds": [
+          1.252340103753351,
+          1.4674241285335408
+        ],
+        "gap_equivalent_fraction": [
+          0.538702786352581,
+          0.6143141213213288
+        ],
+        "saving_fraction_of_official": [
+          0.24803801028457204,
+          0.27250912395182963
+        ],
+        "total_official_to_optimized_fraction": [
+          0.2314605238000878,
+          0.2571328898254986
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9774904726802364,
+        1.0149246491252362
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-native-metadata",
+      "cores": 4,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 3.0135416666666663,
+        "baseline-msvc": 3.01875,
+        "baseline-lld": 3.0739583333333336,
+        "optimized": 2.314583333333333
+      },
+      "linux_mean_seconds": 1.6723565333333332,
+      "contrasts": {
+        "baseline_ratio": 1.0017283097131007,
+        "optimization_seconds": 0.7593750000000004,
+        "optimization_saving_fraction": 0.24703490342256873,
+        "linker_seconds": -0.05520833333333375,
+        "build_bridge_seconds": -0.005208333333333481,
+        "official_gap_seconds": 1.3411851333333331,
+        "gap_equivalent_fraction": 0.5661970007918871,
+        "saving_fraction_of_official": 0.2519875561700658,
+        "total_official_to_optimized_fraction": 0.23193916349809882
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9844384303112316,
+          1.0190641247833623
+        ],
+        "optimization_seconds": [
+          0.678125000000001,
+          0.8229166666666665
+        ],
+        "optimization_saving_fraction": [
+          0.22883135059482165,
+          0.26342114038012665
+        ],
+        "linker_seconds": [
+          -0.11979166666666696,
+          0.005208333333333037
+        ],
+        "build_bridge_seconds": [
+          -0.05729166666666652,
+          0.04791666666666616
+        ],
+        "official_gap_seconds": [
+          1.246275145,
+          1.4292254666666666
+        ],
+        "gap_equivalent_fraction": [
+          0.5132963109814106,
+          0.6182735198279001
+        ],
+        "saving_fraction_of_official": [
+          0.22954866008462643,
+          0.2720385674931129
+        ],
+        "total_official_to_optimized_fraction": [
+          0.22241681260945717,
+          0.24514149335151714
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9850538755648246,
+        1.0171998624011007
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-native-metadata",
+      "cores": 4,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 3.040224666666563,
+        "baseline-msvc": 3.035225166666775,
+        "baseline-lld": 3.1203033866668193,
+        "optimized": 2.3287472066665034
+      },
+      "linux_mean_seconds": 1.6730171839333252,
+      "contrasts": {
+        "baseline_ratio": 0.9983555491623355,
+        "optimization_seconds": 0.7915561800003159,
+        "optimization_saving_fraction": 0.25367923625076555,
+        "linker_seconds": -0.08507822000004417,
+        "build_bridge_seconds": 0.004999499999787993,
+        "official_gap_seconds": 1.3672074827332379,
+        "gap_equivalent_fraction": 0.5789583439214984,
+        "saving_fraction_of_official": 0.2603610807711172,
+        "total_official_to_optimized_fraction": 0.23402134315953535
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9759818563183909,
+          1.0207403082064515
+        ],
+        "optimization_seconds": [
+          0.7014527800003938,
+          0.8704887333336959
+        ],
+        "optimization_saving_fraction": [
+          0.23342475248572278,
+          0.2730772303879045
+        ],
+        "linker_seconds": [
+          -0.18072518000008175,
+          -0.01401545333337717
+        ],
+        "build_bridge_seconds": [
+          -0.0630396066669161,
+          0.07303860666649253
+        ],
+        "official_gap_seconds": [
+          1.2865916568747073,
+          1.4455024887150483
+        ],
+        "gap_equivalent_fraction": [
+          0.5150533524592013,
+          0.6475795958600599
+        ],
+        "saving_fraction_of_official": [
+          0.23337597752703637,
+          0.28676360954837915
+        ],
+        "total_official_to_optimized_fraction": [
+          0.2267922380944369,
+          0.24296828229912754
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.979894662616543,
+        1.0173164745772174
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-wasm-codegen",
+      "cores": 1,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 70.2,
+        "baseline-msvc": 70.57395833333334,
+        "baseline-lld": 70.94375,
+        "optimized": 58.83541666666666
+      },
+      "linux_mean_seconds": 48.14563613333333,
+      "contrasts": {
+        "baseline_ratio": 1.0053270417853752,
+        "optimization_seconds": 12.108333333333334,
+        "optimization_saving_fraction": 0.17067512407130064,
+        "linker_seconds": -0.3697916666666572,
+        "build_bridge_seconds": -0.3739583333333343,
+        "official_gap_seconds": 22.05436386666667,
+        "gap_equivalent_fraction": 0.5490221076670486,
+        "saving_fraction_of_official": 0.17248338081671416,
+        "total_official_to_optimized_fraction": 0.16188865147198495
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9833817126269957,
+          1.0308653888979618
+        ],
+        "optimization_seconds": [
+          11.280208333333334,
+          12.934374999999996
+        ],
+        "optimization_saving_fraction": [
+          0.15953187557745616,
+          0.17901633691107366
+        ],
+        "linker_seconds": [
+          -1.1447916666666629,
+          0.5687500000000085
+        ],
+        "build_bridge_seconds": [
+          -2.1656250000000057,
+          1.1927083333333286
+        ],
+        "official_gap_seconds": [
+          19.50842030666666,
+          24.593879
+        ],
+        "gap_equivalent_fraction": [
+          0.47061842767815953,
+          0.6287185429123948
+        ],
+        "saving_fraction_of_official": [
+          0.15788098693759078,
+          0.18387364428376676
+        ],
+        "total_official_to_optimized_fraction": [
+          0.1562407571724344,
+          0.1688768684929913
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9866330390920557,
+        1.0244602188701566
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-wasm-codegen",
+      "cores": 1,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 70.89976243999999,
+        "baseline-msvc": 71.25859092666659,
+        "baseline-lld": 71.95874115999983,
+        "optimized": 59.47782825333312
+      },
+      "linux_mean_seconds": 48.15693018299999,
+      "contrasts": {
+        "baseline_ratio": 1.0050610675454696,
+        "optimization_seconds": 12.48091290666671,
+        "optimization_saving_fraction": 0.17344540365034283,
+        "linker_seconds": -0.7001502333332468,
+        "build_bridge_seconds": -0.35882848666659584,
+        "official_gap_seconds": 22.742832256999996,
+        "gap_equivalent_fraction": 0.548784459456461,
+        "saving_fraction_of_official": 0.17603603280376112,
+        "total_official_to_optimized_fraction": 0.16109975257438774
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9818955062066668,
+          1.03043836399501
+        ],
+        "optimization_seconds": [
+          11.464989433333201,
+          13.750587753333505
+        ],
+        "optimization_saving_fraction": [
+          0.16001220449902875,
+          0.18530109335093403
+        ],
+        "linker_seconds": [
+          -1.1736384599998222,
+          -0.19371024666689607
+        ],
+        "build_bridge_seconds": [
+          -2.156464453333612,
+          1.3135961866671693
+        ],
+        "official_gap_seconds": [
+          20.128303379843242,
+          25.34870053001508
+        ],
+        "gap_equivalent_fraction": [
+          0.46797552728308567,
+          0.6282212615812628
+        ],
+        "saving_fraction_of_official": [
+          0.15856715360457274,
+          0.1921484228646209
+        ],
+        "total_official_to_optimized_fraction": [
+          0.15569297364007179,
+          0.16872682924140836
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9863127431371611,
+        1.024074916148521
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-wasm-codegen",
+      "cores": 4,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 69.73541666666667,
+        "baseline-msvc": 69.834375,
+        "baseline-lld": 69.74479166666666,
+        "optimized": 57.59166666666666
+      },
+      "linux_mean_seconds": 44.9016918,
+      "contrasts": {
+        "baseline_ratio": 1.0014190541630568,
+        "optimization_seconds": 12.153124999999996,
+        "optimization_saving_fraction": 0.17425136285564927,
+        "linker_seconds": 0.08958333333333712,
+        "build_bridge_seconds": -0.0989583333333286,
+        "official_gap_seconds": 24.833724866666664,
+        "gap_equivalent_fraction": 0.4893798681128444,
+        "saving_fraction_of_official": 0.1742747886356167,
+        "total_official_to_optimized_fraction": 0.1741403519254325
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.989759700342854,
+          1.0116539333890415
+        ],
+        "optimization_seconds": [
+          11.566666666666684,
+          12.657291666666666
+        ],
+        "optimization_saving_fraction": [
+          0.16527190466333497,
+          0.18077675748908617
+        ],
+        "linker_seconds": [
+          -0.6843749999999886,
+          0.8739583333333343
+        ],
+        "build_bridge_seconds": [
+          -0.8156249999999972,
+          0.708333333333357
+        ],
+        "official_gap_seconds": [
+          22.734158733333345,
+          26.855305638333327
+        ],
+        "gap_equivalent_fraction": [
+          0.43883772080755895,
+          0.5421589662320685
+        ],
+        "saving_fraction_of_official": [
+          0.16330406580081516,
+          0.18199617452595782
+        ],
+        "total_official_to_optimized_fraction": [
+          0.16939526571657898,
+          0.1794426122351964
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9910947589728188,
+        1.0104302087536048
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-wasm-codegen",
+      "cores": 4,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 20.602366940000135,
+        "baseline-msvc": 20.60417617999992,
+        "baseline-lld": 20.6397761799999,
+        "optimized": 16.877297453333266
+      },
+      "linux_mean_seconds": 13.053231362600012,
+      "contrasts": {
+        "baseline_ratio": 1.0000878170942715,
+        "optimization_seconds": 3.7624787266666324,
+        "optimization_saving_fraction": 0.18229261276159103,
+        "linker_seconds": -0.03559999999997743,
+        "build_bridge_seconds": -0.0018092399997868824,
+        "official_gap_seconds": 7.549135577400122,
+        "gap_equivalent_fraction": 0.49839861638336186,
+        "saving_fraction_of_official": 0.1826236149285189,
+        "total_official_to_optimized_fraction": 0.18080784103667866
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9905456422719382,
+          1.0082147954940996
+        ],
+        "optimization_seconds": [
+          3.463104153333216,
+          4.046769700000034
+        ],
+        "optimization_saving_fraction": [
+          0.16723142818968378,
+          0.19445286213263152
+        ],
+        "linker_seconds": [
+          -0.3715868733334631,
+          0.24910475333332727
+        ],
+        "build_bridge_seconds": [
+          -0.1692639199997501,
+          0.19835194000012635
+        ],
+        "official_gap_seconds": [
+          6.930598514001869,
+          8.147243094546814
+        ],
+        "gap_equivalent_fraction": [
+          0.4375241149058801,
+          0.560750533023989
+        ],
+        "saving_fraction_of_official": [
+          0.16510914150363412,
+          0.19770952118328314
+        ],
+        "total_official_to_optimized_fraction": [
+          0.17290839999626886,
+          0.192401527370592
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9928172746742279,
+        1.0070936448282395
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-wasm-metadata",
+      "cores": 1,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 2.1375,
+        "baseline-msvc": 2.14375,
+        "baseline-lld": 2.1708333333333334,
+        "optimized": 1.6114583333333337
+      },
+      "linux_mean_seconds": 1.1629462,
+      "contrasts": {
+        "baseline_ratio": 1.002923976608187,
+        "optimization_seconds": 0.5593749999999997,
+        "optimization_saving_fraction": 0.2576775431861803,
+        "linker_seconds": -0.02708333333333357,
+        "build_bridge_seconds": -0.006249999999999645,
+        "official_gap_seconds": 0.9745538000000002,
+        "gap_equivalent_fraction": 0.5739806258002376,
+        "saving_fraction_of_official": 0.26169590643274837,
+        "total_official_to_optimized_fraction": 0.24610136452241707
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.983767830791933,
+          1.022695035460993
+        ],
+        "optimization_seconds": [
+          0.5187499999999998,
+          0.5979166666666667
+        ],
+        "optimization_saving_fraction": [
+          0.24398460057747837,
+          0.2700522069292831
+        ],
+        "linker_seconds": [
+          -0.05729166666666652,
+          0.0031250000000002665
+        ],
+        "build_bridge_seconds": [
+          -0.048958333333333215,
+          0.034375000000000266
+        ],
+        "official_gap_seconds": [
+          0.9081660266666667,
+          1.0417371333333334
+        ],
+        "gap_equivalent_fraction": [
+          0.5242200939491644,
+          0.6207472672931726
+        ],
+        "saving_fraction_of_official": [
+          0.24433734939759047,
+          0.2786483839373161
+        ],
+        "total_official_to_optimized_fraction": [
+          0.24059075750357306,
+          0.2522477522477522
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9877989263055148,
+        1.0180780209324454
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-wasm-metadata",
+      "cores": 1,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 2.1671786999999614,
+        "baseline-msvc": 2.1801548133333197,
+        "baseline-lld": 2.26632441333298,
+        "optimized": 1.6398385066666683
+      },
+      "linux_mean_seconds": 1.1638866397999814,
+      "contrasts": {
+        "baseline_ratio": 1.0059875603859334,
+        "optimization_seconds": 0.6264859066663115,
+        "optimization_saving_fraction": 0.2764325808699944,
+        "linker_seconds": -0.08616959999966012,
+        "build_bridge_seconds": -0.012976113333358352,
+        "official_gap_seconds": 1.00329206019998,
+        "gap_equivalent_fraction": 0.6244302447100378,
+        "saving_fraction_of_official": 0.2890790254935242,
+        "total_official_to_optimized_fraction": 0.24333027697868315
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9872234530434978,
+          1.028740744319057
+        ],
+        "optimization_seconds": [
+          0.5410714599996631,
+          0.7634599199995742
+        ],
+        "optimization_saving_fraction": [
+          0.24959548773128365,
+          0.31258866405412417
+        ],
+        "linker_seconds": [
+          -0.17802427999949977,
+          -0.028611839999575395
+        ],
+        "build_bridge_seconds": [
+          -0.06262353333361981,
+          0.028262960000362103
+        ],
+        "official_gap_seconds": [
+          0.936520950999898,
+          1.069645542733499
+        ],
+        "gap_equivalent_fraction": [
+          0.534437875392945,
+          0.744452800968407
+        ],
+        "saving_fraction_of_official": [
+          0.25099345567560216,
+          0.3461225282655225
+        ],
+        "total_official_to_optimized_fraction": [
+          0.23663340383319761,
+          0.2501203909788006
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9897010642024344,
+        1.0230140646866013
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-wasm-metadata",
+      "cores": 4,
+      "metric": "cpu_seconds",
+      "windows_mean_seconds": {
+        "official": 2.2125,
+        "baseline-msvc": 2.198958333333333,
+        "baseline-lld": 2.23125,
+        "optimized": 1.6645833333333335
+      },
+      "linux_mean_seconds": 1.1687066666666666,
+      "contrasts": {
+        "baseline_ratio": 0.993879472693032,
+        "optimization_seconds": 0.5666666666666667,
+        "optimization_saving_fraction": 0.25396825396825395,
+        "linker_seconds": -0.03229166666666705,
+        "build_bridge_seconds": 0.013541666666666785,
+        "official_gap_seconds": 1.0437933333333334,
+        "gap_equivalent_fraction": 0.5428916324432039,
+        "saving_fraction_of_official": 0.256120527306968,
+        "total_official_to_optimized_fraction": 0.24764595103578144
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.975115207373272,
+          1.0057115659209899
+        ],
+        "optimization_seconds": [
+          0.5322916666666664,
+          0.6093749999999998
+        ],
+        "optimization_saving_fraction": [
+          0.24226804123711335,
+          0.2685269899359561
+        ],
+        "linker_seconds": [
+          -0.05833333333333357,
+          -0.008333333333333304
+        ],
+        "build_bridge_seconds": [
+          -0.012500000000000178,
+          0.05624999999999991
+        ],
+        "official_gap_seconds": [
+          0.9621416349999996,
+          1.1242032899999994
+        ],
+        "gap_equivalent_fraction": [
+          0.49176775624830416,
+          0.5995284969847672
+        ],
+        "saving_fraction_of_official": [
+          0.23990719257540596,
+          0.2760736196319017
+        ],
+        "total_official_to_optimized_fraction": [
+          0.23521060104117347,
+          0.26261682242990647
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9766910420475321,
+        1.0056417489421718
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    },
+    {
+      "workload": "yuv-wasm-metadata",
+      "cores": 4,
+      "metric": "wall_seconds",
+      "windows_mean_seconds": {
+        "official": 2.2246356133332483,
+        "baseline-msvc": 2.217806239999876,
+        "baseline-lld": 2.2574000066667095,
+        "optimized": 1.6870183199999396
+      },
+      "linux_mean_seconds": 1.169320388799997,
+      "contrasts": {
+        "baseline_ratio": 0.9969301159738517,
+        "optimization_seconds": 0.5703816866667699,
+        "optimization_saving_fraction": 0.2526719610978468,
+        "linker_seconds": -0.03959376666683356,
+        "build_bridge_seconds": 0.006829373333372413,
+        "official_gap_seconds": 1.0553152245332513,
+        "gap_equivalent_fraction": 0.5404846565338242,
+        "saving_fraction_of_official": 0.256393309200039,
+        "total_official_to_optimized_fraction": 0.24166532717139155
+      },
+      "ci95": {
+        "baseline_ratio": [
+          0.9755764810856838,
+          1.0122466850105292
+        ],
+        "optimization_seconds": [
+          0.5275585666666303,
+          0.6176538600001851
+        ],
+        "optimization_saving_fraction": [
+          0.23770090089895357,
+          0.27023481876686795
+        ],
+        "linker_seconds": [
+          -0.070752646666854,
+          -0.013114060000013694
+        ],
+        "build_bridge_seconds": [
+          -0.026798726666432682,
+          0.05520187999985238
+        ],
+        "official_gap_seconds": [
+          0.9789684949100441,
+          1.1321688252417346
+        ],
+        "gap_equivalent_fraction": [
+          0.48045758838126146,
+          0.6026846093175311
+        ],
+        "saving_fraction_of_official": [
+          0.23511915288653382,
+          0.2792602742981788
+        ],
+        "total_official_to_optimized_fraction": [
+          0.22859653163848473,
+          0.2509174853432052
+        ]
+      },
+      "baseline_ratio_ci90": [
+        0.9785056162788948,
+        1.0106127022065652
+      ],
+      "baseline_equivalent": true,
+      "positive_gap": true,
+      "vms_per_os": 5,
+      "measured_rounds_per_vm": 3,
+      "attribution_warning": null
+    }
+  ]
+}
