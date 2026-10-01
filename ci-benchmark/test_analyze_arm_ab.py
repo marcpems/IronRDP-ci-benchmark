@@ -84,6 +84,7 @@ class ArmAnalysisTests(unittest.TestCase):
                     index = {
                         "platform": platform, "vm": vm, "pilot": False,
                         "protocol": PROTOCOL, "variants": variants, "runs": [],
+                        "identical_windows_stdlibs_verified": platform == "windows-arm64",
                         "compiler_archive_sha256": {
                             v: f"hash-{v}" for v in variants if v != "official"
                         },

@@ -36,6 +36,22 @@ def verify_custom(root, variant, protocol):
     return sysroot / "bin" / "rustc.exe"
 
 
+def verify_shared_stdlib(official, metadata, host):
+    sysroot = official.parent.parent
+    for target in (host, "wasm32-unknown-unknown"):
+        prefix = f"lib/rustlib/{target}/lib/"
+        entries = {p.replace("\\", "/"): h for p, h in metadata["files"].items()
+                   if p.replace("\\", "/").startswith(prefix)}
+        if not any(Path(p).name.startswith("libstd-") for p in entries):
+            raise RuntimeError(f"No standard-library provenance for {target}")
+        for relative, expected in entries.items():
+            path = sysroot.joinpath(*relative.split("/"))
+            with path.open("rb") as stream:
+                actual = hashlib.file_digest(stream, "sha256").hexdigest()
+            if actual != expected:
+                raise RuntimeError(f"Official/custom standard libraries differ: {relative}")
+
+
 def download_compilers(root, variants, tag):
     root.mkdir(parents=True, exist_ok=True)
     for variant in variants:
@@ -114,6 +130,8 @@ def main():
             if args.compilers is None:
                 parser.error("--compilers is required for the Windows A/B")
             compilers[variant] = verify_custom(args.compilers.resolve(), variant, protocol)
+            metadata = json.loads((args.compilers / f"{variant}.json").read_text(encoding="utf-8"))
+            verify_shared_stdlib(official, metadata, os.environ["BENCHMARK_HOST"])
         version = subprocess.check_output([str(compilers[variant]), "-vV"], text=True)
         if f"release: {protocol['rust_version']}\n" not in version or protocol["rust_sha"] not in version:
             raise RuntimeError(f"Incorrect compiler identity for {variant}: {version}")
@@ -122,6 +140,7 @@ def main():
         "protocol": protocol, "vm": vm, "platform": os.environ["BENCHMARK_PLATFORM"],
         "pilot": args.pilot, "variants": variants, "runs": [],
         "compiler_archive_sha256": {},
+        "identical_windows_stdlibs_verified": os.name == "nt" and len(variants) > 1,
     }
     for variant in variants:
         if variant != "official":

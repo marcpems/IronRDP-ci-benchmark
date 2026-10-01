@@ -5,7 +5,7 @@ import tempfile
 import tomllib
 import unittest
 
-from arm_ab_probe import variant_order, verify_custom
+from arm_ab_probe import variant_order, verify_custom, verify_shared_stdlib
 from build_arm_compilers import configuration, digest, excluded_sysroot_entries, HOST, OFFICIAL_STD, RUST_SHA
 
 
@@ -72,6 +72,21 @@ class ArmAbTests(unittest.TestCase):
             self.assertFalse((destination / "lib" / "rustlib" / "src").exists())
             self.assertFalse((destination / "lib" / "rustlib" / "rustc-src").exists())
             self.assertTrue((destination / "lib" / "rustlib" / "aarch64-pc-windows-msvc" / "fixture").is_file())
+
+    def test_official_standard_libraries_are_byte_identical(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            files = {}
+            for target in (HOST, "wasm32-unknown-unknown"):
+                relative = f"lib/rustlib/{target}/lib/libstd-fixture.rlib"
+                path = root.joinpath(*relative.split("/"))
+                path.parent.mkdir(parents=True)
+                path.write_bytes(target.encode())
+                files[relative] = digest(path)
+            verify_shared_stdlib(root / "bin" / "rustc.exe", {"files": files}, HOST)
+            path.write_bytes(b"changed")
+            with self.assertRaisesRegex(RuntimeError, "standard libraries differ"):
+                verify_shared_stdlib(root / "bin" / "rustc.exe", {"files": files}, HOST)
 
 
 if __name__ == "__main__":

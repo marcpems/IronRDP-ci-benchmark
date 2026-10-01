@@ -46,6 +46,8 @@ def load_matrix(root, protocol):
         if index["variants"] != variants:
             raise ValueError("Missing or unexpected compiler variant")
         if platform == "windows-arm64":
+            if not index.get("identical_windows_stdlibs_verified"):
+                raise ValueError("Official/custom standard-library identity was not verified")
             manifests = index["compiler_archive_sha256"]
             if set(manifests) != set(variants) - {"official"}:
                 raise ValueError("Incomplete compiler provenance")
