@@ -30,7 +30,7 @@ runs:
     - name: Install matching official support tools
       shell: pwsh
       run: |
-        rustup toolchain install 1.94.1-aarch64-pc-windows-msvc --profile minimal --target wasm32-unknown-unknown
+        rustup toolchain install 1.94.1-aarch64-pc-windows-msvc --profile minimal --component clippy --component rustfmt --target wasm32-unknown-unknown
         if ($LASTEXITCODE -ne 0) { throw 'Official support toolchain installation failed' }
     - name: Install verified optimized compiler
       id: install

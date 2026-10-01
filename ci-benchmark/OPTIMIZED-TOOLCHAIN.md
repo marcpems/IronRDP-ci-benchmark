@@ -11,7 +11,9 @@ On `windows-11-arm`, after checking out this fork:
 
 ```yaml
 - uses: ./.github/actions/setup-optimized-rust
-- run: cargo test --workspace --locked --no-run
+- run: cargo xtask check tests --no-run -v
+  shell: pwsh
+- run: cargo xtask check tests -v
   shell: pwsh
 ```
 
@@ -22,7 +24,8 @@ full commit SHA. The action downloads only from this fork's fixed
 
 The action installs official support components and sets **`RUSTC`**, while
 pinning **`RUSTUP_TOOLCHAIN`** to the matching official release. It does not change
-the machine's default toolchain. Cargo and rustdoc remain official; this package
+the machine's default toolchain. Cargo and rustdoc remain official; official
+Clippy and rustfmt are also installed to preserve the repository's required components. This package
 does **not** claim to optimize rustdoc, Clippy, rustfmt, or the entire CI job.
 The optimized package includes rustc and its bundled linker. Only native Windows
 Arm64 and `wasm32-unknown-unknown` target libraries are provided and verified.
@@ -62,3 +65,9 @@ CPU/wall time with separate cold outputs per compiler/round, and runs the origin
 native tests outside those timers. The [protocol](native-ab-protocol.json) fixes
 the sampling and analysis before measurements. This is a cold-build comparison,
 not a claim about warm dependency-cache hits or every upstream CI job.
+
+The benchmark alone disables optional MSVC telemetry on its disposable runners
+using the [documented VSCEIP policy](https://learn.microsoft.com/en-us/visualstudio/ide/visual-studio-experience-improvement-program#registry-settings).
+A pilot identified `vctip.exe` outliving a completed native link. The CPU meter
+still rejects persistent descendants; it does not silently drop their CPU.
+The reusable installer does not change telemetry policies on consumers' machines.

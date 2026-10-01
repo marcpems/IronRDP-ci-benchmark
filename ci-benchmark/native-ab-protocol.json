@@ -12,6 +12,8 @@
   "linux_variants": ["official"],
   "runner_labels": ["windows-11-arm", "ubuntu-24.04-arm"],
   "cores": 4,
+  "native_tool_telemetry": "On disposable Windows benchmark runners only: documented HKLM Software Policies Microsoft VisualStudio SQM OptIn=0 and VSCMD_SKIP_SENDTELEMETRY=1; exclude optional telemetry uploads, preserve compiler binaries and flags",
+  "wall_clock": "Completed process-tree wall time, with Windows root Cargo process lifetime also recorded; fail on descendants still running after a short shutdown grace period",
   "primary_endpoint": "native-total/wall_seconds",
   "secondary_endpoints": "CPU time, five native commands separately, original common-package control and original WASM compilation",
   "profile": "Original Cargo.toml profiles and per-package test overrides; CI dev debug=0, incremental=0, jobs=4; no opt-level or codegen-unit override",

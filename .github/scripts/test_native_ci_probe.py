@@ -1,7 +1,9 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 import tempfile
+import sys
 import unittest
 from unittest.mock import patch
 import zipfile
@@ -10,9 +12,20 @@ from arm_ab_probe import extract_compiler
 from install_optimized_rust import check_hash, install
 from native_ci_probe import COMMANDS, PROFILE_ENV, build_environment, paired_order
 from offline_benchmark import NATIVE_COMMANDS, COMMON_COMMAND, WASM_COMMAND
+from process_metrics import measure
 
 
 class NativeCiTests(unittest.TestCase):
+    @unittest.skipUnless(os.name == "nt", "Windows Job Object shutdown accounting")
+    def test_cpu_meter_waits_for_short_lived_descendants(self):
+        burn = "import time;t=time.process_time();\nwhile time.process_time()-t<0.3: pass"
+        parent = f"import subprocess,sys;subprocess.Popen([sys.executable,'-c',{burn!r}])"
+        with tempfile.TemporaryDirectory() as tmp:
+            row = measure([sys.executable, "-c", parent], Path(tmp), dict(os.environ), 1, Path(tmp) / "late-child")
+            self.assertEqual(row["exit_code"], 0)
+            self.assertGreaterEqual(row["cpu_seconds"], 0.25)
+            self.assertGreater(row["wall_seconds"], row["root_process_wall_seconds"])
+
     def test_exact_original_commands_and_profiles(self):
         self.assertEqual(COMMANDS, [*NATIVE_COMMANDS, ("common", COMMON_COMMAND), ("wasm", WASM_COMMAND)])
         self.assertEqual(len(COMMANDS), 7)

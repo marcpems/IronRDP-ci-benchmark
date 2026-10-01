@@ -61,10 +61,13 @@ def install(destination, manifest, official):
         program = smoke / "smoke.rs"
         program.write_text("pub fn sum(xs: &[u64]) -> u64 { xs.iter().copied().sum() }\n")
         for target in manifest["evaluation_stdlib_sha256"]:
+            artifact = smoke / f"{target}.rlib"
             subprocess.run([
                 str(compiler), "--edition=2024", "--crate-type=rlib", "-O",
-                "--target", target, str(program), "-o", str(smoke / f"{target}.rlib"),
+                "--target", target, str(program), "-o", str(artifact),
             ], env={**env, "LLVM_PROFILE_FILE": str(smoke / "unexpected-%p.profraw")}, check=True)
+            if not artifact.is_file() or artifact.stat().st_size == 0:
+                raise RuntimeError(f"Compiler smoke test produced no library: {target}")
         if list(smoke.glob("*.profraw")):
             raise RuntimeError("Installed compiler still contains PGO instrumentation")
     record = {"manifest": manifest, "rustc": str(compiler), "official_rustc": str(official),
@@ -82,6 +85,8 @@ def main():
     args = parser.parse_args()
     if os.name != "nt" or platform.machine().lower() not in ("arm64", "aarch64"):
         parser.error("This compiler supports native Windows Arm64 only")
+    if shutil.which("rustup") is None:
+        parser.error("rustup is required on PATH; install the matching official support toolchain first")
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     toolchain = f"{manifest['rust_version']}-{manifest['host']}"
     official = Path(subprocess.check_output(

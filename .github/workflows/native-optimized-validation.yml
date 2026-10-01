@@ -33,6 +33,7 @@ jobs:
       CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
       RUST_BACKTRACE: short
       PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
     steps:
       - uses: actions/checkout@v6
       - uses: actions/checkout@v6
@@ -47,6 +48,17 @@ jobs:
       - name: Install original native build dependencies
         if: runner.os == 'Linux'
         uses: ./.github/actions/install-build-deps
+      - name: Opt out of MSVC telemetry on the disposable benchmark runner
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Documented VSCEIP policy: do not count background telemetry uploads as compilation.
+          $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+          New-Item -Path $key -Force | Out-Null
+          New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+          if ((Get-ItemPropertyValue -Path $key -Name OptIn) -ne 0) {
+            throw 'Could not disable optional MSVC telemetry'
+          }
       - name: Install pinned official reference tools
         shell: pwsh
         run: |
