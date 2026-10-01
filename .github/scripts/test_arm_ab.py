@@ -52,6 +52,24 @@ class ArmAbTests(unittest.TestCase):
             (root / "optimized.json").write_text(json.dumps(manifest))
             protocol = {"rust_sha": RUST_SHA, "evaluation_stdlib_sha256": OFFICIAL_STD}
             self.assertEqual(verify_custom(root, "optimized", protocol), path)
+            protocol["llvm_profile_coverage_required"] = True
+            with self.assertRaisesRegex(RuntimeError, "Missing meaningful LLVM"):
+                verify_custom(root, "optimized", protocol)
+            manifest["profiles"] = {"llvm-pgo.profdata": {"sha256": "profile"}}
+            manifest["llvm_training_repair"] = {
+                "profile_sha256": "profile",
+                **{phase: {component: {"nonzero_functions": 1}
+                           for component in ("AArch64TargetLowering", "InstCombine")}
+                   for phase in ("instrumentation_smoke_coverage", "training_coverage")},
+            }
+            (root / "optimized.json").write_text(json.dumps(manifest))
+            self.assertEqual(verify_custom(root, "optimized", protocol), path)
+            manifest["llvm_training_repair"]["profile_sha256"] = "wrong"
+            (root / "optimized.json").write_text(json.dumps(manifest))
+            with self.assertRaisesRegex(RuntimeError, "different profile"):
+                verify_custom(root, "optimized", protocol)
+            manifest["llvm_training_repair"]["profile_sha256"] = "profile"
+            (root / "optimized.json").write_text(json.dumps(manifest))
             path.write_bytes(b"modified")
             with self.assertRaises(RuntimeError):
                 verify_custom(root, "optimized", protocol)

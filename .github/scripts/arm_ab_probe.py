@@ -24,6 +24,14 @@ def verify_custom(root, variant, protocol):
         raise RuntimeError(f"Wrong compiler provenance: {variant}")
     if metadata["evaluation_stdlib_sha256"] != protocol["evaluation_stdlib_sha256"]:
         raise RuntimeError(f"Wrong evaluation standard libraries: {variant}")
+    if variant == "optimized" and protocol.get("llvm_profile_coverage_required"):
+        repair = metadata.get("llvm_training_repair", {})
+        for phase in ("instrumentation_smoke_coverage", "training_coverage"):
+            for component in ("AArch64TargetLowering", "InstCombine"):
+                if repair.get(phase, {}).get(component, {}).get("nonzero_functions", 0) <= 0:
+                    raise RuntimeError(f"Missing meaningful LLVM PGO coverage: {phase}/{component}")
+        if repair.get("profile_sha256") != metadata["profiles"]["llvm-pgo.profdata"]["sha256"]:
+            raise RuntimeError("LLVM PGO coverage belongs to a different profile")
     sysroot = root / variant
     for relative, expected in metadata["files"].items():
         path = sysroot / relative
@@ -143,6 +151,8 @@ def main():
         "pilot": args.pilot, "variants": variants, "runs": [],
         "compiler_archive_sha256": {},
         "identical_windows_stdlibs_verified": os.name == "nt" and len(variants) > 1,
+        "llvm_profile_coverage_verified": os.name == "nt" and "optimized" in variants
+        and protocol.get("llvm_profile_coverage_required", False),
     }
     for variant in variants:
         if variant != "official":

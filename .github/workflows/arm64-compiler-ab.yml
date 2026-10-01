@@ -85,7 +85,7 @@ jobs:
           python .github/scripts/arm_ab_probe.py --source workload --output arm-ab-results `
             --wrapper "$env:COMPILER_METER" --protocol ci-benchmark/arm64-ab-protocol.json `
             --compilers (Join-Path $env:RUNNER_TEMP 'arm-compilers') `
-            --release-tag arm64-compiler-ab-v1 @extra
+            --release-tag arm64-compiler-ab-v2 @extra
           if ($LASTEXITCODE -ne 0) { throw 'Paired measurements failed; inspect evidence' }
       - name: Verify fixed workload remains unchanged
         shell: pwsh

@@ -1,5 +1,6 @@
 {
-  "schema": 1,
+  "schema": 2,
+  "llvm_profile_coverage_required": true,
   "rust_version": "1.94.1",
   "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
   "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",

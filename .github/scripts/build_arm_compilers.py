@@ -239,9 +239,11 @@ def package_contents(source, root, variant, build_dir, provenance, env, sysroot)
     if cache.get("LLVM_BUILD_INSTRUMENTED", "OFF") not in ("", "OFF"):
         raise RuntimeError("Final LLVM build is still instrumented")
     if variant == "optimized":
-        if "llvm-pgo.profdata" not in cache.get("LLVM_PROFDATA_FILE", ""):
+        profile_path = Path(cache.get("LLVM_PROFDATA_FILE", ""))
+        if not profile_path.is_file() or digest(profile_path) != provenance["profiles"]["llvm-pgo.profdata"]["sha256"]:
             raise RuntimeError("Final LLVM build did not use its PGO profile")
-        log = (root / "logs" / "optimized-pipeline.log").read_text(encoding="utf-8", errors="replace")
+        flag_log = provenance.get("compiler_flag_log", "optimized-pipeline.log")
+        log = (root / "logs" / flag_log).read_text(encoding="utf-8", errors="replace")
         for flag in ("-Cprofile-use=", "-Clto=thin", "-Zdylib-lto"):
             if flag not in log:
                 raise RuntimeError(f"Missing actual rustc build flag evidence: {flag}")
@@ -326,7 +328,10 @@ def main():
     provenance = {
         "variant": args.variant, "rust_sha": RUST_SHA, "llvm_sha": LLVM_SHA,
         "rustc_perf_sha": PERF_SHA, "configuration": config,
-        "clang": subprocess.check_output(["clang-cl.exe", "--version"], env=env, text=True),
+        "clang": subprocess.check_output(
+            [str(root / "tools" / "clang20" / "bin" / "clang-cl.exe"), "--version"],
+            env=env, text=True,
+        ),
         "sdk_package": "Microsoft.Windows.SDK.CPP(.arm64) 10.0.26100.9169",
         "common_build_deviations": [
             "Portable SDK and local MSVC version; compare rebuilt MSVC baseline to official compiler.",

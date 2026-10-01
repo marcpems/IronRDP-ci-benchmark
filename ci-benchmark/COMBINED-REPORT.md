@@ -91,7 +91,7 @@ Cargo project.
 | LLVM linkage | Static into compiler, not a separate shared LLVM library | Same |
 | LLVM ThinLTO | **No** | **No** |
 | Cross-crate ThinLTO for rustc | **No**; default `thin-local` mode | **No**; default `thin-local` mode |
-| rustc PGO / LLVM PGO | **Yes / Yes**, generated in the distribution job | **No / No** |
+| rustc PGO / LLVM PGO | **Configured / Configured** in the distribution job; see training caveat below | **No / No** |
 | BOLT | No | No |
 
 The backend is built from
@@ -145,6 +145,28 @@ through `opt-dist linux-ci`; its
 [environment enables BOLT on x64 but not Arm64](https://github.com/rust-lang/rust/blob/1.94.1/src/tools/opt-dist/src/main.rs#L174-L219).
 These are confirmed release-configuration differences, **not measured
 explanations of the 1.5-2x compiler CPU gap**.
+
+## Controlled Windows Arm64 A/B: validation in progress
+
+Matched MSVC and LLD baseline compilers are built. An excluded portability pilot
+put rebuilt-MSVC graphics/four-CPU time within approximately 1% of official Rust,
+but the preregistered five-VM equivalence gate has not yet been evaluated.
+The treatment combines rustc/LLVM PGO and Rust/LLVM ThinLTO; it does not separate
+their individual effects. All Windows variants use byte-identical official
+native/WASM standard libraries. See the [protocol](arm64-ab-protocol.json).
+
+**The first treatment is invalid for attribution.** Its nominal LLVM training
+profile recorded target initialization but no meaningful Arm64 code generation.
+The static-LLVM training path retains stage 1 instead of relinking rustc against
+instrumented LLVM. Run
+[36805183652](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36805183652)
+was cancelled; all its samples and the v1 optimized artifact are excluded.
+The corrected build explicitly relinks rustc and requires nonzero
+`AArch64TargetLowering` and `InstCombine` counters, first from a standalone
+compiler smoke test and then from the exact upstream training corpus.
+This demonstrates why configured PGO is not proof of effective training;
+**it does not establish that official Windows x64 profiles have the same defect**.
+No defensible optimization-attribution percentage is available yet.
 
 ## Controls and limitations
 
@@ -202,10 +224,10 @@ python ci-benchmark\analyze_compiler.py compiler-evidence --output compiler-resu
    LLVM ThinLTO independently, preserving PGO and codegen-unit settings. Do not
    copy Linux's shared-LLVM configuration onto MSVC; bootstrap rejects it.
 3. **Profile the remaining common-target gap:** sample rustc/LLVM execution and
-   separate compiler phases on matched CPU strata. x64 already has PGO, so
-   missing PGO cannot explain its gap. Investigate hot passes, allocation and
+   separate compiler phases on matched CPU strata. x64 configures PGO, but
+   actual backend-training coverage should also be checked. Investigate hot passes, allocation and
    hardware throughput; Linux x64's BOLT is another controlled-build variable.
 
-No optimized compiler rebuild/A-B has yet been run. Native crypto/Opus build-script
+The corrected optimized compiler A/B is underway. Native crypto/Opus build-script
 profiling remains a separate full-workspace track. Cargo cache tuning may improve
 CI latency, but it does not explain this isolated CPU gap.

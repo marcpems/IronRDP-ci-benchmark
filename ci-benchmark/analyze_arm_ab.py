@@ -48,6 +48,8 @@ def load_matrix(root, protocol):
         if platform == "windows-arm64":
             if not index.get("identical_windows_stdlibs_verified"):
                 raise ValueError("Official/custom standard-library identity was not verified")
+            if protocol.get("llvm_profile_coverage_required") and not index.get("llvm_profile_coverage_verified"):
+                raise ValueError("Meaningful LLVM PGO training coverage was not verified")
             manifests = index["compiler_archive_sha256"]
             if set(manifests) != set(variants) - {"official"}:
                 raise ValueError("Incomplete compiler provenance")
