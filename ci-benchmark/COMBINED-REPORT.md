@@ -2,6 +2,15 @@
 
 ## Answer
 
+**Original native CI validation: the optimized Windows Arm64 toolchain reduces
+offline compilation wall time by 16.0% (95% interval 15.4-16.7%) and CPU time by
+16.0% (15.4-16.6%).** The five-command native sequence falls from **709.64 to
+595.99 seconds**, saving **113.65 seconds**. This confirms a substantial benefit
+on the original workload, but **not the full 18-19% graphics-workload saving**.
+All ten VMs completed successfully, including the original native tests.
+The [opt-in setup action](OPTIMIZED-TOOLCHAIN.md) and compiler package are reusable;
+all changes and releases remain in the fork, with upstream untouched.
+
 **Controlled Arm64 result: adding rustc/LLVM PGO and Rust/LLVM ThinLTO recovers
 44.7% of the observed Windows/Linux CPU-time gap (95% interval 38.0-50.6%),
 and 45.6% of the wall-time gap (37.8-53.4%).** Windows compilation uses **18.0%
@@ -20,6 +29,84 @@ The earlier [whole-workspace experiment](REPORT.md) found Windows/Linux native
 compile ratios of **1.82x on x64** and **1.69x on Arm64**. The new isolation suite
 reproduces approximately **2.0x / 1.7x** on a meaningful subset and retains a
 substantial gap when the same WASM target is compiled directly.
+
+## Original native CI validation: 16% less wall and CPU time
+
+[Run 36871453828](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36871453828)
+replays the original five native compilation commands, including full-workspace
+test compilation, on **five standard four-CPU VMs per OS**. Windows pairs official
+and optimized Rust; Linux is the official reference. Three measured rounds follow
+one excluded warmup: **45 measured blocks / 315 commands**, including separate
+common-package and WASM controls. All **60 untimed native correctness commands**
+passed (four commands per compiler/VM).
+
+| Native compilation component | Windows stock wall (s) | Optimized wall (s) | Wall reduction | CPU reduction |
+|---|---:|---:|---:|---:|
+| Build xtask | 4.06 | 3.69 | 8.9% | 12.6% |
+| Workspace test compilation | 540.08 | 460.60 | 14.7% | 15.4% |
+| Native TLS test compilation | 17.24 | 13.43 | 22.1% | 19.4% |
+| Gateway native TLS test compilation | 74.45 | 60.24 | 19.1% | 18.6% |
+| Gateway smartcard test compilation | 73.82 | 58.03 | 21.4% | 17.8% |
+| **Native total** | **709.64** | **595.99** | **16.0%** | **16.0%** |
+
+Total CPU falls from **2630.64 to 2208.94 CPU-seconds**. Linux native totals are
+**414.16 wall / 1549.24 CPU seconds**. The practical replacement closes **38.5%
+of this run's wall-time OS gap (36.3-40.8%)** and **39.0% of its CPU gap
+(37.0-41.1%)**; Windows/Linux ratios fall from **1.71x to 1.44x wall** and
+**1.70x to 1.43x CPU**. These are paired Windows effects and observed cross-runner
+gap equivalents, not hardware-normalized OS attribution.
+
+**Why the overall saving is below the earlier 18-19%:** full-workspace test
+compilation dominates and improves by only 14.7% wall. Cargo's disjoint activity
+intervals locate the remaining cost:
+
+| Native wall-time interval (seconds) | Linux stock | Windows stock | Windows optimized |
+|---|---:|---:|---:|
+| Compiler units active, no build scripts active | 329.94 | 532.16 | 418.25 |
+| Compiler units and build scripts overlap | 82.67 | 172.92 | 173.23 |
+| Build scripts active alone | 0.00 | 0.00 | 0.00 |
+| Outside Cargo-tracked units | 1.55 | 4.56 | 4.51 |
+
+Essentially all net wall savings occur in compiler-only intervals; the interval
+with active build scripts is unchanged. This supports investigating native
+build-script/C/C++ work next, but **overlap is not exclusive CPU attribution**:
+compiler units include linking, and the table cannot assign every overlapping
+second to a build script or LLVM. The independent common-package control saves
+**18.2% wall / 18.7% CPU**, and WASM saves **16.4% / 17.3%**. These controls are
+not added to the native total.
+
+**Controls and limits:** same pinned IronRDP/Rust versions, original Cargo
+profiles and package overrides (no forced codegen-unit setting), initially empty
+native outputs per compiler/round, shared outputs only within the five-command
+sequence. Setup, downloads, installation, correctness and uploads are excluded.
+Intervals use 10,000 paired whole-VM bootstrap draws, not 15 independent Windows
+trials. This is official-to-optimized adoption, unlike the earlier graphics
+optimization-only contrast against an LLD control; it does not measure an entire
+CI job, warm-cache builds, x64, or release-toolchain construction overhead.
+
+Both Windows variants disable MSBuild node reuse. Documented telemetry opt-out
+did not stop `vctip.exe`: the meter retains only exact `vswhere`-identified
+telemetry helpers in an owned Job Object and includes all their CPU within each
+timed build window, without charging post-build idle lifetime. Other persistent
+children fail the measurement. See [implementation details](OPTIMIZED-TOOLCHAIN.md).
+All pilots are excluded. The first full run, **36870970504**, was cancelled after
+a scheduling race in the synthetic meter check; its entire dataset is excluded.
+The accepted run uses a synchronized fixture and retains every measured sample.
+
+**Reproduction:** [endpoint estimates and intervals](NATIVE-AB-RESULTS.md),
+[machine-readable results](NATIVE-AB-RESULTS.json),
+[preregistered protocol](native-ab-protocol.json).
+Measured harness and reusable action commit:
+`c18826dab98f510a418493daa47642d7aac1f181`.
+The [v2 release](https://github.com/marcpems/IronRDP-ci-benchmark/releases/tag/arm64-compiler-ab-v2)
+contains `native-ab-raw-36871453828.zip` (2,025 files), SHA-256
+`648ae3f80db11b83e968bc64c97c3d6cbab4d7ed758801efd72e234ea2705e75`.
+
+```powershell
+gh release download arm64-compiler-ab-v2 --repo marcpems/IronRDP-ci-benchmark --pattern native-ab-raw-36871453828.zip
+Expand-Archive native-ab-raw-36871453828.zip -DestinationPath native-ab-evidence
+python ci-benchmark\analyze_native_ab.py native-ab-evidence --output native-ab-results
+```
 
 ## Initial real-project validation
 
@@ -279,10 +366,11 @@ python ci-benchmark\analyze_compiler.py compiler-evidence --output compiler-resu
 
 **Next investigations, ranked by likely impact and directness:**
 
-1. **Productionize and broaden the validated Windows Arm64 bundle:** preserve
-   static-LLVM relinking and real profile-coverage gates, then verify the gain on
-   the original full-workspace native CI before claiming whole-CI attribution.
-   The measured subset already saves approximately 18-19% of compilation time.
+1. **Qualify the Windows Arm64 bundle for a full Rust distribution:** the reusable
+   fork package now saves 16% on the original native compilation sequence.
+   Preserve static-LLVM relinking and real profile-coverage gates; broaden to
+   all distributed tools and Arm64EC, and measure release-build time and memory.
+   The experimental package is not a fully qualified official release.
 2. **Separate PGO/ThinLTO contributions and extend the controlled test to x64:**
    ablate rustc PGO, LLVM PGO and both ThinLTO settings to find the best benefit
    versus compiler-build cost. Verify actual x64 training coverage, not just flags.

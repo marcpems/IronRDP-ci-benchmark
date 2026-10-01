@@ -17,9 +17,16 @@ On `windows-11-arm`, after checking out this fork:
   shell: pwsh
 ```
 
-For another repository, reference
-`marcpems/IronRDP-ci-benchmark/.github/actions/setup-optimized-rust` at a reviewed
-full commit SHA. The action downloads only from this fork's fixed
+For another repository, use the exact action revision exercised by the full
+validation run:
+
+```yaml
+- uses: marcpems/IronRDP-ci-benchmark/.github/actions/setup-optimized-rust@c18826dab98f510a418493daa47642d7aac1f181
+- run: cargo build --locked
+  shell: pwsh
+```
+
+The action downloads only from this fork's fixed
 `arm64-compiler-ab-v2` release. It does not push, open PRs, or change upstream CI.
 
 The action installs official support components and sets **`RUSTC`**, while
@@ -78,3 +85,15 @@ is closed after the block and its untimed correctness checks.
 Both variants also set `MSBUILDDISABLENODEREUSE=1` so native build-script workers
 exit rather than persist across independently timed compiler blocks.
 The reusable installer does not change telemetry policies on consumers' machines.
+
+## Validated result
+
+[Full original-CI run 36871453828](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36871453828)
+completed on five Windows and five Linux Arm64 VMs. On Windows, the original
+five-command native compilation sequence fell from **709.64 to 595.99 seconds**:
+**16.0% less wall time (95% interval 15.4-16.7%)** and **16.0% less CPU time
+(15.4-16.6%)**. All original native correctness commands passed for both compilers.
+This is below the earlier 18-19% graphics-only saving, not a claim that the full
+GitHub Actions job becomes 18% faster. See the
+[combined report](COMBINED-REPORT.md#original-native-ci-validation-16-less-wall-and-cpu-time)
+for the breakdown, comparison limits and archived evidence.
