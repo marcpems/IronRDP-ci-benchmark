@@ -75,4 +75,6 @@ Per-command counter deltas include **all** CPU consumed during the build window,
 including those helpers; nothing is subtracted. Their idle/post-build lifetime
 is not compilation time. Other persistent descendants remain an error. The job
 is closed after the block and its untimed correctness checks.
+Both variants also set `MSBUILDDISABLENODEREUSE=1` so native build-script workers
+exit rather than persist across independently timed compiler blocks.
 The reusable installer does not change telemetry policies on consumers' machines.

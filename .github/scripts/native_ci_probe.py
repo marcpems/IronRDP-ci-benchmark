@@ -17,7 +17,8 @@ from process_metrics import measure, measurement_session
 
 COMMANDS = [*NATIVE_COMMANDS, ("common", COMMON_COMMAND), ("wasm", WASM_COMMAND)]
 PROFILE_ENV = {"CARGO_INCREMENTAL": "0", "CARGO_PROFILE_DEV_DEBUG": "0",
-               "CARGO_BUILD_JOBS": "4", "CARGO_NET_OFFLINE": "true"}
+               "CARGO_BUILD_JOBS": "4", "CARGO_NET_OFFLINE": "true",
+               "MSBUILDDISABLENODEREUSE": "1"}
 
 
 def paired_order(variants, vm, round_index):
