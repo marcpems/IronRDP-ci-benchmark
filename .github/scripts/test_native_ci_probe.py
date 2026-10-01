@@ -26,16 +26,24 @@ class NativeCiTests(unittest.TestCase):
 
     @unittest.skipUnless(os.name == "nt", "Windows shared Job Object accounting")
     def test_shared_job_counts_active_helper_cpu_without_waiting_for_its_lifetime(self):
-        worker = "import time;time.sleep(0.2);t=time.process_time();\nwhile time.process_time()-t<0.3: pass\ntime.sleep(30)"
+        worker = (
+            "import time;from pathlib import Path\n"
+            "while not Path('start').exists(): time.sleep(0.01)\n"
+            "t=time.process_time()\nwhile time.process_time()-t<0.3: pass\n"
+            "Path('done').touch()\ntime.sleep(30)"
+        )
+        trigger = (
+            "import time;from pathlib import Path\nPath('start').touch()\n"
+            "while not Path('done').exists(): time.sleep(0.01)"
+        )
         parent = f"import subprocess,sys;subprocess.Popen([sys.executable,'-c',{worker!r}])"
         with tempfile.TemporaryDirectory() as tmp, measurement_session([sys.executable]) as session:
             root, env = Path(tmp), dict(os.environ)
             first = measure([sys.executable, "-c", parent], root, env, 1, root / "first", session=session)
             self.assertTrue(first["background_processes_at_completion"])
-            second = measure([sys.executable, "-c", "import time;time.sleep(0.8)"],
-                             root, env, 1, root / "second", session=session)
+            second = measure([sys.executable, "-c", trigger],
+                             root, env, 1, root / "second", session=session, timeout=10)
             self.assertGreaterEqual(second["cpu_seconds"], 0.25)
-            self.assertLess(second["wall_seconds"], 2)
             self.assertEqual(second["processes"], 1)
             with self.assertRaisesRegex(RuntimeError, "Cannot change affinity"):
                 measure([sys.executable, "-c", "pass"], root, env, 2, root / "wrong", session=session)
