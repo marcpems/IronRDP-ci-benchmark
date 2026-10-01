@@ -124,6 +124,8 @@ def main():
         if args.compilers is None:
             parser.error("--compilers is required for downloads")
         download_compilers(args.compilers.resolve(), variants, args.release_tag)
+    for key in ("GH_TOKEN", "GITHUB_TOKEN"):
+        os.environ.pop(key, None)
     compilers = {"official": official}
     for variant in variants:
         if variant != "official":
