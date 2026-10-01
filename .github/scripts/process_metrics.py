@@ -100,6 +100,8 @@ def windows_measure(command, cwd, env, cores, stdout, stderr):
         "ResumeThread": ([handle], w.DWORD),
         "WaitForSingleObject": ([handle, w.DWORD], w.DWORD),
         "GetExitCodeProcess": ([handle, c.POINTER(w.DWORD)], w.BOOL),
+        "OpenProcess": ([w.DWORD, w.BOOL, w.DWORD], handle),
+        "QueryFullProcessImageNameW": ([handle, w.DWORD, w.LPWSTR, c.POINTER(w.DWORD)], w.BOOL),
         "TerminateProcess": ([handle, w.UINT], w.BOOL),
         "CloseHandle": ([handle], w.BOOL),
     }
@@ -157,14 +159,38 @@ def windows_measure(command, cwd, env, cores, stdout, stderr):
         code = w.DWORD()
         check(kernel.GetExitCodeProcess(info.process, c.byref(code)))
         accounting = Accounting()
-        check(kernel.QueryInformationJobObject(
-            job, 1, c.byref(accounting), c.sizeof(accounting), None,
-        ))
+        deadline = time.perf_counter() + 2
+        while True:
+            check(kernel.QueryInformationJobObject(
+                job, 1, c.byref(accounting), c.sizeof(accounting), None,
+            ))
+            if not accounting.active or time.perf_counter() >= deadline:
+                break
+            time.sleep(0.01)
         if accounting.active:
-            raise RuntimeError("measured command left running descendants")
+            class ProcessIds(c.Structure):
+                _fields_ = [("assigned", w.DWORD), ("count", w.DWORD),
+                            ("ids", size * max(64, accounting.active * 2))]
+            ids = ProcessIds()
+            check(kernel.QueryInformationJobObject(job, 3, c.byref(ids), c.sizeof(ids), None))
+            active = []
+            for pid in ids.ids[:ids.count]:
+                process = kernel.OpenProcess(0x1000, False, pid)
+                image = c.create_unicode_buffer(32768)
+                length = w.DWORD(len(image))
+                if process:
+                    try:
+                        found = kernel.QueryFullProcessImageNameW(process, 0, image, c.byref(length))
+                        active.append({"pid": pid, "image": image.value if found else "unavailable"})
+                    finally:
+                        kernel.CloseHandle(process)
+                else:
+                    active.append({"pid": pid, "image": "exited or inaccessible"})
+            raise RuntimeError(f"measured command left running descendants: {active}")
         completed = True
         return {
-            "wall_seconds": elapsed, "user_seconds": accounting.user / 10_000_000,
+            "wall_seconds": time.perf_counter() - start, "root_process_wall_seconds": elapsed,
+            "user_seconds": accounting.user / 10_000_000,
             "kernel_seconds": accounting.kernel / 10_000_000,
             "exit_code": code.value, "processes": accounting.processes,
             "affinity": allowed[:cores], "accounting": "Windows Job Object process tree",
