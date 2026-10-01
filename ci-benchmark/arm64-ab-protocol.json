@@ -1,6 +1,11 @@
 {
   "schema": 2,
   "llvm_profile_coverage_required": true,
+  "compiler_archive_sha256": {
+    "baseline-msvc": "6b7dde84f44b348197b86cc3df3ebe6c988bac071dcfe90c21f5745bc845f488",
+    "baseline-lld": "4e45b946b4ff381d2ead4b47f2531939f69d862e6e81bfcfe20d22a5edb89276",
+    "optimized": "a1f1b683efa54e798323c534edcdb83e9bedcebd933d0648339373e0433d7d07"
+  },
   "rust_version": "1.94.1",
   "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
   "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",

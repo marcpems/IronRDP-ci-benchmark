@@ -87,7 +87,7 @@ class ArmAnalysisTests(unittest.TestCase):
                         "identical_windows_stdlibs_verified": platform == "windows-arm64",
                         "llvm_profile_coverage_verified": platform == "windows-arm64",
                         "compiler_archive_sha256": {
-                            v: f"hash-{v}" for v in variants if v != "official"
+                            v: PROTOCOL["compiler_archive_sha256"][v] for v in variants if v != "official"
                         },
                     }
                     for variant in variants:

@@ -24,6 +24,8 @@ def verify_custom(root, variant, protocol):
         raise RuntimeError(f"Wrong compiler provenance: {variant}")
     if metadata["evaluation_stdlib_sha256"] != protocol["evaluation_stdlib_sha256"]:
         raise RuntimeError(f"Wrong evaluation standard libraries: {variant}")
+    if "compiler_archive_sha256" in protocol and metadata.get("archive_sha256") != protocol["compiler_archive_sha256"][variant]:
+        raise RuntimeError(f"Compiler archive is not the preregistered artifact: {variant}")
     if variant == "optimized" and protocol.get("llvm_profile_coverage_required"):
         repair = metadata.get("llvm_training_repair", {})
         for phase in ("instrumentation_smoke_coverage", "training_coverage"):

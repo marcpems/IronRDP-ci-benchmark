@@ -69,7 +69,12 @@ class ArmAbTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "different profile"):
                 verify_custom(root, "optimized", protocol)
             manifest["llvm_training_repair"]["profile_sha256"] = "profile"
+            manifest["archive_sha256"] = "archive"
             (root / "optimized.json").write_text(json.dumps(manifest))
+            protocol["compiler_archive_sha256"] = {"optimized": "wrong"}
+            with self.assertRaisesRegex(RuntimeError, "preregistered artifact"):
+                verify_custom(root, "optimized", protocol)
+            protocol["compiler_archive_sha256"]["optimized"] = "archive"
             path.write_bytes(b"modified")
             with self.assertRaises(RuntimeError):
                 verify_custom(root, "optimized", protocol)

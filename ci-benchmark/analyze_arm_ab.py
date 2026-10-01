@@ -53,6 +53,8 @@ def load_matrix(root, protocol):
             manifests = index["compiler_archive_sha256"]
             if set(manifests) != set(variants) - {"official"}:
                 raise ValueError("Incomplete compiler provenance")
+            if manifests != protocol["compiler_archive_sha256"]:
+                raise ValueError("Compiler artifacts differ from the preregistered hashes")
             hashes.add(json.dumps(manifests, sort_keys=True))
         total_rounds = protocol["warmup_rounds"] + protocol["measured_rounds"]
         expected_runs = {(v, r) for v in variants for r in range(total_rounds)}
