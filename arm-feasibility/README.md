@@ -15,6 +15,9 @@ An early treatment helper build exposed that `opt-dist` itself must be built wit
 explicit native `--host`/`--target`; otherwise the full distribution target list
 also tries to build the helper for Arm64EC using stage0 without Arm64EC std.
 This helper-only correction does not remove Arm64EC from final distribution.
+ThinLTO must explicitly retain `llvm.link-shared=false` on MSVC, since bootstrap
+otherwise defaults ThinLTO to unsupported shared LLVM. The treatment uses the
+bundled native LLVM librarian for bitcode archives, as well as native LLD.
 
 `patches/` contains only the two candidate upstream fixes: static LLVM relinking
 before training, and read-only clang runtime discovery during bootstrap dry-run.

@@ -147,8 +147,11 @@ def configure_args(source, treatment):
     if treatment:
         args += [
             "--set", "rust.lto=thin", "--set", "llvm.thin-lto=true",
+            "--set", "llvm.link-shared=false",
             "--set", "target." + HOST + ".linker=" +
             str(source / "citools" / "clang-rust" / "bin" / "lld-link.exe"),
+            "--set", "target." + HOST + ".ar=" +
+            str(source / "citools" / "clang-rust" / "bin" / "llvm-lib.exe"),
         ]
     return args
 

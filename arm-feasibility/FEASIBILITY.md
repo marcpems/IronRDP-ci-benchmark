@@ -76,9 +76,12 @@ percentiles or core-linear scaling are inferred from two observations.
 
 ## Fork experiment
 
-Full experiment:
+Baseline full experiment:
 [36991902911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911),
 commit `e00e642302874b9605cecf022d8ef9cc3ac6de3c`.
+Native-helper treatment:
+[36993262359](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36993262359),
+commit `b4737d330d8ff20ce0175bf84a3764972f390bc6`.
 Initial setup-only run:
 [36991037745](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991037745).
 The harness is isolated at branch `ci/arm-release-feasibility` in
@@ -127,6 +130,13 @@ The helper build is now explicitly restricted to native `--host`/`--target`;
 final dist still includes both targets. Only the treatment is launched again;
 the running baseline is neither restarted nor canceled. This is a necessary
 Arm opt-dist integration detail, not a measured optimization timeout.
+
+Run 36993262359 then built the native helper and rustc-perf successfully, but its
+first PGO compiler stage stopped in **1.82 seconds**: enabling LLVM ThinLTO defaults
+bootstrap to shared LLVM, which MSVC rejects. The treatment must explicitly keep
+`llvm.link-shared=false` and use the native LLVM librarian for bitcode archives.
+This is another early configuration failure, not an LLVM compile, six-hour limit,
+or memory failure. No expensive PGO compiler stage has been restarted.
 
 ## Full distribution versus release qualification
 

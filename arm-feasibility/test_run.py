@@ -21,7 +21,9 @@ class ExperimentTests(unittest.TestCase):
         self.assertIn("--target=aarch64-pc-windows-msvc,arm64ec-pc-windows-msvc", baseline)
         self.assertNotIn("llvm.thin-lto=true", baseline)
         self.assertIn("llvm.thin-lto=true", treatment)
+        self.assertIn("llvm.link-shared=false", treatment)
         self.assertIn("rust.lto=thin", treatment)
+        self.assertTrue(any(arg.endswith("llvm-lib.exe") for arg in treatment))
         self.assertFalse(any("DIA" in arg or "LLVM_TOOL_" in arg for arg in treatment))
 
     def test_credentials_are_not_in_build_environment(self):
