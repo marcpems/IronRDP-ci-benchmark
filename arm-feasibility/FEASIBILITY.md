@@ -58,6 +58,9 @@ These are warm-cache release-build observations, **not cold LLVM build timings**
 Fresh PGO, changed optimization flags, and profile-use hashes invalidate assumptions
 about retaining those hits. The fork experiment deliberately has no upstream
 S3 credentials/cache. Cold versus warm costs cannot be attributed solely to PGO.
+Likewise, a passing x64 opt-dist job does not demonstrate nonzero LLVM backend
+coverage: its inspected static-LLVM path still contains the rustc-retention
+behavior motivating the relink fix.
 
 The first merge's last substantial job was `test-x86_64-mingw-1` (~180 min);
 the second was x64 dist (~182 min). Arm dist was not the critical path. Conditional
@@ -79,9 +82,12 @@ percentiles or core-linear scaling are inferred from two observations.
 Baseline full experiment:
 [36991902911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911),
 commit `e00e642302874b9605cecf022d8ef9cc3ac6de3c`.
-Native-helper treatment:
+Native-helper treatment setup probe:
 [36993262359](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36993262359),
 commit `b4737d330d8ff20ce0175bf84a3764972f390bc6`.
+Explicit-static treatment:
+[36994829038](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038),
+commit `44b4a686db45ccace50ab2b86e467c6911a7e1b1`.
 Initial setup-only run:
 [36991037745](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991037745).
 The harness is isolated at branch `ci/arm-release-feasibility` in
@@ -159,6 +165,12 @@ signing, publication, or installer qualification has been measured here.
 Current main is not a drop-in extrapolation: its
 [opt-dist Stage 1](https://github.com/rust-lang/rust/blob/dba8825fe50879b22129271fb865944e384f7cce/src/tools/opt-dist/src/main.rs#L239-L305)
 profiles **rustdoc, Cargo and Clippy as well as rustc**, with additional training.
+Its LLVM submodule is
+[`1b9c0d5ff9bbe7634aead059efe6b11a7eeba145`](https://github.com/rust-lang/llvm-project/blob/1b9c0d5ff9bbe7634aead059efe6b11a7eeba145/cmake/Modules/LLVMVersion.cmake)
+(**23.1.1**) and rustc-perf is
+[`94df17b4a0fbafae5e534b6a754a6a6ee7d51708`](https://github.com/rust-lang/rust/tree/dba8825fe50879b22129271fb865944e384f7cce/src/tools/rustc-perf);
+host clang remains 20.1.3 in
+[install-clang.sh](https://github.com/rust-lang/rust/blob/dba8825fe50879b22129271fb865944e384f7cce/src/ci/scripts/install-clang.sh).
 The static LLVM training stage still retains rustc; main also still lacks the
 read-only runtime-discovery dry-run flag. A pinned 1.94.1 success would not prove
 the larger main pipeline fits.
