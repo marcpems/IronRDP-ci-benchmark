@@ -1,0 +1,1302 @@
+{
+  "protocol": {
+    "schema": 2,
+    "suite": "native",
+    "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+    "rust_version": "1.94.1",
+    "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+    "host": "x86_64-pc-windows-msvc",
+    "hosts": {
+      "windows-x64": "x86_64-pc-windows-msvc",
+      "linux-x64": "x86_64-unknown-linux-gnu"
+    },
+    "platforms": [
+      "windows-x64",
+      "linux-x64"
+    ],
+    "compiler_archive_sha256": {
+      "pgo-control": "c917ce3130fc56585ae777665df49e44a06182f5089390d244778745bde7e3ac",
+      "optimized": "a71c308facf775b9a1e1607636835b19fb60d6053f143e0bd43184ee24802dfc"
+    },
+    "compiler_metadata_sha256": {
+      "pgo-control": "c3df1c9fa0458328bd0e2c030f5ad4d12c19fd121b2d27da9ac284d9533ef80d",
+      "optimized": "e0bba6835e9dbd39e010ee8123b33abfcd8431da697ca77dbc5b53a351bd914e"
+    },
+    "llvm_profile_coverage_required": true,
+    "independent_vms_per_os": 5,
+    "warmup_rounds": 1,
+    "measured_rounds": 3,
+    "windows_variants": [
+      "official",
+      "pgo-control",
+      "optimized"
+    ],
+    "linux_variants": [
+      "official"
+    ],
+    "runner_labels": [
+      "windows-2025",
+      "ubuntu-24.04"
+    ],
+    "cores": 4,
+    "primary_endpoint": "native-total/wall_seconds",
+    "primary_contrast": "official Windows to optimized Windows: practical adoption",
+    "secondary_contrast": "pgo-control to optimized: added ThinLTO with byte-identical frontend and LLVM profiles",
+    "secondary_endpoints": "CPU time, each native command, original common-package and WASM controls",
+    "profile": "Original Cargo profiles and per-package test overrides; debug=0, incremental=0, jobs=4; no opt-level or codegen-unit overrides",
+    "cold_artifacts": "Fresh native/common/WASM targets per compiler/round; five native commands share one initially empty native target",
+    "order": "Counterbalanced rotation by VM and round, reversing alternate rounds",
+    "correctness": "All four original native cargo test commands per compiler/VM after round zero, outside timing; no extra filters or ignores",
+    "cpu_accounting": "Windows private shared Job Object deltas include all descendant CPU inside each timed window, including exact native vswhere-discovered vctip helpers; Linux wait4",
+    "native_process_isolation": "MSBUILDDISABLENODEREUSE=1 for every variant; only exact native vctip helpers may persist; no helper CPU subtraction",
+    "aggregation": "Sum five native command times per block; average measured rounds within VM; equal-weight VM means",
+    "uncertainty": "10000 seeded paired Windows / independently resampled Linux whole-VM bootstrap draws; 95% percentile intervals",
+    "exclusions": "Exclude pilot and fixed warmup; reject incomplete/failed matrices and mixed workflow attempts; no slow-sample trimming",
+    "scope": "Offline cold compilation only; not whole CI elapsed time, production compiler construction, or proof that official x64 LLVM PGO is ineffective"
+  },
+  "bootstrap_draws": 10000,
+  "bootstrap_seed": 1012026,
+  "results": [
+    {
+      "component": "xtask-bootstrap",
+      "metric": "wall_seconds",
+      "official_windows": 4.715906866666592,
+      "optimized_windows": 3.5437585799997273,
+      "official_linux": 2.23884886720006,
+      "saved_seconds": 1.1721482866668649,
+      "reduction_fraction": 0.24855204307615816,
+      "windows_linux_gap_seconds": 2.477057999466532,
+      "gap_closed_fraction": 0.4732017929815543,
+      "pgo_control_windows": 3.706517339999967,
+      "thinlto_saved_seconds": 0.1627587600002398,
+      "thinlto_reduction_fraction": 0.04391150642782134,
+      "ci95": {
+        "saved_seconds": [
+          0.7238708533337559,
+          1.587521506666841
+        ],
+        "reduction_fraction": [
+          0.17819228436773862,
+          0.29615597097346985
+        ],
+        "windows_linux_gap_seconds": [
+          1.557036238438179,
+          3.315352132818028
+        ],
+        "gap_closed_fraction": [
+          0.3804262408724207,
+          0.5662676825839228
+        ],
+        "thinlto_saved_seconds": [
+          0.0015778533334618317,
+          0.3025100066670352
+        ],
+        "thinlto_reduction_fraction": [
+          0.00042488005002258344,
+          0.078673531375466
+        ]
+      }
+    },
+    {
+      "component": "xtask-bootstrap",
+      "metric": "cpu_seconds",
+      "official_windows": 13.463541666666666,
+      "optimized_windows": 9.821875,
+      "official_linux": 6.813496733333333,
+      "saved_seconds": 3.6416666666666657,
+      "reduction_fraction": 0.27048355899419724,
+      "windows_linux_gap_seconds": 6.650044933333333,
+      "gap_closed_fraction": 0.547615347441161,
+      "pgo_control_windows": 10.561458333333334,
+      "thinlto_saved_seconds": 0.7395833333333339,
+      "thinlto_reduction_fraction": 0.07002662984515243,
+      "ci95": {
+        "saved_seconds": [
+          2.841666666666666,
+          4.417708333333335
+        ],
+        "reduction_fraction": [
+          0.25551163812033384,
+          0.28781932107691255
+        ],
+        "windows_linux_gap_seconds": [
+          3.788619684999999,
+          9.145960021666667
+        ],
+        "gap_closed_fraction": [
+          0.45425571999329245,
+          0.7623699248387664
+        ],
+        "thinlto_saved_seconds": [
+          0.5072916666666671,
+          0.9375000000000018
+        ],
+        "thinlto_reduction_fraction": [
+          0.04569597069597067,
+          0.08807634816603417
+        ]
+      }
+    },
+    {
+      "component": "workspace-tests",
+      "metric": "wall_seconds",
+      "official_windows": 746.6742257533333,
+      "optimized_windows": 568.62773228,
+      "official_linux": 384.3405858672,
+      "saved_seconds": 178.04649347333327,
+      "reduction_fraction": 0.23845271114547834,
+      "windows_linux_gap_seconds": 362.3336398861333,
+      "gap_closed_fraction": 0.49138825069978603,
+      "pgo_control_windows": 615.6604951800001,
+      "thinlto_saved_seconds": 47.03276290000008,
+      "thinlto_reduction_fraction": 0.07639399192934923,
+      "ci95": {
+        "saved_seconds": [
+          136.16786105333352,
+          218.65840094666635
+        ],
+        "reduction_fraction": [
+          0.2189622478690841,
+          0.2539075684186211
+        ],
+        "windows_linux_gap_seconds": [
+          210.44500573761022,
+          495.53916045686645
+        ],
+        "gap_closed_fraction": [
+          0.41188327724628465,
+          0.6602456044006249
+        ],
+        "thinlto_saved_seconds": [
+          38.533741046666705,
+          55.09458696666695
+        ],
+        "thinlto_reduction_fraction": [
+          0.07038044028783863,
+          0.08183975992222359
+        ]
+      }
+    },
+    {
+      "component": "workspace-tests",
+      "metric": "cpu_seconds",
+      "official_windows": 2813.1927083333335,
+      "optimized_windows": 2130.670833333333,
+      "official_linux": 1473.3272452666665,
+      "saved_seconds": 682.5218750000004,
+      "reduction_fraction": 0.2426146893450318,
+      "windows_linux_gap_seconds": 1339.865463066667,
+      "gap_closed_fraction": 0.5093958265316079,
+      "pgo_control_windows": 2293.0302083333336,
+      "thinlto_saved_seconds": 162.35937500000045,
+      "thinlto_reduction_fraction": 0.070805597941952,
+      "ci95": {
+        "saved_seconds": [
+          523.7208333333335,
+          838.598958333333
+        ],
+        "reduction_fraction": [
+          0.2235167452653768,
+          0.2576542195006043
+        ],
+        "windows_linux_gap_seconds": [
+          751.6687038450002,
+          1854.2983223333335
+        ],
+        "gap_closed_fraction": [
+          0.4222473141197752,
+          0.7072548456385882
+        ],
+        "thinlto_saved_seconds": [
+          134.37604166666665,
+          188.2208333333333
+        ],
+        "thinlto_reduction_fraction": [
+          0.06891272860514963,
+          0.07270480914911737
+        ]
+      }
+    },
+    {
+      "component": "native-tls-tests",
+      "metric": "wall_seconds",
+      "official_windows": 17.428449839999786,
+      "optimized_windows": 13.99911767333321,
+      "official_linux": 9.761989563999986,
+      "saved_seconds": 3.429332166666576,
+      "reduction_fraction": 0.19676633310186686,
+      "windows_linux_gap_seconds": 7.6664602759998,
+      "gap_closed_fraction": 0.4473162376386734,
+      "pgo_control_windows": 15.41083969333325,
+      "thinlto_saved_seconds": 1.41172202000004,
+      "thinlto_reduction_fraction": 0.0916057819101676,
+      "ci95": {
+        "saved_seconds": [
+          2.563391966666222,
+          4.348881579998727
+        ],
+        "reduction_fraction": [
+          0.15806945212476017,
+          0.24221111285229563
+        ],
+        "windows_linux_gap_seconds": [
+          4.318811525694462,
+          10.42851090818136
+        ],
+        "gap_closed_fraction": [
+          0.3251017951380034,
+          0.6927703899932631
+        ],
+        "thinlto_saved_seconds": [
+          0.579664480000126,
+          2.8228548801662585
+        ],
+        "thinlto_reduction_fraction": [
+          0.03608297206574577,
+          0.1647250880077146
+        ]
+      }
+    },
+    {
+      "component": "native-tls-tests",
+      "metric": "cpu_seconds",
+      "official_windows": 52.45,
+      "optimized_windows": 40.64895833333333,
+      "official_linux": 34.031110733333335,
+      "saved_seconds": 11.80104166666667,
+      "reduction_fraction": 0.22499602796313956,
+      "windows_linux_gap_seconds": 18.418889266666667,
+      "gap_closed_fraction": 0.6407032202546243,
+      "pgo_control_windows": 44.2,
+      "thinlto_saved_seconds": 3.55104166666667,
+      "thinlto_reduction_fraction": 0.0803403092006034,
+      "ci95": {
+        "saved_seconds": [
+          9.151041666666664,
+          14.27708333333333
+        ],
+        "reduction_fraction": [
+          0.2066582060463218,
+          0.24014821676702186
+        ],
+        "windows_linux_gap_seconds": [
+          7.110036599999998,
+          28.456360533333335
+        ],
+        "gap_closed_fraction": null,
+        "thinlto_saved_seconds": [
+          2.5812500000000043,
+          5.069791666666667
+        ],
+        "thinlto_reduction_fraction": [
+          0.06315742054643333,
+          0.10482657936648382
+        ]
+      }
+    },
+    {
+      "component": "gateway-native-tls-tests",
+      "metric": "wall_seconds",
+      "official_windows": 94.35965781333343,
+      "optimized_windows": 72.43051049999983,
+      "official_linux": 50.99875122000003,
+      "saved_seconds": 21.9291473133336,
+      "reduction_fraction": 0.2323996061612987,
+      "windows_linux_gap_seconds": 43.3609065933334,
+      "gap_closed_fraction": 0.5057354431953952,
+      "pgo_control_windows": 78.62387992666669,
+      "thinlto_saved_seconds": 6.193369426666862,
+      "thinlto_reduction_fraction": 0.07877211646694977,
+      "ci95": {
+        "saved_seconds": [
+          16.61894125333353,
+          26.859734373333595
+        ],
+        "reduction_fraction": [
+          0.21253756367432008,
+          0.24805849471639874
+        ],
+        "windows_linux_gap_seconds": [
+          23.704773714743553,
+          60.60972521413338
+        ],
+        "gap_closed_fraction": [
+          0.4104000962283971,
+          0.7337078332017103
+        ],
+        "thinlto_saved_seconds": [
+          4.933497760000385,
+          7.3881255200000595
+        ],
+        "thinlto_reduction_fraction": [
+          0.0738998811240035,
+          0.08442542365007667
+        ]
+      }
+    },
+    {
+      "component": "gateway-native-tls-tests",
+      "metric": "cpu_seconds",
+      "official_windows": 356.09583333333336,
+      "optimized_windows": 268.53229166666665,
+      "official_linux": 194.5090866,
+      "saved_seconds": 87.56354166666671,
+      "reduction_fraction": 0.24589881001135003,
+      "windows_linux_gap_seconds": 161.58674673333337,
+      "gap_closed_fraction": 0.5418980419921,
+      "pgo_control_windows": 291.7885416666667,
+      "thinlto_saved_seconds": 23.256250000000023,
+      "thinlto_reduction_fraction": 0.07970241006436604,
+      "ci95": {
+        "saved_seconds": [
+          67.15104166666666,
+          107.39895833333333
+        ],
+        "reduction_fraction": [
+          0.22597872460703042,
+          0.262918675363141
+        ],
+        "windows_linux_gap_seconds": [
+          86.35260129333354,
+          227.657345575
+        ],
+        "gap_closed_fraction": [
+          0.4365209434249658,
+          0.8029141917231976
+        ],
+        "thinlto_saved_seconds": [
+          19.462500000000006,
+          27.05000000000001
+        ],
+        "thinlto_reduction_fraction": [
+          0.07362198730381486,
+          0.0846683852136512
+        ]
+      }
+    },
+    {
+      "component": "gateway-smartcard-tests",
+      "metric": "wall_seconds",
+      "official_windows": 94.23086603999988,
+      "optimized_windows": 72.03742893333335,
+      "official_linux": 45.588558451200015,
+      "saved_seconds": 22.193437106666536,
+      "reduction_fraction": 0.235521947736803,
+      "windows_linux_gap_seconds": 48.642307588799866,
+      "gap_closed_fraction": 0.4562578998981678,
+      "pgo_control_windows": 77.71653378666663,
+      "thinlto_saved_seconds": 5.6791048533332855,
+      "thinlto_reduction_fraction": 0.07307460300433029,
+      "ci95": {
+        "saved_seconds": [
+          16.49593599999995,
+          27.890938213333115
+        ],
+        "reduction_fraction": [
+          0.2084968141324051,
+          0.2613194991787297
+        ],
+        "windows_linux_gap_seconds": [
+          29.31878979786665,
+          65.41879382389618
+        ],
+        "gap_closed_fraction": [
+          0.3837674748017208,
+          0.588744792345903
+        ],
+        "thinlto_saved_seconds": [
+          4.098537086666568,
+          7.2063324866667955
+        ],
+        "thinlto_reduction_fraction": [
+          0.06487631298356962,
+          0.08318447406815153
+        ]
+      }
+    },
+    {
+      "component": "gateway-smartcard-tests",
+      "metric": "cpu_seconds",
+      "official_windows": 355.52708333333334,
+      "optimized_windows": 259.40625,
+      "official_linux": 176.99494333333334,
+      "saved_seconds": 96.12083333333334,
+      "reduction_fraction": 0.27036149379149504,
+      "windows_linux_gap_seconds": 178.53214,
+      "gap_closed_fraction": 0.5383951222078743,
+      "pgo_control_windows": 281.99583333333334,
+      "thinlto_saved_seconds": 22.589583333333337,
+      "thinlto_reduction_fraction": 0.08010608903795861,
+      "ci95": {
+        "saved_seconds": [
+          72.79166666666666,
+          119.36979166666669
+        ],
+        "reduction_fraction": [
+          0.2405478884717639,
+          0.29727673899204826
+        ],
+        "windows_linux_gap_seconds": [
+          104.61173142500002,
+          242.38760784166664
+        ],
+        "gap_closed_fraction": [
+          0.4463118522301522,
+          0.7174484810965084
+        ],
+        "thinlto_saved_seconds": [
+          17.45416666666668,
+          28.772916666666674
+        ],
+        "thinlto_reduction_fraction": [
+          0.06909523013795282,
+          0.09293482944654152
+        ]
+      }
+    },
+    {
+      "component": "common",
+      "metric": "wall_seconds",
+      "official_windows": 111.52937937999995,
+      "optimized_windows": 78.42032538000004,
+      "official_linux": 56.05172681133331,
+      "saved_seconds": 33.109053999999915,
+      "reduction_fraction": 0.29686396700183926,
+      "windows_linux_gap_seconds": 55.47765256866664,
+      "gap_closed_fraction": 0.5967998368175307,
+      "pgo_control_windows": 85.73655409333327,
+      "thinlto_saved_seconds": 7.316228713333231,
+      "thinlto_reduction_fraction": 0.08533383211749734,
+      "ci95": {
+        "saved_seconds": [
+          23.176827653333376,
+          43.04128034666647
+        ],
+        "reduction_fraction": [
+          0.2559197947230543,
+          0.3327520526850668
+        ],
+        "windows_linux_gap_seconds": [
+          30.194539925683785,
+          77.78082726475286
+        ],
+        "gap_closed_fraction": [
+          0.49844339903207885,
+          0.7942157086243644
+        ],
+        "thinlto_saved_seconds": [
+          5.825090259999698,
+          8.752632866666573
+        ],
+        "thinlto_reduction_fraction": [
+          0.07843102168844564,
+          0.0930921028902348
+        ]
+      }
+    },
+    {
+      "component": "common",
+      "metric": "cpu_seconds",
+      "official_windows": 394.37916666666666,
+      "optimized_windows": 279.4322916666667,
+      "official_linux": 205.66042833333333,
+      "saved_seconds": 114.94687499999998,
+      "reduction_fraction": 0.29146284772479947,
+      "windows_linux_gap_seconds": 188.71873833333333,
+      "gap_closed_fraction": 0.6090909467451486,
+      "pgo_control_windows": 306.078125,
+      "thinlto_saved_seconds": 26.645833333333314,
+      "thinlto_reduction_fraction": 0.08705566048973057,
+      "ci95": {
+        "saved_seconds": [
+          84.92291666666671,
+          144.828125
+        ],
+        "reduction_fraction": [
+          0.26223883173480234,
+          0.31615208023268254
+        ],
+        "windows_linux_gap_seconds": [
+          101.75334140000004,
+          263.7061569316666
+        ],
+        "gap_closed_fraction": [
+          0.5034836558221831,
+          0.8520027229247666
+        ],
+        "thinlto_saved_seconds": [
+          21.648958333333354,
+          31.665625000000034
+        ],
+        "thinlto_reduction_fraction": [
+          0.08023635622063101,
+          0.09461756915083286
+        ]
+      }
+    },
+    {
+      "component": "wasm",
+      "metric": "wall_seconds",
+      "official_windows": 174.40395799999993,
+      "optimized_windows": 134.68907182666703,
+      "official_linux": 93.77249746279999,
+      "saved_seconds": 39.7148861733329,
+      "reduction_fraction": 0.22771780313227133,
+      "windows_linux_gap_seconds": 80.63146053719994,
+      "gap_closed_fraction": 0.4925482672487389,
+      "pgo_control_windows": 144.53060461333328,
+      "thinlto_saved_seconds": 9.84153278666625,
+      "thinlto_reduction_fraction": 0.0680930714501304,
+      "ci95": {
+        "saved_seconds": [
+          31.95417611333295,
+          47.47559623333285
+        ],
+        "reduction_fraction": [
+          0.2114804153565448,
+          0.24345348509136674
+        ],
+        "windows_linux_gap_seconds": [
+          45.72872076786658,
+          111.36095392444325
+        ],
+        "gap_closed_fraction": [
+          0.39512632291637906,
+          0.720751444539045
+        ],
+        "thinlto_saved_seconds": [
+          6.818855326666437,
+          13.5594253533327
+        ],
+        "thinlto_reduction_fraction": [
+          0.05284742705050458,
+          0.08623932299903127
+        ]
+      }
+    },
+    {
+      "component": "wasm",
+      "metric": "cpu_seconds",
+      "official_windows": 647.10625,
+      "optimized_windows": 501.33125,
+      "official_linux": 359.97651526666664,
+      "saved_seconds": 145.77500000000003,
+      "reduction_fraction": 0.22527212494084245,
+      "windows_linux_gap_seconds": 287.1297347333334,
+      "gap_closed_fraction": 0.5076973310875864,
+      "pgo_control_windows": 536.7864583333334,
+      "thinlto_saved_seconds": 35.45520833333336,
+      "thinlto_reduction_fraction": 0.06605086209405901,
+      "ci95": {
+        "saved_seconds": [
+          112.24270833333333,
+          178.19791666666663
+        ],
+        "reduction_fraction": [
+          0.20842512472965335,
+          0.24079797910418152
+        ],
+        "windows_linux_gap_seconds": [
+          146.7517204083333,
+          409.09497220000003
+        ],
+        "gap_closed_fraction": [
+          0.4038032794374884,
+          0.778889070256548
+        ],
+        "thinlto_saved_seconds": [
+          26.90833333333336,
+          44.863541666666606
+        ],
+        "thinlto_reduction_fraction": [
+          0.05650344134918152,
+          0.07606886961652551
+        ]
+      }
+    },
+    {
+      "component": "native-total",
+      "metric": "wall_seconds",
+      "official_windows": 957.4091063133329,
+      "optimized_windows": 730.6385479666661,
+      "official_linux": 492.92873396960005,
+      "saved_seconds": 226.7705583466668,
+      "reduction_fraction": 0.23685857681037265,
+      "windows_linux_gap_seconds": 464.4803723437329,
+      "gap_closed_fraction": 0.48822420030883046,
+      "pgo_control_windows": 791.1182659266667,
+      "thinlto_saved_seconds": 60.479717960000585,
+      "thinlto_reduction_fraction": 0.07644839029112595,
+      "ci95": {
+        "saved_seconds": [
+          172.53037821333407,
+          278.5141581799993
+        ],
+        "reduction_fraction": [
+          0.21679100836868126,
+          0.25274837689317764
+        ],
+        "windows_linux_gap_seconds": [
+          269.1538455017718,
+          634.4786026869145
+        ],
+        "gap_closed_fraction": [
+          0.408173171136046,
+          0.6576539356385106
+        ],
+        "thinlto_saved_seconds": [
+          49.68493019333448,
+          70.99735720666763
+        ],
+        "thinlto_reduction_fraction": [
+          0.07112190734064357,
+          0.07983127074620577
+        ]
+      }
+    },
+    {
+      "component": "native-total",
+      "metric": "cpu_seconds",
+      "official_windows": 3590.7291666666665,
+      "optimized_windows": 2709.0802083333333,
+      "official_linux": 1885.6758826666667,
+      "saved_seconds": 881.6489583333332,
+      "reduction_fraction": 0.24553479736590175,
+      "windows_linux_gap_seconds": 1705.0532839999998,
+      "gap_closed_fraction": 0.5170800036612423,
+      "pgo_control_windows": 2921.5760416666667,
+      "thinlto_saved_seconds": 212.4958333333334,
+      "thinlto_reduction_fraction": 0.07273328857533731,
+      "ci95": {
+        "saved_seconds": [
+          673.4052083333331,
+          1084.0624999999995
+        ],
+        "reduction_fraction": [
+          0.22531559325205694,
+          0.2614380439931546
+        ],
+        "windows_linux_gap_seconds": [
+          950.108137851667,
+          2359.632007281666
+        ],
+        "gap_closed_fraction": [
+          0.4267142740726622,
+          0.7227438359915795
+        ],
+        "thinlto_saved_seconds": [
+          174.5687499999999,
+          246.35937499999955
+        ],
+        "thinlto_reduction_fraction": [
+          0.07048748696106462,
+          0.07519281422844486
+        ]
+      }
+    }
+  ],
+  "github_run_id": "37001433534",
+  "github_run_attempt": "1",
+  "native_wall_partitions": [
+    {
+      "platform": "linux-x64",
+      "vm": 1,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 337.1300000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 104.62999999999991,
+      "outside_tracked_units_seconds": 1.5927509610002817
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 1,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 333.03000000000003,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 108.30999999999993,
+      "outside_tracked_units_seconds": 1.54584852000011
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 1,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 327.9,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 99.60999999999994,
+      "outside_tracked_units_seconds": 1.6414898629993935
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 2,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 272.21000000000004,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 85.07999999999997,
+      "outside_tracked_units_seconds": 1.0753192219999936
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 2,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 267.05,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 82.67999999999996,
+      "outside_tracked_units_seconds": 1.0549080260000794
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 2,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 269.1700000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 84.58999999999996,
+      "outside_tracked_units_seconds": 1.0716567709998974
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 3,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 450.08000000000015,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 128.95999999999987,
+      "outside_tracked_units_seconds": 1.6784520400000766
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 3,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 432.0100000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 126.83999999999986,
+      "outside_tracked_units_seconds": 1.6181665090001247
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 3,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 420.1500000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 125.67999999999986,
+      "outside_tracked_units_seconds": 1.578647423000291
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 4,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 424.4100000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 127.29999999999986,
+      "outside_tracked_units_seconds": 1.568737284000186
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 4,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 425.27000000000015,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 127.29999999999987,
+      "outside_tracked_units_seconds": 1.5936120650000487
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 4,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 424.6100000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 125.83999999999985,
+      "outside_tracked_units_seconds": 1.5712442329998466
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 5,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 427.74000000000007,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 126.36999999999988,
+      "outside_tracked_units_seconds": 1.6176704899999645
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 5,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 427.31000000000006,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 126.78999999999986,
+      "outside_tracked_units_seconds": 1.5897216450001692
+    },
+    {
+      "platform": "linux-x64",
+      "vm": 5,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 427.12000000000006,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 126.38999999999992,
+      "outside_tracked_units_seconds": 1.5727844920004435
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 830.5,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 231.17999999999995,
+      "outside_tracked_units_seconds": 3.6144154999987483
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "optimized",
+      "round": 1,
+      "compiler_units_only_seconds": 600.9400000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 229.91999999999993,
+      "outside_tracked_units_seconds": 3.640557299999811
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "pgo-control",
+      "round": 1,
+      "compiler_units_only_seconds": 668.5100000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 262.3299999999998,
+      "outside_tracked_units_seconds": 3.794636100001538
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "optimized",
+      "round": 2,
+      "compiler_units_only_seconds": 591.7400000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 229.80999999999992,
+      "outside_tracked_units_seconds": 3.607523599997147
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 815.3600000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 228.22,
+      "outside_tracked_units_seconds": 3.5823617000003383
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "pgo-control",
+      "round": 2,
+      "compiler_units_only_seconds": 646.35,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 226.22999999999988,
+      "outside_tracked_units_seconds": 3.618302800001355
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "optimized",
+      "round": 3,
+      "compiler_units_only_seconds": 588.3600000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 227.44999999999993,
+      "outside_tracked_units_seconds": 3.5509098999986266
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "pgo-control",
+      "round": 3,
+      "compiler_units_only_seconds": 646.3100000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 229.02999999999983,
+      "outside_tracked_units_seconds": 3.550859700000846
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 1,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 823.9500000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 230.61999999999983,
+      "outside_tracked_units_seconds": 3.5276539000003444
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "pgo-control",
+      "round": 1,
+      "compiler_units_only_seconds": 713.1,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 246.14999999999998,
+      "outside_tracked_units_seconds": 3.8274132000014616
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 899.1400000000003,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 267.7999999999997,
+      "outside_tracked_units_seconds": 3.919566399999394
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "optimized",
+      "round": 1,
+      "compiler_units_only_seconds": 604.8300000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 236.09999999999997,
+      "outside_tracked_units_seconds": 3.6562322999999934
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 886.8800000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 264.7999999999998,
+      "outside_tracked_units_seconds": 3.780646699999335
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "pgo-control",
+      "round": 2,
+      "compiler_units_only_seconds": 651.1600000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 250.85999999999993,
+      "outside_tracked_units_seconds": 3.675099000002284
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "optimized",
+      "round": 2,
+      "compiler_units_only_seconds": 616.2600000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 235.3599999999999,
+      "outside_tracked_units_seconds": 3.723227399998741
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 848.4800000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 259.1499999999999,
+      "outside_tracked_units_seconds": 3.5989883000011167
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "optimized",
+      "round": 3,
+      "compiler_units_only_seconds": 617.0700000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 237.28999999999994,
+      "outside_tracked_units_seconds": 3.66830600000201
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 2,
+      "variant": "pgo-control",
+      "round": 3,
+      "compiler_units_only_seconds": 652.6400000000003,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 249.2999999999999,
+      "outside_tracked_units_seconds": 3.6810018999972263
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "optimized",
+      "round": 1,
+      "compiler_units_only_seconds": 362.29,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 146.02999999999997,
+      "outside_tracked_units_seconds": 2.6366723000002996
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "pgo-control",
+      "round": 1,
+      "compiler_units_only_seconds": 393.0600000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 171.83999999999995,
+      "outside_tracked_units_seconds": 2.8053288999995836
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 483.6700000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 162.08999999999997,
+      "outside_tracked_units_seconds": 3.0946811999994654
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "pgo-control",
+      "round": 2,
+      "compiler_units_only_seconds": 394.4200000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 152.35999999999993,
+      "outside_tracked_units_seconds": 3.333316900001356
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "optimized",
+      "round": 2,
+      "compiler_units_only_seconds": 365.61999999999995,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 146.02999999999997,
+      "outside_tracked_units_seconds": 3.0268181999987602
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 481.71,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 157.68999999999997,
+      "outside_tracked_units_seconds": 3.0520511000001163
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "pgo-control",
+      "round": 3,
+      "compiler_units_only_seconds": 394.42999999999995,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 159.42000000000007,
+      "outside_tracked_units_seconds": 3.902929199998999
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 490.1500000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 155.29,
+      "outside_tracked_units_seconds": 3.6737282000007996
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 3,
+      "variant": "optimized",
+      "round": 3,
+      "compiler_units_only_seconds": 365.5000000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 143.95999999999992,
+      "outside_tracked_units_seconds": 3.698705800000444
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 842.2100000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 258.0599999999999,
+      "outside_tracked_units_seconds": 3.566434899998497
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "optimized",
+      "round": 1,
+      "compiler_units_only_seconds": 598.1200000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 229.1699999999998,
+      "outside_tracked_units_seconds": 3.6101697000012467
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "pgo-control",
+      "round": 1,
+      "compiler_units_only_seconds": 662.3500000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 240.54999999999987,
+      "outside_tracked_units_seconds": 5.552277600000419
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "optimized",
+      "round": 2,
+      "compiler_units_only_seconds": 595.9000000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 230.89999999999984,
+      "outside_tracked_units_seconds": 3.5625136000010325
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 862.1400000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 257.96999999999997,
+      "outside_tracked_units_seconds": 3.5665854999975624
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "pgo-control",
+      "round": 2,
+      "compiler_units_only_seconds": 655.49,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 244.30999999999986,
+      "outside_tracked_units_seconds": 3.5341474999998574
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "optimized",
+      "round": 3,
+      "compiler_units_only_seconds": 586.2100000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 227.56999999999988,
+      "outside_tracked_units_seconds": 3.4591930999983527
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "pgo-control",
+      "round": 3,
+      "compiler_units_only_seconds": 636.0799999999999,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 237.82999999999996,
+      "outside_tracked_units_seconds": 3.48469699999791
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 4,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 853.2600000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 257.1399999999999,
+      "outside_tracked_units_seconds": 4.085886499998632
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "pgo-control",
+      "round": 1,
+      "compiler_units_only_seconds": 499.83000000000004,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 182.39999999999992,
+      "outside_tracked_units_seconds": 3.6588721999992333
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "official",
+      "round": 1,
+      "compiler_units_only_seconds": 654.9300000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 187.27999999999992,
+      "outside_tracked_units_seconds": 5.568663399999403
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "optimized",
+      "round": 1,
+      "compiler_units_only_seconds": 458.0200000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 176.42999999999992,
+      "outside_tracked_units_seconds": 4.642210900000245
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "official",
+      "round": 2,
+      "compiler_units_only_seconds": 625.7100000000002,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 183.53999999999982,
+      "outside_tracked_units_seconds": 3.5540696999997374
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "pgo-control",
+      "round": 2,
+      "compiler_units_only_seconds": 489.6300000000001,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 183.80999999999995,
+      "outside_tracked_units_seconds": 3.239430399997727
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "optimized",
+      "round": 2,
+      "compiler_units_only_seconds": 456.77,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 175.03999999999996,
+      "outside_tracked_units_seconds": 3.0806855999994633
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "official",
+      "round": 3,
+      "compiler_units_only_seconds": 622.19,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 184.94999999999993,
+      "outside_tracked_units_seconds": 2.8908617000009427
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "optimized",
+      "round": 3,
+      "compiler_units_only_seconds": 455.07000000000016,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 173.25999999999982,
+      "outside_tracked_units_seconds": 2.994493799995277
+    },
+    {
+      "platform": "windows-x64",
+      "vm": 5,
+      "variant": "pgo-control",
+      "round": 3,
+      "compiler_units_only_seconds": 488.98000000000013,
+      "build_scripts_only_seconds": 0.0,
+      "compiler_and_build_scripts_overlap_seconds": 183.29999999999995,
+      "outside_tracked_units_seconds": 3.0556765000007657
+    }
+  ]
+}

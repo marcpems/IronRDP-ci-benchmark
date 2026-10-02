@@ -96,9 +96,13 @@ manifest instead of Arm64. It preserves official support tools and remains opt-i
 - uses: marcpems/IronRDP-ci-benchmark/.github/actions/setup-optimized-rust@d0c9c1a23361750637fa9314e377e6dee2ffe053
 ```
 
-Both x64 compiler construction and the original-test integration pilot passed.
-**The full x64 performance comparison is still pending; do not apply the Arm64
-16% saving to x64.** The x64 release uses freshly trained x64 profiles shared
+Both x64 compiler construction and the full 20-job evaluation passed.
+**The original native compilation sequence saves 23.7% wall time
+(95% interval 21.7-25.3%) and 24.6% CPU (22.5-26.1%)** against official Rust.
+Against the matched effective-PGO control, added ThinLTO saves **7.6% wall /
+7.3% CPU**. These are compilation-only results, not full Rust distribution
+qualification or a claim about the whole CI job. All 80 untimed original native
+correctness commands passed. The x64 release uses freshly trained x64 profiles shared
 between the PGO control and ThinLTO treatment, not Arm64 profiles.
 See [scope and build evidence](WINDOWS-X64-OPTIMIZATION.md).
 

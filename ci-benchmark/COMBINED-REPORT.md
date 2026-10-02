@@ -2,6 +2,14 @@
 
 ## Answer
 
+**Windows x64 is now validated too:** original offline native compilation falls
+from **957.41 to 730.64 seconds**, a **23.7% wall reduction (95% interval
+21.7-25.3%)** and **24.6% CPU reduction (22.5-26.1%)** against official Rust.
+Added ThinLTO alone, against the matched effective-PGO control with identical
+profiles, saves **7.6% wall / 7.3% CPU**. All 20 native/isolation jobs passed.
+This validates downstream performance and correctness, not a fresh-profile
+optimized Rust distribution pipeline within hosted limits.
+
 **Original native CI validation: the optimized Windows Arm64 toolchain reduces
 offline compilation wall time by 16.0% (95% interval 15.4-16.7%) and CPU time by
 16.0% (15.4-16.6%).** The five-command native sequence falls from **709.64 to
@@ -29,6 +37,83 @@ The earlier [whole-workspace experiment](REPORT.md) found Windows/Linux native
 compile ratios of **1.82x on x64** and **1.69x on Arm64**. The new isolation suite
 reproduces approximately **2.0x / 1.7x** on a meaningful subset and retains a
 substantial gap when the same WASM target is compiled directly.
+
+## Original x64 CI validation
+
+[Run 37001433534, attempt 1](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37001433534)
+completed **20/20 jobs** on standard `windows-2025` and `ubuntu-24.04` runners.
+Each suite uses five independent VMs per OS, one excluded warmup and three
+measured rounds, with counterbalanced Windows compiler ordering. Native:
+**60 measured blocks / 420 commands**, plus **80 untimed original correctness
+commands**. Isolation: **60 measured blocks / 600 commands**. No pilots,
+warmups or slow-sample exclusions enter the estimates.
+
+| Native component | Linux stock wall (s) | Windows stock | PGO control | PGO + ThinLTO | Stock wall reduction |
+|---|---:|---:|---:|---:|---:|
+| Build xtask | 2.24 | 4.72 | 3.71 | 3.54 | 24.9% |
+| Workspace test compilation | 384.34 | 746.67 | 615.66 | 568.63 | 23.8% |
+| Native TLS test compilation | 9.76 | 17.43 | 15.41 | 14.00 | 19.7% |
+| Gateway native TLS test compilation | 51.00 | 94.36 | 78.62 | 72.43 | 23.2% |
+| Gateway smartcard test compilation | 45.59 | 94.23 | 77.72 | 72.04 | 23.6% |
+| **Native total** | **492.93** | **957.41** | **791.12** | **730.64** | **23.7%** |
+
+Native CPU is **1885.68 / 3590.73 / 2921.58 / 2709.08 seconds**, respectively.
+The practical replacement saves **226.77 wall seconds (3m47s)**. Windows/Linux
+wall ratios fall from **1.94x to 1.48x**, closing **48.8% of the observed gap
+(40.8-65.8%)**; CPU gap closure is **51.7% (42.7-72.3%)**. These cross-OS
+ratios are not hardware-normalized causal OS effects.
+
+The matched ThinLTO contrast saves **60.48 wall seconds**, or **7.6%
+(7.1-8.0%)**, and **7.3% CPU (7.0-7.5%)**. Both custom compilers use
+byte-identical frontend/backend profiles, official target libraries and the same
+native SDK/linker environment; retain x64 compiler codegen-units=1.
+Official-to-custom results also include build/linker differences and cannot be
+called pure PGO effects or evidence that official x64 LLVM PGO is ineffective.
+
+| Native wall-time interval (s) | Linux stock | Windows stock | PGO control | PGO + ThinLTO |
+|---|---:|---:|---:|---:|
+| Compiler units active alone | 377.68 | 734.69 | 572.82 | 524.18 |
+| Compiler units and build scripts overlap | 113.76 | 219.05 | 214.65 | 202.95 |
+| Build scripts active alone | 0.00 | 0.00 | 0.00 | 0.00 |
+| Outside Cargo-tracked units | 1.49 | 3.67 | 3.65 | 3.50 |
+
+Most native wall savings occur in compiler-only intervals. These are disjoint
+Cargo activity intervals, not exclusive LLVM/compiler/linker CPU attribution.
+The separate common-package and WASM controls save **29.7% / 22.8% wall**;
+neither is added to the native total. Setup, downloads, verification, tests and
+uploads are excluded from every timed compilation.
+
+The independent four-CPU graphics isolation result is **31.4% CPU
+(30.3-32.3%) / 30.2% wall (28.7-31.5%)** against official Rust. Matched
+ThinLTO saves **9.5% CPU (8.8-10.1%) / 8.7% wall (7.1-9.8%)**.
+Direct native and WASM full-codegen replays, which spawn no external linker,
+also improve materially; metadata-only effects are smaller. See all endpoints
+in [the isolation results](X64-COMPILER-RESULTS.md). Do not compare these
+official-baseline effects directly with Arm64's earlier matched-LLD effect.
+
+**Reproduction:** [native estimates](X64-NATIVE-RESULTS.md) /
+[JSON](X64-NATIVE-RESULTS.json), [isolation JSON](X64-COMPILER-RESULTS.json),
+[native protocol](x64-native-protocol.json), and
+[isolation protocol](x64-compiler-protocol.json).
+Measured harness/action commit: `d0c9c1a23361750637fa9314e377e6dee2ffe053`.
+The [x64 release](https://github.com/marcpems/IronRDP-ci-benchmark/releases/tag/x64-compiler-ab-v1)
+archives `x64-ab-raw-37001433534.zip`: **25,691 files / 52,075,244 bytes**,
+SHA-256 `25d7a3f1a60d01d4da498b36c5e90bb94099565b3f2183bf47cdfe9f8627e683`.
+Keep native and compiler evidence roots separate:
+
+```powershell
+gh release download x64-compiler-ab-v1 --repo marcpems/IronRDP-ci-benchmark --pattern x64-ab-raw-37001433534.zip
+Expand-Archive x64-ab-raw-37001433534.zip -DestinationPath x64-ab-evidence
+python ci-benchmark\analyze_native_ab.py x64-ab-evidence\native --protocol ci-benchmark\x64-native-protocol.json --output x64-native-results
+python ci-benchmark\analyze_native_ab.py x64-ab-evidence\compiler --protocol ci-benchmark\x64-compiler-protocol.json --output x64-compiler-results
+```
+
+**Production limit:** x64's fresh-profile all-in-one ThinLTO build exceeded
+350 minutes. The successful treatment used verified profiles from the successful
+PGO control and spent 225.8 minutes in its profile-use compiler build. Neither
+that compiler-only package nor downstream test success proves a complete
+optimized Rust release pipeline fits six hours. See [construction evidence and
+minimal upstream scope](WINDOWS-X64-OPTIMIZATION.md).
 
 ## Original native CI validation: 16% less wall and CPU time
 

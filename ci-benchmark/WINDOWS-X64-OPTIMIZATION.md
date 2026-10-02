@@ -39,7 +39,15 @@ control/treatment profiles and target libraries were verified. The opt-in
 installer and both workload suites passed the four-job
 [pilot 36995063052](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36995063052),
 including all original native correctness commands for all three Windows variants.
-Pilot samples are excluded; full-matrix performance results remain pending.
+Pilot samples are excluded. The full
+[20-job run 37001433534](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37001433534)
+passed: original native compilation improves **23.7% wall / 24.6% CPU** against
+official Rust, and **7.6% wall / 7.3% CPU** against the matched effective-PGO
+control. The latter isolates added ThinLTO with identical profiles; the former
+is a practical toolchain replacement, not proof of missing official PGO.
+See [native results](X64-NATIVE-RESULTS.md),
+[compiler-isolation results](X64-COMPILER-RESULTS.md), and the
+[combined interpretation](COMBINED-REPORT.md#original-x64-ci-validation).
 Immutable artifact checksums are in [the native protocol](x64-native-protocol.json)
 and [the compiler protocol](x64-compiler-protocol.json).
 
@@ -48,13 +56,13 @@ packages. Record compiler files, flags, actual LLVM profile use, profile hashes,
 runner identity and build-stage wall times. Check native/WASM output and absence
 of residual instrumentation before accepting an archive.
 
-Evaluation will reuse the original IronRDP native command sequence and compiler
+Evaluation reused the original IronRDP native command sequence and compiler
 isolation suite: pinned product source, offline builds, original native Cargo
 profiles, cold targets, one excluded warmup and three measured rounds on five
 independent VMs, with paired compiler ordering. Capture process-tree CPU and
 wall time; run original correctness commands outside the performance timers.
-Freeze package hashes in the protocol before dispatching measurements. Do not
-assume Arm64's 16% full-native or 18% graphics saving transfers to x64.
+Package hashes were frozen in the protocols before dispatching measurements.
+The measured x64 effects above replace estimates based on Arm64.
 
 ## Minimal upstream-facing scope
 
