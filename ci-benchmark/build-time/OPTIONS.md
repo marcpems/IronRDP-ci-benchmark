@@ -4,6 +4,40 @@ Read the [completed-log baseline and visuals](README.md) first. Times below
 refer to producing Rust, **not** to downstream IronRDP compilation.
 This investigation does not change Rust/LLVM implementation code or upstream CI.
 
+## Updated priority when adding PGO and ThinLTO
+
+The original stock-only savings below are small compared with the possible cost
+of **adding** optimization stages. The new [offline projection](PGO-LTO-PROJECTION.md)
+retains all distribution outputs and explicitly budgets fresh profile generation:
+**~250–260 /405–415 /670–680 minutes** under efficient/planning/stress assumptions,
+not measured Arm64 bounds. No full feasibility run was awaited.
+
+| Priority for the optimized pipeline | Impact / evidence | Tradeoff / correctness gate |
+|---|---|---|
+| 1. Limit ThinLTO to final shipping artifacts initially | Avoids repeatedly paying potentially dominant LTO costs. Same-x64 initial instrumentation grew~101→287min; **not an Arm64 multiplier**. | Early-stage LTO changes can affect profile compatibility/quality; validate function hashes and effective counters. Never skip required static relinks. |
+| 2. Reuse exact instrumented-LLVM artifacts when legitimate | Conditional planning case with10min restore and warm ordinary seed becomes~338–346min instead of~405–415. **No hit rate or restore time measured.** | Exact source/toolchain/SDK/flags/paths identity; fresh profiles and static relinks retained. Never confuse stock100% cache hits with this new cache entry. |
+| 3. Evaluate minimal subsets before committing to the bundle | Representative modeled efficient/planning/stress: frontend PGO only~155/210/285min; ThinLTO only~140/195/295min; dual PGO without ThinLTO~235/370/590min. | Budgets are hypothetical; performance benefit is not proportional to subset size. Keep all targets/tools/docs/Arm64EC/packages and qualification. |
+| 4. Overlap instrumented LLVM build with frontend work | Native four-job DAG saves~16/22/40min, adds~48/72/104 runner-min. Three persistent jobs with mid-job handoff save~24/38/65min but add~62/111/179 runner-min. | A job-level `needs` cannot start half a job early. Preserve frontend→static relink→LLVM training; rebuilding/linking needs more than a ready binary. Charge actual handoffs and waiting. |
+| 5. Independent profile producers; avoid intermediate frontend profile-use build where correct | Modeled savings~29/62/115min; **adds~47/66/94 runner-min**. | Separate plain frontend against instrumented LLVM costs more work and may train slower. Both profiles must validate before final rebuild; not dual instrumentation. |
+| 6. Split final compiler consumer from producers; later fan out eligible qualification/tools/docs | Planning final consumer has~248–254min compiler allowance within a350min job, with the modeled full tail retained. True fan-out may reduce additional wall time. | Splitting sequential jobs alone avoids timeouts, not elapsed work. Final compiler/packaging/installation gates remain; transfer and duplicate prerequisites can erase gains. |
+| 7. Smaller setup/compression/shard changes | Retain the earlier0–2min setup and0–8min packaging screening targets. Possible optimized-tool compilation benefit is only~2–5min at assumed10–20% rates. | No automatic deduction from full dist time. Prove compiler lineage; do not transfer IronRDP percentages to compiler production. |
+
+**Critical limit result:** the planning serial case needs its final compiler
+phase to fit **~36–44min** to stay within360min; the assumed90min final does not.
+The stress pre-final/retained budgets already exceed360. The correct response is
+a qualified staged pipeline or a smaller optimization subset—not omitting work
+or pretending profile reuse is fresh production.
+
+The completed x64 profile-use treatment36973674727 took225.78min compiler time
+using the control's existing profiles. It informs final-stage risk, **not** an
+end-to-end production policy. The240min promotion timeout is a separate process
+that publishes existing artifacts and does not recompile Rust.
+
+See [revised dependency DAG and projected timelines](PGO-LTO-PROJECTION.md#4-correct-dependencies-and-genuine-parallelism)
+and [machine-readable assumptions/results](pgo-lto-results.json). The previous
+“Arm-only improvements save zero merge minutes” applies to shortening the old
+job; **adding hours can make Arm the new critical path**, modeled explicitly.
+
 ## Decision: optimize two different clocks
 
 1. **Arm64 artifact availability:** optimize its 117–127-minute, warm-cache,
@@ -205,7 +239,8 @@ branch's workflow was launched. See the [complete measured outcome](SOURCE-PROBE
    for the outlier or **15 min** for a uniform Windows improvement; neither is an
    achieved nor guaranteed speedup. Arm64-only changes save **0** in these samples.
 4. **For future fresh Arm64 PGO:** independent profile branches/training shards
-   may offer larger gains, but **minutes remain uncalibrated** pending a valid,
+   may offer larger gains. [Conditional stage-budget projections](PGO-LTO-PROJECTION.md)
+   are now available, but **actual minutes remain uncalibrated** pending a valid,
    complete, hosted fresh-profile distribution baseline. Keep static-LLVM relinks
    and final profile-use rebuild barriers; preserve all corpus/modes/coverage.
 5. **Do not pursue archive-only acquisition now:** the bounded experiment showed

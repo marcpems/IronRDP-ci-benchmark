@@ -7,6 +7,37 @@ Next: **[prioritized easy wins, critical-path models and deeper pipeline options
 The [completed two-runner source probe](SOURCE-PROBE.md) found **no useful
 archive-only fetch saving** and did not qualify checkout equivalence.
 
+## New: expected cost of adding PGO + ThinLTO
+
+**[Read the offline production projection](PGO-LTO-PROJECTION.md)** before
+interpreting the stock baseline as an optimized-release budget.
+Explicit efficient / planning / stress assumptions put fresh frontend+LLVM PGO,
+final-stage ThinLTO and unchanged full outputs at approximately
+**250–260 /405–415 /670–680 minutes**, versus the measured117–127-minute stock
+jobs. These are **conditional scenarios, not measured bounds or confidence
+intervals**; cold hosted Arm64 stage durations remain insufficiently calibrated.
+
+The planning single job exceeds the **360-minute/6h** limit. Splitting correct
+profile producers and the final consumer can keep each modeled job below the
+limit, with extra runner-minutes; true overlap can additionally shorten the
+path. **The final compiler rebuild and profile-validity barriers remain.**
+Minimal subsets, instrumentation-stage LTO choices, tool-build benefit
+sensitivities and whole-merge effects are compared explicitly. The separate
+240-minute promotion limit is not a compiler-build limit.
+
+The new completed x64 ThinLTO treatment used **existing profiles**:228m50s reported total,
+225.78min compiler build. It is not evidence that fresh PGO+ThinLTO production
+is faster than the326-minute fresh-PGO control, and its timings are not scaled
+linearly to Arm64.
+
+* [Projected serial stages](optimized-arm64-projection.svg)
+* [Projected producer/consumer jobs](optimized-arm64-jobs.svg)
+* [Inputs](pgo-lto-inputs.json), [full arithmetic](pgo-lto-results.json),
+  [generated comparison tables](PGO-LTO-TABLES.md)
+
+This follow-up uses existing evidence only: **no new builds, workflow queries,
+or waiting on the separate feasibility experiment**.
+
 ## First conclusions
 
 * **Windows Arm64 distribution takes 117–127 minutes**, including full tools,
@@ -234,18 +265,19 @@ python .\ci-benchmark\build-time\collect.py --logs
 python .\ci-benchmark\build-time\collect.py --runs 33866567178 33999184885
 python .\ci-benchmark\build-time\collect_sources.py
 python .\ci-benchmark\build-time\analyze.py
+python .\ci-benchmark\build-time\project_pgo_lto.py
 ```
 
 The analyzer is offline once evidence is collected; it asserts timing accounting
 and validates SVG XML. Full raw public logs stay untracked under `raw/`.
-Validation: `python -m unittest discover -s .\ci-benchmark\build-time -p test_analyze.py`.
+Validation: `python -m unittest discover -s .\ci-benchmark\build-time -p "test_*.py"`.
 [`collect_local.py`](collect_local.py) is optional and requires the named earlier
 local evidence paths. Hosted source-probe reproduction is isolated in
 [`arm-build-time-source-probe.yml`](../../.github/workflows/arm-build-time-source-probe.yml).
 The [options report](OPTIONS.md) separates measured, modeled and unknown effects.
 
-**Investigation validation:** six focused tests pass; all 313 job totals
-reconcile; four SVGs parse as XML; local links/source snapshots exist; generated
+**Investigation validation:** eighteen focused tests pass; all 313 job totals
+reconcile; four completed-log and two projected SVGs parse as XML; local links/source snapshots exist; generated
 data, inventories and visuals reproduce byte-for-byte. The two source-probe
 jobs completed with negative qualification results, preserved separately from
 production baselines. No full compiler build or upstream CI configuration was

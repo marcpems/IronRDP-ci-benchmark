@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1250" height="499" viewBox="0 0 1250 499">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial,sans-serif" font-size="12" fill="#0f172a">
+<text x="14" y="24" font-size="19">Planning scenario: serial versus profile-producer jobs</text>
+<text x="14" y="46">Assumed timelines; pale sections are charged idle time | 360m limit applies to each job length, not absolute finish</text>
+<path d="M320.00,72 V477" stroke="#e2e8f0"/>
+<text x="320.00" y="66">0m</text>
+<path d="M425.00,72 V477" stroke="#e2e8f0"/>
+<text x="425.00" y="66">60m</text>
+<path d="M530.00,72 V477" stroke="#e2e8f0"/>
+<text x="530.00" y="66">120m</text>
+<path d="M635.00,72 V477" stroke="#e2e8f0"/>
+<text x="635.00" y="66">180m</text>
+<path d="M740.00,72 V477" stroke="#e2e8f0"/>
+<text x="740.00" y="66">240m</text>
+<path d="M845.00,72 V477" stroke="#e2e8f0"/>
+<text x="845.00" y="66">300m</text>
+<path d="M950.00,72 V477" stroke="#e2e8f0"/>
+<text x="950.00" y="66">360m</text>
+<path d="M1055.00,72 V477" stroke="#e2e8f0"/>
+<text x="1055.00" y="66">420m</text>
+<path d="M1160.00,72 V477" stroke="#e2e8f0"/>
+<text x="1160.00" y="66">480m</text>
+<text x="14" y="98">Planning: one serial job</text>
+<rect x="320.000" y="84" width="41.119" height="20" fill="#94a3b8"><title>Setup/support: 23.50 assumed/accounted minutes</title></rect>
+<rect x="361.119" y="84" width="17.500" height="20" fill="#94a3b8"><title>Setup/support: 10.00 assumed/accounted minutes</title></rect>
+<rect x="378.619" y="84" width="52.500" height="20" fill="#eab308"><title>Seed LLVM: 30.00 assumed/accounted minutes</title></rect>
+<rect x="431.119" y="84" width="78.750" height="20" fill="#2563eb"><title>FE instrumentation: 45.00 assumed/accounted minutes</title></rect>
+<rect x="509.869" y="84" width="35.000" height="20" fill="#db2777"><title>FE training: 20.00 assumed/accounted minutes</title></rect>
+<rect x="544.869" y="84" width="35.000" height="20" fill="#1e40af"><title>FE profile-use: 20.00 assumed/accounted minutes</title></rect>
+<rect x="579.869" y="84" width="105.000" height="20" fill="#f97316"><title>LLVM instrumentation: 60.00 assumed/accounted minutes</title></rect>
+<rect x="684.869" y="84" width="21.000" height="20" fill="#a16207"><title>Static relink: 12.00 assumed/accounted minutes</title></rect>
+<rect x="705.869" y="84" width="26.250" height="20" fill="#be123c"><title>LLVM training: 15.00 assumed/accounted minutes</title></rect>
+<rect x="732.119" y="84" width="157.500" height="20" fill="#7c3aed"><title>Final compiler: 90.00 assumed/accounted minutes</title></rect>
+<rect x="889.619" y="84" width="105.652" height="20" fill="#0891b2"><title>Full dist remainder: 60.37 assumed/accounted minutes</title></rect>
+<rect x="995.271" y="84" width="35.000" height="20" fill="#16a34a"><title>Qualification: 20.00 assumed/accounted minutes</title></rect>
+<text x="1034.27" y="98">~406m job</text>
+<text x="14" y="132">Native four-job DAG: 1. Frontend</text>
+<rect x="320.000" y="118" width="58.619" height="20" fill="#94a3b8"><title>Setup/support: 33.50 assumed/accounted minutes</title></rect>
+<rect x="378.619" y="118" width="52.500" height="20" fill="#eab308"><title>Seed LLVM: 30.00 assumed/accounted minutes</title></rect>
+<rect x="431.119" y="118" width="78.750" height="20" fill="#2563eb"><title>FE instrumentation: 45.00 assumed/accounted minutes</title></rect>
+<rect x="509.869" y="118" width="35.000" height="20" fill="#db2777"><title>FE training: 20.00 assumed/accounted minutes</title></rect>
+<rect x="544.869" y="118" width="35.000" height="20" fill="#1e40af"><title>FE profile-use: 20.00 assumed/accounted minutes</title></rect>
+<text x="583.87" y="132">~148m job</text>
+<text x="14" y="166">Native four-job DAG: 2. Instrumented</text>
+<rect x="320.000" y="152" width="58.619" height="20" fill="#94a3b8"><title>Setup/support: 33.50 assumed/accounted minutes</title></rect>
+<rect x="378.619" y="152" width="105.000" height="20" fill="#f97316"><title>LLVM instrumentation: 60.00 assumed/accounted minutes</title></rect>
+<text x="487.62" y="166">~93m job</text>
+<text x="14" y="200">Native four-job DAG: 3. Backend</text>
+<rect x="579.869" y="186" width="38.500" height="20" fill="#64748b"><title>Handoff/setup: 22.00 assumed/accounted minutes</title></rect>
+<rect x="618.369" y="186" width="21.000" height="20" fill="#a16207"><title>Static relink: 12.00 assumed/accounted minutes</title></rect>
+<rect x="639.369" y="186" width="26.250" height="20" fill="#be123c"><title>LLVM training: 15.00 assumed/accounted minutes</title></rect>
+<text x="669.62" y="200">~49m job</text>
+<text x="14" y="234">Native four-job DAG: 4. Final</text>
+<rect x="665.619" y="220" width="28.000" height="20" fill="#64748b"><title>Handoff/setup: 16.00 assumed/accounted minutes</title></rect>
+<rect x="693.619" y="220" width="157.500" height="20" fill="#7c3aed"><title>Final compiler: 90.00 assumed/accounted minutes</title></rect>
+<rect x="851.119" y="220" width="105.652" height="20" fill="#0891b2"><title>Full dist remainder: 60.37 assumed/accounted minutes</title></rect>
+<rect x="956.771" y="220" width="35.000" height="20" fill="#16a34a"><title>Qualification: 20.00 assumed/accounted minutes</title></rect>
+<text x="995.77" y="234">~186m job</text>
+<text x="14" y="268">Mid-job handoff: 1. Frontend</text>
+<rect x="320.000" y="254" width="58.619" height="20" fill="#94a3b8"><title>Setup/support: 33.50 assumed/accounted minutes</title></rect>
+<rect x="378.619" y="254" width="52.500" height="20" fill="#eab308"><title>Seed LLVM: 30.00 assumed/accounted minutes</title></rect>
+<rect x="431.119" y="254" width="78.750" height="20" fill="#2563eb"><title>FE instrumentation: 45.00 assumed/accounted minutes</title></rect>
+<rect x="509.869" y="254" width="35.000" height="20" fill="#db2777"><title>FE training: 20.00 assumed/accounted minutes</title></rect>
+<rect x="544.869" y="254" width="35.000" height="20" fill="#1e40af"><title>FE profile-use: 20.00 assumed/accounted minutes</title></rect>
+<text x="583.87" y="268">~148m job</text>
+<text x="14" y="302">Mid-job handoff: 2. LLVM</text>
+<rect x="320.000" y="288" width="58.619" height="20" fill="#94a3b8"><title>Setup/support: 33.50 assumed/accounted minutes</title></rect>
+<rect x="378.619" y="288" width="105.000" height="20" fill="#f97316"><title>LLVM instrumentation: 60.00 assumed/accounted minutes</title></rect>
+<rect x="483.619" y="288" width="96.250" height="20" fill="#e2e8f0"><title>Waiting: 55.00 assumed/accounted minutes</title></rect>
+<rect x="579.869" y="288" width="10.500" height="20" fill="#64748b"><title>Handoff/setup: 6.00 assumed/accounted minutes</title></rect>
+<rect x="590.369" y="288" width="21.000" height="20" fill="#a16207"><title>Static relink: 12.00 assumed/accounted minutes</title></rect>
+<rect x="611.369" y="288" width="26.250" height="20" fill="#be123c"><title>LLVM training: 15.00 assumed/accounted minutes</title></rect>
+<text x="641.62" y="302">~181m job</text>
+<text x="14" y="336">Mid-job handoff: 3. Final</text>
+<rect x="637.619" y="322" width="28.000" height="20" fill="#64748b"><title>Handoff/setup: 16.00 assumed/accounted minutes</title></rect>
+<rect x="665.619" y="322" width="157.500" height="20" fill="#7c3aed"><title>Final compiler: 90.00 assumed/accounted minutes</title></rect>
+<rect x="823.119" y="322" width="105.652" height="20" fill="#0891b2"><title>Full dist remainder: 60.37 assumed/accounted minutes</title></rect>
+<rect x="928.771" y="322" width="35.000" height="20" fill="#16a34a"><title>Qualification: 20.00 assumed/accounted minutes</title></rect>
+<text x="967.77" y="336">~186m job</text>
+<text x="14" y="370">Independent profiles: 1. Frontend</text>
+<rect x="320.000" y="356" width="58.619" height="20" fill="#94a3b8"><title>Setup/support: 33.50 assumed/accounted minutes</title></rect>
+<rect x="378.619" y="356" width="52.500" height="20" fill="#eab308"><title>Seed LLVM: 30.00 assumed/accounted minutes</title></rect>
+<rect x="431.119" y="356" width="78.750" height="20" fill="#2563eb"><title>FE instrumentation: 45.00 assumed/accounted minutes</title></rect>
+<rect x="509.869" y="356" width="35.000" height="20" fill="#db2777"><title>FE training: 20.00 assumed/accounted minutes</title></rect>
+<text x="548.87" y="370">~128m job</text>
+<text x="14" y="404">Independent profiles: 2. LLVM</text>
+<rect x="320.000" y="390" width="58.619" height="20" fill="#94a3b8"><title>Setup/support: 33.50 assumed/accounted minutes</title></rect>
+<rect x="378.619" y="390" width="105.000" height="20" fill="#f97316"><title>LLVM instrumentation: 60.00 assumed/accounted minutes</title></rect>
+<rect x="483.619" y="390" width="78.750" height="20" fill="#0284c7"><title>Plain FE + static link: 45.00 assumed/accounted minutes</title></rect>
+<rect x="562.369" y="390" width="32.812" height="20" fill="#be123c"><title>LLVM training: 18.75 assumed/accounted minutes</title></rect>
+<text x="599.18" y="404">~157m job</text>
+<text x="14" y="438">Independent profiles: 3. Final</text>
+<rect x="595.182" y="424" width="28.000" height="20" fill="#64748b"><title>Handoff/setup: 16.00 assumed/accounted minutes</title></rect>
+<rect x="623.182" y="424" width="157.500" height="20" fill="#7c3aed"><title>Final compiler: 90.00 assumed/accounted minutes</title></rect>
+<rect x="780.682" y="424" width="105.652" height="20" fill="#0891b2"><title>Full dist remainder: 60.37 assumed/accounted minutes</title></rect>
+<rect x="886.334" y="424" width="35.000" height="20" fill="#16a34a"><title>Qualification: 20.00 assumed/accounted minutes</title></rect>
+<text x="925.33" y="438">~186m job</text>
+</g>
+</svg>
