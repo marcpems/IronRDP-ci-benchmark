@@ -10,12 +10,17 @@ jobs:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     runs-on: windows-2025
     timeout-minutes: 350
+    defaults:
+      run:
+        working-directory: harness
     strategy:
       fail-fast: false
       matrix:
         variant: [pgo-control, optimized]
     steps:
       - uses: actions/checkout@v6
+        with:
+          path: harness
       - uses: actions/checkout@v6
         with:
           repository: marcpems/rust-arm64-compiler-ab
@@ -29,9 +34,9 @@ jobs:
       - name: Prepare pinned native source and support tools
         shell: pwsh
         run: |
-          git -C rust-source config core.longpaths true
-          git -C rust-source remote set-url --push origin DISABLED-UPSTREAM-PUSH
-          git -C rust-source submodule update --init --depth 1 src/llvm-project src/tools/rustc-perf library/backtrace
+          git -C ..\rust-source config core.longpaths true
+          git -C ..\rust-source remote set-url --push origin DISABLED-UPSTREAM-PUSH
+          git -C ..\rust-source submodule update --init --depth 1 src/llvm-project src/tools/rustc-perf library/backtrace
           if ($LASTEXITCODE -ne 0) { throw 'Submodule checkout failed' }
           rustup toolchain install 1.94.1-x86_64-pc-windows-msvc --profile minimal --target wasm32-unknown-unknown
           if ($LASTEXITCODE -ne 0) { throw 'Official reference installation failed' }
@@ -56,18 +61,18 @@ jobs:
           if (-not $vs) { throw 'Native x64 MSVC installation missing' }
           $vcvars = Join-Path $vs 'VC\Auxiliary\Build\vcvars64.bat'
           $python = (Get-Command python).Source
-          & $env:ComSpec /d /s /c "call `"$vcvars`" >nul && `"$python`" .github\scripts\build_windows_x64_compilers.py --source rust-source --output x64-output --clang x64-tools\clang20 --variant ${{ matrix.variant }}"
+          & $env:ComSpec /d /s /c "call `"$vcvars`" >nul && `"$python`" .github\scripts\build_windows_x64_compilers.py --source ..\rust-source --output x64-output --clang x64-tools\clang20 --variant ${{ matrix.variant }}"
           if ($LASTEXITCODE -ne 0) { throw 'Compiler build or provenance validation failed' }
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: x64-compiler-${{ matrix.variant }}
           path: |
-            x64-output/*.zip
-            x64-output/*.json
-            x64-output/*.toml
-            x64-output/*.txt
-            x64-output/*.profdata
-            x64-output/logs
+            harness/x64-output/*.zip
+            harness/x64-output/*.json
+            harness/x64-output/*.toml
+            harness/x64-output/*.txt
+            harness/x64-output/*.profdata
+            harness/x64-output/logs
           if-no-files-found: warn
           retention-days: 30
