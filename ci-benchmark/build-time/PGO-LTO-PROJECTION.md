@@ -10,6 +10,20 @@ nonlinear 16/32-vCPU sensitivities, sequential fallback and cost per qualified
 build. This original four-CPU projection is preserved for provenance; its stage
 budgets and 250–680-minute scenarios are assumptions, not measured bounds.
 
+**Measured-outcome addendum, October 2 16:10 UTC:** the
+[corrected cold Arm64 treatment](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038/job/110799044364)
+failed at the **350-minute harness safety deadline**, **350.57 minutes total**,
+not a compiler error or measured exact 360-minute timeout. Initial instrumentation
+was **193.86 minutes** (LLVM subset **154.08**), frontend training **35.33**,
+frontend-PGO rebuild **21.15**, Stage1 total **250.35**. Stage2 instrumented LLVM
+was still linking after **~85.43 minutes**; backend training and final full dist/
+qualification were not reached. Only the frontend profile was produced.
+See [full measured addendum](BALANCED-PROPOSAL.md#measured-outcome-addendum--october-2-1610-utc)
+and the [maintained feasibility report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/ci/arm-release-feasibility/arm-feasibility/FEASIBILITY.md).
+The cold stock baseline remains **141.82 minutes**. This incomplete treatment
+does not establish completed optimized cost, fit at 360 or native32 performance;
+**the original quantitative model is unchanged**.
+
 ## Headline
 
 Adding fresh frontend/LLVM PGO and final-stage Rust/LLVM ThinLTO can plausibly

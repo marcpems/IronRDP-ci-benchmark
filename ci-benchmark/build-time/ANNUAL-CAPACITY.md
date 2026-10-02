@@ -29,6 +29,20 @@ not a queue-latency guarantee. If only one machine is available, admit that the
 full-demand/headroom target is not established; do not silently omit try builds,
 merge qualification, tools, Arm64EC, training or optimization coverage.
 
+### Measured outcome added October 2, 16:10 UTC
+
+The [corrected cold Arm64 treatment](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038/job/110799044364)
+ended **failure after 350.57 minutes** at the harness's **350-minute safety
+deadline**, not a compiler error or demonstrated exact 360-minute timeout.
+Stage1 took **250.35 minutes**; Stage2 instrumented LLVM was interrupted while
+linking after **~85.43 minutes**. Only the frontend profile exists: LLVM training,
+final full dist and extracted qualification tests were not reached.
+See the [measured-outcome addendum](BALANCED-PROPOSAL.md#measured-outcome-addendum--october-2-1610-utc)
+and [maintained feasibility report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/ci/arm-release-feasibility/arm-feasibility/FEASIBILITY.md).
+This supplies **no completed optimized-build cost, 360-minute fit or native32
+measurement**. The 141.82-minute stock baseline, sampled annual history and all
+conditional capacity/cost model values remain unchanged; no new builds are proposed.
+
 ## Observed frequency, not “one nightly equals one compiler build”
 
 **Read-only sample:** CI workflows created **2026-09-18 00:00 UTC through
@@ -266,6 +280,6 @@ storage. Cache hits must not be required to fit cold-build capacity.
 * Offline: `python .\ci-benchmark\build-time\annual_capacity.py`.
   Tests: `python -m unittest discover -s .\ci-benchmark\build-time -p "test_*.py"`.
 
-This report does not wait for current treatment runs, launch builds, provision
+This report did not wait for treatment runs, launch builds, provision
 hardware, change CI, or publish upstream. The optimization duration model remains
 unvalidated by a completed native32 full-production measurement.

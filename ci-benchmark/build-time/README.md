@@ -311,4 +311,10 @@ completed successfully in **141.82 minutes** (132.44-minute dist command);
 the enclosing workflow's earlier treatment setup failed. The
 [pinned updated report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/95eb8b6f792e7851c8e4be7b47edacd5aa21c32b/arm-feasibility/FEASIBILITY.md)
 supplies the cold baseline used in the balanced proposal. The corrected
-treatment is not awaited or claimed successful here.
+[treatment job 110799044364](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038/job/110799044364)
+subsequently failed at its **350-minute harness safety deadline**, **350.57 minutes
+total**, without reaching LLVM training or final full dist/qualification. This is
+not a compiler error, exact 360-minute timeout measurement or completed optimized
+build cost. See the [measured-outcome addendum](BALANCED-PROPOSAL.md#measured-outcome-addendum--october-2-1610-utc)
+and [maintained feasibility report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/ci/arm-release-feasibility/arm-feasibility/FEASIBILITY.md).
+Existing model values and annual history remain unchanged.

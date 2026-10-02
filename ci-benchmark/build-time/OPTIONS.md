@@ -251,16 +251,18 @@ branch's workflow was launched. See the [complete measured outcome](SOURCE-PROBE
    achieved nor guaranteed speedup. Arm64-only changes save **0** in these samples.
 4. **For future fresh Arm64 PGO:** independent profile branches/training shards
    may offer larger gains. [Conditional stage-budget projections](PGO-LTO-PROJECTION.md)
-   are now available, but **actual minutes remain uncalibrated** pending a valid,
-   complete, hosted fresh-profile distribution baseline. Keep static-LLVM relinks
+   are now available, but **complete production minutes remain uncalibrated**:
+   the corrected cold treatment stopped at its safety deadline before backend
+   training or final distribution. Keep static-LLVM relinks
    and final profile-use rebuild barriers; preserve all corpus/modes/coverage.
 5. **Do not pursue archive-only acquisition now:** the bounded experiment showed
    no meaningful benefit and did not qualify equivalence. Do not count profile
    reuse, omitted tools/targets/tests, or timeout-only job splits as saved work.
 
-Outstanding: private promotion timings/deployed-state confirmation; complete
-Arm64 fresh-PGO full-distribution timings and qualification from the separate
-feasibility investigation; real artifact transfer and compression measurements.
+Remaining evidence gaps: private promotion timings/deployed-state confirmation;
+complete Arm64 fresh-PGO full-distribution timings and qualification, not supplied
+by the deadline-stopped treatment; real artifact transfer/compression measurements.
+These gaps do not imply another experiment is being started.
 The separate agent was notified before/after the bounded source probe. The
 [baseline job in 36991902911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911/job/110789801580)
 subsequently completed successfully in **141.82 minutes**, including a
@@ -272,6 +274,11 @@ No run was cancelled, rerun or duplicated by this investigation.
 
 The [updated immutable feasibility report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/95eb8b6f792e7851c8e4be7b47edacd5aa21c32b/arm-feasibility/FEASIBILITY.md)
 documents the cold baseline and the same 360-minute CI / 240-minute promotion
-limits. The corrected optimized treatment is not awaited, and no optimized
-Arm64 full-build or upstream-readiness claim is made. The
-[balanced proposal](BALANCED-PROPOSAL.md) incorporates only the completed baseline.
+limits. The [corrected treatment](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038/job/110799044364)
+has now failed at the **350-minute harness safety deadline**, **350.57 minutes
+total**, before LLVM training and final dist/qualification. It is not a compiler
+error or evidence of an exact 360-minute timeout. The
+[balanced proposal's measured addendum](BALANCED-PROPOSAL.md#measured-outcome-addendum--october-2-1610-utc)
+and [maintained feasibility report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/ci/arm-release-feasibility/arm-feasibility/FEASIBILITY.md)
+record the outcome without changing model values or claiming an optimized full
+build, native32 measurement or upstream readiness.

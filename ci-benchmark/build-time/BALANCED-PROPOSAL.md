@@ -105,8 +105,38 @@ planning/stress four-CPU serial cases, not new measured bounds.
 The [x64 fresh-PGO control](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36946671654)
 took ~5h26; the [~3h49 ThinLTO treatment](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36973674727)
 reused its profiles. Neither is fresh Arm64 production or an ISA scaling ratio.
-The separate [corrected Arm treatment](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038)
-and parent x64 run 37001433534 were not queried, restarted or awaited here.
+The corrected Arm treatment's terminal outcome is recorded below from the
+feasibility owner's handoff; no run was restarted or awaited by this analysis.
+Parent x64 run 37001433534 was not queried or modified here.
+
+### Measured-outcome addendum — October 2, 16:10 UTC
+
+[Corrected cold Arm64 treatment 36994829038, job 110799044364](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038/job/110799044364)
+completed **failure at 2026-10-02 16:10:03 UTC**, **350.57 minutes total**.
+The harness reported **`safety_deadline_hit=true` at 350 minutes from the first
+step**: this was not a compiler error or an observed exact 360-minute timeout.
+The [maintained feasibility report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/ci/arm-release-feasibility/arm-feasibility/FEASIBILITY.md)
+owns the detailed evidence.
+
+* Initial instrumented rustc+LLVM: **193.86 minutes**, including **154.08 minutes
+  exclusive LLVM**; frontend training **35.33**, frontend-PGO rebuild **21.15**;
+  **Stage1 total 250.35 minutes**. The LLVM subset is not added again.
+* Stage2 instrumented LLVM began **14:44:11.618 UTC** and was still linking at
+  interruption **16:09:37 UTC**, after **~85.43 minutes**. Last Ninja output was
+  **3843/3904 tasks**, not a remaining-time estimate or proof of near completion.
+* Only **`rustc-pgo.profdata`** was produced. LLVM training, final profile-use
+  dist/tools/docs/MSI/Arm64EC and extracted tests were **not reached**; there is
+  no LLVM profile or backend-coverage qualification and no completed optimized
+  release cost.
+* Sampled whole-machine peaks: physical **7.51 GiB**, commit **7.80 GiB**;
+  minimum free disk **29.52 GiB**. No sampled resource exhaustion was observed;
+  this does not bound unsampled spikes or unreached final-stage requirements.
+
+The **141.82-minute cold stock baseline remains valid**. The treatment did not
+complete within its operational budget; whether it could fit exactly 360 minutes
+is unmeasured. It is not a native32 measurement or validation of the proposed
+final-only-LTO policy. Existing model inputs, annual demand and conditional cost/
+capacity values are **unchanged**, not recalibrated from this incomplete run.
 
 ## Comparable latency, billed SUM and successful-build cost
 
