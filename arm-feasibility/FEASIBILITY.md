@@ -120,6 +120,14 @@ RAM, native ARM64 Python 3.13.15, image `win11-vs2026-arm64` 20260924.168.1,
 and ~123.7 GiB free on a ~255.45 GiB C: volume before source setup. These are
 machine observations, not compiler peak-memory/disk measurements.
 
+In run 36991902911 the baseline reached its full build. Treatment failed after
+**143.64 seconds building opt-dist**, before any PGO compiler build: bootstrap
+tried to compile this native helper for Arm64EC too, but stage0 lacks its `core`.
+The helper build is now explicitly restricted to native `--host`/`--target`;
+final dist still includes both targets. Only the treatment is launched again;
+the running baseline is neither restarted nor canceled. This is a necessary
+Arm opt-dist integration detail, not a measured optimization timeout.
+
 ## Full distribution versus release qualification
 
 The current successful upstream log packages native and Arm64EC standard libraries,
@@ -157,6 +165,8 @@ nonzero backend profile coverage before enabling more optimization. Separately
 qualify full main Arm64 opt-dist in a try job; do not silently enable it for every
 ordinary compiler-test job. ThinLTO flags and switching Arm dist to opt-dist should
 remain a separate adoption decision backed by time/memory/disk and correctness.
+An Arm opt-dist job must also pass the native target when building the helper,
+without narrowing the configured final distribution targets.
 
 Go only after full component/Arm64EC/MSI coverage, valid fresh profiles, extracted
 dist tests, adequate six-hour cold/miss and warm-cache headroom, current-main

@@ -37,6 +37,13 @@ class ExperimentTests(unittest.TestCase):
         self.assertIn("SYSTEMROOT", {key.upper() for key in env})
         self.assertNotIn("DIST_TRY_BUILD", env)
 
+    def test_helper_is_native_but_distribution_retains_arm64ec(self):
+        command = run.helper_command()
+        self.assertEqual(command[command.index("--target") + 1], run.HOST)
+        self.assertEqual(command[command.index("--host") + 1], run.HOST)
+        self.assertTrue(any("arm64ec-pc-windows-msvc" in arg
+                            for arg in run.configure_args(Path("D:\\experiment"), True)))
+
 
 if __name__ == "__main__":
     unittest.main()

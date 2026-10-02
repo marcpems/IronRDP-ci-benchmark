@@ -153,6 +153,11 @@ def configure_args(source, treatment):
     return args
 
 
+def helper_command():
+    return [sys.executable, "x.py", "build", "--host", HOST, "--target", HOST,
+            "--set", "rust.debug=true", "opt-dist"]
+
+
 def validate_profiles(source, env):
     result = {}
     root = source / "opt-artifacts"
@@ -224,8 +229,7 @@ def main():
             raise FileNotFoundError("Required native runner tool missing: " + tool)
     dist = [sys.executable, "x.py", "dist", "bootstrap", "--include-default-paths"]
     if treatment:
-        execute([sys.executable, "x.py", "build", "--set", "rust.debug=true", "opt-dist"],
-                source, env, "build-opt-dist", deadline)
+        execute(helper_command(), source, env, "build-opt-dist", deadline)
         fixture = source / "src" / "tools" / "rustc-perf" / "collector" / "compile-benchmarks" / "token-stream-stress"
         lock = fixture / "Cargo.lock"
         before = tomllib.loads(lock.read_text())

@@ -3,11 +3,18 @@
 This fork-only experiment measures a fresh Rust 1.94.1 distribution on standard
 `windows-11-arm` runners. It does not modify or publish upstream releases.
 
-Two independent jobs build the exact same source with full tools, documentation,
+Two independent variants build the exact same source with full tools, documentation,
 profiling runtime, native MSVC SDK/DIA defaults, and both native and Arm64EC standard
 libraries. The baseline uses the upstream Arm64 distribution recipe. The treatment
 adds fresh rustc and LLVM PGO, Rust ThinLTO, LLVM ThinLTO, and native LLD for rustc.
 It also runs opt-dist's extracted-distribution tests. Neither trims LLVM tools.
+
+The original matrix launched both variants. The workflow now selects treatment
+only: the baseline continues in run 36991902911 and must not be duplicated.
+An early treatment helper build exposed that `opt-dist` itself must be built with
+explicit native `--host`/`--target`; otherwise the full distribution target list
+also tries to build the helper for Arm64EC using stage0 without Arm64EC std.
+This helper-only correction does not remove Arm64EC from final distribution.
 
 `patches/` contains only the two candidate upstream fixes: static LLVM relinking
 before training, and read-only clang runtime discovery during bootstrap dry-run.
