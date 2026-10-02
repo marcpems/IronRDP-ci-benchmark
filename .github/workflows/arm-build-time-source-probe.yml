@@ -1,0 +1,37 @@
+name: Arm64 compiler source acquisition probe
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [analysis/arm-build-time-options]
+    paths:
+      - .github/workflows/arm-build-time-source-probe.yml
+      - ci-benchmark/build-time/source_probe.py
+
+permissions:
+  contents: read
+
+jobs:
+  source:
+    name: Source acquisition (${{ matrix.order }})
+    runs-on: windows-11-arm
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        order: [git-first, archive-first]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Compare pinned LLVM source acquisition
+        shell: pwsh
+        run: python .\ci-benchmark\build-time\source_probe.py --order "${{ matrix.order }}"
+      - name: Preserve bounded experiment evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-probe-${{ matrix.order }}
+          path: source-probe\results\
+          if-no-files-found: error
+          retention-days: 30
