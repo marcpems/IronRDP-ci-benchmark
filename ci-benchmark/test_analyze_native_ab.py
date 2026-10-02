@@ -13,23 +13,43 @@ from analyze_native_ab import (
 PROTOCOL = json.loads(Path(__file__).with_name("native-ab-protocol.json").read_text())
 
 
-def evidence(root):
+def evidence(root, x64=False):
     protocol = copy.deepcopy(PROTOCOL)
+    platforms = ("windows-x64", "linux-x64") if x64 else PLATFORMS
+    if x64:
+        protocol.update({"platforms": list(platforms), "host": "x86_64-pc-windows-msvc",
+                         "windows_variants": ["official", "pgo-control", "optimized"],
+                         "compiler_archive_sha256": {}, "compiler_metadata_sha256": {}})
+        provenances = {}
+        for variant in ("pgo-control", "optimized"):
+            data = {"archive_sha256": variant, "host": protocol["host"],
+                    "llvm_profile_sha256": "profile",
+                    "profiles": {"llvm-pgo.profdata": {"sha256": "profile"}},
+                    "llvm_training_coverage": {c: {"nonzero_functions": 1}
+                                               for c in ("X86TargetLowering", "InstCombine")}}
+            provenances[variant] = json.dumps(data).encode()
+            protocol["compiler_archive_sha256"][variant] = variant
+            protocol["compiler_metadata_sha256"][variant] = hashlib.sha256(provenances[variant]).hexdigest()
     provenance = json.dumps({"archive_sha256": protocol["optimized_archive_sha256"]}).encode()
     protocol["optimized_metadata_sha256"] = hashlib.sha256(provenance).hexdigest()
     last = None
-    for platform in PLATFORMS:
-        variants = protocol["windows_variants"] if platform == "windows-arm64" else ["official"]
+    for platform in platforms:
+        variants = protocol["windows_variants"] if platform == platforms[0] else ["official"]
         for vm in range(1, 6):
             directory = root / f"{platform}-{vm}"
             directory.mkdir()
-            if platform == "windows-arm64":
+            if x64 and platform == platforms[0]:
+                for variant, raw in provenances.items():
+                    (directory / f"{variant}-compiler.json").write_bytes(raw)
+            elif platform == "windows-arm64":
                 (directory / "optimized-compiler.json").write_bytes(provenance)
                 (directory / "installation.json").write_text(json.dumps({
                     "stdlib_identity_verified": True, "native_and_wasm_smoke_passed": True,
                 }))
             index = {"platform": platform, "vm": vm, "pilot": False, "protocol": protocol,
                      "variants": variants, "runs": []}
+            if x64 and platform == platforms[0]:
+                index["identical_windows_stdlibs_verified"] = True
             for r in range(4):
                 for position, variant in enumerate(paired_order(variants, vm, r)):
                     name = f"{r}-{variant}"
@@ -48,7 +68,7 @@ def evidence(root):
                     }
                     rows = []
                     for command_name, args in COMMANDS:
-                        wall = 1 if platform == "linux-arm64" else 2 if variant == "official" else 1.6
+                        wall = 1 if platform == platforms[1] else 2 if variant == "official" else 1.8 if variant == "pgo-control" else 1.6
                         rows.append({
                             "name": command_name, "command": ["cargo", *args, "--frozen", "--timings", "--message-format=json"],
                             "exit_code": 0, "compiled_artifacts": 1, "wall_seconds": wall,
@@ -70,6 +90,26 @@ def evidence(root):
 
 
 class NativeAnalysisTests(unittest.TestCase):
+    def test_x64_three_variant_matrix_and_thinlto_contrast(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            protocol, _ = evidence(root, x64=True)
+            matrix, partitions, _ = load_matrix(root, protocol)
+            result = analyze(matrix, protocol, draws=100)
+            total = next(r for r in result["results"] if r["component"] == "native-total" and r["metric"] == "wall_seconds")
+            self.assertAlmostEqual(total["pgo_control_windows"], 9)
+            self.assertAlmostEqual(total["thinlto_saved_seconds"], 1)
+            self.assertAlmostEqual(total["thinlto_reduction_fraction"], 1 / 9)
+            self.assertEqual(len(partitions), 60)
+            self.assertIn("Windows x64", markdown(result))
+            self.assertIn("11.1%", markdown(result))
+            index_path = root / "windows-x64-1" / "index.json"
+            index = json.loads(index_path.read_text())
+            index["identical_windows_stdlibs_verified"] = False
+            index_path.write_text(json.dumps(index))
+            with self.assertRaisesRegex(ValueError, "standard libraries"):
+                load_matrix(root, protocol)
+
     def test_complete_matrix_known_savings_and_tampered_command(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

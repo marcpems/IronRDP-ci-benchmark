@@ -30,11 +30,13 @@ def interval(values, coverage=0.95):
 
 def load_matrix(root, protocol):
     indexes = sorted(root.rglob("index.json"))
-    wanted = {(p, vm) for p in PLATFORMS
+    platforms = protocol.get("platforms", PLATFORMS)
+    windows_platform = platforms[0]
+    wanted = {(p, vm) for p in platforms
               for vm in range(1, protocol["independent_vms_per_os"] + 1)}
     seen = set()
     identities, hashes = set(), set()
-    matrix = {endpoint: {p: {} for p in PLATFORMS} for endpoint in ENDPOINTS}
+    matrix = {endpoint: {p: {} for p in platforms} for endpoint in ENDPOINTS}
     for path in indexes:
         index = json.loads(path.read_text(encoding="utf-8"))
         key = index["platform"], index["vm"]
@@ -42,10 +44,10 @@ def load_matrix(root, protocol):
             raise ValueError("Unexpected/duplicate VM, pilot data or changed protocol")
         seen.add(key)
         platform, vm = key
-        variants = protocol["windows_variants"] if platform == "windows-arm64" else ["official"]
+        variants = protocol["windows_variants"] if platform == windows_platform else ["official"]
         if index["variants"] != variants:
             raise ValueError("Missing or unexpected compiler variant")
-        if platform == "windows-arm64":
+        if platform == windows_platform:
             if not index.get("identical_windows_stdlibs_verified"):
                 raise ValueError("Official/custom standard-library identity was not verified")
             if protocol.get("llvm_profile_coverage_required") and not index.get("llvm_profile_coverage_verified"):
@@ -101,7 +103,7 @@ def load_matrix(root, protocol):
                     raise ValueError("CPU accounting mismatch")
                 if row["cpu_seconds"] / row["wall_seconds"] > row["cores"] * 1.05:
                     raise ValueError("CPU use exceeds affinity budget")
-                if platform == "windows-arm64" and endpoint[0].startswith("yuv-") and row["processes"] != 1:
+                if platform == windows_platform and endpoint[0].startswith("yuv-") and row["processes"] != 1:
                     raise ValueError("Direct replay spawned unexpected child processes")
                 if endpoint[0].startswith("yuv-") and row["command"][0] != compiler:
                     raise ValueError("Direct replay did not use the declared compiler")

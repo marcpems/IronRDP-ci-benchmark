@@ -22,11 +22,21 @@ def verify_custom(root, variant, protocol):
     metadata = json.loads((root / f"{variant}.json").read_text(encoding="utf-8"))
     if metadata["variant"] != variant or metadata["rust_sha"] != protocol["rust_sha"]:
         raise RuntimeError(f"Wrong compiler provenance: {variant}")
-    if metadata["evaluation_stdlib_sha256"] != protocol["evaluation_stdlib_sha256"]:
+    if ("evaluation_stdlib_sha256" in protocol
+            and metadata.get("evaluation_stdlib_sha256") != protocol["evaluation_stdlib_sha256"]):
         raise RuntimeError(f"Wrong evaluation standard libraries: {variant}")
     if "compiler_archive_sha256" in protocol and metadata.get("archive_sha256") != protocol["compiler_archive_sha256"][variant]:
         raise RuntimeError(f"Compiler archive is not the preregistered artifact: {variant}")
-    if variant == "optimized" and protocol.get("llvm_profile_coverage_required"):
+    if protocol.get("host") == "x86_64-pc-windows-msvc":
+        if metadata.get("host") != protocol["host"]:
+            raise RuntimeError("Wrong compiler host")
+        if protocol.get("llvm_profile_coverage_required"):
+            for component in ("X86TargetLowering", "InstCombine"):
+                if metadata.get("llvm_training_coverage", {}).get(component, {}).get("nonzero_functions", 0) <= 0:
+                    raise RuntimeError(f"Missing meaningful LLVM PGO coverage: {component}")
+            if metadata.get("llvm_profile_sha256") != metadata["profiles"]["llvm-pgo.profdata"]["sha256"]:
+                raise RuntimeError("LLVM PGO coverage belongs to a different profile")
+    elif variant == "optimized" and protocol.get("llvm_profile_coverage_required"):
         repair = metadata.get("llvm_training_repair", {})
         for phase in ("instrumentation_smoke_coverage", "training_coverage"):
             for component in ("AArch64TargetLowering", "InstCombine"):
@@ -62,7 +72,7 @@ def verify_shared_stdlib(official, metadata, host):
                 raise RuntimeError(f"Official/custom standard libraries differ: {relative}")
 
 
-def download_compilers(root, variants, tag):
+def download_compilers(root, variants, tag, protocol=None):
     root.mkdir(parents=True, exist_ok=True)
     for variant in variants:
         if variant == "official":
@@ -72,12 +82,19 @@ def download_compilers(root, variants, tag):
             "--pattern", f"{variant}.zip", "--pattern", f"{variant}.json",
             "--dir", str(root),
         ], check=True)
-        metadata = json.loads((root / f"{variant}.json").read_text(encoding="utf-8"))
+        metadata_path = root / f"{variant}.json"
+        if protocol and "compiler_metadata_sha256" in protocol:
+            actual = hashlib.sha256(metadata_path.read_bytes()).hexdigest()
+            if actual != protocol["compiler_metadata_sha256"][variant]:
+                raise RuntimeError(f"Compiler metadata checksum mismatch: {variant}")
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
         archive = root / f"{variant}.zip"
         with archive.open("rb") as stream:
             checksum = hashlib.file_digest(stream, "sha256").hexdigest()
         if checksum != metadata["archive_sha256"]:
             raise RuntimeError(f"Archive checksum mismatch: {variant}")
+        if protocol and checksum != protocol["compiler_archive_sha256"][variant]:
+            raise RuntimeError(f"Archive differs from the preregistered compiler: {variant}")
         extract_compiler(archive, root / variant)
         archive.unlink()
 
@@ -137,7 +154,7 @@ def main():
     if args.release_tag and os.name == "nt" and len(variants) > 1:
         if args.compilers is None:
             parser.error("--compilers is required for downloads")
-        download_compilers(args.compilers.resolve(), variants, args.release_tag)
+        download_compilers(args.compilers.resolve(), variants, args.release_tag, protocol)
     for key in ("GH_TOKEN", "GITHUB_TOKEN"):
         os.environ.pop(key, None)
     compilers = {"official": official}

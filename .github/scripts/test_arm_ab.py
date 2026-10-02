@@ -10,6 +10,36 @@ from build_arm_compilers import configuration, digest, excluded_sysroot_entries,
 
 
 class ArmAbTests(unittest.TestCase):
+    def test_x64_profile_coverage_uses_x86_lowering_and_matching_profile(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            compiler = root / "pgo-control" / "bin" / "rustc.exe"
+            compiler.parent.mkdir(parents=True)
+            compiler.write_bytes(b"fixture")
+            protocol = {"rust_sha": RUST_SHA, "host": "x86_64-pc-windows-msvc",
+                        "llvm_profile_coverage_required": True,
+                        "compiler_archive_sha256": {"pgo-control": "archive"}}
+            metadata = {
+                "variant": "pgo-control", "rust_sha": RUST_SHA, "host": protocol["host"],
+                "archive_sha256": "archive", "llvm_profile_sha256": "profile",
+                "profiles": {"llvm-pgo.profdata": {"sha256": "profile"}},
+                "llvm_training_coverage": {c: {"nonzero_functions": 1}
+                                           for c in ("X86TargetLowering", "InstCombine")},
+                "files": {"bin/rustc.exe": digest(compiler)},
+            }
+            path = root / "pgo-control.json"
+            path.write_text(json.dumps(metadata))
+            self.assertEqual(verify_custom(root, "pgo-control", protocol), compiler)
+            metadata["llvm_training_coverage"]["X86TargetLowering"]["nonzero_functions"] = 0
+            path.write_text(json.dumps(metadata))
+            with self.assertRaisesRegex(RuntimeError, "Missing meaningful LLVM"):
+                verify_custom(root, "pgo-control", protocol)
+            metadata["llvm_training_coverage"]["X86TargetLowering"]["nonzero_functions"] = 1
+            metadata["llvm_profile_sha256"] = "other"
+            path.write_text(json.dumps(metadata))
+            with self.assertRaisesRegex(RuntimeError, "different profile"):
+                verify_custom(root, "pgo-control", protocol)
+
     def test_order_is_deterministic_and_rotates_positions(self):
         variants = ["official", "baseline-msvc", "baseline-lld", "optimized"]
         for vm in range(1, 6):

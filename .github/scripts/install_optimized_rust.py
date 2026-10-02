@@ -1,4 +1,4 @@
-"""Install the checksum-pinned Windows Arm64 compiler without replacing official tools."""
+"""Install a checksum-pinned native Windows compiler without replacing official tools."""
 
 import argparse
 import hashlib
@@ -60,7 +60,7 @@ def install(destination, manifest, official):
         smoke = Path(tmp)
         program = smoke / "smoke.rs"
         program.write_text("pub fn sum(xs: &[u64]) -> u64 { xs.iter().copied().sum() }\n")
-        for target in manifest["evaluation_stdlib_sha256"]:
+        for target in (manifest["host"], "wasm32-unknown-unknown"):
             artifact = smoke / f"{target}.rlib"
             subprocess.run([
                 str(compiler), "--edition=2024", "--crate-type=rlib", "-O",
@@ -83,11 +83,13 @@ def main():
     parser.add_argument("--github-outputs", action="store_true")
     parser.add_argument("--activate", action="store_true")
     args = parser.parse_args()
-    if os.name != "nt" or platform.machine().lower() not in ("arm64", "aarch64"):
-        parser.error("This compiler supports native Windows Arm64 only")
+    manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
+    machines = {"aarch64-pc-windows-msvc": ("arm64", "aarch64"),
+                "x86_64-pc-windows-msvc": ("amd64", "x86_64")}
+    if os.name != "nt" or platform.machine().lower() not in machines.get(manifest["host"], ()):
+        parser.error(f"This compiler requires native Windows hardware matching {manifest['host']}")
     if shutil.which("rustup") is None:
         parser.error("rustup is required on PATH; install the matching official support toolchain first")
-    manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     toolchain = f"{manifest['rust_version']}-{manifest['host']}"
     official = Path(subprocess.check_output(
         ["rustup", "which", "--toolchain", toolchain, "rustc"], text=True,

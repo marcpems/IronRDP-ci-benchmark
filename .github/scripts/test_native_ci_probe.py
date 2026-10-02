@@ -10,12 +10,27 @@ import zipfile
 
 from arm_ab_probe import extract_compiler
 from install_optimized_rust import check_hash, install
-from native_ci_probe import COMMANDS, PROFILE_ENV, build_environment, paired_order
+from native_ci_probe import COMMANDS, PROFILE_ENV, build_environment, paired_order, telemetry_executables
 from offline_benchmark import NATIVE_COMMANDS, COMMON_COMMAND, WASM_COMMAND
 from process_metrics import measure, measurement_session
 
 
 class NativeCiTests(unittest.TestCase):
+    @unittest.skipUnless(os.name == "nt", "Windows tool discovery")
+    def test_x64_telemetry_lookup_is_exact_native_architecture(self):
+        with patch("native_ci_probe.os.name", "nt"), \
+                patch.dict(os.environ, {"ProgramFiles(x86)": r"C:\Program Files (x86)"}), \
+                patch("native_ci_probe.platform.machine", return_value="AMD64"), \
+                patch("native_ci_probe.subprocess.check_output", return_value="") as run:
+            self.assertEqual(telemetry_executables(), [])
+        self.assertEqual(run.call_args.args[0][-1], r"VC\Tools\MSVC\*\bin\Hostx64\x64\vctip.exe")
+
+    def test_three_variant_order_rotates_without_mutating_input(self):
+        variants = ["official", "pgo-control", "optimized"]
+        for vm in range(1, 6):
+            self.assertEqual({paired_order(variants, vm, r)[0] for r in range(6)}, set(variants))
+        self.assertEqual(variants, ["official", "pgo-control", "optimized"])
+
     @unittest.skipUnless(os.name == "nt", "Windows persistent descendant validation")
     def test_shared_job_rejects_unapproved_persistent_child(self):
         parent = "import subprocess,sys;subprocess.Popen([sys.executable,'-c','import time;time.sleep(30)'])"
