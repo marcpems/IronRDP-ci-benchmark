@@ -1,0 +1,125 @@
+2026-10-02T05:03:06.0563678Z Image: windows-11-vs2026-arm64
+2026-10-02T05:03:06.0564219Z Version: 20260924.168.1
+2026-10-02T05:04:28.4849423Z C:/Program Files/Git  256G  132G  124G  52% /
+  "SCRIPT": "python x.py dist bootstrap --include-default-paths",
+2026-10-02T05:04:37.2694276Z normal dist builder detected, setting DEPLOY=1
+2026-10-02T05:04:37.3409293Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:04:37.6185561Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:04:38.2362051Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:04:38.6876785Z SCRIPT=python x.py dist bootstrap --include-default-paths
+2026-10-02T05:04:38.7531776Z C:/Program Files/Git  256G  132G  124G  52% /
+2026-10-02T05:04:45.0023990Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:04:45.9732432Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:04:47.1087475Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:05:14.4304334Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:05:14.7256538Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:05:16.6497365Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:05:16.9544381Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:10.5978387Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:10.9109082Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:12.0753384Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:12.5210300Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:12.7875167Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:13.2974103Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:13.6058059Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:14.0757996Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:14.4103534Z SCRIPT=python x.py dist bootstrap --include-default-paths
+2026-10-02T05:12:14.4731726Z C:/Program Files/Git  256G  136G  120G  54% /
+2026-10-02T05:13:05.0554302Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:14:06.8997031Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T05:14:12.4966804Z downloading https://static.rust-lang.org/dist/2026-09-29/rust-std-beta-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T05:14:13.0080802Z downloading https://static.rust-lang.org/dist/2026-09-29/rustc-beta-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T05:14:13.8591117Z downloading https://static.rust-lang.org/dist/2026-09-29/cargo-beta-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T05:14:14.4198335Z extracting C:\a\rust\rust\build\cache\2026-09-29\rust-std-beta-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T05:14:14.4208553Z extracting C:\a\rust\rust\build\cache\2026-09-29\rustc-beta-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T05:14:14.4398817Z extracting C:\a\rust\rust\build\cache\2026-09-29\cargo-beta-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T05:15:34.0320537Z Executing python x.py dist bootstrap --include-default-paths
+2026-10-02T05:15:34.1110001Z + python x.py dist bootstrap --include-default-paths
+2026-10-02T06:07:04.3210591Z Dist rust-docs-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:09:46.6269864Z Dist rust-docs-nightly-arm64ec-pc-windows-msvc
+2026-10-02T06:11:53.2683400Z Dist rust-docs-json-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:12:16.5423856Z Dist rust-docs-json-nightly-arm64ec-pc-windows-msvc
+2026-10-02T06:19:32.1834492Z Dist rustc-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:20:28.4296555Z Dist rust-std-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:20:42.6519550Z Dist rust-std-nightly-arm64ec-pc-windows-msvc
+2026-10-02T06:20:59.5293444Z Dist rustc-dev-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:22:32.7918865Z Dist rust-analysis-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:22:32.9672670Z Dist rust-analysis-nightly-arm64ec-pc-windows-msvc
+2026-10-02T06:22:38.2304962Z Dist rust-src-nightly
+2026-10-02T06:28:54.6892745Z Dist cargo-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:34:49.8721660Z Dist rust-analyzer-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:36:07.4546418Z Dist rustfmt-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:38:16.1733557Z Dist clippy-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:39:54.2440195Z Dist miri-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:39:58.8673357Z Dist llvm-tools-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:40:39.1423235Z Dist llvm-bitcode-linker-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:40:43.3856247Z Dist rust-dev-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:45:39.0785296Z Dist extended stage2 (aarch64-pc-windows-msvc)
+2026-10-02T06:46:16.3504340Z Dist rust-docs-json-nightly-aarch64-pc-windows-msvc
+2026-10-02T06:46:24.5901033Z Dist rust-nightly-aarch64-pc-windows-msvc
+2026-10-02T07:00:17.4326055Z Dist bootstrap-nightly-aarch64-pc-windows-msvc
+2026-10-02T07:00:25.5631818Z Compile requests                    3824
+2026-10-02T07:00:25.5632278Z Compile requests executed           3742
+2026-10-02T07:00:25.5632673Z Cache hits                          3664
+2026-10-02T07:00:25.5632984Z Cache hits (c [msvc])                 22
+2026-10-02T07:00:25.5633304Z Cache hits (c++ [msvc])             3446
+2026-10-02T07:00:25.5634755Z Cache hits (rust)                    196
+2026-10-02T07:00:25.5635075Z Cache misses                          78
+2026-10-02T07:00:25.5635377Z Cache misses (c++ [msvc])              1
+2026-10-02T07:00:25.5635699Z Cache misses (rust)                   77
+2026-10-02T07:00:25.5635999Z Cache hits rate                    97.92 %
+2026-10-02T07:00:25.5636312Z Cache hits rate (c [msvc])        100.00 %
+2026-10-02T07:00:25.5636621Z Cache hits rate (c++ [msvc])       99.97 %
+2026-10-02T07:00:25.5636919Z Cache hits rate (rust)             71.79 %
+2026-10-02T07:00:25.5645631Z Cache location                  s3, name: rust-lang-ci-sccache2, prefix: /
+2026-10-02T07:00:26.2226182Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T07:00:26.7050735Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T07:00:26.8460077Z C:/Program Files/Git  256G  170G   86G  67% /
+2026-10-02T07:00:26.8994253Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T07:00:27.7615549Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T07:00:28.9297764Z -rw-r--r-- 1 runneradmin 197121 7.3M Oct  2 00:00 bootstrap-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9298781Z -rw-r--r-- 1 runneradmin 197121 9.9M Oct  1 23:29 cargo-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9299373Z -rw-r--r-- 1 runneradmin 197121 4.3M Oct  1 23:38 clippy-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9300958Z -rw-r--r-- 1 runneradmin 197121 964K Oct  1 23:40 llvm-bitcode-linker-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9301836Z -rw-r--r-- 1 runneradmin 197121  63M Oct  1 23:40 llvm-tools-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9303172Z -rw-r--r-- 1 runneradmin 197121 2.5M Oct  1 23:39 miri-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9305050Z -rw-r--r-- 1 runneradmin 197121  16K Oct  1 23:22 rust-analysis-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9305829Z -rw-r--r-- 1 runneradmin 197121  16K Oct  1 23:22 rust-analysis-nightly-arm64ec-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9306483Z -rw-r--r-- 1 runneradmin 197121 9.8M Oct  1 23:35 rust-analyzer-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9310714Z -rw-r--r-- 1 runneradmin 197121 444M Oct  1 23:45 rust-dev-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9311608Z -rw-r--r-- 1 runneradmin 197121 6.3M Oct  1 23:46 rust-docs-json-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9312262Z -rw-r--r-- 1 runneradmin 197121 6.3M Oct  1 23:12 rust-docs-json-nightly-arm64ec-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9312897Z -rw-r--r-- 1 runneradmin 197121  31M Oct  1 23:09 rust-docs-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9313509Z -rw-r--r-- 1 runneradmin 197121  30M Oct  1 23:11 rust-docs-nightly-arm64ec-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9314099Z -rw-r--r-- 1 runneradmin 197121 318M Oct  1 23:56 rust-nightly-aarch64-pc-windows-msvc.msi
+2026-10-02T07:00:28.9314673Z -rw-r--r-- 1 runneradmin 197121 231M Oct  1 23:52 rust-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9315627Z -rw-r--r-- 1 runneradmin 197121 6.4M Oct  1 23:22 rust-src-nightly.tar.xz
+2026-10-02T07:00:28.9316230Z -rw-r--r-- 1 runneradmin 197121  24M Oct  1 23:20 rust-std-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9317457Z -rw-r--r-- 1 runneradmin 197121  22M Oct  1 23:20 rust-std-nightly-arm64ec-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9318533Z -rw-r--r-- 1 runneradmin 197121 137M Oct  1 23:22 rustc-dev-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9327465Z -rw-r--r-- 1 runneradmin 197121  78M Oct  1 23:20 rustc-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:28.9329504Z -rw-r--r-- 1 runneradmin 197121 2.6M Oct  1 23:36 rustfmt-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.0533105Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-analysis-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-analysis-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.0807502Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\llvm-bitcode-linker-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/llvm-bitcode-linker-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.1343296Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\clippy-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/clippy-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.1395221Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-analysis-nightly-arm64ec-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-analysis-nightly-arm64ec-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.1745726Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\bootstrap-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/bootstrap-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.1781876Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\miri-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/miri-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.2528519Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-docs-json-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-docs-json-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.3585077Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-docs-json-nightly-arm64ec-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-docs-json-nightly-arm64ec-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.6176904Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\cargo-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/cargo-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:37.7743103Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-analyzer-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-analyzer-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:39.0011093Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-nightly-aarch64-pc-windows-msvc.msi to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-nightly-aarch64-pc-windows-msvc.msi
+2026-10-02T07:00:39.8664434Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-src-nightly.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-src-nightly.tar.xz
+2026-10-02T07:00:39.9018697Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:40.1885525Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-std-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-std-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:40.2141102Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-std-nightly-arm64ec-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-std-nightly-arm64ec-pc-windows-msvc.tar.xz
+2026-10-02T07:00:40.8080524Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rustc-dev-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rustc-dev-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:40.9977168Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rustfmt-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rustfmt-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:41.1556124Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rustc-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rustc-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:41.4261454Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-docs-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-docs-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:43.1399548Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-dev-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-dev-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:43.4072735Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\rust-docs-nightly-arm64ec-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/rust-docs-nightly-arm64ec-pc-windows-msvc.tar.xz
+2026-10-02T07:00:43.5274198Z upload: ..\..\..\Users\RUNNER~1\AppData\Local\Temp\tmp.cifuzClEmb\llvm-tools-nightly-aarch64-pc-windows-msvc.tar.xz to s3://rust-lang-ci2/rustc-builds/dba8825fe50879b22129271fb865944e384f7cce/llvm-tools-nightly-aarch64-pc-windows-msvc.tar.xz
+2026-10-02T07:00:45.2572283Z   SCRIPT: python x.py dist bootstrap --include-default-paths
+2026-10-02T07:00:45.8528389Z   SCRIPT: python x.py dist bootstrap --include-default-paths

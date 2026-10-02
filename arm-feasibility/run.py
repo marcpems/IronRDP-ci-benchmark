@@ -198,9 +198,12 @@ def main():
             pins[relative] = actual
         if treatment:
             for patch in sorted((HERE / "patches").glob("*.patch")):
-                subprocess.run(["git", "-C", str(source), "apply", "--check", str(patch)], check=True)
-                subprocess.run(["git", "-C", str(source), "apply", str(patch)], check=True)
-        configure = [sys.executable, "configure", *configure_args(source, treatment)]
+                subprocess.run(["git", "-C", str(source), "apply", "--ignore-space-change",
+                                "--check", str(patch)], check=True)
+                subprocess.run(["git", "-C", str(source), "apply", "--ignore-space-change",
+                                str(patch)], check=True)
+        configure = [sys.executable, str(source / "src" / "bootstrap" / "configure.py"),
+                     *configure_args(source, treatment)]
         execute(configure, source, env, "configure", deadline)
         shutil.copy2(source / "bootstrap.toml", EVIDENCE / "bootstrap.toml")
         diff = subprocess.check_output(["git", "-C", str(source), "diff"], text=True)

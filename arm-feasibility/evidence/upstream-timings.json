@@ -1,0 +1,210 @@
+[
+  {
+    "run_id": 36967138610,
+    "url": "https://github.com/rust-lang/rust/actions/runs/36967138610",
+    "sha": "dba8825fe50879b22129271fb865944e384f7cce",
+    "created": "2026-10-02T05:02:04Z",
+    "conclusion": "success",
+    "created_to_updated_minutes": 181.35,
+    "job_span_minutes": 181.283,
+    "matrix_jobs": 95,
+    "selected_jobs": [
+      {
+        "name": "auto - dist-aarch64-msvc",
+        "job_id": 110713424955,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36967138610/job/110713424955",
+        "labels": [
+          "windows-11-arm"
+        ],
+        "started": "2026-10-02T05:03:04Z",
+        "job_minutes": 117.933,
+        "build_minutes": 106.333,
+        "other_step_minutes": 11.6
+      },
+      {
+        "name": "auto - dist-x86_64-msvc-alt",
+        "job_id": 110713425154,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36967138610/job/110713425154",
+        "labels": [
+          "windows-2025"
+        ],
+        "started": "2026-10-02T05:03:03Z",
+        "job_minutes": 174.983,
+        "build_minutes": 168.65,
+        "other_step_minutes": 6.333
+      },
+      {
+        "name": "auto - test-aarch64-msvc-2",
+        "job_id": 110713425253,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36967138610/job/110713425253",
+        "labels": [
+          "windows-11-arm"
+        ],
+        "started": "2026-10-02T05:03:03Z",
+        "job_minutes": 118.983,
+        "build_minutes": 106.367,
+        "other_step_minutes": 12.616
+      },
+      {
+        "name": "auto - dist-x86_64-msvc",
+        "job_id": 110713425273,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36967138610/job/110713425273",
+        "labels": [
+          "windows-2025-8core-32gb"
+        ],
+        "started": "2026-10-02T05:03:04Z",
+        "job_minutes": 119.117,
+        "build_minutes": 114.717,
+        "other_step_minutes": 4.4
+      },
+      {
+        "name": "auto - test-aarch64-msvc-1",
+        "job_id": 110713425414,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36967138610/job/110713425414",
+        "labels": [
+          "windows-11-arm"
+        ],
+        "started": "2026-10-02T05:03:04Z",
+        "job_minutes": 143.817,
+        "build_minutes": 133.067,
+        "other_step_minutes": 10.75
+      }
+    ],
+    "last_finishing_jobs": [
+      {
+        "name": "auto - dist-x86_64-mingw",
+        "id": 110713425126,
+        "completed": "2026-10-02T07:48:13Z",
+        "job_minutes": 165.183
+      },
+      {
+        "name": "auto - test-x86_64-mingw-2",
+        "id": 110713428066,
+        "completed": "2026-10-02T07:48:46Z",
+        "job_minutes": 165.683
+      },
+      {
+        "name": "auto - dist-x86_64-msvc-alt",
+        "id": 110713425154,
+        "completed": "2026-10-02T07:58:02Z",
+        "job_minutes": 174.983
+      },
+      {
+        "name": "auto - test-x86_64-mingw-1",
+        "id": 110713428058,
+        "completed": "2026-10-02T08:03:04Z",
+        "job_minutes": 179.983
+      },
+      {
+        "name": "publish toolstate",
+        "id": 110757915109,
+        "completed": "2026-10-02T08:03:25Z",
+        "job_minutes": 0.283
+      }
+    ]
+  },
+  {
+    "run_id": 36953332403,
+    "url": "https://github.com/rust-lang/rust/actions/runs/36953332403",
+    "sha": "a5c10c39125788787370a1ab11c954b9dff37859",
+    "created": "2026-10-02T01:57:00Z",
+    "conclusion": "success",
+    "created_to_updated_minutes": 183.767,
+    "job_span_minutes": 183.667,
+    "matrix_jobs": 95,
+    "selected_jobs": [
+      {
+        "name": "auto - dist-aarch64-msvc",
+        "job_id": 110671035562,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36953332403/job/110671035562",
+        "labels": [
+          "windows-11-arm"
+        ],
+        "started": "2026-10-02T01:58:02Z",
+        "job_minutes": 121.467,
+        "build_minutes": 108.483,
+        "other_step_minutes": 12.984
+      },
+      {
+        "name": "auto - dist-x86_64-msvc",
+        "job_id": 110671035857,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36953332403/job/110671035857",
+        "labels": [
+          "windows-2025-8core-32gb"
+        ],
+        "started": "2026-10-02T01:58:02Z",
+        "job_minutes": 182.367,
+        "build_minutes": 175.767,
+        "other_step_minutes": 6.6
+      },
+      {
+        "name": "auto - dist-x86_64-msvc-alt",
+        "job_id": 110671035881,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36953332403/job/110671035881",
+        "labels": [
+          "windows-2025"
+        ],
+        "started": "2026-10-02T01:58:02Z",
+        "job_minutes": 170.817,
+        "build_minutes": 165.067,
+        "other_step_minutes": 5.75
+      },
+      {
+        "name": "auto - test-aarch64-msvc-1",
+        "job_id": 110671036042,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36953332403/job/110671036042",
+        "labels": [
+          "windows-11-arm"
+        ],
+        "started": "2026-10-02T01:58:03Z",
+        "job_minutes": 149.5,
+        "build_minutes": 132.7,
+        "other_step_minutes": 16.8
+      },
+      {
+        "name": "auto - test-aarch64-msvc-2",
+        "job_id": 110671036094,
+        "url": "https://github.com/rust-lang/rust/actions/runs/36953332403/job/110671036094",
+        "labels": [
+          "windows-11-arm"
+        ],
+        "started": "2026-10-02T01:58:03Z",
+        "job_minutes": 117.533,
+        "build_minutes": 106.283,
+        "other_step_minutes": 11.25
+      }
+    ],
+    "last_finishing_jobs": [
+      {
+        "name": "auto - dist-x86_64-msvc-alt",
+        "id": 110671035881,
+        "completed": "2026-10-02T04:48:51Z",
+        "job_minutes": 170.817
+      },
+      {
+        "name": "auto - test-x86_64-msvc-1",
+        "id": 110671039034,
+        "completed": "2026-10-02T04:53:24Z",
+        "job_minutes": 175.35
+      },
+      {
+        "name": "auto - test-x86_64-mingw-1",
+        "id": 110671038983,
+        "completed": "2026-10-02T04:56:32Z",
+        "job_minutes": 178.483
+      },
+      {
+        "name": "auto - dist-x86_64-msvc",
+        "id": 110671035857,
+        "completed": "2026-10-02T05:00:24Z",
+        "job_minutes": 182.367
+      },
+      {
+        "name": "publish toolstate",
+        "id": 110712851422,
+        "completed": "2026-10-02T05:00:45Z",
+        "job_minutes": 0.283
+      }
+    ]
+  }
+]

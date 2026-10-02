@@ -1,0 +1,3 @@
+/evidence/*
+!/evidence/upstream-timings.json
+!/evidence/upstream-arm-dist-excerpts.log

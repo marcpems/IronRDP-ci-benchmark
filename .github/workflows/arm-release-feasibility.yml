@@ -23,6 +23,11 @@ jobs:
         shell: pwsh
         run: |
           "ARM_JOB_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=false" >> $env:GITHUB_ENV
       - uses: actions/checkout@v6
         with:
           path: harness
