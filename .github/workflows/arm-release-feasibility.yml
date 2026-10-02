@@ -1,0 +1,97 @@
+name: Arm64 full distribution feasibility
+on:
+  push:
+    branches: [ci/arm-release-feasibility]
+    paths:
+      - .github/workflows/arm-release-feasibility.yml
+      - arm-feasibility/run.py
+      - arm-feasibility/patches/**
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  distribution:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: windows-11-arm
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [baseline, treatment]
+    steps:
+      - name: Start total-job clock
+        shell: pwsh
+        run: |
+          "ARM_JOB_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: marcpems/rust-arm64-compiler-ab
+          ref: e408947bfd200af42db322daf0fadfe7e26d3bd1
+          path: rust-source
+          persist-credentials: false
+      - name: Native runner preparation
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force harness\arm-evidence | Out-Null
+          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors | ConvertTo-Json > harness\arm-evidence\cpu.json
+          Get-CimInstance Win32_OperatingSystem | Select-Object Caption,Version,TotalVisibleMemorySize,FreePhysicalMemory | ConvertTo-Json > harness\arm-evidence\os.json
+          Get-Volume | Select-Object DriveLetter,SizeRemaining,Size | ConvertTo-Json > harness\arm-evidence\volumes.json
+          @{ ImageOS=$env:ImageOS; ImageVersion=$env:ImageVersion; RunnerArch=$env:RUNNER_ARCH; Started=$env:ARM_JOB_STARTED } | ConvertTo-Json > harness\arm-evidence\runner.json
+          git -C rust-source config core.longpaths true
+          git -C rust-source config core.autocrlf false
+          git -C rust-source remote set-url --push origin DISABLED-UPSTREAM-PUSH
+          git -C rust-source submodule update --init --recursive --depth 1 --jobs 8
+          if ($LASTEXITCODE -ne 0) { throw 'Full source checkout failed' }
+          New-Item -ItemType Directory -Force rust-source\citools\clang-rust,rust-source\wix\bin | Out-Null
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-woa64.exe -o rust-source\citools\LLVM-20.1.3-woa64.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Native clang download failed' }
+          7z x -y -bd -bso0 -orust-source\citools\clang-rust rust-source\citools\LLVM-20.1.3-woa64.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Native clang extraction failed' }
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip -o rust-source\wix\wix311-binaries.zip
+          if ($LASTEXITCODE -ne 0) { throw 'WIX download failed' }
+          7z x -y -bd -bso0 -orust-source\wix\bin rust-source\wix\wix311-binaries.zip
+          if ($LASTEXITCODE -ne 0) { throw 'WIX extraction failed' }
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vs = & $vswhere -latest -products * -property installationPath
+          if (-not $vs) { throw 'Visual Studio not found' }
+          "ARM_VCVARS=$vs\VC\Auxiliary\Build\vcvarsall.bat" >> $env:GITHUB_ENV
+          python harness\arm-feasibility\run.py --source rust-source --variant ${{ matrix.variant }} --phase prepare
+          if ($LASTEXITCODE -ne 0) { throw 'Preflight failed' }
+      - name: Preserve pre-build evidence
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: arm-${{ matrix.variant }}-preflight
+          path: harness/arm-evidence
+          retention-days: 30
+      - name: Full distribution and treatment dist tests
+        shell: pwsh
+        run: |
+          $python = (Get-Command python).Source
+          & $env:ComSpec /d /s /c "call `"$env:ARM_VCVARS`" arm64 >nul && `"$python`" harness\arm-feasibility\run.py --source rust-source --variant ${{ matrix.variant }} --phase build"
+          if ($LASTEXITCODE -ne 0) { throw 'Distribution failed; see evidence and streamed resource samples' }
+      - name: Preserve final diagnostics
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: arm-${{ matrix.variant }}-diagnostics
+          path: |
+            harness/arm-evidence
+            rust-source/build/metrics.json
+            rust-source/bootstrap.toml
+            rust-source/opt-artifacts/*.profdata
+          compression-level: 1
+          retention-days: 30
+      - name: Preserve successful full distribution
+        uses: actions/upload-artifact@v6
+        if: success()
+        with:
+          name: arm-${{ matrix.variant }}-full-dist
+          path: rust-source/build/dist
+          compression-level: 0
+          retention-days: 7

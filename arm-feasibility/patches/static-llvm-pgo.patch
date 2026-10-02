@@ -1,0 +1,19 @@
+diff --git a/src/tools/opt-dist/src/main.rs b/src/tools/opt-dist/src/main.rs
+--- a/src/tools/opt-dist/src/main.rs
++++ b/src/tools/opt-dist/src/main.rs
+@@ -285,6 +285,11 @@ fn execute_pipeline(
+             stage.section("Build PGO instrumented LLVM", |section| {
+-                Bootstrap::build(env)
+-                    .llvm_pgo_instrument(&llvm_profile_dir_root)
+-                    .avoid_rustc_rebuild()
+-                    .run(section)
++                let builder = Bootstrap::build(env).llvm_pgo_instrument(&llvm_profile_dir_root);
++                let builder = if env.supports_shared_llvm() {
++                    builder.avoid_rustc_rebuild()
++                } else {
++                    // Static LLVM must be relinked into the compiler used for training.
++                    builder.rustc_pgo_optimize(&rustc_pgo_profile).rustc_rebuild()
++                };
++
++                builder.run(section)
+             })?;
