@@ -1,0 +1,22 @@
+Source: run 36994829038, job 110799044364, artifact 11236929598
+File: harness/arm-evidence/fresh-pgo-full-dist-tests.log
+[2026-10-02T10:32:57.867Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` starts
+[2026-10-02T10:32:57.867Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` starts
+[2026-10-02T13:46:49.539Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` ended: OK (11631.67s)`
+[2026-10-02T13:46:49.539Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` starts
+[2026-10-02T14:22:09.510Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` ended: OK (2119.97s)`
+[2026-10-02T14:22:09.512Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO optimized rustc` starts
+[2026-10-02T14:43:18.594Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO optimized rustc` ended: OK (1269.08s)`
+[2026-10-02T14:43:18.594Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` ended: OK (15020.73s)`
+[2026-10-02T14:43:18.595Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO)` starts
+[2026-10-02T14:44:11.618Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Build PGO instrumented LLVM` starts
+
+Last build-log line before safety termination:
+[3843/3904] Linking CXX executable bin\llvm-cfi-verify.exe
+
+Recorded by harness/arm-evidence/stages.jsonl:
+stage=fresh-pgo-full-dist-tests
+completed_unix=1790957377.3101795
+elapsed_seconds=20321.298701524734
+returncode=1
+safety_deadline_hit=true

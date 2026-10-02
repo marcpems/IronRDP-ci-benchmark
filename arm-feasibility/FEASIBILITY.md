@@ -2,7 +2,12 @@
 
 ## Status and decision
 
-**Full cold baseline fits; optimized treatment still running; not release-qualified.** This report separates measured
+**Full cold baseline fits; optimized treatment exhausted the 350-minute safety
+budget during its second LLVM build; not release-qualified.** Do not enable this
+single-job fresh-PGO/ThinLTO recipe on the standard four-core runner as a reliable
+upstream release path. The run stopped before the hard 360-minute boundary, so it
+does not measure an exact six-hour failure or a completed optimized duration.
+This report separates measured
 upstream timings, a cold fork experiment, and conditional budget scenarios. Existing
 Arm compiler performance wins are motivation, not evidence that a full distribution
 fits CI. Neither the earlier trimmed package nor x64 profile reuse qualifies Arm64.
@@ -193,6 +198,72 @@ the treatment must be measured independently. The pinned cold baseline and
 current-main warm sample differ in both version and cache state.
 
 ## Full distribution versus release qualification
+
+### Measured full cold treatment: safety timeout
+
+[Treatment job 110799044364](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038/job/110799044364)
+ran **10:19:29-16:10:03 UTC on October 2**, **350.57 minutes total**.
+The harness recorded `safety_deadline_hit=true` and terminated its owned process
+tree at the predeclared 350-minute first-step deadline. Final diagnostics uploaded
+successfully. This is a build-duration failure, not another setup failure,
+compiler diagnostic, or observed out-of-memory/disk failure.
+
+| Optimization phase | Wall minutes | Outcome |
+|---|---:|---|
+| Initial instrumented rustc + LLVM build | 193.86 | Completed |
+| Gather frontend PGO profiles | 35.33 | Completed |
+| Rebuild rustc using frontend PGO | 21.15 | Completed |
+| **Stage 1 subtotal** | **250.35** | **Completed; overlaps the three rows above** |
+| Build PGO-instrumented LLVM for Stage 2 | **85.43 elapsed** | **Interrupted, not a completed stage time** |
+| LLVM profile training and final profile-use distribution/tests | Not reached | No qualification |
+
+Before Stage 1 there were approximately **13.48 minutes** of checkout, setup,
+helper and rustc-perf preparation. Stage 2 also spent **0.88 minutes** between
+its start and the instrumented-LLVM build. These phases are wall time, not CPU.
+Bootstrap reports **154.08 minutes of exclusive LLVM build work** inside the
+initial 193.86-minute build; do not add that nested time again.
+
+The final LLVM log line was Ninja **3843/3904**, linking `llvm-cfi-verify.exe`.
+Task count is **not** a remaining-time estimate: compiler relinking, LLVM
+training, final profile-use rebuilding, full tools/docs/Arm64EC/MSI packaging and
+extracted-distribution tests still remained. No successful full distribution was
+uploaded. Only `rustc-pgo.profdata` was produced (81,044,080 bytes; SHA-256
+`8c4c3668dd5e6a09a18872bc309d0a788232dd870ac40aa57cf67524c2013c72`);
+the LLVM profile and required nonzero backend coverage could not be validated.
+The earlier separately validated Arm64 downstream compiler remains a different,
+successful experiment; this incomplete run does not replace its artifact.
+
+Across **345 one-minute samples**, maximum observed machine physical usage was
+**7.51 GiB**, maximum commit usage **7.80 GiB**, and minimum free disk
+**29.52 GiB** (116.42 GiB at the first sample). These sampled values do not show
+resource exhaustion, but are not continuous process peaks; later stages were
+never measured. Disk demand is also materially higher than the cold baseline.
+
+[Persistent summary](evidence/treatment-summary.json) includes job/stage identity,
+deadline status, machine resource extrema, and completed bootstrap invocations.
+[Phase excerpts](evidence/treatment-stage-excerpts.log) preserve the opt-dist
+boundaries. The
+[complete diagnostic artifact](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038/artifacts/11236929598)
+has 30-day retention; `summarize_experiment.py` reproduces the summary from its
+contents and the job API response. Interrupted bootstrap invocations are absent
+from completed-invocation metrics and must not be treated as zero cost.
+
+**Decision:** the cold baseline is **141.82 minutes**, while this treatment is
+**still incomplete at 350 minutes**. A ten-minute YAML increase would remove
+the diagnostic reserve, not establish a reliable release pipeline. Ordinary
+Arm64 compiler tests need not enter opt-dist and are not automatically slowed
+by a dist-only change; however the optimized distribution would be a new CI
+critical-path/timeout risk. Release promotion cannot proceed using artifacts
+that were never completed. Its separate 240-minute budget remains unmeasured.
+
+A larger native runner or source-pinned staged pipeline remains a candidate,
+not a validated remedy. In particular, the
+[32-vCPU capacity/cost proposal](https://github.com/marcpems/IronRDP-ci-benchmark/blob/analysis/arm-build-time-options/ci-benchmark/build-time/ANNUAL-CAPACITY.md)
+uses conditional scaling and annual-demand assumptions: this four-core timeout
+does not turn its 32-vCPU durations into measurements. No rerun or paid runner
+was launched in response to this failure.
+
+### Remaining release qualification
 
 The current successful upstream log packages native and Arm64EC standard libraries,
 HTML/JSON docs and analysis, plus rustc, rustc-dev/rust-dev, rust-src, Cargo,

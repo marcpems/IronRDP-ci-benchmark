@@ -10,7 +10,11 @@ adds fresh rustc and LLVM PGO, Rust ThinLTO, LLVM ThinLTO, and native LLD for ru
 It also runs opt-dist's extracted-distribution tests. Neither trims LLVM tools.
 
 The original matrix launched both variants. The workflow now selects treatment
-only: the baseline continues in run 36991902911 and must not be duplicated.
+only. The baseline completed in run 36991902911 in **141.82 minutes**.
+The corrected treatment in run 36994829038 exhausted its **350-minute safety
+budget** during Stage 2's instrumented LLVM build, before LLVM training and final
+distribution/tests. Both runs are terminal and must not be duplicated merely to
+update documentation. See [measured outcomes](FEASIBILITY.md).
 An early treatment helper build exposed that `opt-dist` itself must be built with
 explicit native `--host`/`--target`; otherwise the full distribution target list
 also tries to build the helper for Arm64EC using stage0 without Arm64EC std.

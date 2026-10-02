@@ -1,0 +1,156 @@
+{
+  "job_id": 110799044364,
+  "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36994829038/job/110799044364",
+  "conclusion": "failure",
+  "started": "2026-10-02T10:19:29Z",
+  "completed": "2026-10-02T16:10:03Z",
+  "job_minutes": 350.56666666666666,
+  "stages": [
+    {
+      "stage": "configure",
+      "started_unix": 1790936876.8610394,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.15\\arm64\\python.exe",
+        "C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\src\\bootstrap\\configure.py",
+        "--build=aarch64-pc-windows-msvc",
+        "--host=aarch64-pc-windows-msvc",
+        "--target=aarch64-pc-windows-msvc,arm64ec-pc-windows-msvc",
+        "--enable-full-tools",
+        "--enable-profiler",
+        "--enable-locked-deps",
+        "--disable-manage-submodules",
+        "--enable-cargo-native-static",
+        "--disable-dist-src",
+        "--enable-llvm-static-stdcpp",
+        "--release-channel=stable",
+        "--debuginfo-level-std=1",
+        "--dist-compression-formats=xz",
+        "--set",
+        "build.print-step-timings=true",
+        "--set",
+        "build.metrics=true",
+        "--set",
+        "build.optimized-compiler-builtins=true",
+        "--set",
+        "rust.codegen-units-std=1",
+        "--set",
+        "rust.remap-debuginfo=true",
+        "--set",
+        "dist.compression-profile=balanced",
+        "--set",
+        "llvm.download-ci-llvm=false",
+        "--set",
+        "rust.download-rustc=false",
+        "--set",
+        "llvm.clang-cl=C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\citools\\clang-rust\\bin\\clang-cl.exe",
+        "--set",
+        "rust.lto=thin",
+        "--set",
+        "llvm.thin-lto=true",
+        "--set",
+        "llvm.link-shared=false",
+        "--set",
+        "target.aarch64-pc-windows-msvc.linker=C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\citools\\clang-rust\\bin\\lld-link.exe",
+        "--set",
+        "target.aarch64-pc-windows-msvc.ar=C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\citools\\clang-rust\\bin\\llvm-lib.exe"
+      ],
+      "completed_unix": 1790936877.3419983,
+      "elapsed_seconds": 0.4809591770172119,
+      "returncode": 0,
+      "safety_deadline_hit": false
+    },
+    {
+      "stage": "build-opt-dist",
+      "started_unix": 1790936905.846695,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.15\\arm64\\python.exe",
+        "x.py",
+        "build",
+        "--host",
+        "aarch64-pc-windows-msvc",
+        "--target",
+        "aarch64-pc-windows-msvc",
+        "--set",
+        "rust.debug=true",
+        "opt-dist"
+      ],
+      "completed_unix": 1790937055.9729955,
+      "elapsed_seconds": 150.12630105018616,
+      "returncode": 0,
+      "safety_deadline_hit": false
+    },
+    {
+      "stage": "lock-format",
+      "started_unix": 1790937055.9748032,
+      "command": [
+        "C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\build\\aarch64-pc-windows-msvc\\stage0\\bin\\cargo.exe",
+        "generate-lockfile",
+        "--offline"
+      ],
+      "completed_unix": 1790937056.0096102,
+      "elapsed_seconds": 0.034807443618774414,
+      "returncode": 0,
+      "safety_deadline_hit": false
+    },
+    {
+      "stage": "fresh-pgo-full-dist-tests",
+      "started_unix": 1790937056.0114796,
+      "command": [
+        "C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\build\\aarch64-pc-windows-msvc\\stage1-tools-bin\\opt-dist.exe",
+        "windows-ci",
+        "--",
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.15\\arm64\\python.exe",
+        "x.py",
+        "dist",
+        "bootstrap",
+        "--include-default-paths"
+      ],
+      "completed_unix": 1790957377.3101795,
+      "elapsed_seconds": 20321.298701524734,
+      "returncode": 1,
+      "safety_deadline_hit": true
+    }
+  ],
+  "resources": {
+    "sample_count": 345,
+    "sample_interval_seconds": 60,
+    "max_machine_physical_used_gib": 7.506145477294922,
+    "min_machine_physical_available_gib": 8.484092712402344,
+    "max_machine_commit_used_gib": 7.802082061767578,
+    "first_disk_free_gib": 116.42307662963867,
+    "min_disk_free_gib": 29.516029357910156,
+    "last_disk_free_gib": 92.91877746582031,
+    "note": "Sampled machine-wide values, not process RSS or continuous peak measurements"
+  },
+  "bootstrap_invocations": [
+    {
+      "cmdline": "build --host aarch64-pc-windows-msvc --target aarch64-pc-windows-msvc --set rust.debug=true opt-dist",
+      "wall_minutes": 1.1725690633333334,
+      "exclusive_category_minutes": {
+        "bootstrap": 1.2548333333333333e-05,
+        "compile": 3.607e-05,
+        "tool": 1.1463444283333333
+      }
+    },
+    {
+      "cmdline": "build --target aarch64-pc-windows-msvc --host aarch64-pc-windows-msvc --stage 2 library/std --rust-profile-generate C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\opt-artifacts\\rustc-pgo",
+      "wall_minutes": 193.83400981833333,
+      "exclusive_category_minutes": {
+        "bootstrap": 7.474833333333333e-05,
+        "compile": 37.2595414,
+        "llvm": 154.08322485000002,
+        "tool": 2.483734061666667
+      }
+    },
+    {
+      "cmdline": "build --target aarch64-pc-windows-msvc --host aarch64-pc-windows-msvc --stage 2 library/std --rust-profile-use C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\opt-artifacts\\rustc-pgo.profdata",
+      "wall_minutes": 21.102897690000002,
+      "exclusive_category_minutes": {
+        "bootstrap": 4.142166666666667e-05,
+        "compile": 21.017318505,
+        "llvm": 3.056e-05,
+        "tool": 0.06164319666666665
+      }
+    }
+  ]
+}
