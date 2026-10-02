@@ -10,6 +10,10 @@ completed 141.82-minute cold baseline with verified native Windows Arm64
 retry costs. Prefer one native 32-vCPU job; retain a two-job profile/final-build
 fallback before a broader DAG. Funding does not limit the choice. Earlier
 rankings below address stock four-CPU jobs or the original hypothetical budgets.
+The [annual capacity follow-up](ANNUAL-CAPACITY.md) distinguishes one runner per
+build from a one-runner fleet: observed MSVC dist demand annualizes to ~4,224
+attempts, exceeding one runner's central full-attempt capacity. Prefer simple
+overflow/replacement capacity over adding a profile DAG solely for throughput.
 
 ## Updated priority when adding PGO and ThinLTO
 

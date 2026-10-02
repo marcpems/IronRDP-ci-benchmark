@@ -1,7 +1,7 @@
 # Balanced Windows Arm64 compiler-production proposal
 
 **Decision, 2026-10-02:** prefer **one native Windows Arm64 32-vCPU / 128-GB
-larger runner**, fresh rustc+LLVM PGO, and **ThinLTO only on the final shipping
+larger runner per build**, fresh rustc+LLVM PGO, and **ThinLTO only on the final shipping
 Rust/LLVM compiler** initially. This keeps the existing serial bootstrap pipeline
 and full distribution instead of adding a four-job protocol. Funding is not the
 constraint: choose latency, headroom and maintainability first. This is a
@@ -21,6 +21,34 @@ stage-local LTO settings and mandatory static relinks. Keep
 opt-dist helpers for the native host only; the final dist still includes Arm64EC.
 Do not apply final ThinLTO globally to every training stage. Keep
 `DIST_REQUIRE_ALL_TOOLS=1` and the existing channel's full output policy.
+
+## Can one machine cover a year of upstream work?
+
+**Not reliably as the sole runner.** “One runner per build” above is not a
+one-machine fleet guarantee. The new [capacity and annual-cost assessment](ANNUAL-CAPACITY.md)
+inspects **2,633 CI invocations over September 18–October 1 UTC**:
+**162 MSVC Arm64 distribution attempts**, 344 native test jobs and 160 separate
+Arm64 LLVM-MinGW dist jobs. Promotion reuses CI artifacts; it does not add
+365 nightly and 365 beta compiler rebuilds.
+
+With **concurrency one**, 95% assumed availability and the current **$0.098/min**
+native32 rate, annualizing those MSVC attempts gives:
+
+| Scope / conditional accounting | Attempts/year | Central optimized compute/year | Adverse compute/year |
+|---|---:|---:|---:|
+| One candidate attempt daily, **not full upstream CI** | 365 | $4,865 | $8,871 |
+| Sampled scheduled rate, budget each attempt in full | ~4,224 | **$56,292** | **$102,650** |
+| Same arrivals, retain historical cancellation deadlines | ~4,224 | **$39,986** | **$58,711** |
+
+The full-attempt central/adverse workloads require **115%/209%** of one runner's
+available minutes; even cancellation-aware central occupancy is **81%**, above
+a 70% headroom target. These are modeled cost/capacity sensitivities, not yearly
+forecasts or measured native32 builds. Prefer a primary runner with overflow/
+replacement capacity; central full-attempt planning needs **two runner slots**.
+Keep ordinary CI elsewhere. Linux/macOS/x86 coverage cannot be replaced by this
+machine. A **$51,508.80** continuous-active hosted-rate equivalent is not a
+self-hosted annual TCO quote, and idle larger-runner configuration is not billed.
+See [sample provenance, queues, retries, storage and yearly tables](ANNUAL-CAPACITY.md).
 
 ## Verified availability and price—not x64 substitutions
 
@@ -212,6 +240,7 @@ cost and schedule wait remain unknown and are not included in compiler prices.
 ## Reproduce / scope
 
 `python .\ci-benchmark\build-time\balanced_model.py` and
+`python .\ci-benchmark\build-time\annual_capacity.py`; validation:
 `python -m unittest discover -s .\ci-benchmark\build-time -p "test_*.py"`.
 Inputs/source excerpts: [balanced-inputs.json](balanced-inputs.json).
 Existing evidence: [README](README.md), [OPTIONS](OPTIONS.md),

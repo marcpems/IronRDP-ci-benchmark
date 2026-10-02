@@ -21,6 +21,14 @@ See [nonlinear scaling / billed-SUM / retry tables](BALANCED-TABLES.md) and
 [model inputs](balanced-inputs.json). Earlier projections below remain separate
 historical scenarios, not measured bounds.
 
+**Annual capacity follow-up:** [is one native32 machine enough?](ANNUAL-CAPACITY.md)
+Two complete weeks contain **162 MSVC Arm64 dist attempts**, not fourteen nightly
+rebuilds. Full-attempt annualized planning is **~4,224 attempts / $56k central
+compute / 115% of one runner's available capacity**; cancellation-aware central
+replay is ~$40k / 81%. Neither is a measured 32-vCPU optimized result.
+One runner per build does not imply one runner can reliably service the fleet.
+Keep ordinary test CI and cross-platform qualification elsewhere.
+
 ## New: expected cost of adding PGO + ThinLTO
 
 **[Read the offline production projection](PGO-LTO-PROJECTION.md)** before
@@ -290,7 +298,7 @@ local evidence paths. Hosted source-probe reproduction is isolated in
 [`arm-build-time-source-probe.yml`](../../.github/workflows/arm-build-time-source-probe.yml).
 The [options report](OPTIONS.md) separates measured, modeled and unknown effects.
 
-**Investigation validation:** twenty-six focused tests pass; all 313 job totals
+**Investigation validation:** thirty-five focused tests pass; all 313 job totals
 reconcile; four completed-log and two projected SVGs parse as XML; local links/source snapshots exist; generated
 data, inventories and visuals reproduce byte-for-byte. The two source-probe
 jobs completed with negative qualification results, preserved separately from
