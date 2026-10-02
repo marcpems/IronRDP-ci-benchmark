@@ -4,6 +4,8 @@
 Analysis dated 2026-10-02. Sources are completed successful September 4–5 CI
 runs, not October master and not the separate Rust 1.94.1 experiments.
 Next: **[prioritized easy wins, critical-path models and deeper pipeline options](OPTIONS.md)**.
+The [completed two-runner source probe](SOURCE-PROBE.md) found **no useful
+archive-only fetch saving** and did not qualify checkout equivalence.
 
 ## First conclusions
 
@@ -236,7 +238,15 @@ python .\ci-benchmark\build-time\analyze.py
 
 The analyzer is offline once evidence is collected; it asserts timing accounting
 and validates SVG XML. Full raw public logs stay untracked under `raw/`.
+Validation: `python -m unittest discover -s .\ci-benchmark\build-time -p test_analyze.py`.
 [`collect_local.py`](collect_local.py) is optional and requires the named earlier
 local evidence paths. Hosted source-probe reproduction is isolated in
 [`arm-build-time-source-probe.yml`](../../.github/workflows/arm-build-time-source-probe.yml).
 The [options report](OPTIONS.md) separates measured, modeled and unknown effects.
+
+**Investigation validation:** six focused tests pass; all 313 job totals
+reconcile; four SVGs parse as XML; local links/source snapshots exist; generated
+data, inventories and visuals reproduce byte-for-byte. The two source-probe
+jobs completed with negative qualification results, preserved separately from
+production baselines. No full compiler build or upstream CI configuration was
+changed by this investigation.

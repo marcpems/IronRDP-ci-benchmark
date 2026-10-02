@@ -51,6 +51,18 @@ class TimingTests(unittest.TestCase):
             self.assertEqual(run["scenarios"][0]["matrix_makespan_saved_seconds"], 0)
             self.assertEqual(run["scenarios"][1]["matrix_makespan_saved_seconds"], 0)
 
+    def test_probe_is_a_negative_result_not_a_production_baseline(self):
+        folder = ROOT / "data" / "source-probe-36992548740"
+        data = json.loads((folder / "summary.json").read_text())
+        self.assertAlmostEqual(data["mean_archive_minus_git_seconds"], 3.296043)
+        self.assertAlmostEqual(data["runner_minutes"], 21.05)
+        for order in ("git-first", "archive-first"):
+            result = json.loads((folder / f"{order}.json").read_text())
+            self.assertFalse(result["passed"])
+            self.assertEqual(result["cpu_count"], 4)
+            self.assertEqual(result["steps"]["git"]["verification"]["mismatch_count"], 521)
+            self.assertEqual(result["steps"]["archive"]["verification"]["mismatch_count"], 16)
+
 
 if __name__ == "__main__":
     unittest.main()

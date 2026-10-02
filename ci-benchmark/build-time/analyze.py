@@ -157,7 +157,7 @@ def main():
                   "Nested intervals must not be summed. Exclusive categories are in `summary.json`.", ""]
     diagram_rows, arm_rows, frontier_rows = [], [], []
     for folder in sorted((ROOT / "data").iterdir()):
-        if not folder.is_dir() or not (folder / "run.json").exists():
+        if not folder.is_dir() or not folder.name.isdigit() or not (folder / "run.json").exists():
             continue
         run = json.loads((folder / "run.json").read_text())
         jobs = json.loads((folder / "jobs.json").read_text())

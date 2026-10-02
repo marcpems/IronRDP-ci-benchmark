@@ -59,15 +59,22 @@ estimated reliably from these warm un-PGO'd upstream observations.
 
 | Order | Option / expected impact | Evidence and confidence | Cost / qualification |
 |---|---|---|---|
-| 1 | **Improve source acquisition**, preserving the exact LLVM tree. Target **0–5 min/job** within the observed 7.1–10.9-min *all-submodule* step; actual paired probe result is reported below, not assumed. | Low-change candidate: upstream already has an archive-fetch helper, currently disabled; current Git path already uses `-j16`, so “enable parallel Git” is not a new win. | One source archive and extraction disk space; no additional build job after adoption. Preserve gitlink identity, symlink semantics, source-version metadata, nested modules, and Git fallback. File equivalence alone is not full bootstrap qualification. |
-| 2 | **Stop accidental cold-cache regressions / record cache identity per stage.** Approximately **0 min** for the already-100%-hit Arm64 C++ baseline; potentially tens of minutes on genuinely cold jobs. | High confidence in observed cache disparity, low in any proposed remedy's time. Do not conflate cache hits with downloaded LLVM or a clean compilation. | Exact keys include source/LLVM SHA, host clang, SDK, target set, optimization/instrumentation mode and profile digest. Wrong-key reuse risks invalid code. Prewarming may move cost off-path rather than remove runner-minutes. Do not share instrumented and final objects. |
-| 3 | **Trim or overlap repeated setup**, not output/test coverage. Target **0–2 min/job**: second environment dump alone is ~1–1.5 min; citool build ~1 min. | Medium confidence in budget, unmeasured implementation. Cache the locked citool binary by source/compiler/platform; retain required diagnostics once and redact credentials. | Tiny cache compared with LLVM; restore/upload can erase benefit. Source-bound builds cannot start before source exists. Keeping scheduled work within a job avoids another runner's startup cost. |
-| 4 | **Faster CI compression / concurrent independent package compression.** Screening target **0–8 min Arm64 dist**, bounded by 25–26 min explicit packaging. | Medium opportunity, low measured confidence. Existing profile is already `balanced`; don't assume maximum compression is currently in use. Promotion is configured to recompress XZ, so measure **combined CI + promotion** impact. | Preserve every component, MSI, package manifest, payload and final compression policy. More threads on 4CPU/16GiB may contend with linking; larger CI archives increase transfer/storage. Benchmark actual rust-dev/docs/compiler payloads, not zero-filled or source-only data. |
-| 5 | **Rebalance existing Arm64 test shards**, retaining test/bootstrap coverage. Target **0–10 min for Arm64 qualification**, **0 global merge min in these samples**. | Current 22-min test-only imbalance suggests ideal ~11-min benefit if equal transferable suites, but compiler/tool prerequisites differ. | Could be a small Makefile/job-matrix change. Preserve x.py shebang and x.ps1 testing, every suite, and stage2 qualification. Measure suite durations and per-shard duplicated prerequisites before moving them. |
+| 1 | **Preserve correct compiler-cache hits / record cache identity per stage.** Approximately **0 min** for the already-100%-hit Arm64 C++ baseline; potentially tens of minutes on genuinely cold critical-path jobs. | High confidence in observed cache disparity, low in any proposed remedy's time. The cache misses may be legitimate source/config changes, not a cache bug. Do not conflate cache hits with downloaded LLVM or a clean compilation. | Exact keys include source/LLVM SHA, host clang, SDK, target set, optimization/instrumentation mode and profile digest. Wrong-key reuse risks invalid code. Prewarming may move cost off-path rather than remove runner-minutes. Do not share instrumented and final objects. |
+| 2 | **Trim or overlap repeated setup**, not output/test coverage. Target **0–2 min/job**: second environment dump alone is ~1–1.5 min; citool build ~1 min. | Medium confidence in budget, unmeasured implementation. Cache the locked citool binary by source/compiler/platform; retain required diagnostics once and redact credentials. | Tiny cache compared with LLVM; restore/upload can erase benefit. Source-bound builds cannot start before source exists. Keeping scheduled work within a job avoids another runner's startup cost. |
+| 3 | **Faster CI compression / concurrent independent package compression.** Screening target **0–8 min Arm64 dist**, bounded by 25–26 min explicit packaging. | Medium opportunity, low measured confidence. Existing profile is already `balanced`; don't assume maximum compression is currently in use. Promotion is configured to recompress XZ, so measure **combined CI + promotion** impact. | Preserve every component, MSI, package manifest, payload and final compression policy. More threads on 4CPU/16GiB may contend with linking; larger CI archives increase transfer/storage. Benchmark actual rust-dev/docs/compiler payloads, not zero-filled or source-only data. |
+| 4 | **Rebalance existing Arm64 test shards**, retaining test/bootstrap coverage. Target **0–10 min for Arm64 qualification**, **0 global merge min in these samples**. | Current 22-min test-only imbalance suggests ideal ~11-min benefit if equal transferable suites, but compiler/tool prerequisites differ. | Could be a small Makefile/job-matrix change. Preserve x.py shebang and x.ps1 testing, every suite, and stage2 qualification. Measure suite durations and per-shard duplicated prerequisites before moving them. |
+| Rejected probe | **Replace shallow Git with archive-only source acquisition. No demonstrated gain.** Measured archive minus Git is **+3.30s mean** (slower), not the initially screened 0–5-min opportunity. | Two opposite-order standard-runner probes: 180,584-file extraction/checkout dominates. Exact checkout equivalence remains unqualified because the strict raw-blob oracle rejected both controls and archives. Current upstream already uses `-j16`. | No production patch recommended. Source caching/pre-staging would be a different unmeasured option; archive fetch alone does not remove filesystem writes. Preserve gitlink identity, attributes, symlinks and nested modules before considering it again. |
 
-**Recommended first upstream-sized step:** stage/cache timing observability plus
-one narrowly scoped source-acquisition change **only if** the bounded source
-probe and a full bootstrap run pass. Do not start with a broad stage2 DAG rewrite,
+**Recommended first upstream-sized step:** expose per-stage cache/CPU/disk
+metrics and gate the full recursive `du . | sort ...` inventory behind a
+diagnostic/failure path, while retaining cheap capacity/environment/tool identity
+information and checking total setup time. The pinned
+[`dump-environment.sh`](sources/rust-src_ci_scripts_dump-environment.sh) performs
+that full directory walk both before and after submodule checkout; the second invocation
+takes 59–90 seconds on the Arm64 samples. This bounds the opportunity, not a
+measurement of `du` alone. The source
+archive probe did **not** justify an acquisition patch. Next measure compression
+on existing real distribution payloads. Do not start with a broad stage2 DAG rewrite,
 drop LLVM targets/tools, or reduce training corpus/test qualification.
 
 ## Deeper pipeline parallelization: highest Arm64 opportunities
@@ -166,7 +173,7 @@ Source markers and classifications are in [local-evidence.json](data/local-evide
 ## Bounded experiment record
 
 [Run 36992548740](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36992548740)
-uses two standard `windows-11-arm` runners, opposite Git/archive orders and a
+completed on two standard `windows-11-arm` runners, opposite Git/archive orders and a
 35-minute per-job cap. It fetches only the exact LLVM commit from September
 sample 33865610474 (`76a3a9d0075fe0df4bb57160372700006e3d0b2b`), not the
 Rust 1.94.1 feasibility agent's LLVM commit.
@@ -175,5 +182,39 @@ No compiler build, global SDK edits, cancellation of another run, release writes
 or upstream mutations. Checkout credentials are not persisted; public downloads
 run with an allowlisted environment. Artifact logs contain tool versions,
 timings and file/blob verification, not environment dumps. Only this isolated
-branch's workflow is launched. Results will be recorded after both jobs finish;
-there is no claimed measured source-fetch saving yet.
+branch's workflow was launched. See the [complete measured outcome](SOURCE-PROBE.md):
+
+* Git acquisition **250.82/260.42s**, archive **257.87/259.96s**.
+* Archive is **3.30s slower on average**; no useful saving established.
+* Strict literal-blob guards failed **both** methods; Git attributes and archive
+  substitutions make that oracle insufficient for Windows checkout equivalence.
+  This is not evidence of download corruption and not a qualified production patch.
+* Results persisted; no extra full-build runner launched to pursue a no-gain candidate.
+
+## Final ranking by expected impact and remaining blockers
+
+1. **For an Arm64 artifact deadline:** tools/docs/package fan-out has the largest
+   *observed eligible budget*: **10–25 min screening target**, medium opportunity,
+   low timing confidence until transfer/prerequisite costs are measured.
+2. **Lower-change Arm64 work:** compression **0–8 min**, shard rebalancing
+   **0–10 min qualification-only**, setup **0–2 min**; all modeled, not measured
+   treatment wins. Gating recursive diagnostic filesystem walks is the smallest
+   first patch; it must retain failure diagnostics rather than hiding problems.
+3. **For the whole merge:** investigate both macOS 26 cache-heavy jobs and the
+   combined MSVC/Mingw test frontier. Conditional replay ceilings are **87.5 min**
+   for the outlier or **15 min** for a uniform Windows improvement; neither is an
+   achieved nor guaranteed speedup. Arm64-only changes save **0** in these samples.
+4. **For future fresh Arm64 PGO:** independent profile branches/training shards
+   may offer larger gains, but **minutes remain uncalibrated** pending a valid,
+   complete, hosted fresh-profile distribution baseline. Keep static-LLVM relinks
+   and final profile-use rebuild barriers; preserve all corpus/modes/coverage.
+5. **Do not pursue archive-only acquisition now:** the bounded experiment showed
+   no meaningful benefit and did not qualify equivalence. Do not count profile
+   reuse, omitted tools/targets/tests, or timeout-only job splits as saved work.
+
+Outstanding: private promotion timings/deployed-state confirmation; complete
+Arm64 fresh-PGO full-distribution timings and qualification from the separate
+feasibility investigation; real artifact transfer and compression measurements.
+The separate agent was notified before/after the bounded source probe; no full
+build identity/result was available to incorporate here. No upstream-ready
+compiler or distribution claim is made.

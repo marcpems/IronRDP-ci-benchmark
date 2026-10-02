@@ -1,0 +1,14 @@
+[
+  {
+    "order": "git-first",
+    "artifact_name": "source-probe-git-first",
+    "command_log_bytes": 19055734,
+    "command_log_sha256": "6087f48ef50c0fbbfdc7f47252dd3b650a1cbb6be1ef9f95e637fe252dfe050a"
+  },
+  {
+    "order": "archive-first",
+    "artifact_name": "source-probe-archive-first",
+    "command_log_bytes": 19055733,
+    "command_log_sha256": "7544f7cc4eab5f5f2a4264afc3c36f53d986f29a74a1b2dfbdb3188a58e96cbf"
+  }
+]

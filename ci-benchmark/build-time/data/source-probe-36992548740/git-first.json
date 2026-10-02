@@ -1,0 +1,101 @@
+{
+  "rust_sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+  "llvm_sha": "76a3a9d0075fe0df4bb57160372700006e3d0b2b",
+  "order": "git-first",
+  "started_utc": "2026-10-02T09:55:42.645930+00:00",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "machine": "ARM64",
+  "cpu_count": 4,
+  "image_version": "20260924.168.1",
+  "run_id": "36992548740",
+  "steps": {
+    "git": {
+      "fetch_seconds": 37.66415889999996,
+      "checkout_seconds": 212.91570230000002,
+      "total_seconds": 250.8234071,
+      "verification": {
+        "files": 180584,
+        "bytes": 2246421303,
+        "digest": "dfaff2b700cd5a3d460d6cc3e53785a711f2200bdae854ce69a163e2529c301b",
+        "mismatch_count": 521,
+        "mismatches_first20": [
+          "lld/test/wasm/Inputs/libstub.so: blob mismatch",
+          "llvm/test/MC/AsmParser/preserve-comments-crlf.s: blob mismatch",
+          "llvm/test/tools/llvm-mca/X86/directives-handle-crlf.s: blob mismatch",
+          "llvm/test/tools/split-file/Inputs/basic-aa.crlf: blob mismatch",
+          "llvm/test/tools/split-file/Inputs/basic-bb.crlf: blob mismatch",
+          "llvm/test/tools/split-file/basic.crlf.test: blob mismatch",
+          "third-party/boost-math/.codecov.yml: blob mismatch",
+          "third-party/boost-math/.drone.star: blob mismatch",
+          "third-party/boost-math/.gitattributes: blob mismatch",
+          "third-party/boost-math/.gitignore: blob mismatch",
+          "third-party/boost-math/.travis.yml: blob mismatch",
+          "third-party/boost-math/CMakeLists.txt: blob mismatch",
+          "third-party/boost-math/LICENSE: blob mismatch",
+          "third-party/boost-math/README.md: blob mismatch",
+          "third-party/boost-math/build.jam: blob mismatch",
+          "third-party/boost-math/include/boost/cstdfloat.hpp: blob mismatch",
+          "third-party/boost-math/include/boost/math/bindings/detail/big_digamma.hpp: blob mismatch",
+          "third-party/boost-math/include/boost/math/bindings/detail/big_lanczos.hpp: blob mismatch",
+          "third-party/boost-math/include/boost/math/bindings/mpfr.hpp: blob mismatch",
+          "third-party/boost-math/include/boost/math/bindings/mpreal.hpp: blob mismatch"
+        ],
+        "extra_count": 0,
+        "extras_first20": [],
+        "qualification": "file content/path equivalence; executable mode and full Rust bootstrap not qualified"
+      },
+      "verification_seconds": 50.585256399999935
+    },
+    "archive": {
+      "fetch_seconds": 45.906540800000016,
+      "extract_seconds": 209.34398639999995,
+      "archive_bytes": 277646076,
+      "archive_sha256": "52431f3ff4c447f5201e072923df9b3c3d69514491f5a54f005fe85aafde2205",
+      "total_seconds": 257.8724056,
+      "verification": {
+        "files": 180584,
+        "bytes": 2246237050,
+        "digest": "30d1a7de9580c6a40134076b792d1bf6395ea3376a207930bc6a842e8e83ed7a",
+        "mismatch_count": 16,
+        "mismatches_first20": [
+          "clang/bindings/python/.git_archival.txt: blob mismatch",
+          "clang/test/Driver/Inputs/CUDA-symlinks/usr/bin/ptxas: blob mismatch",
+          "clang/test/Driver/Inputs/multilib_32bit_linux_tree/usr/i386-unknown-linux/bin/as: blob mismatch",
+          "clang/test/Driver/Inputs/multilib_32bit_linux_tree/usr/i386-unknown-linux/bin/ld: blob mismatch",
+          "clang/test/Driver/Inputs/multilib_64bit_linux_tree/usr/x86_64-unknown-linux/bin/as: blob mismatch",
+          "clang/test/Driver/Inputs/multilib_64bit_linux_tree/usr/x86_64-unknown-linux/bin/ld: blob mismatch",
+          "lld/test/wasm/Inputs/libstub.so: blob mismatch",
+          "lldb/test/API/functionalities/breakpoint/breakpoint_with_realpath_and_source_map/symlink1/foo.h: blob mismatch",
+          "llvm/test/MC/AsmParser/preserve-comments-crlf.s: blob mismatch",
+          "llvm/test/tools/llvm-mca/X86/directives-handle-crlf.s: blob mismatch",
+          "llvm/test/tools/split-file/Inputs/basic-aa.crlf: blob mismatch",
+          "llvm/test/tools/split-file/Inputs/basic-bb.crlf: blob mismatch",
+          "llvm/test/tools/split-file/basic.crlf.test: blob mismatch",
+          "llvm/utils/mlgo-utils/combine_training_corpus.py: blob mismatch",
+          "llvm/utils/mlgo-utils/extract_ir.py: blob mismatch",
+          "llvm/utils/mlgo-utils/make_corpus.py: blob mismatch"
+        ],
+        "extra_count": 0,
+        "extras_first20": [],
+        "qualification": "file content/path equivalence; executable mode and full Rust bootstrap not qualified"
+      },
+      "verification_seconds": 39.641033799999946
+    }
+  },
+  "cache_state": "fresh paths/no Actions cache; OS/CDN caches uncontrolled",
+  "git": {
+    "path": "C:\\Program Files\\Git\\bin\\git.EXE",
+    "version": "git version 2.55.0.windows.5"
+  },
+  "curl.exe": {
+    "path": "C:\\Windows\\system32\\curl.exe",
+    "version": "curl 8.21.0 (Windows) libcurl/8.21.0 Schannel zlib/1.3.2 WinIDN WinLDAP"
+  },
+  "tar.exe": {
+    "path": "C:\\Windows\\system32\\tar.exe",
+    "version": "bsdtar 3.8.8 - libarchive 3.8.8 zlib/1.2.13.1-motley liblzma/5.8.1 bz2lib/1.0.8 libzstd/1.5.7 cng/2.0 libb2/bundled "
+  },
+  "passed": false,
+  "error": "RuntimeError('source content equivalence failed')",
+  "ended_utc": "2026-10-02T10:05:42.647384+00:00"
+}

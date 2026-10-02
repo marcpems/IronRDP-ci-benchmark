@@ -1,0 +1,35 @@
+{
+  "run": 36992548740,
+  "kind": "completed source acquisition experiment, not a production compiler build",
+  "observations": [
+    {
+      "order": "git-first",
+      "git_seconds": 250.8234071,
+      "archive_seconds": 257.8724056,
+      "archive_minus_git_seconds": 7.048998499999982,
+      "git_fetch_seconds": 37.66415889999996,
+      "git_checkout_seconds": 212.91570230000002,
+      "archive_fetch_seconds": 45.906540800000016,
+      "archive_extract_seconds": 209.34398639999995,
+      "git_literal_blob_mismatches": 521,
+      "archive_literal_blob_mismatches": 16
+    },
+    {
+      "order": "archive-first",
+      "git_seconds": 260.4153113,
+      "archive_seconds": 259.95839880000017,
+      "archive_minus_git_seconds": -0.45691249999981665,
+      "git_fetch_seconds": 51.71534530000008,
+      "git_checkout_seconds": 206.41532949999987,
+      "archive_fetch_seconds": 48.290675599999986,
+      "archive_extract_seconds": 208.20900310000002,
+      "git_literal_blob_mismatches": 521,
+      "archive_literal_blob_mismatches": 16
+    }
+  ],
+  "makespan_minutes": 10.633333333333333,
+  "runner_minutes": 21.05,
+  "mean_archive_minus_git_seconds": 3.2960430000000827,
+  "recommendation": "do not adopt archive-only fetch as a speedup on this evidence",
+  "qualification": "strict literal Git-blob oracle rejected both controls and archives; Git attributes/export substitutions/symlink representation require a platform-aware oracle; no source equivalence or full bootstrap claim"
+}

@@ -145,5 +145,47 @@
     "path": "terraform/releases/environments.tf",
     "local": "simpleinfra-terraform_releases_environments.tf",
     "url": "https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/terraform/releases/environments.tf"
+  },
+  {
+    "repo": "rust-lang/llvm-project",
+    "sha": "76a3a9d0075fe0df4bb57160372700006e3d0b2b",
+    "path": ".gitattributes",
+    "local": "llvm-project-.gitattributes",
+    "url": "https://github.com/rust-lang/llvm-project/blob/76a3a9d0075fe0df4bb57160372700006e3d0b2b/.gitattributes"
+  },
+  {
+    "repo": "rust-lang/llvm-project",
+    "sha": "76a3a9d0075fe0df4bb57160372700006e3d0b2b",
+    "path": "llvm/.gitattributes",
+    "local": "llvm-project-llvm_.gitattributes",
+    "url": "https://github.com/rust-lang/llvm-project/blob/76a3a9d0075fe0df4bb57160372700006e3d0b2b/llvm/.gitattributes"
+  },
+  {
+    "repo": "rust-lang/llvm-project",
+    "sha": "76a3a9d0075fe0df4bb57160372700006e3d0b2b",
+    "path": "third-party/boost-math/.gitattributes",
+    "local": "llvm-project-third-party_boost-math_.gitattributes",
+    "url": "https://github.com/rust-lang/llvm-project/blob/76a3a9d0075fe0df4bb57160372700006e3d0b2b/third-party/boost-math/.gitattributes"
+  },
+  {
+    "repo": "rust-lang/llvm-project",
+    "sha": "76a3a9d0075fe0df4bb57160372700006e3d0b2b",
+    "path": "clang/bindings/python/.git_archival.txt",
+    "local": "llvm-project-clang_bindings_python_.git_archival.txt",
+    "url": "https://github.com/rust-lang/llvm-project/blob/76a3a9d0075fe0df4bb57160372700006e3d0b2b/clang/bindings/python/.git_archival.txt"
+  },
+  {
+    "repo": "rust-lang/llvm-project",
+    "sha": "76a3a9d0075fe0df4bb57160372700006e3d0b2b",
+    "path": "lld/test/wasm/Inputs/libstub.so",
+    "local": "llvm-project-lld_test_wasm_Inputs_libstub.so",
+    "url": "https://github.com/rust-lang/llvm-project/blob/76a3a9d0075fe0df4bb57160372700006e3d0b2b/lld/test/wasm/Inputs/libstub.so"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/ci/scripts/dump-environment.sh",
+    "local": "rust-src_ci_scripts_dump-environment.sh",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/ci/scripts/dump-environment.sh"
   }
 ]
