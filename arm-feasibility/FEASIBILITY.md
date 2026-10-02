@@ -2,7 +2,7 @@
 
 ## Status and decision
 
-**Investigation in progress; not release-qualified.** This report separates measured
+**Full cold baseline fits; optimized treatment still running; not release-qualified.** This report separates measured
 upstream timings, a cold fork experiment, and conditional budget scenarios. Existing
 Arm compiler performance wins are motivation, not evidence that a full distribution
 fits CI. Neither the earlier trimmed package nor x64 profile reuse qualifies Arm64.
@@ -114,7 +114,7 @@ Minute memory/commit/disk samples and stage progress stream to logs; preflight
 artifacts upload before compilation; deadline handling reserves diagnostic time.
 Profiles must show **nonzero AArch64TargetLowering and InstCombine execution**.
 
-**Build results pending.** Initial preflight failed before any compiler build:
+Initial preflight failed before any compiler build:
 baseline stopped at 9m20s because top-level `configure` is a shell wrapper;
 treatment stopped at 10m24s because patch context encountered checkout line-ending
 differences. Python now invokes `src/bootstrap/configure.py`; Git line-ending
@@ -143,6 +143,54 @@ bootstrap to shared LLVM, which MSVC rejects. The treatment must explicitly keep
 `llvm.link-shared=false` and use the native LLVM librarian for bitcode archives.
 This is another early configuration failure, not an LLVM compile, six-hour limit,
 or memory failure. No expensive PGO compiler stage has been restarted.
+
+### Measured full cold baseline: success
+
+[Baseline job 110789801580](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911/job/110789801580)
+completed **09:48:31–12:10:20 UTC**, **141.82 minutes total**, including source/tool
+downloads, setup and upload. Its `x.py dist` command took **132.44 minutes**;
+the bootstrap engine measured **131.18 minutes**. The containing matrix workflow
+is red only because its earlier treatment helper failed; this baseline job is green.
+
+| Measured baseline portion | Wall minutes |
+|---|---:|
+| Checkout/native source+tools setup before build step | 8.48 |
+| LLVM + LLD build steps | 50.84 |
+| rustc / std build steps | 22.94 |
+| Rust tool build steps | 25.52 |
+| Documentation steps | 5.51 |
+| Distribution packaging (including combined installer) | 22.50 |
+| Vendoring | 3.75 |
+
+Build categories are **exclusive bootstrap step timings**, not nested durations
+added together and not CPU time. Source/host-tool downloads are in setup, and
+initial stage0/bootstrap preparation is outside the 131.18-minute engine timing.
+Cargo orchestration remains part of its build-step wall times; vendoring is
+reported separately, not called compiler time.
+
+It produced **21 distribution files, 1.297 GiB total**, including native and Arm64EC
+std/HTML docs/JSON docs/analysis, rustc/rustc-dev/rust-dev, rust-src, bootstrap, Cargo,
+Clippy, rustfmt, rust-analyzer, LLVM tools, llvm-bitcode-linker, combined `.tar.xz`,
+and a **285.7 MiB MSI**. Miri is correctly channel-gated out on stable.
+The [full-dist artifact](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911/artifacts/11224797934)
+and [diagnostics](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911/artifacts/11224733050)
+are preserved without publishing a release.
+Full distribution retention is seven days, diagnostic retention thirty days;
+the compact summary and component hashes remain committed in this branch.
+
+Across **134 one-minute machine samples**, peak observed physical usage was
+**7.28 GiB**, peak commit usage **7.94 GiB**, and minimum free disk **83.00 GiB**
+(116.37 GiB free after setup, ~33.38 GiB growth during the build).
+These are sampled machine-wide values, not continuous peaks or compiler-process RSS.
+[Persistent summary, component hashes and phase records](evidence/baseline-summary.json);
+`summarize_experiment.py` reproduces the reduction from the diagnostic artifact
+and the job API response.
+
+Thus this **full stable cold baseline demonstrably fits**, with 218.18 minutes
+between measured job completion and the 360-minute cap. That spare budget is
+not a prediction that several LLVM/PGO rebuilds plus training/tests will fit;
+the treatment must be measured independently. The pinned cold baseline and
+current-main warm sample differ in both version and cache state.
 
 ## Full distribution versus release qualification
 

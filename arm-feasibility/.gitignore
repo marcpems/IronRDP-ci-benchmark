@@ -1,3 +1,5 @@
 /evidence/*
 !/evidence/upstream-timings.json
 !/evidence/upstream-arm-dist-excerpts.log
+!/evidence/baseline-summary.json
+!/evidence/treatment-summary.json

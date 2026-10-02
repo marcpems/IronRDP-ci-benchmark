@@ -1,0 +1,203 @@
+{
+  "job_id": 110789801580,
+  "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911/job/110789801580",
+  "conclusion": "success",
+  "started": "2026-10-02T09:48:31Z",
+  "completed": "2026-10-02T12:10:20Z",
+  "job_minutes": 141.81666666666666,
+  "stages": [
+    {
+      "stage": "configure",
+      "started_unix": 1790935001.888742,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.15\\arm64\\python.exe",
+        "C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\src\\bootstrap\\configure.py",
+        "--build=aarch64-pc-windows-msvc",
+        "--host=aarch64-pc-windows-msvc",
+        "--target=aarch64-pc-windows-msvc,arm64ec-pc-windows-msvc",
+        "--enable-full-tools",
+        "--enable-profiler",
+        "--enable-locked-deps",
+        "--disable-manage-submodules",
+        "--enable-cargo-native-static",
+        "--disable-dist-src",
+        "--enable-llvm-static-stdcpp",
+        "--release-channel=stable",
+        "--debuginfo-level-std=1",
+        "--dist-compression-formats=xz",
+        "--set",
+        "build.print-step-timings=true",
+        "--set",
+        "build.metrics=true",
+        "--set",
+        "build.optimized-compiler-builtins=true",
+        "--set",
+        "rust.codegen-units-std=1",
+        "--set",
+        "rust.remap-debuginfo=true",
+        "--set",
+        "dist.compression-profile=balanced",
+        "--set",
+        "llvm.download-ci-llvm=false",
+        "--set",
+        "rust.download-rustc=false",
+        "--set",
+        "llvm.clang-cl=C:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\rust-source\\citools\\clang-rust\\bin\\clang-cl.exe"
+      ],
+      "completed_unix": 1790935002.2782712,
+      "elapsed_seconds": 0.3895297050476074,
+      "returncode": 0,
+      "safety_deadline_hit": false
+    },
+    {
+      "stage": "full-dist",
+      "started_unix": 1790935025.7157648,
+      "command": [
+        "C:\\hostedtoolcache\\windows\\Python\\3.13.15\\arm64\\python.exe",
+        "x.py",
+        "dist",
+        "bootstrap",
+        "--include-default-paths"
+      ],
+      "completed_unix": 1790942972.041951,
+      "elapsed_seconds": 7946.326186656952,
+      "returncode": 0,
+      "safety_deadline_hit": false
+    }
+  ],
+  "resources": {
+    "sample_count": 134,
+    "sample_interval_seconds": 60,
+    "max_machine_physical_used_gib": 7.281837463378906,
+    "min_machine_physical_available_gib": 8.70840072631836,
+    "max_machine_commit_used_gib": 7.940288543701172,
+    "first_disk_free_gib": 116.37471008300781,
+    "min_disk_free_gib": 82.9996223449707,
+    "last_disk_free_gib": 82.9996223449707,
+    "note": "Sampled machine-wide values, not process RSS or continuous peak measurements"
+  },
+  "dist_manifest": [
+    {
+      "name": "bootstrap-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 7244628,
+      "sha256": "4cecb5a017bcae76f287b218b03b51c4fac75b5d41bcf6c23c670c9b07325fe2"
+    },
+    {
+      "name": "cargo-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 10099448,
+      "sha256": "114fed9440075c892ec78e4ce657fd5cd015fa9e89d2e055074109ebb814f22e"
+    },
+    {
+      "name": "clippy-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 4456268,
+      "sha256": "75e073eb3b841375d0700bc647b48a77a904accca34a66491820e6659101bad5"
+    },
+    {
+      "name": "llvm-bitcode-linker-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 975384,
+      "sha256": "44aabc3a1cf5634dfef83ff4ad874064ed086d9c3d63525cb5239ce315bda982"
+    },
+    {
+      "name": "llvm-tools-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 60984692,
+      "sha256": "4a0b7fbea4b80d260964a06259db7679d468bb3c75fb5de3299ffc726f7c1112"
+    },
+    {
+      "name": "rust-1.94.1-aarch64-pc-windows-msvc.msi",
+      "bytes": 299568457,
+      "sha256": "f2193fdf1572a549c0f5c98d3f8509cedce0ca1a24e59e6d499a53bdb4316521"
+    },
+    {
+      "name": "rust-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 218189776,
+      "sha256": "f38f5b8161da92cb128d4b17874f38692d0aa25d30c6b333c2d1baee3e391f82"
+    },
+    {
+      "name": "rust-analysis-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 16172,
+      "sha256": "837f06f8a9febddae50dd416805c2b9f7119c8dd40611e50f069736a72be1328"
+    },
+    {
+      "name": "rust-analysis-1.94.1-arm64ec-pc-windows-msvc.tar.xz",
+      "bytes": 16168,
+      "sha256": "3cff2e40174d6b43ba7116d12cef03252fedc4525d039a496739e86df1812e42"
+    },
+    {
+      "name": "rust-analyzer-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 10236688,
+      "sha256": "ff5355b7d9d6a46719a3d06e818987b14656171a824415734a323d7eb8b309fd"
+    },
+    {
+      "name": "rust-dev-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 448576968,
+      "sha256": "af78ddff185c0d594b11c0dbdab092398a3fac3d5f9b87821cd394a68fa73903"
+    },
+    {
+      "name": "rust-docs-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 28378368,
+      "sha256": "9d6702ffbd6c362c5c85d7cba7415b74c6a25fc07442ed8d62fab2049bc3a94a"
+    },
+    {
+      "name": "rust-docs-1.94.1-arm64ec-pc-windows-msvc.tar.xz",
+      "bytes": 26636220,
+      "sha256": "c9f9c2e32e895bde1d13035c44bf89aa9acf4e0a93fe8159f7f821850fac4e1a"
+    },
+    {
+      "name": "rust-docs-json-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 3573920,
+      "sha256": "99ce41091fd0c673e737c8d0b09da860e2c10fed4a1d1f551558a86a6d8733c7"
+    },
+    {
+      "name": "rust-docs-json-1.94.1-arm64ec-pc-windows-msvc.tar.xz",
+      "bytes": 3540608,
+      "sha256": "a08d72a7fbe16633e7d74770660526bf121e85aaef949e32841f19f99994950c"
+    },
+    {
+      "name": "rust-src-1.94.1.tar.xz",
+      "bytes": 4080404,
+      "sha256": "106446128d2f8e509bde9f4059b90aa82377e826116483ab94d73790475e5848"
+    },
+    {
+      "name": "rust-std-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 21828756,
+      "sha256": "ac49b6093128da69712b0bb490beb96e224df4f2700dec180aa74c73889f86c8"
+    },
+    {
+      "name": "rust-std-1.94.1-arm64ec-pc-windows-msvc.tar.xz",
+      "bytes": 21594108,
+      "sha256": "906593e69120b70d1eb37f7d2b4e960fc5fbd939298f33d8ad87be02852834e3"
+    },
+    {
+      "name": "rustc-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 76908740,
+      "sha256": "8b41c42d3b027ea20297f14265b4c800ac85b3dd27c3aa170bd58783518acda2"
+    },
+    {
+      "name": "rustc-dev-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 143099472,
+      "sha256": "4f9f8b173e769abb9d97b506530ff44779dbd3e20a8b993823c0716fd21d47ea"
+    },
+    {
+      "name": "rustfmt-1.94.1-aarch64-pc-windows-msvc.tar.xz",
+      "bytes": 2694624,
+      "sha256": "c7eecd846c5de13848edc3f77986f0e0030adc2f35eba4b9f7b6523dd51de686"
+    }
+  ],
+  "dist_bytes": 1392699869,
+  "bootstrap_invocations": [
+    {
+      "cmdline": "dist bootstrap --include-default-paths",
+      "wall_minutes": 131.18041715500001,
+      "exclusive_category_minutes": {
+        "bootstrap": 6.433833333333334e-05,
+        "compile": 22.94436225666666,
+        "dist": 22.49958901333333,
+        "doc": 5.505811354999997,
+        "llvm": 50.84457411,
+        "run": 0.06818367166666667,
+        "tool": 25.524659038333326,
+        "vendor": 3.7487554166666666
+      }
+    }
+  ]
+}
