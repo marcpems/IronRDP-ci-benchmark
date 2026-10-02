@@ -31,6 +31,18 @@ source, clang, MSVC and SDK. This avoids repeating training within one hosted-jo
 time limit and makes the ThinLTO contrast tighter. It is not a measurement of
 fresh-profile optimized release production time.
 
+The replacement treatment completed successfully in
+[run 36973674727](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36973674727):
+**3h49m total**, including **225.8 minutes** for its profile-use compiler build.
+Archive contents, actual profile use, native/WASM smoke output and matching
+control/treatment profiles and target libraries were verified. The opt-in
+installer and both workload suites passed the four-job
+[pilot 36995063052](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36995063052),
+including all original native correctness commands for all three Windows variants.
+Pilot samples are excluded; full-matrix performance results remain pending.
+Immutable artifact checksums are in [the native protocol](x64-native-protocol.json)
+and [the compiler protocol](x64-compiler-protocol.json).
+
 Use byte-identical official native/WASM standard libraries in the evaluation
 packages. Record compiler files, flags, actual LLVM profile use, profile hashes,
 runner identity and build-stage wall times. Check native/WASM output and absence

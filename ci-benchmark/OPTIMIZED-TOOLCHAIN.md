@@ -86,6 +86,22 @@ Both variants also set `MSBUILDDISABLENODEREUSE=1` so native build-script worker
 exit rather than persist across independently timed compiler blocks.
 The reusable installer does not change telemetry policies on consumers' machines.
 
+## Experimental x64 extension
+
+On `windows-2025`, the action at
+`d0c9c1a23361750637fa9314e377e6dee2ffe053` automatically selects the native x64
+manifest instead of Arm64. It preserves official support tools and remains opt-in:
+
+```yaml
+- uses: marcpems/IronRDP-ci-benchmark/.github/actions/setup-optimized-rust@d0c9c1a23361750637fa9314e377e6dee2ffe053
+```
+
+Both x64 compiler construction and the original-test integration pilot passed.
+**The full x64 performance comparison is still pending; do not apply the Arm64
+16% saving to x64.** The x64 release uses freshly trained x64 profiles shared
+between the PGO control and ThinLTO treatment, not Arm64 profiles.
+See [scope and build evidence](WINDOWS-X64-OPTIMIZATION.md).
+
 ## Validated result
 
 [Full original-CI run 36871453828](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36871453828)
