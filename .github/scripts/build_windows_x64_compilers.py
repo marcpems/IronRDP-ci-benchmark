@@ -122,6 +122,24 @@ def profile_coverage(profdata, profile, env):
     return coverage
 
 
+def verified_profiles(root, metadata_sha256):
+    metadata_path = root / "pgo-control.json"
+    if digest(metadata_path) != metadata_sha256:
+        raise RuntimeError("PGO control metadata checksum mismatch")
+    metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    if (metadata["variant"] != "pgo-control" or metadata["rust_sha"] != RUST_SHA
+            or metadata["llvm_sha"] != LLVM_SHA or metadata["rustc_perf_sha"] != PERF_SHA
+            or metadata["host"] != HOST):
+        raise RuntimeError("PGO profiles belong to a different compiler")
+    for name in ("rustc-pgo.profdata", "llvm-pgo.profdata"):
+        if digest(root / name) != metadata["profiles"][name]["sha256"]:
+            raise RuntimeError(f"PGO profile checksum mismatch: {name}")
+    for component in ("X86TargetLowering", "InstCombine"):
+        if metadata["llvm_training_coverage"][component]["nonzero_functions"] <= 0:
+            raise RuntimeError(f"PGO control did not exercise {component}")
+    return metadata
+
+
 def package(source, output, official, variant, metadata, env):
     stage = source / "build" / HOST / "stage2"
     with tempfile.TemporaryDirectory(prefix="package-", dir=output) as tmp:
@@ -179,7 +197,11 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--clang", type=Path, required=True)
     parser.add_argument("--variant", choices=VARIANTS, required=True)
+    parser.add_argument("--profiles-from", type=Path)
+    parser.add_argument("--profile-metadata-sha256")
     args = parser.parse_args()
+    if args.profiles_from and (args.variant != "optimized" or not args.profile_metadata_sha256):
+        parser.error("--profiles-from requires optimized and --profile-metadata-sha256")
     if os.name != "nt" or platform.machine().lower() not in ("amd64", "x86_64"):
         parser.error("Build on native Windows x64, not the local Arm64 machine")
     source, output, clang = args.source.resolve(), args.output.resolve(), args.clang.resolve()
@@ -211,23 +233,40 @@ def main():
     (output / "bootstrap.toml").write_text(config, encoding="utf-8")
     timings = []
     x = [sys.executable, "x.py"]
-    execute(x + ["build", "--set", "rust.debug=true", "opt-dist"], source, env,
-            logs / "build-opt-dist.log", timings)
-    stage0 = source / "build" / HOST / "stage0" / "bin"
-    fixture = source / "src" / "tools" / "rustc-perf" / "collector" / "compile-benchmarks" / "token-stream-stress"
-    before = tomllib.loads((fixture / "Cargo.lock").read_text())
-    execute([str(stage0 / "cargo.exe"), "generate-lockfile", "--offline"], fixture, env,
-            logs / "training-lockfile.log", timings)
-    if tomllib.loads((fixture / "Cargo.lock").read_text())["package"] != before["package"]:
-        raise RuntimeError("Training fixture dependency graph changed")
-    helper = source / "build" / HOST / "stage1-tools-bin" / "opt-dist.exe"
-    execute([str(helper), "local", "--target-triple", HOST, "--checkout-dir", str(source),
-             "--llvm-dir", str(clang), "--python", sys.executable, "--llvm-shared", "false",
-             "--", *x, "build", "--stage", "2", "library/std"],
-            source, env, logs / "pgo-pipeline.log", timings)
+    profile_origin = None
+    if args.profiles_from:
+        profile_root = args.profiles_from.resolve()
+        control = verified_profiles(profile_root, args.profile_metadata_sha256)
+        if digest(clang.parent / "LLVM-20.1.3-win64.exe") != control["clang_installer_sha256"]:
+            raise RuntimeError("Treatment uses different clang tools from profile generation")
+        if env.get("VCToolsInstallDir") != control["msvc"] or env.get("WindowsSDKVersion") != control["sdk"]:
+            raise RuntimeError("Native SDK/MSVC changed between control and treatment")
+        profile_origin = {"metadata_sha256": args.profile_metadata_sha256,
+                          "github_run_id": control["github_run_id"],
+                          "reason": "Identical control profiles isolate additional ThinLTO; avoid repeating training"}
+        execute(x + ["build", "--stage", "2", "library/std",
+                     "--rust-profile-use", str(profile_root / "rustc-pgo.profdata"),
+                     "--llvm-profile-use", str(profile_root / "llvm-pgo.profdata")],
+                source, env, logs / "pgo-pipeline.log", timings)
+    else:
+        execute(x + ["build", "--set", "rust.debug=true", "opt-dist"], source, env,
+                logs / "build-opt-dist.log", timings)
+        stage0 = source / "build" / HOST / "stage0" / "bin"
+        fixture = source / "src" / "tools" / "rustc-perf" / "collector" / "compile-benchmarks" / "token-stream-stress"
+        before = tomllib.loads((fixture / "Cargo.lock").read_text())
+        execute([str(stage0 / "cargo.exe"), "generate-lockfile", "--offline"], fixture, env,
+                logs / "training-lockfile.log", timings)
+        if tomllib.loads((fixture / "Cargo.lock").read_text())["package"] != before["package"]:
+            raise RuntimeError("Training fixture dependency graph changed")
+        helper = source / "build" / HOST / "stage1-tools-bin" / "opt-dist.exe"
+        execute([str(helper), "local", "--target-triple", HOST, "--checkout-dir", str(source),
+                 "--llvm-dir", str(clang), "--python", sys.executable, "--llvm-shared", "false",
+                 "--", *x, "build", "--stage", "2", "library/std"],
+                source, env, logs / "pgo-pipeline.log", timings)
+        profile_root = source / "opt-artifacts"
     profiles = {}
     for name in ("rustc-pgo.profdata", "llvm-pgo.profdata"):
-        path = source / "opt-artifacts" / name
+        path = profile_root / name
         if not path.is_file() or path.stat().st_size == 0:
             raise RuntimeError(f"Missing profile: {name}")
         shutil.copy2(path, output / name)
@@ -255,6 +294,7 @@ def main():
     metadata = {
         "variant": args.variant, "host": HOST, "rust_sha": RUST_SHA, "llvm_sha": LLVM_SHA,
         "rustc_perf_sha": PERF_SHA, "configuration": config, "profiles": profiles,
+        "profile_origin": profile_origin,
         "llvm_training_coverage": coverage, "llvm_profile_sha256": profiles["llvm-pgo.profdata"]["sha256"],
         "patches": {name: digest(patches / name) for name in patch_names},
         "clang": subprocess.check_output([str(clang / "bin" / "clang-cl.exe"), "--version"], env=env, text=True),

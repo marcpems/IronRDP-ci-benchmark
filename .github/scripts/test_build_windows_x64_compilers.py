@@ -1,14 +1,22 @@
 import json
 import os
 from pathlib import Path
+import tempfile
 import tomllib
 import unittest
 from unittest.mock import patch
 
-from build_windows_x64_compilers import build_environment, configuration, profile_coverage
+from build_windows_x64_compilers import build_environment, configuration, profile_coverage, verified_profiles
 
 
 class WindowsX64BuildTests(unittest.TestCase):
+    def test_reused_profiles_require_pinned_control_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "pgo-control.json").write_text("{}")
+            with self.assertRaisesRegex(RuntimeError, "metadata checksum"):
+                verified_profiles(root, "wrong")
+
     def test_control_differs_only_in_lto_and_required_llvm_linker_selection(self):
         control = tomllib.loads(configuration(Path(r"C:\clang"), "pgo-control"))
         optimized = tomllib.loads(configuration(Path(r"C:\clang"), "optimized"))

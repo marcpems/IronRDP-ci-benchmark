@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 jobs:
   build:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
@@ -16,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [pgo-control, optimized]
+        variant: [optimized]
     steps:
       - uses: actions/checkout@v6
         with:
@@ -53,6 +54,13 @@ jobs:
           $env:PYTHONDONTWRITEBYTECODE = '1'
           python -m unittest discover -s .github/scripts -p test_build_windows_x64_compilers.py
           if ($LASTEXITCODE -ne 0) { throw 'Builder validation failed' }
+      - name: Download verified x64 control profiles
+        uses: actions/download-artifact@v6
+        with:
+          name: x64-compiler-pgo-control
+          path: harness/x64-profile-control
+          run-id: 36946671654
+          github-token: ${{ github.token }}
       - name: Build and verify native x64 compiler
         shell: pwsh
         run: |
@@ -61,7 +69,7 @@ jobs:
           if (-not $vs) { throw 'Native x64 MSVC installation missing' }
           $vcvars = Join-Path $vs 'VC\Auxiliary\Build\vcvars64.bat'
           $python = (Get-Command python).Source
-          & $env:ComSpec /d /s /c "call `"$vcvars`" >nul && `"$python`" .github\scripts\build_windows_x64_compilers.py --source ..\rust-source --output x64-output --clang x64-tools\clang20 --variant ${{ matrix.variant }}"
+          & $env:ComSpec /d /s /c "call `"$vcvars`" >nul && `"$python`" .github\scripts\build_windows_x64_compilers.py --source ..\rust-source --output x64-output --clang x64-tools\clang20 --variant ${{ matrix.variant }} --profiles-from x64-profile-control --profile-metadata-sha256 c3df1c9fa0458328bd0e2c030f5ad4d12c19fd121b2d27da9ac284d9533ef80d"
           if ($LASTEXITCODE -ne 0) { throw 'Compiler build or provenance validation failed' }
       - uses: actions/upload-artifact@v6
         if: always()

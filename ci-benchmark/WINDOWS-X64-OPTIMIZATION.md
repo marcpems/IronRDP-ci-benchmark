@@ -16,10 +16,20 @@ ThinLTO modes, not necessarily identical architecture-specific release options.
 Build two matched x64 packages: `pgo-control` (both PGO stages, no cross-crate
 ThinLTO) and `optimized` (both PGO stages and both ThinLTO settings). Both use
 the same native SDK, clang-cl 20.1.3, LLD and bitcode-capable librarian.
-Both relink static LLVM for training and require nonzero X86TargetLowering
-and InstCombine profile counters. This makes the matched contrast an additional
+Both use profiles from a compiler relinked against static instrumented LLVM
+and require nonzero X86TargetLowering and InstCombine profile counters.
+This makes the matched contrast an additional
 ThinLTO effect with effective PGO, not a claim about official x64 PGO coverage.
 The official compiler remains the practical adoption reference.
+
+The PGO control completed on `windows-2025` in run **36946671654** (5h26m).
+The concurrent all-in-one ThinLTO/training job exceeded its 350-minute limit
+before completing Stage 1. No treatment artifact or performance sample from
+that cancelled job is accepted. The replacement treatment build uses the
+control's **identical, checksum-pinned frontend and LLVM profiles**, with the same
+source, clang, MSVC and SDK. This avoids repeating training within one hosted-job
+time limit and makes the ThinLTO contrast tighter. It is not a measurement of
+fresh-profile optimized release production time.
 
 Use byte-identical official native/WASM standard libraries in the evaluation
 packages. Record compiler files, flags, actual LLVM profile use, profile hashes,
