@@ -15,9 +15,10 @@ Run 33865610474; raw SHA256 `32cad4520718b99f0d686a740098e4980f1142bbb13c0a482bc
 | Compiler | 9.924 |
 | Tools | 23.931 |
 | Libraries | 0.462 |
-| Tests | 8.028 |
+| Training | 6.698 |
 | Docs | 4.154 |
 | Packaging | 4.397 |
+| Tests | 1.329 |
 
 <details><summary>All observed bootstrap intervals</summary>
 
@@ -230,9 +231,10 @@ Run 33865610474; raw SHA256 `e4d8d5ba5d9d1cba89370c6ac1b1b04264d5ad87cfa9ed66b52
 | Compiler | 10.450 |
 | Tools | 26.240 |
 | Libraries | 0.492 |
-| Tests | 17.073 |
+| Training | 15.687 |
 | Docs | 4.183 |
 | Packaging | 10.040 |
+| Tests | 1.386 |
 
 <details><summary>All observed bootstrap intervals</summary>
 
@@ -779,9 +781,10 @@ Run 33865610474; raw SHA256 `de0616cd75dfb914075ee8e48b21fd9fb5c9e3fd9916ef37e32
 | Compiler | 24.908 |
 | Tools | 58.694 |
 | Libraries | 0.979 |
-| Tests | 32.904 |
+| Training | 24.468 |
 | Docs | 4.847 |
 | Packaging | 16.319 |
+| Tests | 8.436 |
 
 <details><summary>All observed bootstrap intervals</summary>
 
@@ -1069,9 +1072,10 @@ Run 33916006473; raw SHA256 `40bc8ee9d68d18ff1dc9d095c7a599de494027a5a3cc99a7cbc
 | Compiler | 13.219 |
 | Tools | 23.009 |
 | Libraries | 0.438 |
-| Tests | 10.887 |
+| Training | 8.014 |
 | Docs | 5.941 |
 | Packaging | 4.233 |
+| Tests | 2.873 |
 
 <details><summary>All observed bootstrap intervals</summary>
 
@@ -1264,9 +1268,10 @@ Run 33916006473; raw SHA256 `1c3730b04722549d57bbfc21f580d6e7f158256aae4d67d289b
 | Compiler | 18.598 |
 | Tools | 38.775 |
 | Libraries | 0.839 |
-| Tests | 31.813 |
+| Training | 29.999 |
 | Docs | 9.239 |
 | Packaging | 16.707 |
+| Tests | 1.814 |
 
 <details><summary>All observed bootstrap intervals</summary>
 
@@ -1911,9 +1916,10 @@ Run 33916006473; raw SHA256 `ebccfa4442774dd79960e36972a74efc10abc3d9a84e0ba6835
 | Compiler | 26.737 |
 | Tools | 49.829 |
 | Libraries | 0.819 |
-| Tests | 31.139 |
+| Training | 22.432 |
 | Docs | 5.040 |
 | Packaging | 15.378 |
+| Tests | 8.707 |
 
 <details><summary>All observed bootstrap intervals</summary>
 
@@ -2090,9 +2096,10 @@ Run 33961251131; raw SHA256 `ac79181932c04171f11f1682e4b8e0b63b9069a58203b44aa80
 | Compiler | 9.867 |
 | Tools | 24.062 |
 | Libraries | 0.459 |
-| Tests | 8.020 |
+| Training | 6.719 |
 | Docs | 4.195 |
 | Packaging | 4.377 |
+| Tests | 1.301 |
 
 <details><summary>All observed bootstrap intervals</summary>
 
@@ -2305,9 +2312,10 @@ Run 33961251131; raw SHA256 `7a5efc79cf79e4fd6b746293617888a385526dc2666e02cbb22
 | Compiler | 10.303 |
 | Tools | 26.287 |
 | Libraries | 0.491 |
-| Tests | 16.968 |
+| Training | 15.609 |
 | Docs | 4.133 |
 | Packaging | 9.939 |
+| Tests | 1.359 |
 
 <details><summary>All observed bootstrap intervals</summary>
 
@@ -2550,9 +2558,10 @@ Run 33961251131; raw SHA256 `6db512c1833ce5a05f71537389059979ded4fa35da5fa5393de
 | Compiler | 20.659 |
 | Tools | 47.676 |
 | Libraries | 0.773 |
-| Tests | 28.687 |
+| Training | 20.891 |
 | Docs | 3.984 |
 | Packaging | 14.418 |
+| Tests | 7.796 |
 
 <details><summary>All observed bootstrap intervals</summary>
 

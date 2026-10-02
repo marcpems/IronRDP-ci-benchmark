@@ -650,6 +650,18 @@
       "text": "2026-09-04T11:01:00.0086039Z running: cd \"/checkout/obj/build/x86_64-unknown-linux-gnu/llvm/build\" && CMAKE_PREFIX_PATH=\"\" DESTDIR=\"\" LC_ALL=\"C\" \"cmake\" \"/checkout/src/llvm-project/llvm\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=16\" \"-DLLVM_TARGET_ARCH=x86_64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-unknown-linux-gnu\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_ENABLE_ZLIB=ON\" \"-DLLVM_LINK_LLVM_DYLIB=ON\" \"-DLLVM_VERSIONED_DYLIB_NAME_ON_DARWIN=OFF\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.100.0-nightly\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=clang\" \"-DCMAKE_CXX_COMPILER=clang++\" \"-DCMAKE_ASM_COMPILER=clang\" \"-DCMAKE_C_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_CXX_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_AR=/rustroot/bin/llvm-ar\" \"-DCMAKE_RANLIB=/rustroot/bin/llvm-ranlib\" \"-DCMAKE_SHARED_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_MODULE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_EXE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DLLVM_ENABLE_ZSTD=FORCE_ON\" \"-DLLVM_USE_STATIC_ZSTD=TRUE\" \"-DCMAKE_INSTALL_PREFIX=/checkout/obj/build/x86_64-unknown-linux-gnu/llvm\" \"-DCMAKE_ASM_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w\" \"-DCMAKE_BUILD_TYPE=Release\""
     },
     {
+      "line": 3871,
+      "text": "2026-09-04T11:01:00.0384835Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 3872,
+      "text": "2026-09-04T11:01:00.0740461Z -- The CXX compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 3873,
+      "text": "2026-09-04T11:01:00.0845128Z -- The ASM compiler identification is Clang"
+    },
+    {
       "line": 11407,
       "text": "2026-09-04T11:02:17.0190753Z \tfinished in 77.046 seconds"
     },
@@ -676,6 +688,14 @@
     {
       "line": 12235,
       "text": "2026-09-04T11:08:05.1387360Z ##[group]Building LLD for x86_64-unknown-linux-gnu"
+    },
+    {
+      "line": 12260,
+      "text": "2026-09-04T11:08:05.2086458Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 12261,
+      "text": "2026-09-04T11:08:05.2448223Z -- The CXX compiler identification is Clang 23.1.0"
     },
     {
       "line": 12503,
@@ -712,6 +732,18 @@
     {
       "line": 12728,
       "text": "2026-09-04T11:08:28.2935252Z ##[group]Building sanitizers for x86_64-unknown-linux-gnu"
+    },
+    {
+      "line": 12753,
+      "text": "2026-09-04T11:08:28.3530263Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 12754,
+      "text": "2026-09-04T11:08:28.3891553Z -- The CXX compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 12755,
+      "text": "2026-09-04T11:08:28.3996033Z -- The ASM compiler identification is Clang"
     },
     {
       "line": 13496,
@@ -1026,6 +1058,18 @@
       "text": "2026-09-04T11:38:16.2445722Z running: cd \"/checkout/obj/build/x86_64-unknown-linux-gnu/llvm/build\" && CMAKE_PREFIX_PATH=\"\" DESTDIR=\"\" LC_ALL=\"C\" \"cmake\" \"/checkout/src/llvm-project/llvm\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=16\" \"-DLLVM_TARGET_ARCH=x86_64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-unknown-linux-gnu\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_BUILD_INSTRUMENTED=IR\" \"-DLLVM_PROFILE_DATA_DIR=/tmp/tmp-multistage/opt-artifacts/llvm-pgo/prof-%p\" \"-DLLVM_BUILD_RUNTIME=No\" \"-DLLVM_ENABLE_ZLIB=ON\" \"-DLLVM_LINK_LLVM_DYLIB=ON\" \"-DLLVM_VERSIONED_DYLIB_NAME_ON_DARWIN=OFF\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.100.0-nightly\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=clang\" \"-DCMAKE_CXX_COMPILER=clang++\" \"-DCMAKE_ASM_COMPILER=clang\" \"-DCMAKE_C_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_CXX_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_AR=/rustroot/bin/llvm-ar\" \"-DCMAKE_RANLIB=/rustroot/bin/llvm-ranlib\" \"-DCMAKE_SHARED_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_MODULE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_EXE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DLLVM_ENABLE_LTO=Thin\" \"-DLLVM_ENABLE_LLD=ON\" \"-DLLVM_ENABLE_ZSTD=FORCE_ON\" \"-DLLVM_USE_STATIC_ZSTD=TRUE\" \"-DCMAKE_INSTALL_PREFIX=/checkout/obj/build/x86_64-unknown-linux-gnu/llvm\" \"-DCMAKE_ASM_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w\" \"-DCMAKE_BUILD_TYPE=Release\""
     },
     {
+      "line": 18642,
+      "text": "2026-09-04T11:38:16.3303115Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 18643,
+      "text": "2026-09-04T11:38:16.3800560Z -- The CXX compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 18644,
+      "text": "2026-09-04T11:38:16.3916774Z -- The ASM compiler identification is Clang"
+    },
+    {
       "line": 26182,
       "text": "2026-09-04T11:41:41.6978613Z \tfinished in 205.542 seconds"
     },
@@ -1036,6 +1080,14 @@
     {
       "line": 26210,
       "text": "2026-09-04T11:41:41.7078546Z ##[group]Building LLD for x86_64-unknown-linux-gnu"
+    },
+    {
+      "line": 26235,
+      "text": "2026-09-04T11:41:41.7802056Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 26236,
+      "text": "2026-09-04T11:41:41.8150284Z -- The CXX compiler identification is Clang 23.1.0"
     },
     {
       "line": 26482,
@@ -1146,6 +1198,18 @@
       "text": "2026-09-04T11:45:18.7269428Z running: cd \"/checkout/obj/build/x86_64-unknown-linux-gnu/llvm/build\" && CMAKE_PREFIX_PATH=\"\" DESTDIR=\"\" LC_ALL=\"C\" \"cmake\" \"/checkout/src/llvm-project/llvm\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=16\" \"-DLLVM_TARGET_ARCH=x86_64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-unknown-linux-gnu\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_PROFDATA_FILE=/tmp/tmp-multistage/opt-artifacts/llvm-pgo.profdata\" \"-DLLVM_ENABLE_ZLIB=ON\" \"-DLLVM_LINK_LLVM_DYLIB=ON\" \"-DLLVM_VERSIONED_DYLIB_NAME_ON_DARWIN=OFF\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.100.0-nightly\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=clang\" \"-DCMAKE_CXX_COMPILER=clang++\" \"-DCMAKE_ASM_COMPILER=clang\" \"-DCMAKE_C_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_CXX_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_AR=/rustroot/bin/llvm-ar\" \"-DCMAKE_RANLIB=/rustroot/bin/llvm-ranlib\" \"-DCMAKE_SHARED_LINKER_FLAGS= -Wl,-q -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_MODULE_LINKER_FLAGS= -Wl,-q -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_EXE_LINKER_FLAGS= -Wl,-q -Wl,-Bsymbolic -static-libstdc++\" \"-DLLVM_ENABLE_LTO=Thin\" \"-DLLVM_ENABLE_LLD=ON\" \"-DLLVM_ENABLE_ZSTD=FORCE_ON\" \"-DLLVM_USE_STATIC_ZSTD=TRUE\" \"-DCMAKE_INSTALL_PREFIX=/checkout/obj/build/x86_64-unknown-linux-gnu/llvm\" \"-DCMAKE_ASM_FLAGS= -ffunction-sections -fdata-sections -fPIC -m64 --target=x86_64-unknown-linux-gnu -w\" \"-DCMAKE_BUILD_TYPE=Release\""
     },
     {
+      "line": 26907,
+      "text": "2026-09-04T11:45:18.7822198Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 26908,
+      "text": "2026-09-04T11:45:18.8294210Z -- The CXX compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 26909,
+      "text": "2026-09-04T11:45:18.8411648Z -- The ASM compiler identification is Clang"
+    },
+    {
       "line": 34447,
       "text": "2026-09-04T11:55:40.4419485Z \tfinished in 621.752 seconds"
     },
@@ -1156,6 +1220,14 @@
     {
       "line": 34475,
       "text": "2026-09-04T11:55:40.8894403Z ##[group]Building LLD for x86_64-unknown-linux-gnu"
+    },
+    {
+      "line": 34500,
+      "text": "2026-09-04T11:55:40.9615283Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 34501,
+      "text": "2026-09-04T11:55:40.9971519Z -- The CXX compiler identification is Clang 23.1.0"
     },
     {
       "line": 34747,
@@ -1954,6 +2026,14 @@
       "text": "2026-09-04T12:36:47.7857201Z \tfinished in 5.683 seconds"
     },
     {
+      "line": 53003,
+      "text": "2026-09-04T12:36:47.9418601Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 53004,
+      "text": "2026-09-04T12:36:47.9885151Z -- The CXX compiler identification is Clang 23.1.0"
+    },
+    {
       "line": 53121,
       "text": "2026-09-04T12:36:53.0413852Z \tfinished in 5.197 seconds"
     },
@@ -1966,8 +2046,24 @@
       "text": "2026-09-04T12:36:54.9473296Z \tfinished in 1.900 seconds"
     },
     {
+      "line": 53154,
+      "text": "2026-09-04T12:36:55.1724420Z -- The C compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 53155,
+      "text": "2026-09-04T12:36:55.2074600Z -- The CXX compiler identification is Clang 23.1.0"
+    },
+    {
+      "line": 53156,
+      "text": "2026-09-04T12:36:55.2181817Z -- The ASM compiler identification is Clang"
+    },
+    {
       "line": 53688,
       "text": "2026-09-04T12:37:05.4398255Z \tfinished in 10.341 seconds"
+    },
+    {
+      "line": 53708,
+      "text": "2026-09-04T12:37:05.5190502Z -- The CXX compiler identification is Clang 23.1.0"
     },
     {
       "line": 53738,

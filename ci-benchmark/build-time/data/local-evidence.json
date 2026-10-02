@@ -1,0 +1,404 @@
+{
+  "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+  "llvm_sha": "00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7",
+  "rustc_perf_sha": "c0301bc44d175b9b2c5442b25049475c39d7700c",
+  "local_arm_hardware": "Snapdragon X2 Elite, 12 cores/~64GB; builder jobs=8",
+  "local_arm_configuration": "custom portable SDK; DIA off; final standalone utilities pruned",
+  "local_arm_evidence_release": "https://github.com/marcpems/IronRDP-ci-benchmark/releases/tag/arm64-compiler-ab-v2",
+  "x64_run": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36946671654",
+  "x64_hardware": "windows-2025 standard, 4CPU/16GB; not upstream 8CPU/32GB dist",
+  "qualification": "Local logs generally lack wall-clock boundaries except opt-dist timers; unknown intervals stay unknown",
+  "files": [
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\logs\\baseline-msvc-build.log",
+      "sha256": "6e61d1f75ac05c0619233d21bcec24802341857729e163a0e45f244826a43a74",
+      "bytes": 90633,
+      "classification": "5-second no-op/resumed compiler-only control; not a clean production baseline",
+      "events": [
+        {
+          "line": 1561,
+          "text": "Build completed successfully in 0:00:05"
+        }
+      ]
+    },
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\logs\\baseline-lld-build.log",
+      "sha256": "67c187bd1c656f6e60d49c4f13aa3de6f402e8165eb8feb0645cfd64f2dc9771",
+      "bytes": 2472434,
+      "classification": "9m10s incremental compiler-only control; prior LLVM state unknown; not a clean production baseline",
+      "events": [
+        {
+          "line": 379,
+          "text": "\tfinished in 7.622 seconds"
+        },
+        {
+          "line": 5767,
+          "text": "Build completed successfully in 0:09:10"
+        }
+      ]
+    },
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\logs\\optimized-pipeline-attempt-02.log",
+      "sha256": "bbb706fc60b2e419990cabbc743904e2da0b07db74a6037d6e2eeb8e8d84f08e",
+      "bytes": 3613012,
+      "classification": "initial instrumentation completed; frontend training failed; exclude total",
+      "events": [
+        {
+          "line": 350,
+          "text": "[2026-09-30T23:16:11.766Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` starts"
+        },
+        {
+          "line": 351,
+          "text": "[2026-09-30T23:16:11.766Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` starts"
+        },
+        {
+          "line": 7318,
+          "text": "\tfinished in 2658.477 seconds"
+        },
+        {
+          "line": 21071,
+          "text": "\tfinished in 148.589 seconds"
+        },
+        {
+          "line": 35707,
+          "text": "Build completed successfully in 0:59:43"
+        },
+        {
+          "line": 35737,
+          "text": "[2026-10-01T00:15:55.729Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` ended: OK (3583.96s)`"
+        },
+        {
+          "line": 35738,
+          "text": "[2026-10-01T00:15:55.730Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` starts"
+        },
+        {
+          "line": 35816,
+          "text": "[2026-10-01T00:24:54.506Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` ended: FAIL (538.78s)`"
+        },
+        {
+          "line": 35817,
+          "text": "[2026-10-01T00:24:54.506Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` ended: FAIL (4122.74s)`"
+        },
+        {
+          "line": 35824,
+          "text": "    Total duration:                                         1h 8m 42s"
+        }
+      ]
+    },
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\logs\\optimized-pipeline.log",
+      "sha256": "b523a83b6690dd6a3b0e4a73927aa338fa9cd533bfabaa0599f61f238905f047",
+      "bytes": 2951344,
+      "classification": "resumed; static LLVM training invalid; exclude total",
+      "events": [
+        {
+          "line": 350,
+          "text": "[2026-10-01T00:27:09.176Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` starts"
+        },
+        {
+          "line": 351,
+          "text": "[2026-10-01T00:27:09.176Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` starts"
+        },
+        {
+          "line": 1913,
+          "text": "Build completed successfully in 0:00:04"
+        },
+        {
+          "line": 1943,
+          "text": "[2026-10-01T00:27:13.317Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` ended: OK (4.14s)`"
+        },
+        {
+          "line": 1944,
+          "text": "[2026-10-01T00:27:13.317Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` starts"
+        },
+        {
+          "line": 2012,
+          "text": "[2026-10-01T00:36:47.945Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` ended: OK (574.63s)`"
+        },
+        {
+          "line": 2014,
+          "text": "[2026-10-01T00:36:47.947Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO optimized rustc` starts"
+        },
+        {
+          "line": 13200,
+          "text": "Build completed successfully in 0:07:49"
+        },
+        {
+          "line": 13230,
+          "text": "[2026-10-01T00:44:37.636Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO optimized rustc` ended: OK (469.69s)`"
+        },
+        {
+          "line": 13231,
+          "text": "[2026-10-01T00:44:37.636Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` ended: OK (1048.46s)`"
+        },
+        {
+          "line": 13232,
+          "text": "[2026-10-01T00:44:37.637Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO)` starts"
+        },
+        {
+          "line": 13236,
+          "text": "[2026-10-01T00:44:39.875Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Build PGO instrumented LLVM` starts"
+        },
+        {
+          "line": 20172,
+          "text": "\tfinished in 2246.879 seconds"
+        },
+        {
+          "line": 20429,
+          "text": "\tfinished in 164.822 seconds"
+        },
+        {
+          "line": 20476,
+          "text": "Build completed successfully in 0:40:15"
+        },
+        {
+          "line": 20506,
+          "text": "[2026-10-01T01:24:55.780Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Build PGO instrumented LLVM` ended: OK (2415.91s)`"
+        },
+        {
+          "line": 20507,
+          "text": "[2026-10-01T01:24:55.780Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Gather profiles` starts"
+        },
+        {
+          "line": 20556,
+          "text": "[2026-10-01T01:28:35.756Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Gather profiles` ended: OK (219.98s)`"
+        },
+        {
+          "line": 20561,
+          "text": "[2026-10-01T01:28:38.762Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO)` ended: OK (2641.13s)`"
+        },
+        {
+          "line": 20562,
+          "text": "[2026-10-01T01:28:38.762Z INFO  opt_dist::timer] Section `Stage 5 (final build)` starts"
+        },
+        {
+          "line": 27752,
+          "text": "\tfinished in 2450.222 seconds"
+        },
+        {
+          "line": 28008,
+          "text": "\tfinished in 131.781 seconds"
+        },
+        {
+          "line": 28779,
+          "text": "Build completed successfully in 0:48:11"
+        },
+        {
+          "line": 28809,
+          "text": "[2026-10-01T02:16:50.759Z INFO  opt_dist::timer] Section `Stage 5 (final build)` ended: OK (2892.00s)`"
+        },
+        {
+          "line": 28821,
+          "text": "    Total duration:                                        1h 49m 41s"
+        }
+      ]
+    },
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\logs\\optimized-v2-instrument.log",
+      "sha256": "c10a6d904ae340608e84d8d1eef9de06c457cca997714c2b6087293b2f09b48e",
+      "bytes": 1192206,
+      "classification": "valid corrected instrumentation; resumed LLVM objects; component only",
+      "events": [
+        {
+          "line": 442,
+          "text": "\tfinished in 142.664 seconds"
+        },
+        {
+          "line": 10795,
+          "text": "Build completed successfully in 0:10:12"
+        }
+      ]
+    },
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\logs\\optimized-v2-training-1.log",
+      "sha256": "7fc4396b69c445dc49046699ca83cf6dd51c3b28964666ac8002966a53832b4f",
+      "bytes": 2243,
+      "classification": "corrected LLVM training; component only",
+      "events": []
+    },
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\logs\\optimized-v2-final.log",
+      "sha256": "169e8af8bc89fb6931d516b26264129db5410613f46913a94949be2250119ceb",
+      "bytes": 786072,
+      "classification": "valid compiler-only final; pruned standalone LLVM tools; component only",
+      "events": [
+        {
+          "line": 6289,
+          "text": "\tfinished in 837.210 seconds"
+        },
+        {
+          "line": 6543,
+          "text": "\tfinished in 197.064 seconds"
+        },
+        {
+          "line": 7314,
+          "text": "Build completed successfully in 0:23:33"
+        }
+      ]
+    },
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\x64-build-36946671654\\x64-compiler-pgo-control\\logs\\pgo-pipeline.log",
+      "sha256": "23a9a2db4556bfcd79d022b78601379198e30ca7593e83bf8394b4bbb67ef401",
+      "bytes": 7583160,
+      "classification": "completed hosted x64 compiler-only PGO control; not Arm64/full distribution",
+      "events": [
+        {
+          "line": 590,
+          "text": "[2026-10-02T00:42:33.315Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` starts"
+        },
+        {
+          "line": 591,
+          "text": "[2026-10-02T00:42:33.315Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` starts"
+        },
+        {
+          "line": 7572,
+          "text": "\tfinished in 3955.919 seconds"
+        },
+        {
+          "line": 21072,
+          "text": "\tfinished in 167.185 seconds"
+        },
+        {
+          "line": 35852,
+          "text": "Build completed successfully in 1:41:05"
+        },
+        {
+          "line": 35882,
+          "text": "[2026-10-02T02:23:38.474Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` ended: OK (6065.16s)`"
+        },
+        {
+          "line": 35883,
+          "text": "[2026-10-02T02:23:38.474Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` starts"
+        },
+        {
+          "line": 35951,
+          "text": "[2026-10-02T02:56:06.580Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` ended: OK (1948.11s)`"
+        },
+        {
+          "line": 35953,
+          "text": "[2026-10-02T02:56:06.580Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO optimized rustc` starts"
+        },
+        {
+          "line": 47405,
+          "text": "Build completed successfully in 0:15:35"
+        },
+        {
+          "line": 47435,
+          "text": "[2026-10-02T03:11:41.828Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO optimized rustc` ended: OK (935.25s)`"
+        },
+        {
+          "line": 47436,
+          "text": "[2026-10-02T03:11:41.828Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` ended: OK (8948.51s)`"
+        },
+        {
+          "line": 47437,
+          "text": "[2026-10-02T03:11:41.828Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO)` starts"
+        },
+        {
+          "line": 47441,
+          "text": "[2026-10-02T03:11:43.365Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Build PGO instrumented LLVM` starts"
+        },
+        {
+          "line": 54422,
+          "text": "\tfinished in 4451.957 seconds"
+        },
+        {
+          "line": 54680,
+          "text": "\tfinished in 170.815 seconds"
+        },
+        {
+          "line": 56017,
+          "text": "Build completed successfully in 1:18:46"
+        },
+        {
+          "line": 56047,
+          "text": "[2026-10-02T04:30:30.333Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Build PGO instrumented LLVM` ended: OK (4726.97s)`"
+        },
+        {
+          "line": 56048,
+          "text": "[2026-10-02T04:30:30.333Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Gather profiles` starts"
+        },
+        {
+          "line": 56097,
+          "text": "[2026-10-02T04:50:58.868Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Gather profiles` ended: OK (1228.54s)`"
+        },
+        {
+          "line": 56102,
+          "text": "[2026-10-02T04:51:00.802Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO)` ended: OK (5958.97s)`"
+        },
+        {
+          "line": 56103,
+          "text": "[2026-10-02T04:51:00.803Z INFO  opt_dist::timer] Section `Stage 5 (final build)` starts"
+        },
+        {
+          "line": 63195,
+          "text": "\tfinished in 3867.952 seconds"
+        },
+        {
+          "line": 63452,
+          "text": "\tfinished in 165.249 seconds"
+        },
+        {
+          "line": 64788,
+          "text": "Build completed successfully in 1:08:52"
+        },
+        {
+          "line": 64818,
+          "text": "[2026-10-02T05:59:53.714Z INFO  opt_dist::timer] Section `Stage 5 (final build)` ended: OK (4132.91s)`"
+        },
+        {
+          "line": 64830,
+          "text": "    Total duration:                                        5h 17m 20s"
+        }
+      ]
+    },
+    {
+      "path": "D:\\copilot\\arm-compiler-ab\\x64-build-36946671654\\x64-compiler-optimized\\logs\\pgo-pipeline.log",
+      "sha256": "80e98528189519857a65b84809317803f9a2963a215f42946e06bb10c9eb3cba",
+      "bytes": 5545737,
+      "classification": "hosted x64 ThinLTO timed out; no completed optimized artifact; exclude total",
+      "events": [
+        {
+          "line": 589,
+          "text": "[2026-10-02T00:42:15.036Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO)` starts"
+        },
+        {
+          "line": 590,
+          "text": "[2026-10-02T00:42:15.036Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` starts"
+        },
+        {
+          "line": 7575,
+          "text": "\tfinished in 13132.918 seconds"
+        },
+        {
+          "line": 21074,
+          "text": "\tfinished in 694.667 seconds"
+        },
+        {
+          "line": 35854,
+          "text": "Build completed successfully in 4:47:13"
+        },
+        {
+          "line": 35884,
+          "text": "[2026-10-02T05:29:28.583Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM` ended: OK (17233.55s)`"
+        },
+        {
+          "line": 35885,
+          "text": "[2026-10-02T05:29:28.583Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` starts"
+        },
+        {
+          "line": 35953,
+          "text": "[2026-10-02T05:57:58.746Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Gather profiles` ended: OK (1710.16s)`"
+        },
+        {
+          "line": 35955,
+          "text": "[2026-10-02T05:57:58.747Z INFO  opt_dist::timer] Section `Stage 1 (Rustc PGO) > Build PGO optimized rustc` starts"
+        },
+        {
+          "line": 47366,
+          "text": "Build completed unsuccessfully in 0:26:33"
+        }
+      ]
+    }
+  ]
+}

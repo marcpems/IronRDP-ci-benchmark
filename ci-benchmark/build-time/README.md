@@ -3,6 +3,7 @@
 **Scope: producing and qualifying Rust toolchains, not compiling IronRDP.**
 Analysis dated 2026-10-02. Sources are completed successful September 4–5 CI
 runs, not October master and not the separate Rust 1.94.1 experiments.
+Next: **[prioritized easy wins, critical-path models and deeper pipeline options](OPTIONS.md)**.
 
 ## First conclusions
 
@@ -34,6 +35,10 @@ Makespan is run start to last completed job, including matrix/queue gaps;
 elapsed times, not CPU, billed minutes, or exclusive critical-path time.
 Independent matrix jobs overlap. The final toolstate job depends on the
 matrix. Two PR runs are context, not same-commit matched controls.
+The merge ranges are also descriptive, **not matched A/B estimates**: source
+commits, some optimization policies and some Linux runner classes differ.
+Cache/physical-hardware state remains **unknown** for jobs without focused
+raw-log evidence; runner labels alone do not prove equal machines.
 
 ![Observed job timeline](timeline.svg)
 
@@ -71,6 +76,46 @@ pure compilation. Tiny dry-run groups, explicit resumed groups and nested
 opt-dist timers are retained with timestamps and source log line numbers.
 The interval sweep prevents double-counting.
 
+The Sep 4 AM Arm64 log identifies clang-cl **20.1.3**, MSVC tools
+**14.44.35207**, image **20260830.155.1**, source-built LLVM configured for all
+listed supported codegen backends, and Rust **1.100.0-nightly**. Do not transfer
+its times to the pinned 1.94.1/LLVM21.1.8 experiment merely because host clang
+matches. Exact commands, image IDs and compiler identifications are in the
+per-job `log_facts`.
+
+### Other important jobs and optimization stages
+
+| Elapsed job minutes | Sep 4 AM | Sep 4 PM | Sep 5 |
+|---|---:|---:|---:|
+| Windows Arm64 test shard 1 | 137.10 | 140.08 | 137.47 |
+| Windows Arm64 test shard 2 | 105.28 | 109.45 | 113.00 |
+| Windows x64 dist (8CPU/32GB label) | 180.07 | 181.02 | 149.33 |
+| Linux Arm64 dist | 71.07 | **94.12, different runner** | 70.95 |
+| Linux x64 dist | 104.65 | **174.13, different runner** | 103.87 |
+
+Sep 4 AM/Sep 5 Linux hosts are EC2 c9g.4xlarge/c8a.4xlarge respectively;
+Sep 4 PM uses an 8-core hosted Arm64 label and a 36-core CodeBuild x64 label.
+Exclude that middle observation from a hardware-matched Linux aggregate.
+
+| Windows x64 opt-dist leaf timer, minutes | Sep 4 AM | Sep 4 PM | Sep 5 |
+|---|---:|---:|---:|
+| Initial instrumented compiler/tools + LLVM | 49.03 | 46.79 | 40.46 |
+| Frontend profile gathering | 13.92 | 14.28 | 12.11 |
+| Rustdoc profile gathering | 2.01 | 2.01 | 1.82 |
+| Clippy profile gathering | 2.85 | Not configured | 2.49 |
+| Profile-use frontend rebuild | 21.18 | 17.71 | 16.44 |
+| Instrumented LLVM build | 9.10 | 13.17 | 7.36 |
+| Backend profile gathering | 7.21 | 7.22 | 5.84 |
+| Final dist build/tools/docs/package | 51.70 | 55.35 | 43.41 |
+| Optimized-artifact test invocation | 11.12 | 11.49 | 9.27 |
+
+These are actual **nominal production stage timings**, not proof of effective
+PGO. We have not independently verified the upstream x64 backend counters;
+static-link instrumentation/relink correctness is a separate prerequisite.
+The middle sample's policy differs; do not pool these as identical treatments.
+Small stage setup gaps, building opt-dist/rustc-perf and Actions setup sit outside
+these leaf timers and remain visible in the full inventory.
+
 Full evidence:
 
 * [Every job, start/end, runner label, conclusion and Actions step](ALL-JOBS-AND-STEPS.md).
@@ -88,7 +133,7 @@ flowchart TD
   PR[Pull request / limited CI] --> PM[Calculate matrix]
   PM --> PC[11 Linux checks and test shards in parallel]
   PC --> PRGate[PR result; no full Windows distribution]
-  Merge[auto merge / release-channel branch CI] --> MM[Calculate matrix]
+  Merge[bors auto / try commit for target channel] --> MM[Calculate matrix]
   MM --> AD[Windows Arm64 dist: stage1, stage2, native + Arm64EC, full tools/docs/package]
   MM --> AT1[Arm64 ci-msvc-py tests]
   MM --> AT2[Arm64 ci-msvc-ps1 tests]
@@ -102,23 +147,67 @@ flowchart TD
   OD --> Gate
   OT --> Gate
   Gate --> TS[Publish toolstate]
-  Gate -.eligible commit.-> Promote[Release promotion]
-  CIStore --> Promote
-  Promote --> Published[Signed channel artifacts and release manifests]
+  Gate -.eligible merged commit.-> Promote[Select channel commit]
+  Schedule[EventBridge nightly/beta schedule or manual release request] --> Promote
+  CIStore --> Download[Download existing CI distribution artifacts]
+  Promote --> Download
+  Download --> Check[Require components; inspect versions]
+  Check --> Recompress[Prune unshipped inputs; recompress; build manifests/checksums]
+  Recompress --> Sign[Sign artifacts + manifests]
+  Sign --> Smoke[Rustup install and execute smoke test]
+  Smoke --> Published[Publish dated archives/docs/channel; invalidate CDN; tag/announce]
 ```
 
 `dist-aarch64-msvc` executes `python x.py dist bootstrap --include-default-paths`,
 with `DIST_REQUIRE_ALL_TOOLS=1`, native host, native + Arm64EC targets and profiler
 support. Arm64 tests explicitly split `make ci-msvc-py` and `make ci-msvc-ps1`.
 The dist job does not depend on those test shards; the all-platform gate does.
-Release promotion and exact current trigger/qualification details are being
-verified separately; no public promotion elapsed-time sample is included here.
-**Do not add a speculative promotion cost, or assume it recompiles rustc.**
+`ci.yml` triggers on PRs and `automation/bors/{auto,try,try-perf}`, not directly
+on every push to `stable`. Channel configuration selects the intended release.
+For MSVC, `ci-msvc-py` runs stage2 tests skipping `compiler`/`src`, while
+`ci-msvc-ps1` skips `tests`/`library`/`tidyselftest`; both skip linkchecker and
+exercise distinct Windows bootstrap entrypoints. These are not interchangeable
+with the optimized-artifact subset of tests in opt-dist.
+
+### Promotion is a separate AWS process; its measured time is unknown
+
+Pinned [`promote-release` source](https://github.com/rust-lang/promote-release/blob/f699a3c4abdf090f09afb062794e5f5b7fd34d9f/src/lib.rs)
+downloads existing `rustc-builds/<commit>/` artifacts, validates required
+components, recompresses, generates manifests/checksums, signs, smoke-tests
+installation and execution, publishes artifacts/docs/channel metadata, invalidates
+CDNs, and tags/announces. Even `build-manifest` is extracted as an already-built
+binary from CI output. **It does not rebuild the compiler.**
+
+The [pinned infrastructure definition](https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/terraform/releases/impl/promote-release.tf)
+declares `promote-release--{dev,prod}` in AWS CodeBuild
+(`BUILD_GENERAL1_XLARGE`, Linux container, **240-minute configured timeout**).
+That is a limit, **not observed duration**, and is separate from GitHub's
+360-minute hosted-job limit. The [channel configuration](https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/terraform/releases/environments.tf)
+schedules nightly/beta at 00:00 UTC; stable has no automatic cron entry.
+Authorized manual/Lambda entrypoints select channel/environment, including
+dev-stable preparation and production publication. These are public source
+definitions as inspected October 2, not a verification of deployed AWS state
+on the September sample dates.
+
+| Promotion operation / configured phase | Wall cost |
+|---|---|
+| Container/startup + load signing keys | **Unknown: no completed private CodeBuild log** |
+| Select commit, acquire existing CI artifacts, component checks | **Unknown** |
+| Recompression, checksum/manifest generation, signing | **Unknown** |
+| Rustup installation/execution smoke tests | **Unknown** |
+| Publish archives/docs/channel, CDN invalidation, announcements | **Unknown** |
+
+The infrastructure routes execution logs to CloudWatch and blocks public access
+to the release-log bucket. No private credentials/access were sought. Complete
+publication-latency ranking therefore requires authorized completed promotion
+logs; CI's artifact upload duration is not a substitute.
 
 ## Evidence exclusions
 
 * Local Snapdragon X2 Elite compiler-only logs use 8 jobs, custom SDK/DIA and
   utility choices; resumed pieces are component evidence only.
+  The earlier MSVC control log's 5 seconds is a no-op/resume; the LLD control
+  log's 9m10s is incremental with prior LLVM state, not a clean control.
 * `optimized-pipeline.log`'s 1h49m41s reused an instrumented compiler and had
   ineffective static-LLVM training: not a valid optimized production total.
 * The 59m43s initial instrumentation, corrected 10m12s resumed instrumentation,
@@ -129,6 +218,11 @@ verified separately; no public promotion elapsed-time sample is included here.
 * Linux/x64 values are different hardware, caches and optimization policies;
   no cross-platform normalized speedup is inferred.
 
+[Nine explicitly classified earlier local/x64 logs](data/local-evidence.json)
+retain hashes and timing markers, including valid corrected profile evidence
+versus invalid/resumed/time-out totals. They are not added to the upstream
+timeline or used to manufacture a complete optimized Arm64 release duration.
+
 ## Reproduce
 
 No third-party Python dependencies. `GH_EXE` may override the local `gh` path.
@@ -136,10 +230,13 @@ No third-party Python dependencies. `GH_EXE` may override the local `gh` path.
 ```powershell
 python .\ci-benchmark\build-time\collect.py --logs
 python .\ci-benchmark\build-time\collect.py --runs 33866567178 33999184885
+python .\ci-benchmark\build-time\collect_sources.py
 python .\ci-benchmark\build-time\analyze.py
 ```
 
 The analyzer is offline once evidence is collected; it asserts timing accounting
 and validates SVG XML. Full raw public logs stay untracked under `raw/`.
-The upcoming prioritized options and bounded source-fetch experiment will
-distinguish measured savings from modeled opportunities and unchanged outputs.
+[`collect_local.py`](collect_local.py) is optional and requires the named earlier
+local evidence paths. Hosted source-probe reproduction is isolated in
+[`arm-build-time-source-probe.yml`](../../.github/workflows/arm-build-time-source-probe.yml).
+The [options report](OPTIONS.md) separates measured, modeled and unknown effects.

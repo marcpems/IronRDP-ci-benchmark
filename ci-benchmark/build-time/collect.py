@@ -77,7 +77,7 @@ def collect(run_id, logs):
             pattern = re.compile(r"(##\[group\]|##\[endgroup\]|finished in|"
                                  r"opt_dist::timer|[Tt]otal time|[Bb]uild completed|"
                                  r"Cache hits|Cache misses|cpu cores|MemTotal|"
-                                 r"clang version|Image:|Version:|LLVM_VERSION_SUFFIX|"
+                                 r"clang version|compiler identification|Image:|Version:|LLVM_VERSION_SUFFIX|"
                                  r"Dist |building `msi`)")
             for number, line in enumerate(text.splitlines(), 1):
                 if pattern.search(line):

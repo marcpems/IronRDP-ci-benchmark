@@ -614,6 +614,22 @@
       "text": "2026-09-04T20:38:12.6946381Z running: \"cmake\" \"C:\\\\a\\\\rust\\\\rust\\\\src/llvm-project/llvm\" \"-G\" \"Ninja\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=8\" \"-DLLVM_TARGET_ARCH=x86_64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-pc-windows-msvc\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_ENABLE_ZLIB=OFF\" \"-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.99.0-beta\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_CXX_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_ASM_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_C_FLAGS= -nologo -MT -Brepro -W0 --target=x86_64-pc-windows-msvc\" \"-DCMAKE_CXX_FLAGS= -nologo -MT -Brepro -W0 --target=x86_64-pc-windows-msvc\" \"-DCMAKE_AR=C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/HostX64/x64/lib.exe\" \"-DCMAKE_SHARED_LINKER_FLAGS=\" \"-DCMAKE_MODULE_LINKER_FLAGS=\" \"-DCMAKE_EXE_LINKER_FLAGS=\" \"-DLLVM_ENABLE_ZSTD=OFF\" \"-DCMAKE_INSTALL_PREFIX=C:\\\\a\\\\rust\\\\rust\\\\build\\\\x86_64-pc-windows-msvc\\\\llvm\" \"-DCMAKE_ASM_FLAGS= -nologo -MT -Brepro -W0\" \"-DCMAKE_BUILD_TYPE=Release\""
     },
     {
+      "line": 3878,
+      "text": "2026-09-04T20:38:12.9280585Z -- The C compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 3879,
+      "text": "2026-09-04T20:38:13.1200773Z -- The CXX compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 3880,
+      "text": "2026-09-04T20:38:13.2150219Z -- The ASM compiler identification is Clang with MSVC-like command-line"
+    },
+    {
+      "line": 4037,
+      "text": "2026-09-04T20:38:26.6996701Z -- The ASM_MASM compiler identification is MSVC"
+    },
+    {
       "line": 11041,
       "text": "2026-09-04T20:45:36.4096227Z \tfinished in 443.757 seconds"
     },
@@ -640,6 +656,14 @@
     {
       "line": 11900,
       "text": "2026-09-04T20:58:26.6208682Z ##[group]Building LLD for x86_64-pc-windows-msvc"
+    },
+    {
+      "line": 11914,
+      "text": "2026-09-04T20:58:26.8621703Z -- The C compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 11915,
+      "text": "2026-09-04T20:58:27.0428798Z -- The CXX compiler identification is Clang 20.1.3 with MSVC-like command-line"
     },
     {
       "line": 12135,
@@ -930,6 +954,22 @@
       "text": "2026-09-04T21:59:03.0182088Z running: \"cmake\" \"C:\\\\a\\\\rust\\\\rust\\\\src/llvm-project/llvm\" \"-G\" \"Ninja\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=8\" \"-DLLVM_TARGET_ARCH=x86_64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-pc-windows-msvc\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_BUILD_INSTRUMENTED=IR\" \"-DLLVM_PROFILE_DATA_DIR=C:/a/rust/rust/opt-artifacts/llvm-pgo/prof-%p\" \"-DLLVM_BUILD_RUNTIME=No\" \"-DLLVM_ENABLE_ZLIB=OFF\" \"-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.99.0-beta\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_CXX_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_ASM_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_C_FLAGS= -nologo -MT -Brepro -W0 --target=x86_64-pc-windows-msvc\" \"-DCMAKE_CXX_FLAGS= -nologo -MT -Brepro -W0 --target=x86_64-pc-windows-msvc\" \"-DCMAKE_AR=C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/HostX64/x64/lib.exe\" \"-DCMAKE_SHARED_LINKER_FLAGS=\" \"-DCMAKE_MODULE_LINKER_FLAGS=\" \"-DCMAKE_EXE_LINKER_FLAGS=\" \"-DLLVM_ENABLE_ZSTD=OFF\" \"-DCMAKE_INSTALL_PREFIX=C:\\\\a\\\\rust\\\\rust\\\\build\\\\x86_64-pc-windows-msvc\\\\llvm\" \"-DCMAKE_ASM_FLAGS= -nologo -MT -Brepro -W0\" \"-DCMAKE_BUILD_TYPE=Release\""
     },
     {
+      "line": 18046,
+      "text": "2026-09-04T21:59:03.2421419Z -- The C compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 18047,
+      "text": "2026-09-04T21:59:03.4322330Z -- The CXX compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 18048,
+      "text": "2026-09-04T21:59:03.5212216Z -- The ASM compiler identification is Clang with MSVC-like command-line"
+    },
+    {
+      "line": 18205,
+      "text": "2026-09-04T21:59:16.3701217Z -- The ASM_MASM compiler identification is MSVC"
+    },
+    {
       "line": 25210,
       "text": "2026-09-04T22:11:48.3064880Z \tfinished in 765.328 seconds"
     },
@@ -940,6 +980,14 @@
     {
       "line": 25238,
       "text": "2026-09-04T22:11:48.5425705Z ##[group]Building LLD for x86_64-pc-windows-msvc"
+    },
+    {
+      "line": 25252,
+      "text": "2026-09-04T22:11:48.8800143Z -- The C compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 25253,
+      "text": "2026-09-04T22:11:49.0633171Z -- The CXX compiler identification is Clang 20.1.3 with MSVC-like command-line"
     },
     {
       "line": 25473,
@@ -1046,6 +1094,22 @@
       "text": "2026-09-04T22:19:30.1038637Z running: \"cmake\" \"C:\\\\a\\\\rust\\\\rust\\\\src/llvm-project/llvm\" \"-G\" \"Ninja\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=8\" \"-DLLVM_TARGET_ARCH=x86_64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=x86_64-pc-windows-msvc\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_PROFDATA_FILE=C:/a/rust/rust/opt-artifacts/llvm-pgo.profdata\" \"-DLLVM_ENABLE_ZLIB=OFF\" \"-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.99.0-beta\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_CXX_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_ASM_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_C_FLAGS= -nologo -MT -Brepro -W0 --target=x86_64-pc-windows-msvc\" \"-DCMAKE_CXX_FLAGS= -nologo -MT -Brepro -W0 --target=x86_64-pc-windows-msvc\" \"-DCMAKE_AR=C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/HostX64/x64/lib.exe\" \"-DCMAKE_SHARED_LINKER_FLAGS=\" \"-DCMAKE_MODULE_LINKER_FLAGS=\" \"-DCMAKE_EXE_LINKER_FLAGS=\" \"-DLLVM_ENABLE_ZSTD=OFF\" \"-DCMAKE_INSTALL_PREFIX=C:\\\\a\\\\rust\\\\rust\\\\build\\\\x86_64-pc-windows-msvc\\\\llvm\" \"-DCMAKE_ASM_FLAGS= -nologo -MT -Brepro -W0\" \"-DCMAKE_BUILD_TYPE=Release\""
     },
     {
+      "line": 25889,
+      "text": "2026-09-04T22:19:30.3022456Z -- The C compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 25890,
+      "text": "2026-09-04T22:19:30.5202719Z -- The CXX compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 25891,
+      "text": "2026-09-04T22:19:30.6069500Z -- The ASM compiler identification is Clang with MSVC-like command-line"
+    },
+    {
+      "line": 26048,
+      "text": "2026-09-04T22:19:43.0096514Z -- The ASM_MASM compiler identification is MSVC"
+    },
+    {
       "line": 33053,
       "text": "2026-09-04T22:31:38.0153594Z \tfinished in 727.951 seconds"
     },
@@ -1056,6 +1120,14 @@
     {
       "line": 33076,
       "text": "2026-09-04T22:31:38.1755994Z ##[group]Building LLD for x86_64-pc-windows-msvc"
+    },
+    {
+      "line": 33090,
+      "text": "2026-09-04T22:31:38.4207770Z -- The C compiler identification is Clang 20.1.3 with MSVC-like command-line"
+    },
+    {
+      "line": 33091,
+      "text": "2026-09-04T22:31:38.6094203Z -- The CXX compiler identification is Clang 20.1.3 with MSVC-like command-line"
     },
     {
       "line": 33311,

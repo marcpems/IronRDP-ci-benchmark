@@ -54,5 +54,96 @@
     "path": "run.sh",
     "local": "promote-release-run.sh",
     "url": "https://github.com/rust-lang/promote-release/blob/f699a3c4abdf090f09afb062794e5f5b7fd34d9f/run.sh"
+  },
+  {
+    "repo": "rust-lang/promote-release",
+    "sha": "f699a3c4abdf090f09afb062794e5f5b7fd34d9f",
+    "path": "src/lib.rs",
+    "local": "promote-release-src_lib.rs",
+    "url": "https://github.com/rust-lang/promote-release/blob/f699a3c4abdf090f09afb062794e5f5b7fd34d9f/src/lib.rs"
+  },
+  {
+    "repo": "rust-lang/promote-release",
+    "sha": "f699a3c4abdf090f09afb062794e5f5b7fd34d9f",
+    "path": "src/bin/promote-release.rs",
+    "local": "promote-release-src_bin_promote-release.rs",
+    "url": "https://github.com/rust-lang/promote-release/blob/f699a3c4abdf090f09afb062794e5f5b7fd34d9f/src/bin/promote-release.rs"
+  },
+  {
+    "repo": "rust-lang/promote-release",
+    "sha": "f699a3c4abdf090f09afb062794e5f5b7fd34d9f",
+    "path": "src/config.rs",
+    "local": "promote-release-src_config.rs",
+    "url": "https://github.com/rust-lang/promote-release/blob/f699a3c4abdf090f09afb062794e5f5b7fd34d9f/src/config.rs"
+  },
+  {
+    "repo": "rust-lang/promote-release",
+    "sha": "f699a3c4abdf090f09afb062794e5f5b7fd34d9f",
+    "path": "src/smoke_test.rs",
+    "local": "promote-release-src_smoke_test.rs",
+    "url": "https://github.com/rust-lang/promote-release/blob/f699a3c4abdf090f09afb062794e5f5b7fd34d9f/src/smoke_test.rs"
+  },
+  {
+    "repo": "rust-lang/promote-release",
+    "sha": "f699a3c4abdf090f09afb062794e5f5b7fd34d9f",
+    "path": "src/build_manifest.rs",
+    "local": "promote-release-src_build_manifest.rs",
+    "url": "https://github.com/rust-lang/promote-release/blob/f699a3c4abdf090f09afb062794e5f5b7fd34d9f/src/build_manifest.rs"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/bootstrap/mk/Makefile.in",
+    "local": "rust-src_bootstrap_mk_Makefile.in",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/bootstrap/mk/Makefile.in"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/tools/opt-dist/src/timer.rs",
+    "local": "rust-src_tools_opt-dist_src_timer.rs",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/tools/opt-dist/src/timer.rs"
+  },
+  {
+    "repo": "rust-lang/simpleinfra",
+    "sha": "3db50ee298dd74635f3196cac3d4c3c72f4597af",
+    "path": "terragrunt/modules/promote-release/main.tf",
+    "local": "simpleinfra-terragrunt_modules_promote-release_main.tf",
+    "url": "https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/terragrunt/modules/promote-release/main.tf"
+  },
+  {
+    "repo": "rust-lang/simpleinfra",
+    "sha": "3db50ee298dd74635f3196cac3d4c3c72f4597af",
+    "path": "terragrunt/accounts/promote-release-prod/promote-release/terragrunt.hcl",
+    "local": "simpleinfra-terragrunt_accounts_promote-release-prod_promote-release_terragrunt.hcl",
+    "url": "https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/terragrunt/accounts/promote-release-prod/promote-release/terragrunt.hcl"
+  },
+  {
+    "repo": "rust-lang/simpleinfra",
+    "sha": "3db50ee298dd74635f3196cac3d4c3c72f4597af",
+    "path": "release-scripts/promote-release.py",
+    "local": "simpleinfra-release-scripts_promote-release.py",
+    "url": "https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/release-scripts/promote-release.py"
+  },
+  {
+    "repo": "rust-lang/simpleinfra",
+    "sha": "3db50ee298dd74635f3196cac3d4c3c72f4597af",
+    "path": "terraform/releases/impl/promote-release.tf",
+    "local": "simpleinfra-terraform_releases_impl_promote-release.tf",
+    "url": "https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/terraform/releases/impl/promote-release.tf"
+  },
+  {
+    "repo": "rust-lang/simpleinfra",
+    "sha": "3db50ee298dd74635f3196cac3d4c3c72f4597af",
+    "path": "terraform/releases/lambdas/start-release/index.py",
+    "local": "simpleinfra-terraform_releases_lambdas_start-release_index.py",
+    "url": "https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/terraform/releases/lambdas/start-release/index.py"
+  },
+  {
+    "repo": "rust-lang/simpleinfra",
+    "sha": "3db50ee298dd74635f3196cac3d4c3c72f4597af",
+    "path": "terraform/releases/environments.tf",
+    "local": "simpleinfra-terraform_releases_environments.tf",
+    "url": "https://github.com/rust-lang/simpleinfra/blob/3db50ee298dd74635f3196cac3d4c3c72f4597af/terraform/releases/environments.tf"
   }
 ]

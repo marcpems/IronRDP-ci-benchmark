@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="487" viewBox="0 0 1200 487">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial,sans-serif" font-size="13" fill="#0f172a">
+<text x="16" y="24" font-size="19">What actually gates each completed merge?</text>
+<text x="16" y="46">Three latest matrix jobs versus Arm64 dist | red: latest jobs (not all pure tests) | blue: Arm64 dist</text>
+<path d="M330.00,65 V459" stroke="#e2e8f0"/>
+<text x="330.00" y="62">0m</text>
+<path d="M408.68,65 V459" stroke="#e2e8f0"/>
+<text x="408.68" y="62">30m</text>
+<path d="M487.36,65 V459" stroke="#e2e8f0"/>
+<text x="487.36" y="62">60m</text>
+<path d="M566.05,65 V459" stroke="#e2e8f0"/>
+<text x="566.05" y="62">90m</text>
+<path d="M644.73,65 V459" stroke="#e2e8f0"/>
+<text x="644.73" y="62">120m</text>
+<path d="M723.41,65 V459" stroke="#e2e8f0"/>
+<text x="723.41" y="62">150m</text>
+<path d="M802.09,65 V459" stroke="#e2e8f0"/>
+<text x="802.09" y="62">180m</text>
+<path d="M880.77,65 V459" stroke="#e2e8f0"/>
+<text x="880.77" y="62">210m</text>
+<path d="M959.46,65 V459" stroke="#e2e8f0"/>
+<text x="959.46" y="62">240m</text>
+<path d="M1038.14,65 V459" stroke="#e2e8f0"/>
+<text x="1038.14" y="62">270m</text>
+<path d="M1116.82,65 V459" stroke="#e2e8f0"/>
+<text x="1116.82" y="62">300m</text>
+<text x="16" y="92">33865610474 i686-msvc-1</text>
+<rect x="333.147" y="78" width="493.949" height="20" fill="#e11d48"><title>Tests: 188.333 min</title></rect>
+<text x="832.096" y="92">188.3m</text>
+<text x="16" y="123">33865610474 x86_64-mingw-1</text>
+<rect x="333.016" y="109" width="486.474" height="20" fill="#e11d48"><title>Tests: 185.483 min</title></rect>
+<text x="824.490" y="123">185.5m</text>
+<text x="16" y="154">33865610474 dist-x86_64-msvc</text>
+<rect x="333.060" y="140" width="472.268" height="20" fill="#e11d48"><title>Tests: 180.067 min</title></rect>
+<text x="810.327" y="154">180.1m</text>
+<text x="16" y="185">33865610474 dist-aarch64-msvc</text>
+<rect x="333.104" y="171" width="306.991" height="20" fill="#2563eb"><title>Compiler: 117.050 min</title></rect>
+<text x="645.095" y="185">117.0m</text>
+<text x="16" y="216">33916006473 aarch64-apple-macos-26-2</text>
+<rect x="333.366" y="202" width="728.116" height="20" fill="#e11d48"><title>Tests: 277.617 min</title></rect>
+<text x="1066.481" y="216">277.6m</text>
+<text x="16" y="247">33916006473 aarch64-apple-macos-26-1</text>
+<rect x="333.541" y="233" width="676.229" height="20" fill="#e11d48"><title>Tests: 257.833 min</title></rect>
+<text x="1014.770" y="247">257.8m</text>
+<text x="16" y="278">33916006473 i686-msvc-1</text>
+<rect x="333.191" y="264" width="498.801" height="20" fill="#e11d48"><title>Tests: 190.183 min</title></rect>
+<text x="836.992" y="278">190.2m</text>
+<text x="16" y="309">33916006473 dist-aarch64-msvc</text>
+<rect x="333.147" y="295" width="333.874" height="20" fill="#2563eb"><title>Compiler: 127.300 min</title></rect>
+<text x="672.022" y="309">127.3m</text>
+<text x="16" y="340">33961251131 i686-msvc-1</text>
+<rect x="333.759" y="326" width="497.708" height="20" fill="#e11d48"><title>Tests: 189.767 min</title></rect>
+<text x="836.467" y="340">189.8m</text>
+<text x="16" y="371">33961251131 x86_64-mingw-1</text>
+<rect x="333.759" y="357" width="488.091" height="20" fill="#e11d48"><title>Tests: 186.100 min</title></rect>
+<text x="826.851" y="371">186.1m</text>
+<text x="16" y="402">33961251131 dist-x86_64-msvc-alt</text>
+<rect x="333.759" y="388" width="456.313" height="20" fill="#e11d48"><title>Tests: 173.983 min</title></rect>
+<text x="795.072" y="402">174.0m</text>
+<text x="16" y="433">33961251131 dist-aarch64-msvc</text>
+<rect x="333.803" y="419" width="323.121" height="20" fill="#2563eb"><title>Compiler: 123.200 min</title></rect>
+<text x="661.924" y="433">123.2m</text>
+</g>
+</svg>

@@ -1,0 +1,95 @@
+[
+  {
+    "run_id": 33865610474,
+    "qualification": "counterfactual matrix finish only; no rerun, no queue/resource changes; speedups are assumptions",
+    "scenarios": [
+      {
+        "scenario": "Arm64 dist 20 minutes faster",
+        "assumed_reduction_seconds": 1200,
+        "matrix_makespan_saved_seconds": 0.0
+      },
+      {
+        "scenario": "All three Windows Arm64 jobs 20 minutes faster",
+        "assumed_reduction_seconds": 1200,
+        "matrix_makespan_saved_seconds": 0.0
+      },
+      {
+        "scenario": "i686-msvc-1 30 minutes faster",
+        "assumed_reduction_seconds": 1800,
+        "matrix_makespan_saved_seconds": 174.0
+      },
+      {
+        "scenario": "All MSVC/Mingw jobs 15 minutes faster",
+        "assumed_reduction_seconds": 900,
+        "matrix_makespan_saved_seconds": 900.0
+      },
+      {
+        "scenario": "Both macOS26 jobs 90 minutes faster",
+        "assumed_reduction_seconds": 5400,
+        "matrix_makespan_saved_seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 33916006473,
+    "qualification": "counterfactual matrix finish only; no rerun, no queue/resource changes; speedups are assumptions",
+    "scenarios": [
+      {
+        "scenario": "Arm64 dist 20 minutes faster",
+        "assumed_reduction_seconds": 1200,
+        "matrix_makespan_saved_seconds": 0.0
+      },
+      {
+        "scenario": "All three Windows Arm64 jobs 20 minutes faster",
+        "assumed_reduction_seconds": 1200,
+        "matrix_makespan_saved_seconds": 0.0
+      },
+      {
+        "scenario": "i686-msvc-1 30 minutes faster",
+        "assumed_reduction_seconds": 1800,
+        "matrix_makespan_saved_seconds": 0.0
+      },
+      {
+        "scenario": "All MSVC/Mingw jobs 15 minutes faster",
+        "assumed_reduction_seconds": 900,
+        "matrix_makespan_saved_seconds": 0.0
+      },
+      {
+        "scenario": "Both macOS26 jobs 90 minutes faster",
+        "assumed_reduction_seconds": 5400,
+        "matrix_makespan_saved_seconds": 5250.0
+      }
+    ]
+  },
+  {
+    "run_id": 33961251131,
+    "qualification": "counterfactual matrix finish only; no rerun, no queue/resource changes; speedups are assumptions",
+    "scenarios": [
+      {
+        "scenario": "Arm64 dist 20 minutes faster",
+        "assumed_reduction_seconds": 1200,
+        "matrix_makespan_saved_seconds": 0.0
+      },
+      {
+        "scenario": "All three Windows Arm64 jobs 20 minutes faster",
+        "assumed_reduction_seconds": 1200,
+        "matrix_makespan_saved_seconds": 0.0
+      },
+      {
+        "scenario": "i686-msvc-1 30 minutes faster",
+        "assumed_reduction_seconds": 1800,
+        "matrix_makespan_saved_seconds": 220.0
+      },
+      {
+        "scenario": "All MSVC/Mingw jobs 15 minutes faster",
+        "assumed_reduction_seconds": 900,
+        "matrix_makespan_saved_seconds": 900.0
+      },
+      {
+        "scenario": "Both macOS26 jobs 90 minutes faster",
+        "assumed_reduction_seconds": 5400,
+        "matrix_makespan_saved_seconds": 0.0
+      }
+    ]
+  }
+]

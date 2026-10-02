@@ -542,6 +542,18 @@
       "text": "2026-09-04T20:38:21.6269650Z running: cd \"/Users/runner/work/rust/rust/build/aarch64-apple-darwin/llvm/build\" && CMAKE_PREFIX_PATH=\"\" DESTDIR=\"\" LC_ALL=\"C\" \"cmake\" \"/Users/runner/work/rust/rust/src/llvm-project/llvm\" \"-DCMAKE_OSX_ARCHITECTURES=arm64\" \"-G\" \"Ninja\" \"-DLLVM_ENABLE_ASSERTIONS=ON\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=3\" \"-DLLVM_TARGET_ARCH=aarch64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-apple-darwin\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_ENABLE_ZLIB=ON\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.99.0-beta\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=cc\" \"-DCMAKE_CXX_COMPILER=c++\" \"-DCMAKE_ASM_COMPILER=cc\" \"-DCMAKE_C_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=arm64-apple-macosx -mmacosx-version-min=11 -w\" \"-DCMAKE_CXX_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=arm64-apple-macosx -mmacosx-version-min=11 -w -stdlib=libc++\" \"-DCMAKE_SHARED_LINKER_FLAGS=\" \"-DCMAKE_MODULE_LINKER_FLAGS=\" \"-DCMAKE_EXE_LINKER_FLAGS=\" \"-DLLVM_ENABLE_ZSTD=OFF\" \"-DCMAKE_INSTALL_PREFIX=/Users/runner/work/rust/rust/build/aarch64-apple-darwin/llvm\" \"-DCMAKE_ASM_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=arm64-apple-macosx -mmacosx-version-min=11 -w\" \"-DCMAKE_BUILD_TYPE=Release\""
     },
     {
+      "line": 3286,
+      "text": "2026-09-04T20:38:22.0016910Z -- The C compiler identification is AppleClang 17.0.0.17000603"
+    },
+    {
+      "line": 3287,
+      "text": "2026-09-04T20:38:24.7488840Z -- The CXX compiler identification is AppleClang 17.0.0.17000603"
+    },
+    {
+      "line": 3288,
+      "text": "2026-09-04T20:38:24.8004340Z -- The ASM compiler identification is AppleClang"
+    },
+    {
       "line": 10344,
       "text": "2026-09-04T23:02:16.3300850Z \tfinished in 8634.987 seconds"
     },
@@ -568,6 +580,14 @@
     {
       "line": 11046,
       "text": "2026-09-04T23:07:49.1707120Z ##[group]Building LLD for aarch64-apple-darwin"
+    },
+    {
+      "line": 11060,
+      "text": "2026-09-04T23:07:50.1365320Z -- The C compiler identification is AppleClang 17.0.0.17000603"
+    },
+    {
+      "line": 11061,
+      "text": "2026-09-04T23:07:50.3716110Z -- The CXX compiler identification is AppleClang 17.0.0.17000603"
     },
     {
       "line": 11307,
@@ -604,6 +624,18 @@
     {
       "line": 11501,
       "text": "2026-09-04T23:22:55.0787230Z ##[group]Building sanitizers for aarch64-apple-darwin"
+    },
+    {
+      "line": 11515,
+      "text": "2026-09-04T23:22:55.9551820Z -- The C compiler identification is AppleClang 17.0.0.17000603"
+    },
+    {
+      "line": 11516,
+      "text": "2026-09-04T23:22:56.2770230Z -- The CXX compiler identification is AppleClang 17.0.0.17000603"
+    },
+    {
+      "line": 11517,
+      "text": "2026-09-04T23:22:56.3860750Z -- The ASM compiler identification is AppleClang"
     },
     {
       "line": 12079,
