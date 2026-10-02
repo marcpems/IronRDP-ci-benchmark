@@ -1,0 +1,3840 @@
+[
+  {
+    "id": 101002664198,
+    "name": "Calculate job matrix",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:04Z",
+    "completed_at": "2026-09-04T11:09:46Z",
+    "runner_name": "GitHub Actions 1002532948",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04-arm"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002664198",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:05Z",
+        "completed_at": "2026-09-04T11:09:06Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:06Z",
+        "completed_at": "2026-09-04T11:09:17Z",
+        "elapsed_seconds": 11.0
+      },
+      {
+        "name": "Test citool",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:17Z",
+        "completed_at": "2026-09-04T11:09:17Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Calculate the CI job matrix",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:17Z",
+        "completed_at": "2026-09-04T11:09:44Z",
+        "elapsed_seconds": 27.0
+      },
+      {
+        "name": "Post Checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:09:44Z",
+        "completed_at": "2026-09-04T11:09:44Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:09:44Z",
+        "completed_at": "2026-09-04T11:09:44Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 42.0
+  },
+  {
+    "id": 101002850622,
+    "name": "PR - pr-check-1",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:47Z",
+    "completed_at": "2026-09-04T12:11:30Z",
+    "runner_name": "GitHub Actions 1002532970",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850622",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:48Z",
+        "completed_at": "2026-09-04T11:09:50Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:50Z",
+        "completed_at": "2026-09-04T11:09:50Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:50Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 12.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 54.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 4.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:33Z",
+        "elapsed_seconds": 29.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:33Z",
+        "completed_at": "2026-09-04T12:11:27Z",
+        "elapsed_seconds": 3594.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T12:11:27Z",
+        "completed_at": "2026-09-04T12:11:27Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T12:11:27Z",
+        "completed_at": "2026-09-04T12:11:27Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T12:11:27Z",
+        "completed_at": "2026-09-04T12:11:27Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T12:11:27Z",
+        "completed_at": "2026-09-04T12:11:27Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T12:11:27Z",
+        "completed_at": "2026-09-04T12:11:28Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T12:11:28Z",
+        "completed_at": "2026-09-04T12:11:28Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T12:11:28Z",
+        "completed_at": "2026-09-04T12:11:28Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T12:11:28Z",
+        "completed_at": "2026-09-04T12:11:28Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 3703.0
+  },
+  {
+    "id": 101002850642,
+    "name": "PR - aarch64-gnu-llvm-21-2",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:51Z",
+    "completed_at": "2026-09-04T11:54:34Z",
+    "runner_name": "GitHub Actions 1002532971",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04-arm"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850642",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:52Z",
+        "completed_at": "2026-09-04T11:09:53Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:53Z",
+        "completed_at": "2026-09-04T11:09:53Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:53Z",
+        "completed_at": "2026-09-04T11:09:53Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:53Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 8.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:49Z",
+        "elapsed_seconds": 47.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:10:49Z",
+        "completed_at": "2026-09-04T11:10:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:10:49Z",
+        "completed_at": "2026-09-04T11:10:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:10:49Z",
+        "completed_at": "2026-09-04T11:10:55Z",
+        "elapsed_seconds": 6.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:10:55Z",
+        "completed_at": "2026-09-04T11:10:55Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:10:55Z",
+        "completed_at": "2026-09-04T11:10:55Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:10:55Z",
+        "completed_at": "2026-09-04T11:10:55Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:10:55Z",
+        "completed_at": "2026-09-04T11:10:55Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:10:55Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:11:14Z",
+        "elapsed_seconds": 18.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:14Z",
+        "completed_at": "2026-09-04T11:54:30Z",
+        "elapsed_seconds": 2596.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T11:54:30Z",
+        "completed_at": "2026-09-04T11:54:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T11:54:30Z",
+        "completed_at": "2026-09-04T11:54:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T11:54:30Z",
+        "completed_at": "2026-09-04T11:54:31Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T11:54:31Z",
+        "completed_at": "2026-09-04T11:54:31Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T11:54:31Z",
+        "completed_at": "2026-09-04T11:54:31Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T11:54:31Z",
+        "completed_at": "2026-09-04T11:54:31Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T11:54:31Z",
+        "completed_at": "2026-09-04T11:54:32Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T11:54:32Z",
+        "completed_at": "2026-09-04T11:54:32Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 2683.0
+  },
+  {
+    "id": 101002850661,
+    "name": "PR - x86_64-gnu-miri",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:48Z",
+    "completed_at": "2026-09-04T12:33:46Z",
+    "runner_name": "GitHub Actions 1002532974",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850661",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:48Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 3.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 12.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 57.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 3.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:06Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:11:06Z",
+        "completed_at": "2026-09-04T11:11:35Z",
+        "elapsed_seconds": 29.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:35Z",
+        "completed_at": "2026-09-04T12:33:43Z",
+        "elapsed_seconds": 4928.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T12:33:43Z",
+        "completed_at": "2026-09-04T12:33:43Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T12:33:43Z",
+        "completed_at": "2026-09-04T12:33:43Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T12:33:43Z",
+        "completed_at": "2026-09-04T12:33:43Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T12:33:43Z",
+        "completed_at": "2026-09-04T12:33:43Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T12:33:43Z",
+        "completed_at": "2026-09-04T12:33:43Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T12:33:43Z",
+        "completed_at": "2026-09-04T12:33:43Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T12:33:43Z",
+        "completed_at": "2026-09-04T12:33:44Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T12:33:44Z",
+        "completed_at": "2026-09-04T12:33:44Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 5038.0
+  },
+  {
+    "id": 101002850663,
+    "name": "PR - x86_64-gnu-gcc",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:47Z",
+    "completed_at": "2026-09-04T12:28:30Z",
+    "runner_name": "GitHub Actions 1002532972",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850663",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:48Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 12.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 56.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 4.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:11:02Z",
+        "completed_at": "2026-09-04T11:11:03Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:11:03Z",
+        "completed_at": "2026-09-04T11:11:32Z",
+        "elapsed_seconds": 29.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:32Z",
+        "completed_at": "2026-09-04T12:28:26Z",
+        "elapsed_seconds": 4614.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T12:28:26Z",
+        "completed_at": "2026-09-04T12:28:26Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T12:28:26Z",
+        "completed_at": "2026-09-04T12:28:26Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T12:28:26Z",
+        "completed_at": "2026-09-04T12:28:26Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T12:28:26Z",
+        "completed_at": "2026-09-04T12:28:26Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T12:28:26Z",
+        "completed_at": "2026-09-04T12:28:29Z",
+        "elapsed_seconds": 3.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T12:28:29Z",
+        "completed_at": "2026-09-04T12:28:29Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T12:28:29Z",
+        "completed_at": "2026-09-04T12:28:29Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T12:28:29Z",
+        "completed_at": "2026-09-04T12:28:29Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 4723.0
+  },
+  {
+    "id": 101002850668,
+    "name": "PR - x86_64-gnu-llvm-21",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:48Z",
+    "completed_at": "2026-09-04T12:07:12Z",
+    "runner_name": "GitHub Actions 1002532979",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850668",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:50Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:50Z",
+        "completed_at": "2026-09-04T11:09:50Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:50Z",
+        "completed_at": "2026-09-04T11:09:50Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:50Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 12.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:11:06Z",
+        "elapsed_seconds": 63.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:11:06Z",
+        "completed_at": "2026-09-04T11:11:06Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:11:06Z",
+        "completed_at": "2026-09-04T11:11:06Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:11:06Z",
+        "completed_at": "2026-09-04T11:11:10Z",
+        "elapsed_seconds": 4.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:11:10Z",
+        "completed_at": "2026-09-04T11:11:10Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:11:10Z",
+        "completed_at": "2026-09-04T11:11:10Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:11:10Z",
+        "completed_at": "2026-09-04T11:11:10Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:11:10Z",
+        "completed_at": "2026-09-04T11:11:10Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:11:10Z",
+        "completed_at": "2026-09-04T11:11:12Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:11:12Z",
+        "completed_at": "2026-09-04T11:11:46Z",
+        "elapsed_seconds": 34.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:46Z",
+        "completed_at": "2026-09-04T12:07:06Z",
+        "elapsed_seconds": 3320.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T12:07:06Z",
+        "completed_at": "2026-09-04T12:07:06Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T12:07:06Z",
+        "completed_at": "2026-09-04T12:07:06Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T12:07:06Z",
+        "completed_at": "2026-09-04T12:07:07Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T12:07:07Z",
+        "completed_at": "2026-09-04T12:07:07Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T12:07:07Z",
+        "completed_at": "2026-09-04T12:07:08Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T12:07:08Z",
+        "completed_at": "2026-09-04T12:07:08Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T12:07:08Z",
+        "completed_at": "2026-09-04T12:07:09Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T12:07:09Z",
+        "completed_at": "2026-09-04T12:07:09Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 3444.0
+  },
+  {
+    "id": 101002850688,
+    "name": "PR - x86_64-gnu-gcc-core-tests",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:10:23Z",
+    "completed_at": "2026-09-04T11:28:38Z",
+    "runner_name": "GitHub Actions 1002532975",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850688",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:10:24Z",
+        "completed_at": "2026-09-04T11:10:24Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:10:24Z",
+        "completed_at": "2026-09-04T11:10:24Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:10:24Z",
+        "completed_at": "2026-09-04T11:10:25Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:10:25Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 5.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:10:30Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:30Z",
+        "completed_at": "2026-09-04T11:12:02Z",
+        "elapsed_seconds": 92.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:12:02Z",
+        "completed_at": "2026-09-04T11:12:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:12:02Z",
+        "completed_at": "2026-09-04T11:12:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:12:02Z",
+        "completed_at": "2026-09-04T11:12:06Z",
+        "elapsed_seconds": 4.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:12:06Z",
+        "completed_at": "2026-09-04T11:12:06Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:12:06Z",
+        "completed_at": "2026-09-04T11:12:06Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:12:06Z",
+        "completed_at": "2026-09-04T11:12:06Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:12:06Z",
+        "completed_at": "2026-09-04T11:12:06Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:12:06Z",
+        "completed_at": "2026-09-04T11:12:07Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:12:07Z",
+        "completed_at": "2026-09-04T11:12:30Z",
+        "elapsed_seconds": 23.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:12:30Z",
+        "completed_at": "2026-09-04T11:28:36Z",
+        "elapsed_seconds": 966.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T11:28:36Z",
+        "completed_at": "2026-09-04T11:28:36Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T11:28:36Z",
+        "completed_at": "2026-09-04T11:28:36Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T11:28:36Z",
+        "completed_at": "2026-09-04T11:28:36Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T11:28:36Z",
+        "completed_at": "2026-09-04T11:28:36Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T11:28:36Z",
+        "completed_at": "2026-09-04T11:28:36Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T11:28:36Z",
+        "completed_at": "2026-09-04T11:28:36Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T11:28:36Z",
+        "completed_at": "2026-09-04T11:28:37Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T11:28:37Z",
+        "completed_at": "2026-09-04T11:28:37Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 1095.0
+  },
+  {
+    "id": 101002850700,
+    "name": "PR - pr-check-2",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:48Z",
+    "completed_at": "2026-09-04T11:52:33Z",
+    "runner_name": "GitHub Actions 1002532973",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850700",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 13.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 54.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:11:00Z",
+        "elapsed_seconds": 4.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:11:00Z",
+        "completed_at": "2026-09-04T11:11:00Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:11:00Z",
+        "completed_at": "2026-09-04T11:11:00Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:11:00Z",
+        "completed_at": "2026-09-04T11:11:00Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:11:00Z",
+        "completed_at": "2026-09-04T11:11:00Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:11:00Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:30Z",
+        "elapsed_seconds": 29.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:30Z",
+        "completed_at": "2026-09-04T11:52:24Z",
+        "elapsed_seconds": 2454.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T11:52:24Z",
+        "completed_at": "2026-09-04T11:52:27Z",
+        "elapsed_seconds": 3.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T11:52:27Z",
+        "completed_at": "2026-09-04T11:52:27Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T11:52:27Z",
+        "completed_at": "2026-09-04T11:52:29Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T11:52:29Z",
+        "completed_at": "2026-09-04T11:52:29Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T11:52:29Z",
+        "completed_at": "2026-09-04T11:52:31Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T11:52:31Z",
+        "completed_at": "2026-09-04T11:52:31Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T11:52:31Z",
+        "completed_at": "2026-09-04T11:52:31Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T11:52:31Z",
+        "completed_at": "2026-09-04T11:52:31Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 2565.0
+  },
+  {
+    "id": 101002850730,
+    "name": "PR - x86_64-gnu-tools",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:47Z",
+    "completed_at": "2026-09-04T12:15:31Z",
+    "runner_name": "GitHub Actions 1002532977",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850730",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:48Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 3.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 12.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:11:00Z",
+        "elapsed_seconds": 56.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:11:00Z",
+        "completed_at": "2026-09-04T11:11:00Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:11:00Z",
+        "completed_at": "2026-09-04T11:11:00Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:11:00Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 4.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:11:04Z",
+        "completed_at": "2026-09-04T11:11:05Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:11:05Z",
+        "completed_at": "2026-09-04T11:11:26Z",
+        "elapsed_seconds": 21.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:26Z",
+        "completed_at": "2026-09-04T12:15:27Z",
+        "elapsed_seconds": 3841.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T12:15:28Z",
+        "completed_at": "2026-09-04T12:15:28Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T12:15:28Z",
+        "completed_at": "2026-09-04T12:15:28Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T12:15:28Z",
+        "completed_at": "2026-09-04T12:15:28Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T12:15:28Z",
+        "completed_at": "2026-09-04T12:15:28Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T12:15:28Z",
+        "completed_at": "2026-09-04T12:15:28Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T12:15:28Z",
+        "completed_at": "2026-09-04T12:15:28Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T12:15:28Z",
+        "completed_at": "2026-09-04T12:15:29Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T12:15:29Z",
+        "completed_at": "2026-09-04T12:15:29Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 3944.0
+  },
+  {
+    "id": 101002850733,
+    "name": "PR - tidy",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:48Z",
+    "completed_at": "2026-09-04T11:16:52Z",
+    "runner_name": "GitHub Actions 1002532976",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850733",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:09:51Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 13.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:04Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:04Z",
+        "completed_at": "2026-09-04T11:10:41Z",
+        "elapsed_seconds": 37.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:10:41Z",
+        "completed_at": "2026-09-04T11:10:41Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:10:41Z",
+        "completed_at": "2026-09-04T11:10:41Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:10:41Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 15.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:57Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:10:57Z",
+        "completed_at": "2026-09-04T11:11:36Z",
+        "elapsed_seconds": 39.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:36Z",
+        "completed_at": "2026-09-04T11:16:46Z",
+        "elapsed_seconds": 310.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T11:16:46Z",
+        "completed_at": "2026-09-04T11:16:46Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T11:16:46Z",
+        "completed_at": "2026-09-04T11:16:46Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T11:16:46Z",
+        "completed_at": "2026-09-04T11:16:48Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T11:16:48Z",
+        "completed_at": "2026-09-04T11:16:48Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T11:16:48Z",
+        "completed_at": "2026-09-04T11:16:48Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T11:16:48Z",
+        "completed_at": "2026-09-04T11:16:48Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T11:16:48Z",
+        "completed_at": "2026-09-04T11:16:49Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T11:16:49Z",
+        "completed_at": "2026-09-04T11:16:49Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 424.0
+  },
+  {
+    "id": 101002850748,
+    "name": "PR - aarch64-gnu-llvm-21-1",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:50Z",
+    "completed_at": "2026-09-04T12:17:42Z",
+    "runner_name": "GitHub Actions 1002532980",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04-arm"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850748",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:51Z",
+        "completed_at": "2026-09-04T11:09:52Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:52Z",
+        "completed_at": "2026-09-04T11:09:52Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:52Z",
+        "completed_at": "2026-09-04T11:09:52Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:52Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 10.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:03Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:03Z",
+        "completed_at": "2026-09-04T11:10:49Z",
+        "elapsed_seconds": 46.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:10:49Z",
+        "completed_at": "2026-09-04T11:10:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:10:49Z",
+        "completed_at": "2026-09-04T11:10:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:10:49Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 7.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:56Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:10:56Z",
+        "completed_at": "2026-09-04T11:10:57Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:10:57Z",
+        "completed_at": "2026-09-04T11:11:24Z",
+        "elapsed_seconds": 27.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:24Z",
+        "completed_at": "2026-09-04T12:17:35Z",
+        "elapsed_seconds": 3971.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T12:17:35Z",
+        "completed_at": "2026-09-04T12:17:35Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T12:17:35Z",
+        "completed_at": "2026-09-04T12:17:35Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T12:17:35Z",
+        "completed_at": "2026-09-04T12:17:36Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T12:17:36Z",
+        "completed_at": "2026-09-04T12:17:36Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T12:17:36Z",
+        "completed_at": "2026-09-04T12:17:40Z",
+        "elapsed_seconds": 4.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T12:17:40Z",
+        "completed_at": "2026-09-04T12:17:40Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T12:17:40Z",
+        "completed_at": "2026-09-04T12:17:40Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T12:17:40Z",
+        "completed_at": "2026-09-04T12:17:40Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 4072.0
+  },
+  {
+    "id": 101002850788,
+    "name": "PR - x86_64-gnu-next-trait-solver-polonius",
+    "status": "completed",
+    "conclusion": "success",
+    "started_at": "2026-09-04T11:09:47Z",
+    "completed_at": "2026-09-04T12:13:45Z",
+    "runner_name": "GitHub Actions 1002532978",
+    "runner_group_name": "GitHub Actions",
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101002850788",
+    "steps": [
+      {
+        "name": "Set up job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 1,
+        "started_at": "2026-09-04T11:09:48Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "Install cargo in AWS CodeBuild",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 2,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 3,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:09:49Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 4,
+        "started_at": "2026-09-04T11:09:49Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 12.0
+      },
+      {
+        "name": "free up disk space",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 5,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 6,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "configure the PR in which the error message will be posted",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 7,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "add extra environment variables",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 8,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the channel matches the target branch",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 9,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "collect CPU statistics",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 10,
+        "started_at": "2026-09-04T11:10:01Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 1.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 11,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install awscli",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 12,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install sccache",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 13,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install clang",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 14,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install tidy",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 15,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install WIX",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 16,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 17,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:02Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "checkout submodules",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 18,
+        "started_at": "2026-09-04T11:10:02Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 56.0
+      },
+      {
+        "name": "install MinGW",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 19,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "install ninja",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 20,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:10:58Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "enable ipv6 on Docker",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 21,
+        "started_at": "2026-09-04T11:10:58Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 3.0
+      },
+      {
+        "name": "disable git crlf conversion",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 22,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure line endings are correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 23,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure backported commits are in upstream branches",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 24,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "ensure the stable version number is correct",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 25,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:01Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "show the current environment",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 26,
+        "started_at": "2026-09-04T11:11:01Z",
+        "completed_at": "2026-09-04T11:11:03Z",
+        "elapsed_seconds": 2.0
+      },
+      {
+        "name": "build citool",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 27,
+        "started_at": "2026-09-04T11:11:03Z",
+        "completed_at": "2026-09-04T11:11:44Z",
+        "elapsed_seconds": 41.0
+      },
+      {
+        "name": "run the build",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 28,
+        "started_at": "2026-09-04T11:11:44Z",
+        "completed_at": "2026-09-04T12:13:39Z",
+        "elapsed_seconds": 3715.0
+      },
+      {
+        "name": "create github artifacts",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 29,
+        "started_at": "2026-09-04T12:13:39Z",
+        "completed_at": "2026-09-04T12:13:39Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "print disk usage",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 30,
+        "started_at": "2026-09-04T12:13:39Z",
+        "completed_at": "2026-09-04T12:13:39Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to github",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 31,
+        "started_at": "2026-09-04T12:13:39Z",
+        "completed_at": "2026-09-04T12:13:39Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "upload artifacts to S3",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 32,
+        "started_at": "2026-09-04T12:13:39Z",
+        "completed_at": "2026-09-04T12:13:39Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "postprocess metrics into the summary",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 33,
+        "started_at": "2026-09-04T12:13:39Z",
+        "completed_at": "2026-09-04T12:13:43Z",
+        "elapsed_seconds": 4.0
+      },
+      {
+        "name": "upload job metrics to DataDog",
+        "status": "completed",
+        "conclusion": "skipped",
+        "number": 34,
+        "started_at": "2026-09-04T12:13:43Z",
+        "completed_at": "2026-09-04T12:13:43Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Post checkout the source code",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 68,
+        "started_at": "2026-09-04T12:13:43Z",
+        "completed_at": "2026-09-04T12:13:43Z",
+        "elapsed_seconds": 0.0
+      },
+      {
+        "name": "Complete job",
+        "status": "completed",
+        "conclusion": "success",
+        "number": 69,
+        "started_at": "2026-09-04T12:13:43Z",
+        "completed_at": "2026-09-04T12:13:43Z",
+        "elapsed_seconds": 0.0
+      }
+    ],
+    "elapsed_seconds": 3838.0
+  },
+  {
+    "id": 101024510938,
+    "name": "publish toolstate",
+    "status": "completed",
+    "conclusion": "skipped",
+    "started_at": "2026-09-04T12:33:47Z",
+    "completed_at": "2026-09-04T12:33:46Z",
+    "runner_name": null,
+    "runner_group_name": null,
+    "labels": [
+      "ubuntu-24.04"
+    ],
+    "html_url": "https://github.com/rust-lang/rust/actions/runs/33866567178/job/101024510938",
+    "steps": [],
+    "elapsed_seconds": -1.0
+  }
+]

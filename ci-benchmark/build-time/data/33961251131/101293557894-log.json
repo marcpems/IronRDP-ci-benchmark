@@ -1,0 +1,2009 @@
+{
+  "job_id": 101293557894,
+  "name": "auto - dist-aarch64-linux",
+  "source": "https://api.github.com/repos/rust-lang/rust/actions/jobs/101293557894/logs",
+  "sha256": "ac79181932c04171f11f1682e4b8e0b63b9069a58203b44aa80f4e1deabe2421",
+  "bytes": 7703832,
+  "events": [
+    {
+      "line": 5,
+      "text": "2026-09-05T10:41:18.5894627Z ##[group]GITHUB_TOKEN Permissions"
+    },
+    {
+      "line": 9,
+      "text": "2026-09-05T10:41:18.5897445Z ##[endgroup]"
+    },
+    {
+      "line": 18,
+      "text": "2026-09-05T10:41:19.3230831Z ##[group]Run '/home/ubuntu/job-started.sh'"
+    },
+    {
+      "line": 20,
+      "text": "2026-09-05T10:41:19.3241321Z ##[endgroup]"
+    },
+    {
+      "line": 22,
+      "text": "2026-09-05T10:41:19.3482510Z ##[group]Run git config --global core.autocrlf false"
+    },
+    {
+      "line": 38,
+      "text": "2026-09-05T10:41:19.3499561Z ##[endgroup]"
+    },
+    {
+      "line": 39,
+      "text": "2026-09-05T10:41:19.3626018Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "line": 68,
+      "text": "2026-09-05T10:41:19.3642377Z ##[endgroup]"
+    },
+    {
+      "line": 70,
+      "text": "2026-09-05T10:41:19.7608515Z ##[group]Getting Git version info"
+    },
+    {
+      "line": 74,
+      "text": "2026-09-05T10:41:19.7615012Z ##[endgroup]"
+    },
+    {
+      "line": 80,
+      "text": "2026-09-05T10:41:19.7644025Z ##[group]Determining repository object format"
+    },
+    {
+      "line": 81,
+      "text": "2026-09-05T10:41:19.7644725Z ##[endgroup]"
+    },
+    {
+      "line": 82,
+      "text": "2026-09-05T10:41:19.7645327Z ##[group]Initializing the repository"
+    },
+    {
+      "line": 99,
+      "text": "2026-09-05T10:41:19.7891087Z ##[endgroup]"
+    },
+    {
+      "line": 100,
+      "text": "2026-09-05T10:41:19.7891772Z ##[group]Disabling automatic garbage collection"
+    },
+    {
+      "line": 102,
+      "text": "2026-09-05T10:41:19.7913030Z ##[endgroup]"
+    },
+    {
+      "line": 103,
+      "text": "2026-09-05T10:41:19.7913623Z ##[group]Setting up auth"
+    },
+    {
+      "line": 118,
+      "text": "2026-09-05T10:41:19.8712372Z ##[endgroup]"
+    },
+    {
+      "line": 119,
+      "text": "2026-09-05T10:41:19.8712990Z ##[group]Fetching the repository"
+    },
+    {
+      "line": 127,
+      "text": "2026-09-05T10:41:21.4470294Z ##[endgroup]"
+    },
+    {
+      "line": 128,
+      "text": "2026-09-05T10:41:21.4470642Z ##[group]Determining the checkout info"
+    },
+    {
+      "line": 129,
+      "text": "2026-09-05T10:41:21.4471008Z ##[endgroup]"
+    },
+    {
+      "line": 132,
+      "text": "2026-09-05T10:41:21.4529583Z ##[group]Checking out the ref"
+    },
+    {
+      "line": 160,
+      "text": "2026-09-05T10:41:22.7263377Z ##[endgroup]"
+    },
+    {
+      "line": 163,
+      "text": "2026-09-05T10:41:22.7402622Z ##[group]Run echo \"disk usage:\""
+    },
+    {
+      "line": 180,
+      "text": "2026-09-05T10:41:22.7416450Z ##[endgroup]"
+    },
+    {
+      "line": 193,
+      "text": "2026-09-05T10:41:22.7569701Z ##[group]Run src/ci/scripts/setup-environment.sh"
+    },
+    {
+      "line": 218,
+      "text": "2026-09-05T10:41:22.7584077Z ##[endgroup]"
+    },
+    {
+      "line": 228,
+      "text": "2026-09-05T10:41:22.7915710Z ##[group]Run src/ci/scripts/verify-channel.sh"
+    },
+    {
+      "line": 252,
+      "text": "2026-09-05T10:41:22.7930304Z ##[endgroup]"
+    },
+    {
+      "line": 254,
+      "text": "2026-09-05T10:41:22.7988219Z ##[group]Run src/ci/scripts/collect-cpu-stats.sh"
+    },
+    {
+      "line": 278,
+      "text": "2026-09-05T10:41:22.8002179Z ##[endgroup]"
+    },
+    {
+      "line": 279,
+      "text": "2026-09-05T10:41:22.8054229Z ##[group]Run src/ci/scripts/dump-environment.sh"
+    },
+    {
+      "line": 303,
+      "text": "2026-09-05T10:41:22.8067900Z ##[endgroup]"
+    },
+    {
+      "line": 506,
+      "text": "2026-09-05T10:41:22.9309454Z ##[group]Run src/ci/scripts/install-awscli.sh"
+    },
+    {
+      "line": 530,
+      "text": "2026-09-05T10:41:22.9324508Z ##[endgroup]"
+    },
+    {
+      "line": 531,
+      "text": "2026-09-05T10:41:22.9413500Z ##[group]Run src/ci/scripts/install-sccache.sh"
+    },
+    {
+      "line": 555,
+      "text": "2026-09-05T10:41:22.9427333Z ##[endgroup]"
+    },
+    {
+      "line": 556,
+      "text": "2026-09-05T10:41:22.9487672Z ##[group]Run src/ci/scripts/install-clang.sh"
+    },
+    {
+      "line": 580,
+      "text": "2026-09-05T10:41:22.9501212Z ##[endgroup]"
+    },
+    {
+      "line": 581,
+      "text": "2026-09-05T10:41:22.9556797Z ##[group]Run src/ci/scripts/install-tidy.sh"
+    },
+    {
+      "line": 605,
+      "text": "2026-09-05T10:41:22.9570304Z ##[endgroup]"
+    },
+    {
+      "line": 606,
+      "text": "2026-09-05T10:41:22.9642354Z ##[group]Run src/ci/scripts/install-wix.sh"
+    },
+    {
+      "line": 630,
+      "text": "2026-09-05T10:41:22.9656049Z ##[endgroup]"
+    },
+    {
+      "line": 631,
+      "text": "2026-09-05T10:41:22.9711106Z ##[group]Run src/ci/scripts/disable-git-crlf-conversion.sh"
+    },
+    {
+      "line": 655,
+      "text": "2026-09-05T10:41:22.9724495Z ##[endgroup]"
+    },
+    {
+      "line": 656,
+      "text": "2026-09-05T10:41:22.9771137Z ##[group]Run src/ci/scripts/checkout-submodules.sh"
+    },
+    {
+      "line": 680,
+      "text": "2026-09-05T10:41:22.9784820Z ##[endgroup]"
+    },
+    {
+      "line": 770,
+      "text": "2026-09-05T10:41:57.2527324Z ##[group]Run src/ci/scripts/install-mingw.sh"
+    },
+    {
+      "line": 794,
+      "text": "2026-09-05T10:41:57.2543337Z ##[endgroup]"
+    },
+    {
+      "line": 795,
+      "text": "2026-09-05T10:41:57.2610016Z ##[group]Run src/ci/scripts/install-ninja.sh"
+    },
+    {
+      "line": 819,
+      "text": "2026-09-05T10:41:57.2624577Z ##[endgroup]"
+    },
+    {
+      "line": 820,
+      "text": "2026-09-05T10:41:57.2690283Z ##[group]Run src/ci/scripts/enable-docker-ipv6.sh"
+    },
+    {
+      "line": 844,
+      "text": "2026-09-05T10:41:57.2704593Z ##[endgroup]"
+    },
+    {
+      "line": 846,
+      "text": "2026-09-05T10:41:57.7875773Z ##[group]Run src/ci/scripts/disable-git-crlf-conversion.sh"
+    },
+    {
+      "line": 870,
+      "text": "2026-09-05T10:41:57.7890654Z ##[endgroup]"
+    },
+    {
+      "line": 871,
+      "text": "2026-09-05T10:41:57.7943982Z ##[group]Run src/ci/scripts/verify-line-endings.sh"
+    },
+    {
+      "line": 895,
+      "text": "2026-09-05T10:41:57.7957584Z ##[endgroup]"
+    },
+    {
+      "line": 935,
+      "text": "2026-09-05T10:41:57.8100007Z ##[group]Run src/ci/scripts/verify-backported-commits.sh"
+    },
+    {
+      "line": 959,
+      "text": "2026-09-05T10:41:57.8113578Z ##[endgroup]"
+    },
+    {
+      "line": 961,
+      "text": "2026-09-05T10:41:57.8188815Z ##[group]Run src/ci/scripts/verify-stable-version-number.sh"
+    },
+    {
+      "line": 985,
+      "text": "2026-09-05T10:41:57.8202501Z ##[endgroup]"
+    },
+    {
+      "line": 987,
+      "text": "2026-09-05T10:41:57.8273410Z ##[group]Run src/ci/scripts/dump-environment.sh"
+    },
+    {
+      "line": 1011,
+      "text": "2026-09-05T10:41:57.8286816Z ##[endgroup]"
+    },
+    {
+      "line": 1214,
+      "text": "2026-09-05T10:41:58.7880956Z ##[group]Run cd src/ci/citool"
+    },
+    {
+      "line": 1239,
+      "text": "2026-09-05T10:41:58.7895953Z ##[endgroup]"
+    },
+    {
+      "line": 1441,
+      "text": "2026-09-05T10:42:09.1383393Z ##[group]Run set +e"
+    },
+    {
+      "line": 1479,
+      "text": "2026-09-05T10:42:09.1400866Z ##[endgroup]"
+    },
+    {
+      "line": 1482,
+      "text": "2026-09-05T10:42:09.1740663Z ##[group]Image checksum input"
+    },
+    {
+      "line": 1899,
+      "text": "2026-09-05T10:42:09.1823551Z ##[endgroup]"
+    },
+    {
+      "line": 1901,
+      "text": "2026-09-05T10:42:09.1824649Z ##[group]Building docker image for dist-aarch64-linux"
+    },
+    {
+      "line": 1972,
+      "text": "2026-09-05T10:42:33.0724264Z ##[endgroup]"
+    },
+    {
+      "line": 1978,
+      "text": "2026-09-05T10:42:35.8935868Z ##[group]Clock drift check"
+    },
+    {
+      "line": 1981,
+      "text": "2026-09-05T10:42:35.9284139Z ##[endgroup]"
+    },
+    {
+      "line": 1984,
+      "text": "2026-09-05T10:42:36.2438341Z ##[group]Configure the build"
+    },
+    {
+      "line": 2031,
+      "text": "2026-09-05T10:42:36.2454985Z ##[endgroup]"
+    },
+    {
+      "line": 2039,
+      "text": "2026-09-05T10:42:44.7118324Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 2169,
+      "text": "2026-09-05T10:42:54.6747002Z ##[endgroup]"
+    },
+    {
+      "line": 2170,
+      "text": "2026-09-05T10:42:54.8595887Z ##[group]Building LLVM for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 2171,
+      "text": "2026-09-05T10:42:54.8596235Z ##[endgroup]"
+    },
+    {
+      "line": 2172,
+      "text": "2026-09-05T10:42:54.8598537Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2173,
+      "text": "2026-09-05T10:42:54.8599271Z ##[endgroup]"
+    },
+    {
+      "line": 2175,
+      "text": "2026-09-05T10:42:54.8600192Z ##[group]Building stage1 codegen backend cranelift (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2176,
+      "text": "2026-09-05T10:42:54.8600632Z ##[endgroup]"
+    },
+    {
+      "line": 2177,
+      "text": "2026-09-05T10:42:54.8602506Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2178,
+      "text": "2026-09-05T10:42:54.8602893Z ##[endgroup]"
+    },
+    {
+      "line": 2179,
+      "text": "2026-09-05T10:42:54.8603629Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2180,
+      "text": "2026-09-05T10:42:54.8604039Z ##[endgroup]"
+    },
+    {
+      "line": 2181,
+      "text": "2026-09-05T10:42:54.8604685Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2182,
+      "text": "2026-09-05T10:42:54.8605086Z ##[endgroup]"
+    },
+    {
+      "line": 2183,
+      "text": "2026-09-05T10:42:54.8607168Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2184,
+      "text": "2026-09-05T10:42:54.8607552Z ##[endgroup]"
+    },
+    {
+      "line": 2185,
+      "text": "2026-09-05T10:42:54.8608675Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2186,
+      "text": "2026-09-05T10:42:54.8609074Z ##[endgroup]"
+    },
+    {
+      "line": 2188,
+      "text": "2026-09-05T10:42:54.8610270Z ##[group]Building stage2 codegen backend cranelift (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2189,
+      "text": "2026-09-05T10:42:54.8610743Z ##[endgroup]"
+    },
+    {
+      "line": 2190,
+      "text": "2026-09-05T10:42:54.8611160Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2191,
+      "text": "2026-09-05T10:42:54.8611605Z ##[endgroup]"
+    },
+    {
+      "line": 2192,
+      "text": "2026-09-05T10:42:54.8613055Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2193,
+      "text": "2026-09-05T10:42:54.8613444Z ##[endgroup]"
+    },
+    {
+      "line": 2194,
+      "text": "2026-09-05T10:42:54.8614196Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2195,
+      "text": "2026-09-05T10:42:54.8614607Z ##[endgroup]"
+    },
+    {
+      "line": 2197,
+      "text": "2026-09-05T10:42:54.8617789Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2198,
+      "text": "2026-09-05T10:42:54.8618169Z ##[endgroup]"
+    },
+    {
+      "line": 2199,
+      "text": "2026-09-05T10:42:54.8619137Z ##[group]Building stage2 rust-analyzer (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2200,
+      "text": "2026-09-05T10:42:54.8619517Z ##[endgroup]"
+    },
+    {
+      "line": 2201,
+      "text": "2026-09-05T10:42:54.8620857Z ##[group]Building stage2 rust-analyzer-proc-macro-srv (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2202,
+      "text": "2026-09-05T10:42:54.8621294Z ##[endgroup]"
+    },
+    {
+      "line": 2203,
+      "text": "2026-09-05T10:42:54.8622380Z ##[group]Building stage2 rustdoc-tool-binary (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2204,
+      "text": "2026-09-05T10:42:54.8622777Z ##[endgroup]"
+    },
+    {
+      "line": 2205,
+      "text": "2026-09-05T10:42:54.8623716Z ##[group]Building stage2 clippy-driver (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2206,
+      "text": "2026-09-05T10:42:54.8624096Z ##[endgroup]"
+    },
+    {
+      "line": 2207,
+      "text": "2026-09-05T10:42:54.8632107Z ##[group]Building stage2 cargo-clippy (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2208,
+      "text": "2026-09-05T10:42:54.8632520Z ##[endgroup]"
+    },
+    {
+      "line": 2209,
+      "text": "2026-09-05T10:42:54.8632831Z ##[group]Building stage2 rustfmt (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2210,
+      "text": "2026-09-05T10:42:54.8633191Z ##[endgroup]"
+    },
+    {
+      "line": 2211,
+      "text": "2026-09-05T10:42:54.8633505Z ##[group]Building stage2 cargo-fmt (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2212,
+      "text": "2026-09-05T10:42:54.8633867Z ##[endgroup]"
+    },
+    {
+      "line": 2213,
+      "text": "2026-09-05T10:42:54.8634172Z ##[group]Building stage2 miri (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2214,
+      "text": "2026-09-05T10:42:54.8634523Z ##[endgroup]"
+    },
+    {
+      "line": 2215,
+      "text": "2026-09-05T10:42:54.8635024Z ##[group]Building stage2 cargo-miri (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2216,
+      "text": "2026-09-05T10:42:54.8635406Z ##[endgroup]"
+    },
+    {
+      "line": 2217,
+      "text": "2026-09-05T10:42:54.8650281Z Build completed successfully in 0:00:18"
+    },
+    {
+      "line": 2218,
+      "text": "2026-09-05T10:42:54.8710863Z ##[group]Display CPU and Memory information"
+    },
+    {
+      "line": 2363,
+      "text": "2026-09-05T10:42:54.8759854Z MemTotal:       32205948 kB"
+    },
+    {
+      "line": 2418,
+      "text": "2026-09-05T10:42:54.8769230Z ##[endgroup]"
+    },
+    {
+      "line": 2421,
+      "text": "2026-09-05T10:42:54.9289346Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 2423,
+      "text": "2026-09-05T10:42:54.9648373Z ##[endgroup]"
+    },
+    {
+      "line": 2426,
+      "text": "2026-09-05T10:42:55.1535603Z [TIMING:start] tool::OptimizedDist { compiler: Compiler { stage: 0, host: aarch64-unknown-linux-gnu, forced_compiler: false }, target: aarch64-unknown-linux-gnu }"
+    },
+    {
+      "line": 2434,
+      "text": "2026-09-05T10:42:55.1541613Z ##[group]Building stage1 opt-dist (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 2652,
+      "text": "2026-09-05T10:43:09.0035357Z ##[endgroup]"
+    },
+    {
+      "line": 2654,
+      "text": "2026-09-05T10:43:09.0037464Z [TIMING:end] tool::OptimizedDist { compiler: Compiler { stage: 0, host: aarch64-unknown-linux-gnu, forced_compiler: false }, target: aarch64-unknown-linux-gnu } -- 0.000"
+    },
+    {
+      "line": 2655,
+      "text": "2026-09-05T10:43:09.0057034Z Build completed successfully in 0:00:14"
+    },
+    {
+      "line": 2658,
+      "text": "2026-09-05T10:43:09.0132822Z ##[group]Environment values"
+    },
+    {
+      "line": 2711,
+      "text": "2026-09-05T10:43:09.0150724Z ##[endgroup]"
+    },
+    {
+      "line": 2712,
+      "text": "2026-09-05T10:43:09.0150972Z ##[group]Printing bootstrap.toml"
+    },
+    {
+      "line": 2946,
+      "text": "2026-09-05T10:43:09.0207985Z ##[endgroup]"
+    },
+    {
+      "line": 2947,
+      "text": "2026-09-05T10:43:09.0208239Z ##[group]Building rustc-perf"
+    },
+    {
+      "line": 3479,
+      "text": "2026-09-05T10:43:30.6661565Z ##[endgroup]"
+    },
+    {
+      "line": 3480,
+      "text": "2026-09-05T10:43:30.6662002Z [2026-09-05T10:43:30.666Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO)` starts"
+    },
+    {
+      "line": 3481,
+      "text": "2026-09-05T10:43:30.6662585Z [2026-09-05T10:43:30.666Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO instrumented rustc and LLVM` starts"
+    },
+    {
+      "line": 3483,
+      "text": "2026-09-05T10:43:30.7200860Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 3485,
+      "text": "2026-09-05T10:43:30.7581760Z ##[endgroup]"
+    },
+    {
+      "line": 3494,
+      "text": "2026-09-05T10:43:30.9635332Z ##[group]Building LLVM for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 3511,
+      "text": "2026-09-05T10:43:31.0079083Z running: cd \"/checkout/obj/build/aarch64-unknown-linux-gnu/llvm/build\" && CMAKE_PREFIX_PATH=\"\" DESTDIR=\"\" LC_ALL=\"C\" \"cmake\" \"/checkout/src/llvm-project/llvm\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=16\" \"-DLLVM_TARGET_ARCH=aarch64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-unknown-linux-gnu\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_ENABLE_ZLIB=ON\" \"-DLLVM_LINK_LLVM_DYLIB=ON\" \"-DLLVM_VERSIONED_DYLIB_NAME_ON_DARWIN=OFF\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.100.0-nightly\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=clang\" \"-DCMAKE_CXX_COMPILER=clang++\" \"-DCMAKE_ASM_COMPILER=clang\" \"-DCMAKE_C_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_CXX_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_AR=/rustroot/bin/llvm-ar\" \"-DCMAKE_RANLIB=/rustroot/bin/llvm-ranlib\" \"-DCMAKE_SHARED_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_MODULE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_EXE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DLLVM_ENABLE_ZSTD=FORCE_ON\" \"-DLLVM_USE_STATIC_ZSTD=TRUE\" \"-DCMAKE_INSTALL_PREFIX=/checkout/obj/build/aarch64-unknown-linux-gnu/llvm\" \"-DCMAKE_ASM_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w\" \"-DCMAKE_BUILD_TYPE=Release\""
+    },
+    {
+      "line": 11050,
+      "text": "2026-09-05T10:44:47.0939863Z \tfinished in 76.130 seconds"
+    },
+    {
+      "line": 11051,
+      "text": "2026-09-05T10:44:47.0940169Z ##[endgroup]"
+    },
+    {
+      "line": 11067,
+      "text": "2026-09-05T10:44:47.1061150Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 11754,
+      "text": "2026-09-05T10:49:07.5890447Z ##[endgroup]"
+    },
+    {
+      "line": 11758,
+      "text": "2026-09-05T10:49:07.7764062Z ##[group]Building stage1 codegen backend cranelift (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 11873,
+      "text": "2026-09-05T10:50:29.5583940Z ##[endgroup]"
+    },
+    {
+      "line": 11877,
+      "text": "2026-09-05T10:50:29.5586853Z ##[group]Building LLD for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 12145,
+      "text": "2026-09-05T10:50:32.7443504Z \tfinished in 3.185 seconds"
+    },
+    {
+      "line": 12146,
+      "text": "2026-09-05T10:50:32.7443841Z ##[endgroup]"
+    },
+    {
+      "line": 12149,
+      "text": "2026-09-05T10:50:32.7447127Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 12153,
+      "text": "2026-09-05T10:50:33.0023672Z ##[endgroup]"
+    },
+    {
+      "line": 12158,
+      "text": "2026-09-05T10:50:33.0028982Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 12292,
+      "text": "2026-09-05T10:50:52.3278425Z ##[endgroup]"
+    },
+    {
+      "line": 12297,
+      "text": "2026-09-05T10:50:52.3284172Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 12361,
+      "text": "2026-09-05T10:50:55.7878379Z ##[endgroup]"
+    },
+    {
+      "line": 12370,
+      "text": "2026-09-05T10:50:55.9336041Z ##[group]Building sanitizers for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 13126,
+      "text": "2026-09-05T10:51:04.9129553Z \tfinished in 8.979 seconds"
+    },
+    {
+      "line": 13127,
+      "text": "2026-09-05T10:51:04.9129877Z ##[endgroup]"
+    },
+    {
+      "line": 13129,
+      "text": "2026-09-05T10:51:04.9135184Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 13203,
+      "text": "2026-09-05T10:51:32.2935482Z ##[endgroup]"
+    },
+    {
+      "line": 13205,
+      "text": "2026-09-05T10:51:32.2999645Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 13793,
+      "text": "2026-09-05T10:54:06.7101479Z ##[endgroup]"
+    },
+    {
+      "line": 13797,
+      "text": "2026-09-05T10:54:06.7144652Z ##[group]Building stage2 codegen backend cranelift (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 13887,
+      "text": "2026-09-05T10:55:53.8437072Z ##[endgroup]"
+    },
+    {
+      "line": 13891,
+      "text": "2026-09-05T10:55:53.8441743Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 13895,
+      "text": "2026-09-05T10:55:54.1600325Z ##[endgroup]"
+    },
+    {
+      "line": 13900,
+      "text": "2026-09-05T10:55:54.1605791Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 14022,
+      "text": "2026-09-05T10:56:18.7864970Z ##[endgroup]"
+    },
+    {
+      "line": 14027,
+      "text": "2026-09-05T10:56:18.7870331Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 14088,
+      "text": "2026-09-05T10:56:23.1134947Z ##[endgroup]"
+    },
+    {
+      "line": 14101,
+      "text": "2026-09-05T10:56:23.1152931Z ##[group]Building stage2 rustdoc-tool-binary (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 14297,
+      "text": "2026-09-05T10:58:01.7854634Z ##[endgroup]"
+    },
+    {
+      "line": 14302,
+      "text": "2026-09-05T10:58:01.7861422Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 15186,
+      "text": "2026-09-05T11:02:12.6177428Z ##[endgroup]"
+    },
+    {
+      "line": 15191,
+      "text": "2026-09-05T11:02:12.6184019Z ##[group]Building stage2 clippy-driver (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 15370,
+      "text": "2026-09-05T11:04:11.9171296Z ##[endgroup]"
+    },
+    {
+      "line": 15375,
+      "text": "2026-09-05T11:04:11.9179261Z ##[group]Building stage2 cargo-clippy (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 15473,
+      "text": "2026-09-05T11:04:12.0387434Z ##[endgroup]"
+    },
+    {
+      "line": 15476,
+      "text": "2026-09-05T11:04:12.0446841Z Build completed successfully in 0:20:41"
+    },
+    {
+      "line": 15526,
+      "text": "2026-09-05T11:04:12.0523325Z [2026-09-05T11:04:12.050Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO instrumented rustc and LLVM` ended: OK (1241.38s)`"
+    },
+    {
+      "line": 15527,
+      "text": "2026-09-05T11:04:12.0523978Z [2026-09-05T11:04:12.050Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustc profiles` starts"
+    },
+    {
+      "line": 15529,
+      "text": "2026-09-05T11:04:12.0524919Z ##[group]Running benchmarks"
+    },
+    {
+      "line": 15591,
+      "text": "2026-09-05T11:07:47.1443552Z ##[endgroup]"
+    },
+    {
+      "line": 15599,
+      "text": "2026-09-05T11:08:47.7443503Z [2026-09-05T11:08:47.744Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustc profiles` ended: OK (275.69s)`"
+    },
+    {
+      "line": 15600,
+      "text": "2026-09-05T11:08:47.7444193Z [2026-09-05T11:08:47.744Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustdoc profiles` starts"
+    },
+    {
+      "line": 15603,
+      "text": "2026-09-05T11:08:47.7449135Z ##[group]Running benchmarks"
+    },
+    {
+      "line": 15645,
+      "text": "2026-09-05T11:09:10.4585171Z ##[endgroup]"
+    },
+    {
+      "line": 15653,
+      "text": "2026-09-05T11:09:18.0673097Z [2026-09-05T11:09:18.067Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustdoc profiles` ended: OK (30.32s)`"
+    },
+    {
+      "line": 15654,
+      "text": "2026-09-05T11:09:18.0673771Z [2026-09-05T11:09:18.067Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather clippy profiles` starts"
+    },
+    {
+      "line": 15657,
+      "text": "2026-09-05T11:09:18.0678727Z ##[group]Running benchmarks"
+    },
+    {
+      "line": 15700,
+      "text": "2026-09-05T11:10:00.1482222Z ##[endgroup]"
+    },
+    {
+      "line": 15708,
+      "text": "2026-09-05T11:10:08.8173553Z [2026-09-05T11:10:08.817Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather clippy profiles` ended: OK (50.75s)`"
+    },
+    {
+      "line": 15710,
+      "text": "2026-09-05T11:10:08.8181422Z [2026-09-05T11:10:08.818Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO optimized rustc` starts"
+    },
+    {
+      "line": 15712,
+      "text": "2026-09-05T11:10:09.0322631Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 15714,
+      "text": "2026-09-05T11:10:09.3169541Z ##[endgroup]"
+    },
+    {
+      "line": 15738,
+      "text": "2026-09-05T11:10:09.8378238Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16056,
+      "text": "2026-09-05T11:10:11.4603062Z ##[endgroup]"
+    },
+    {
+      "line": 16060,
+      "text": "2026-09-05T11:10:11.6490025Z ##[group]Building stage1 codegen backend cranelift (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16111,
+      "text": "2026-09-05T11:10:11.9194840Z ##[endgroup]"
+    },
+    {
+      "line": 16117,
+      "text": "2026-09-05T11:10:11.9205989Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16120,
+      "text": "2026-09-05T11:10:11.9974574Z ##[endgroup]"
+    },
+    {
+      "line": 16125,
+      "text": "2026-09-05T11:10:11.9979803Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16192,
+      "text": "2026-09-05T11:10:12.3423392Z ##[endgroup]"
+    },
+    {
+      "line": 16197,
+      "text": "2026-09-05T11:10:12.3429008Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16239,
+      "text": "2026-09-05T11:10:12.4941808Z ##[endgroup]"
+    },
+    {
+      "line": 16249,
+      "text": "2026-09-05T11:10:12.7375259Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16289,
+      "text": "2026-09-05T11:10:12.9049458Z ##[endgroup]"
+    },
+    {
+      "line": 16291,
+      "text": "2026-09-05T11:10:12.9114380Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16847,
+      "text": "2026-09-05T11:13:08.4249858Z ##[endgroup]"
+    },
+    {
+      "line": 16851,
+      "text": "2026-09-05T11:13:08.6237635Z ##[group]Building stage2 codegen backend cranelift (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16903,
+      "text": "2026-09-05T11:13:23.0303542Z ##[endgroup]"
+    },
+    {
+      "line": 16907,
+      "text": "2026-09-05T11:13:23.0307912Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16910,
+      "text": "2026-09-05T11:13:23.1060453Z ##[endgroup]"
+    },
+    {
+      "line": 16915,
+      "text": "2026-09-05T11:13:23.1065933Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 16982,
+      "text": "2026-09-05T11:13:23.3813964Z ##[endgroup]"
+    },
+    {
+      "line": 16987,
+      "text": "2026-09-05T11:13:23.3819236Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 17029,
+      "text": "2026-09-05T11:13:23.5130173Z ##[endgroup]"
+    },
+    {
+      "line": 17042,
+      "text": "2026-09-05T11:13:23.5147157Z ##[group]Building stage2 rustdoc-tool-binary (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 17206,
+      "text": "2026-09-05T11:14:42.3512697Z ##[endgroup]"
+    },
+    {
+      "line": 17211,
+      "text": "2026-09-05T11:14:42.3524834Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 17914,
+      "text": "2026-09-05T11:17:52.9097918Z ##[endgroup]"
+    },
+    {
+      "line": 17919,
+      "text": "2026-09-05T11:17:52.9105427Z ##[group]Building stage2 clippy-driver (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 18084,
+      "text": "2026-09-05T11:19:31.1988287Z ##[endgroup]"
+    },
+    {
+      "line": 18089,
+      "text": "2026-09-05T11:19:31.1995737Z ##[group]Building stage2 cargo-clippy (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 18187,
+      "text": "2026-09-05T11:19:31.3308400Z ##[endgroup]"
+    },
+    {
+      "line": 18190,
+      "text": "2026-09-05T11:19:31.3384217Z Build completed successfully in 0:09:22"
+    },
+    {
+      "line": 18240,
+      "text": "2026-09-05T11:19:31.3488231Z [2026-09-05T11:19:31.347Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO optimized rustc` ended: OK (562.53s)`"
+    },
+    {
+      "line": 18241,
+      "text": "2026-09-05T11:19:31.3488839Z [2026-09-05T11:19:31.347Z INFO  opt_dist::timer] Section `Stage 1 (Rustc + rustdoc + cargo + clippy PGO)` ended: OK (2160.68s)`"
+    },
+    {
+      "line": 18242,
+      "text": "2026-09-05T11:19:31.3489347Z [2026-09-05T11:19:31.347Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO)` starts"
+    },
+    {
+      "line": 18246,
+      "text": "2026-09-05T11:19:31.8491225Z [2026-09-05T11:19:31.849Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Build PGO instrumented LLVM` starts"
+    },
+    {
+      "line": 18248,
+      "text": "2026-09-05T11:19:31.9019077Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 18250,
+      "text": "2026-09-05T11:19:31.9614253Z ##[endgroup]"
+    },
+    {
+      "line": 18259,
+      "text": "2026-09-05T11:19:32.1638246Z ##[group]Building LLVM for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 18276,
+      "text": "2026-09-05T11:19:32.2524138Z running: cd \"/checkout/obj/build/aarch64-unknown-linux-gnu/llvm/build\" && CMAKE_PREFIX_PATH=\"\" DESTDIR=\"\" LC_ALL=\"C\" \"cmake\" \"/checkout/src/llvm-project/llvm\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=16\" \"-DLLVM_TARGET_ARCH=aarch64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-unknown-linux-gnu\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_BUILD_INSTRUMENTED=IR\" \"-DLLVM_PROFILE_DATA_DIR=/tmp/tmp-multistage/opt-artifacts/llvm-pgo/prof-%p\" \"-DLLVM_BUILD_RUNTIME=No\" \"-DLLVM_ENABLE_ZLIB=ON\" \"-DLLVM_LINK_LLVM_DYLIB=ON\" \"-DLLVM_VERSIONED_DYLIB_NAME_ON_DARWIN=OFF\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.100.0-nightly\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=clang\" \"-DCMAKE_CXX_COMPILER=clang++\" \"-DCMAKE_ASM_COMPILER=clang\" \"-DCMAKE_C_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_CXX_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_AR=/rustroot/bin/llvm-ar\" \"-DCMAKE_RANLIB=/rustroot/bin/llvm-ranlib\" \"-DCMAKE_SHARED_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_MODULE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_EXE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DLLVM_ENABLE_LTO=Thin\" \"-DLLVM_ENABLE_LLD=ON\" \"-DLLVM_ENABLE_ZSTD=FORCE_ON\" \"-DLLVM_USE_STATIC_ZSTD=TRUE\" \"-DCMAKE_INSTALL_PREFIX=/checkout/obj/build/aarch64-unknown-linux-gnu/llvm\" \"-DCMAKE_ASM_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w\" \"-DCMAKE_BUILD_TYPE=Release\""
+    },
+    {
+      "line": 25819,
+      "text": "2026-09-05T11:23:03.0752343Z \tfinished in 210.911 seconds"
+    },
+    {
+      "line": 25820,
+      "text": "2026-09-05T11:23:03.0752668Z ##[endgroup]"
+    },
+    {
+      "line": 25847,
+      "text": "2026-09-05T11:23:03.0882800Z ##[group]Building LLD for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 26119,
+      "text": "2026-09-05T11:23:11.4166950Z \tfinished in 8.328 seconds"
+    },
+    {
+      "line": 26120,
+      "text": "2026-09-05T11:23:11.4167278Z ##[endgroup]"
+    },
+    {
+      "line": 26123,
+      "text": "2026-09-05T11:23:11.4170671Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 26126,
+      "text": "2026-09-05T11:23:11.4907847Z ##[endgroup]"
+    },
+    {
+      "line": 26131,
+      "text": "2026-09-05T11:23:11.4913414Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 26198,
+      "text": "2026-09-05T11:23:11.5939412Z ##[endgroup]"
+    },
+    {
+      "line": 26203,
+      "text": "2026-09-05T11:23:11.5944954Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 26245,
+      "text": "2026-09-05T11:23:11.6894276Z ##[endgroup]"
+    },
+    {
+      "line": 26270,
+      "text": "2026-09-05T11:23:11.8458365Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 26273,
+      "text": "2026-09-05T11:23:11.9203946Z ##[endgroup]"
+    },
+    {
+      "line": 26278,
+      "text": "2026-09-05T11:23:11.9209443Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 26345,
+      "text": "2026-09-05T11:23:12.0102056Z ##[endgroup]"
+    },
+    {
+      "line": 26350,
+      "text": "2026-09-05T11:23:12.0107382Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 26392,
+      "text": "2026-09-05T11:23:12.0940290Z ##[endgroup]"
+    },
+    {
+      "line": 26403,
+      "text": "2026-09-05T11:23:12.0993208Z Build completed successfully in 0:03:40"
+    },
+    {
+      "line": 26404,
+      "text": "2026-09-05T11:23:12.1052677Z ##[group]Running benchmarks"
+    },
+    {
+      "line": 26446,
+      "text": "2026-09-05T11:23:12.1066730Z [2026-09-05T11:23:12.105Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Build PGO instrumented LLVM` ended: OK (220.26s)`"
+    },
+    {
+      "line": 26447,
+      "text": "2026-09-05T11:23:12.1067227Z [2026-09-05T11:23:12.105Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Gather profiles` starts"
+    },
+    {
+      "line": 26491,
+      "text": "2026-09-05T11:25:15.3440545Z ##[endgroup]"
+    },
+    {
+      "line": 26499,
+      "text": "2026-09-05T11:25:55.9219333Z [2026-09-05T11:25:55.921Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO) > Gather profiles` ended: OK (163.82s)`"
+    },
+    {
+      "line": 26504,
+      "text": "2026-09-05T11:25:57.5078393Z [2026-09-05T11:25:57.507Z INFO  opt_dist::timer] Section `Stage 2 (LLVM PGO)` ended: OK (386.16s)`"
+    },
+    {
+      "line": 26505,
+      "text": "2026-09-05T11:25:57.5078810Z [2026-09-05T11:25:57.507Z INFO  opt_dist::timer] Section `Stage 5 (final build)` starts"
+    },
+    {
+      "line": 26507,
+      "text": "2026-09-05T11:25:57.6277502Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 26509,
+      "text": "2026-09-05T11:25:58.0136768Z ##[endgroup]"
+    },
+    {
+      "line": 26519,
+      "text": "2026-09-05T11:25:58.8249969Z ##[group]Building LLVM for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 26536,
+      "text": "2026-09-05T11:25:58.8742588Z running: cd \"/checkout/obj/build/aarch64-unknown-linux-gnu/llvm/build\" && CMAKE_PREFIX_PATH=\"\" DESTDIR=\"\" LC_ALL=\"C\" \"cmake\" \"/checkout/src/llvm-project/llvm\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=16\" \"-DLLVM_TARGET_ARCH=aarch64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-unknown-linux-gnu\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_PROFDATA_FILE=/tmp/tmp-multistage/opt-artifacts/llvm-pgo.profdata\" \"-DLLVM_ENABLE_ZLIB=ON\" \"-DLLVM_LINK_LLVM_DYLIB=ON\" \"-DLLVM_VERSIONED_DYLIB_NAME_ON_DARWIN=OFF\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.100.0-nightly\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=clang\" \"-DCMAKE_CXX_COMPILER=clang++\" \"-DCMAKE_ASM_COMPILER=clang\" \"-DCMAKE_C_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_CXX_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w -gz -fdebug-prefix-map=/checkout=/rustc/llvm\" \"-DCMAKE_AR=/rustroot/bin/llvm-ar\" \"-DCMAKE_RANLIB=/rustroot/bin/llvm-ranlib\" \"-DCMAKE_SHARED_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_MODULE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DCMAKE_EXE_LINKER_FLAGS= -Wl,-Bsymbolic -static-libstdc++\" \"-DLLVM_ENABLE_LTO=Thin\" \"-DLLVM_ENABLE_LLD=ON\" \"-DLLVM_ENABLE_ZSTD=FORCE_ON\" \"-DLLVM_USE_STATIC_ZSTD=TRUE\" \"-DCMAKE_INSTALL_PREFIX=/checkout/obj/build/aarch64-unknown-linux-gnu/llvm\" \"-DCMAKE_ASM_FLAGS= -ffunction-sections -fdata-sections -fPIC --target=aarch64-unknown-linux-gnu -w\" \"-DCMAKE_BUILD_TYPE=Release\""
+    },
+    {
+      "line": 34079,
+      "text": "2026-09-05T11:35:10.6231108Z \tfinished in 551.798 seconds"
+    },
+    {
+      "line": 34080,
+      "text": "2026-09-05T11:35:10.6231430Z ##[endgroup]"
+    },
+    {
+      "line": 34102,
+      "text": "2026-09-05T11:35:11.2467016Z ##[group]Building LLD for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 34374,
+      "text": "2026-09-05T11:35:18.5950611Z \tfinished in 7.348 seconds"
+    },
+    {
+      "line": 34375,
+      "text": "2026-09-05T11:35:18.5951018Z ##[endgroup]"
+    },
+    {
+      "line": 34378,
+      "text": "2026-09-05T11:35:18.5954104Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 34381,
+      "text": "2026-09-05T11:35:18.8110976Z ##[endgroup]"
+    },
+    {
+      "line": 34386,
+      "text": "2026-09-05T11:35:18.8116206Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 34453,
+      "text": "2026-09-05T11:35:19.1579529Z ##[endgroup]"
+    },
+    {
+      "line": 34458,
+      "text": "2026-09-05T11:35:19.1585340Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 34500,
+      "text": "2026-09-05T11:35:19.3201162Z ##[endgroup]"
+    },
+    {
+      "line": 34518,
+      "text": "2026-09-05T11:35:19.6878754Z ##[group]Building stage1 unstable-book-gen (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 34743,
+      "text": "2026-09-05T11:35:32.4293951Z ##[endgroup]"
+    },
+    {
+      "line": 34750,
+      "text": "2026-09-05T11:35:34.9779275Z ##[group]Building stage1 rustbook (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 35139,
+      "text": "2026-09-05T11:35:52.2259845Z ##[endgroup]"
+    },
+    {
+      "line": 35177,
+      "text": "2026-09-05T11:35:56.8795787Z ##[group]Documenting stage2 book redirect pages (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 35180,
+      "text": "2026-09-05T11:35:56.8819898Z ##[endgroup]"
+    },
+    {
+      "line": 35181,
+      "text": "2026-09-05T11:35:56.8820260Z ##[group]Building stage1 rustdoc-tool-binary (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 35367,
+      "text": "2026-09-05T11:37:00.0716935Z ##[endgroup]"
+    },
+    {
+      "line": 35368,
+      "text": "2026-09-05T11:37:00.0718480Z ##[group]Documenting stage2 book redirect pages (stage1 -> stage2, aarch64-unknown-linux-gnu) (continued)"
+    },
+    {
+      "line": 35371,
+      "text": "2026-09-05T11:37:00.6899609Z ##[endgroup]"
+    },
+    {
+      "line": 35374,
+      "text": "2026-09-05T11:37:00.6901738Z ##[group]Documenting stage2 standalone (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 35375,
+      "text": "2026-09-05T11:37:00.9250790Z ##[endgroup]"
+    },
+    {
+      "line": 35378,
+      "text": "2026-09-05T11:37:00.9255562Z ##[group]Documenting stage1 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, profiler_builtins, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in HTML format (stage1 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 35443,
+      "text": "2026-09-05T11:37:17.1251778Z ##[endgroup]"
+    },
+    {
+      "line": 35447,
+      "text": "2026-09-05T11:37:17.1276614Z ##[group]Documenting stage2 compiler{rustc-main, rustc_abi, rustc_arena, rustc_ast, rustc_ast_ir, rustc_ast_lowering, rustc_ast_passes, rustc_ast_pretty, rustc_attr_ir, rustc_attr_parsing, rustc_baked_icu_data, rustc_borrowck, rustc_builtin_macros, rustc_codegen_llvm, rustc_codegen_ssa, rustc_const_eval, rustc_crate_store, rustc_data_structures, rustc_driver, rustc_driver_impl, rustc_error_codes, rustc_error_messages, rustc_errors, rustc_expand, rustc_feature, rustc_fs_util, rustc_graphviz, rustc_hashes, rustc_hir, rustc_hir_analysis, rustc_hir_id, rustc_hir_pretty, rustc_hir_typeck, rustc_incremental, rustc_index, rustc_index_macros, rustc_infer, rustc_interface, rustc_lexer, rustc_lint, rustc_lint_defs, rustc_llvm, rustc_log, rustc_macros, rustc_metadata, rustc_middle, rustc_mir_build, rustc_mir_dataflow, rustc_mir_transform, rustc_monomorphize, rustc_next_trait_solver, rustc_parse, rustc_parse_format, rustc_passes, rustc_pattern_analysis, rustc_privacy, rustc_proc_macro, rustc_public, rustc_public_bridge, rustc_query_impl, rustc_resolve, rustc_sanitizers, rustc_serialize, rustc_session, rustc_span, rustc_structures, rustc_symbol_mangling, rustc_target, rustc_thread_pool, rustc_trait_selection, rustc_traits, rustc_transmute, rustc_ty_utils, rustc_ty_walk, rustc_type_ir, rustc_type_ir_macros, rustc_windows_rc} (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 36107,
+      "text": "2026-09-05T11:38:00.7317160Z ##[endgroup]"
+    },
+    {
+      "line": 36126,
+      "text": "2026-09-05T11:38:01.2018352Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 36129,
+      "text": "2026-09-05T11:38:01.2811880Z ##[endgroup]"
+    },
+    {
+      "line": 36134,
+      "text": "2026-09-05T11:38:01.2817375Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 36201,
+      "text": "2026-09-05T11:38:01.6571175Z ##[endgroup]"
+    },
+    {
+      "line": 36206,
+      "text": "2026-09-05T11:38:01.6576567Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 36248,
+      "text": "2026-09-05T11:38:01.8240631Z ##[endgroup]"
+    },
+    {
+      "line": 36253,
+      "text": "2026-09-05T11:38:01.8251488Z ##[group]Documenting stage2 rustdoc (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 36441,
+      "text": "2026-09-05T11:38:12.8862508Z ##[endgroup]"
+    },
+    {
+      "line": 36444,
+      "text": "2026-09-05T11:38:12.8870873Z ##[group]Documenting stage2 rustfmt (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 36623,
+      "text": "2026-09-05T11:38:20.5760547Z ##[endgroup]"
+    },
+    {
+      "line": 36629,
+      "text": "2026-09-05T11:38:20.5766595Z ##[group]Building stage2 error_index_generator (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 36853,
+      "text": "2026-09-05T11:38:32.6501300Z ##[endgroup]"
+    },
+    {
+      "line": 36966,
+      "text": "2026-09-05T11:38:55.4599682Z ##[group]Building stage1 lint-docs (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 36997,
+      "text": "2026-09-05T11:38:58.1403420Z ##[endgroup]"
+    },
+    {
+      "line": 37000,
+      "text": "2026-09-05T11:38:58.1450219Z ##[group]Running stage2 lint-docs (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 37001,
+      "text": "2026-09-05T11:39:11.1210199Z ##[endgroup]"
+    },
+    {
+      "line": 37013,
+      "text": "2026-09-05T11:39:11.6136989Z ##[group]Documenting stage2 cargo (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 37829,
+      "text": "2026-09-05T11:39:57.0936913Z ##[endgroup]"
+    },
+    {
+      "line": 37841,
+      "text": "2026-09-05T11:39:57.5240704Z ##[group]Documenting stage2 clippy (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 37872,
+      "text": "2026-09-05T11:40:00.4892868Z ##[endgroup]"
+    },
+    {
+      "line": 37884,
+      "text": "2026-09-05T11:40:00.6168635Z ##[group]Documenting stage2 compiler-with-tools (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 37886,
+      "text": "2026-09-05T11:40:00.6191292Z ##[endgroup]"
+    },
+    {
+      "line": 37887,
+      "text": "2026-09-05T11:40:00.6191669Z ##[group]Documenting stage2 miri (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38050,
+      "text": "2026-09-05T11:40:18.0846219Z ##[endgroup]"
+    },
+    {
+      "line": 38051,
+      "text": "2026-09-05T11:40:18.0846645Z ##[group]Documenting stage2 compiler-with-tools (stage1 -> stage2, aarch64-unknown-linux-gnu) (continued)"
+    },
+    {
+      "line": 38054,
+      "text": "2026-09-05T11:40:18.0848969Z ##[endgroup]"
+    },
+    {
+      "line": 38055,
+      "text": "2026-09-05T11:40:18.0849296Z ##[group]Documenting stage2 tidy (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38271,
+      "text": "2026-09-05T11:40:24.3505576Z ##[endgroup]"
+    },
+    {
+      "line": 38272,
+      "text": "2026-09-05T11:40:24.3505994Z ##[group]Documenting stage2 compiler-with-tools (stage1 -> stage2, aarch64-unknown-linux-gnu) (continued)"
+    },
+    {
+      "line": 38275,
+      "text": "2026-09-05T11:40:24.3508427Z ##[endgroup]"
+    },
+    {
+      "line": 38276,
+      "text": "2026-09-05T11:40:24.3508835Z ##[group]Documenting stage2 bootstrap (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38440,
+      "text": "2026-09-05T11:40:34.3805988Z ##[endgroup]"
+    },
+    {
+      "line": 38441,
+      "text": "2026-09-05T11:40:34.3806408Z ##[group]Documenting stage2 compiler-with-tools (stage1 -> stage2, aarch64-unknown-linux-gnu) (continued)"
+    },
+    {
+      "line": 38444,
+      "text": "2026-09-05T11:40:34.3809156Z ##[endgroup]"
+    },
+    {
+      "line": 38445,
+      "text": "2026-09-05T11:40:34.3809576Z ##[group]Documenting stage2 buildhelper (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38451,
+      "text": "2026-09-05T11:40:35.2132540Z ##[endgroup]"
+    },
+    {
+      "line": 38452,
+      "text": "2026-09-05T11:40:35.2132953Z ##[group]Documenting stage2 compiler-with-tools (stage1 -> stage2, aarch64-unknown-linux-gnu) (continued)"
+    },
+    {
+      "line": 38455,
+      "text": "2026-09-05T11:40:35.2135266Z ##[endgroup]"
+    },
+    {
+      "line": 38456,
+      "text": "2026-09-05T11:40:35.2135714Z ##[group]Documenting stage2 compiletest (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38597,
+      "text": "2026-09-05T11:40:39.6604655Z ##[endgroup]"
+    },
+    {
+      "line": 38598,
+      "text": "2026-09-05T11:40:39.6605083Z ##[group]Documenting stage2 compiler-with-tools (stage1 -> stage2, aarch64-unknown-linux-gnu) (continued)"
+    },
+    {
+      "line": 38601,
+      "text": "2026-09-05T11:40:39.6607310Z ##[endgroup]"
+    },
+    {
+      "line": 38602,
+      "text": "2026-09-05T11:40:39.6607665Z ##[group]Documenting stage2 runmakesupport (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38684,
+      "text": "2026-09-05T11:40:44.1825640Z ##[endgroup]"
+    },
+    {
+      "line": 38685,
+      "text": "2026-09-05T11:40:44.1826127Z ##[group]Documenting stage2 compiler-with-tools (stage1 -> stage2, aarch64-unknown-linux-gnu) (continued)"
+    },
+    {
+      "line": 38688,
+      "text": "2026-09-05T11:40:47.2728803Z ##[endgroup]"
+    },
+    {
+      "line": 38718,
+      "text": "2026-09-05T11:40:47.5949011Z ##[group]Documenting stage2 releases (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38719,
+      "text": "2026-09-05T11:40:47.6544605Z ##[endgroup]"
+    },
+    {
+      "line": 38723,
+      "text": "2026-09-05T11:40:48.2732634Z ##[group]Building stage1 rust-installer (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38799,
+      "text": "2026-09-05T11:40:59.7771137Z ##[endgroup]"
+    },
+    {
+      "line": 38802,
+      "text": "2026-09-05T11:40:59.7820816Z Dist rust-docs-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 38803,
+      "text": "2026-09-05T11:41:18.9360150Z \tfinished in 19.153 seconds"
+    },
+    {
+      "line": 38806,
+      "text": "2026-09-05T11:41:19.4449958Z Dist rustc-docs-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 38807,
+      "text": "2026-09-05T11:41:51.8017890Z \tfinished in 32.356 seconds"
+    },
+    {
+      "line": 38811,
+      "text": "2026-09-05T11:41:51.8021810Z ##[group]Documenting stage1 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, profiler_builtins, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in JSON format (stage1 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38851,
+      "text": "2026-09-05T11:41:58.3045449Z ##[endgroup]"
+    },
+    {
+      "line": 38853,
+      "text": "2026-09-05T11:41:58.3098337Z Dist rust-docs-json-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 38854,
+      "text": "2026-09-05T11:42:02.3640782Z \tfinished in 4.054 seconds"
+    },
+    {
+      "line": 38861,
+      "text": "2026-09-05T11:42:02.3647970Z ##[group]Building stage2 rustdoc-tool-binary (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 38967,
+      "text": "2026-09-05T11:42:02.8676539Z ##[endgroup]"
+    },
+    {
+      "line": 38972,
+      "text": "2026-09-05T11:42:02.8683263Z ##[group]Building stage2 rust-analyzer-proc-macro-srv (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 39149,
+      "text": "2026-09-05T11:42:20.2788679Z ##[endgroup]"
+    },
+    {
+      "line": 39156,
+      "text": "2026-09-05T11:42:20.2973889Z ##[group]Vendoring sources to \"/checkout\""
+    },
+    {
+      "line": 41313,
+      "text": "2026-09-05T11:42:32.0681574Z ##[endgroup]"
+    },
+    {
+      "line": 41315,
+      "text": "2026-09-05T11:42:32.0682870Z ##[group]generate-copyright"
+    },
+    {
+      "line": 41318,
+      "text": "2026-09-05T11:42:32.0685982Z ##[endgroup]"
+    },
+    {
+      "line": 41319,
+      "text": "2026-09-05T11:42:32.0686350Z ##[group]Building stage1 generate-copyright (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 41449,
+      "text": "2026-09-05T11:42:36.7907957Z ##[endgroup]"
+    },
+    {
+      "line": 41450,
+      "text": "2026-09-05T11:42:36.7908236Z ##[group]generate-copyright (continued)"
+    },
+    {
+      "line": 45817,
+      "text": "2026-09-05T11:42:38.0908502Z ##[endgroup]"
+    },
+    {
+      "line": 45819,
+      "text": "2026-09-05T11:42:38.1037111Z Dist rustc-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 45820,
+      "text": "2026-09-05T11:42:55.1395393Z \tfinished in 17.035 seconds"
+    },
+    {
+      "line": 45823,
+      "text": "2026-09-05T11:42:55.1469805Z Dist rustc-codegen-cranelift-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 45824,
+      "text": "2026-09-05T11:42:57.5451355Z \tfinished in 2.398 seconds"
+    },
+    {
+      "line": 45827,
+      "text": "2026-09-05T11:42:57.5520830Z Dist rust-std-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 45828,
+      "text": "2026-09-05T11:43:05.2128039Z \tfinished in 7.660 seconds"
+    },
+    {
+      "line": 45831,
+      "text": "2026-09-05T11:43:05.3613825Z Dist rustc-dev-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 45832,
+      "text": "2026-09-05T11:43:36.3165448Z \tfinished in 30.955 seconds"
+    },
+    {
+      "line": 45835,
+      "text": "2026-09-05T11:43:36.3220557Z Dist rust-analysis-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 45836,
+      "text": "2026-09-05T11:43:36.3413047Z \tfinished in 0.019 seconds"
+    },
+    {
+      "line": 45840,
+      "text": "2026-09-05T11:43:37.0462166Z ##[group]Vendoring sources to \"/checkout/obj/build/tmp/tarball/rust-src/image/lib/rustlib/src/rust\""
+    },
+    {
+      "line": 45874,
+      "text": "2026-09-05T11:43:37.1276969Z ##[endgroup]"
+    },
+    {
+      "line": 45876,
+      "text": "2026-09-05T11:43:37.1329494Z Dist rust-src-nightly"
+    },
+    {
+      "line": 45877,
+      "text": "2026-09-05T11:43:43.2178476Z \tfinished in 6.084 seconds"
+    },
+    {
+      "line": 45882,
+      "text": "2026-09-05T11:43:43.2183100Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 46272,
+      "text": "2026-09-05T11:43:44.8584094Z ##[endgroup]"
+    },
+    {
+      "line": 46275,
+      "text": "2026-09-05T11:43:44.8691000Z Dist cargo-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 46276,
+      "text": "2026-09-05T11:43:52.5042694Z \tfinished in 7.635 seconds"
+    },
+    {
+      "line": 46281,
+      "text": "2026-09-05T11:43:52.5049810Z ##[group]Building stage2 rust-analyzer (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 46765,
+      "text": "2026-09-05T11:45:58.2906646Z ##[endgroup]"
+    },
+    {
+      "line": 46768,
+      "text": "2026-09-05T11:45:58.2982144Z Dist rust-analyzer-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 46769,
+      "text": "2026-09-05T11:46:05.6047698Z \tfinished in 7.306 seconds"
+    },
+    {
+      "line": 46774,
+      "text": "2026-09-05T11:46:05.6053898Z ##[group]Building stage2 rustfmt (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 46944,
+      "text": "2026-09-05T11:46:31.5347499Z ##[endgroup]"
+    },
+    {
+      "line": 46949,
+      "text": "2026-09-05T11:46:31.5353703Z ##[group]Building stage2 cargo-fmt (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 47051,
+      "text": "2026-09-05T11:46:31.6364279Z ##[endgroup]"
+    },
+    {
+      "line": 47054,
+      "text": "2026-09-05T11:46:31.6437427Z Dist rustfmt-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47055,
+      "text": "2026-09-05T11:46:33.2056492Z \tfinished in 1.561 seconds"
+    },
+    {
+      "line": 47060,
+      "text": "2026-09-05T11:46:33.2062834Z ##[group]Building stage2 clippy-driver (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 47158,
+      "text": "2026-09-05T11:46:33.6579026Z ##[endgroup]"
+    },
+    {
+      "line": 47163,
+      "text": "2026-09-05T11:46:33.6585195Z ##[group]Building stage2 cargo-clippy (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 47261,
+      "text": "2026-09-05T11:46:33.7622853Z ##[endgroup]"
+    },
+    {
+      "line": 47264,
+      "text": "2026-09-05T11:46:33.7695349Z Dist clippy-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47265,
+      "text": "2026-09-05T11:46:37.2640384Z \tfinished in 3.494 seconds"
+    },
+    {
+      "line": 47270,
+      "text": "2026-09-05T11:46:37.2646824Z ##[group]Building stage2 miri (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 47504,
+      "text": "2026-09-05T11:47:22.7212295Z ##[endgroup]"
+    },
+    {
+      "line": 47509,
+      "text": "2026-09-05T11:47:22.7218559Z ##[group]Building stage2 cargo-miri (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 47580,
+      "text": "2026-09-05T11:47:28.7365701Z ##[endgroup]"
+    },
+    {
+      "line": 47583,
+      "text": "2026-09-05T11:47:28.7440550Z Dist miri-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47584,
+      "text": "2026-09-05T11:47:30.7721477Z \tfinished in 2.028 seconds"
+    },
+    {
+      "line": 47587,
+      "text": "2026-09-05T11:47:30.7792146Z Dist llvm-tools-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47588,
+      "text": "2026-09-05T11:47:40.1671839Z \tfinished in 9.387 seconds"
+    },
+    {
+      "line": 47591,
+      "text": "2026-09-05T11:47:40.1733296Z Dist llvm-bitcode-linker-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47592,
+      "text": "2026-09-05T11:47:40.5973344Z \tfinished in 0.424 seconds"
+    },
+    {
+      "line": 47597,
+      "text": "2026-09-05T11:47:41.6704336Z Dist rust-dev-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47598,
+      "text": "2026-09-05T11:48:01.4138293Z \tfinished in 19.743 seconds"
+    },
+    {
+      "line": 47601,
+      "text": "2026-09-05T11:48:01.4140582Z Dist extended stage2 (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 47604,
+      "text": "2026-09-05T11:48:01.4146235Z ##[group]Documenting stage2 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, profiler_builtins, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in JSON format (stage2 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 47671,
+      "text": "2026-09-05T11:48:14.3115707Z ##[endgroup]"
+    },
+    {
+      "line": 47673,
+      "text": "2026-09-05T11:48:14.3218021Z Dist rust-docs-json-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47674,
+      "text": "2026-09-05T11:48:18.4102154Z \tfinished in 4.088 seconds"
+    },
+    {
+      "line": 47676,
+      "text": "2026-09-05T11:48:18.4161152Z Dist rust-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47677,
+      "text": "2026-09-05T11:49:25.6908079Z \tfinished in 67.274 seconds"
+    },
+    {
+      "line": 47680,
+      "text": "2026-09-05T11:49:26.2630040Z Dist reproducible-artifacts-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47681,
+      "text": "2026-09-05T11:49:38.3586244Z \tfinished in 12.095 seconds"
+    },
+    {
+      "line": 47686,
+      "text": "2026-09-05T11:49:38.3590715Z ##[group]Building stage2 build-manifest (stage1 -> stage2, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 47805,
+      "text": "2026-09-05T11:49:56.3939849Z ##[endgroup]"
+    },
+    {
+      "line": 47808,
+      "text": "2026-09-05T11:49:56.3995665Z Dist build-manifest-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47809,
+      "text": "2026-09-05T11:49:56.7987261Z \tfinished in 0.399 seconds"
+    },
+    {
+      "line": 47812,
+      "text": "2026-09-05T11:49:56.8042470Z Dist bootstrap-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47813,
+      "text": "2026-09-05T11:50:02.4415800Z \tfinished in 5.637 seconds"
+    },
+    {
+      "line": 47953,
+      "text": "2026-09-05T11:50:09.3089974Z \tfinished in 5.723 seconds"
+    },
+    {
+      "line": 47955,
+      "text": "2026-09-05T11:50:09.3157429Z Dist enzyme-nightly-aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 47956,
+      "text": "2026-09-05T11:50:11.1540122Z \tfinished in 1.838 seconds"
+    },
+    {
+      "line": 47958,
+      "text": "2026-09-05T11:50:11.1620230Z Build completed successfully in 0:24:13"
+    },
+    {
+      "line": 48110,
+      "text": "2026-09-05T11:50:11.1748386Z [2026-09-05T11:50:11.168Z INFO  opt_dist::timer] Section `Stage 5 (final build)` ended: OK (1453.66s)`"
+    },
+    {
+      "line": 48111,
+      "text": "2026-09-05T11:50:11.1748781Z [2026-09-05T11:50:11.168Z INFO  opt_dist::timer] Section `Run tests` starts"
+    },
+    {
+      "line": 48141,
+      "text": "2026-09-05T11:50:16.2182268Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 48207,
+      "text": "2026-09-05T11:50:25.8951481Z ##[endgroup]"
+    },
+    {
+      "line": 48208,
+      "text": "2026-09-05T11:50:26.4429883Z ##[group]Building stage1 compiletest (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 48286,
+      "text": "2026-09-05T11:50:34.8109017Z ##[endgroup]"
+    },
+    {
+      "line": 48287,
+      "text": "2026-09-05T11:50:34.8156779Z ##[group]Testing stage0 with compiletest suite=assembly-llvm mode=assembly (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 49065,
+      "text": "2026-09-05T11:50:37.2208174Z test result: ok. 678 passed; 0 failed; 96 ignored; 0 measured; 0 filtered out; finished in 2.36s"
+    },
+    {
+      "line": 49067,
+      "text": "2026-09-05T11:50:37.2220887Z ##[endgroup]"
+    },
+    {
+      "line": 49068,
+      "text": "2026-09-05T11:50:37.2235285Z ##[group]Testing stage0 with compiletest suite=codegen-llvm mode=codegen (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 50297,
+      "text": "2026-09-05T11:50:39.5459793Z test result: ok. 1013 passed; 0 failed; 212 ignored; 0 measured; 0 filtered out; finished in 2.29s"
+    },
+    {
+      "line": 50299,
+      "text": "2026-09-05T11:50:39.5470053Z ##[endgroup]"
+    },
+    {
+      "line": 50300,
+      "text": "2026-09-05T11:50:39.5484152Z ##[group]Testing stage0 with compiletest suite=codegen-units mode=codegen-units (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 50350,
+      "text": "2026-09-05T11:50:39.7177241Z test result: ok. 45 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 134.76ms"
+    },
+    {
+      "line": 50352,
+      "text": "2026-09-05T11:50:39.7184740Z ##[endgroup]"
+    },
+    {
+      "line": 50353,
+      "text": "2026-09-05T11:50:39.7198593Z ##[group]Building test helpers for aarch64-unknown-linux-gnu"
+    },
+    {
+      "line": 50354,
+      "text": "2026-09-05T11:50:39.7742943Z ##[endgroup]"
+    },
+    {
+      "line": 50355,
+      "text": "2026-09-05T11:50:39.7744229Z ##[group]Testing stage0 with compiletest suite=incremental mode=incremental (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 50539,
+      "text": "2026-09-05T11:50:43.8273394Z test result: ok. 176 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 4.01s"
+    },
+    {
+      "line": 50541,
+      "text": "2026-09-05T11:50:43.8283974Z ##[endgroup]"
+    },
+    {
+      "line": 50542,
+      "text": "2026-09-05T11:50:43.8298651Z ##[group]Testing stage0 with compiletest suite=mir-opt mode=mir-opt (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 50956,
+      "text": "2026-09-05T11:50:45.0271957Z test result: ok. 409 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 1.16s"
+    },
+    {
+      "line": 50958,
+      "text": "2026-09-05T11:50:45.0286214Z ##[endgroup]"
+    },
+    {
+      "line": 50959,
+      "text": "2026-09-05T11:50:45.0300724Z ##[group]Testing stage0 with compiletest suite=pretty mode=pretty (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 51077,
+      "text": "2026-09-05T11:50:45.3906176Z test result: ok. 110 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 323.46ms"
+    },
+    {
+      "line": 51079,
+      "text": "2026-09-05T11:50:45.3912430Z ##[endgroup]"
+    },
+    {
+      "line": 51080,
+      "text": "2026-09-05T11:50:45.3927311Z ##[group]Building stage1 run_make_support (stage0 -> stage1, aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 51109,
+      "text": "2026-09-05T11:50:50.4777001Z ##[endgroup]"
+    },
+    {
+      "line": 51110,
+      "text": "2026-09-05T11:50:50.4779311Z ##[group]Testing stage0 with compiletest suite=run-make mode=run-make (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 51116,
+      "text": "2026-09-05T11:50:50.5210939Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 525 filtered out; finished in 20.23\u00b5s"
+    },
+    {
+      "line": 51118,
+      "text": "2026-09-05T11:50:50.5211417Z ##[endgroup]"
+    },
+    {
+      "line": 51119,
+      "text": "2026-09-05T11:50:50.5228004Z ##[group]Testing stage0 with compiletest suite=ui mode=ui (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 73316,
+      "text": "2026-09-05T11:51:49.8194840Z test result: ok. 21830 passed; 0 failed; 363 ignored; 0 measured; 0 filtered out; finished in 59.22s"
+    },
+    {
+      "line": 73318,
+      "text": "2026-09-05T11:51:49.8267985Z ##[endgroup]"
+    },
+    {
+      "line": 73319,
+      "text": "2026-09-05T11:51:49.8286412Z ##[group]Testing stage0 with compiletest suite=crashes mode=crashes (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 73525,
+      "text": "2026-09-05T11:51:50.1388360Z test result: ok. 186 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 273.33ms"
+    },
+    {
+      "line": 73527,
+      "text": "2026-09-05T11:51:50.1395273Z ##[endgroup]"
+    },
+    {
+      "line": 73528,
+      "text": "2026-09-05T11:51:50.1413606Z ##[group]Testing stage0 with compiletest suite=rustdoc-html mode=rustdoc-html (aarch64-unknown-linux-gnu)"
+    },
+    {
+      "line": 74348,
+      "text": "2026-09-05T11:51:58.0405831Z test result: ok. 815 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 7.86s"
+    },
+    {
+      "line": 74350,
+      "text": "2026-09-05T11:51:58.0413275Z ##[endgroup]"
+    },
+    {
+      "line": 74351,
+      "text": "2026-09-05T11:51:58.0429392Z Build completed successfully in 0:01:41"
+    },
+    {
+      "line": 74352,
+      "text": "2026-09-05T11:51:58.0489000Z [2026-09-05T11:51:58.048Z INFO  opt_dist::timer] Section `Run tests` ended: OK (106.88s)`"
+    },
+    {
+      "line": 74385,
+      "text": "2026-09-05T11:51:58.0525484Z ##[group]sccache stats"
+    },
+    {
+      "line": 74388,
+      "text": "2026-09-05T11:51:58.0540819Z Cache hits                         8219"
+    },
+    {
+      "line": 74389,
+      "text": "2026-09-05T11:51:58.0541012Z Cache hits (c [clang])              437"
+    },
+    {
+      "line": 74390,
+      "text": "2026-09-05T11:51:58.0541201Z Cache hits (c++ [clang])           7259"
+    },
+    {
+      "line": 74391,
+      "text": "2026-09-05T11:51:58.0541386Z Cache hits (rust)                   523"
+    },
+    {
+      "line": 74392,
+      "text": "2026-09-05T11:51:58.0541620Z Cache misses                       8134"
+    },
+    {
+      "line": 74393,
+      "text": "2026-09-05T11:51:58.0541807Z Cache misses (c [clang])           4718"
+    },
+    {
+      "line": 74394,
+      "text": "2026-09-05T11:51:58.0542002Z Cache misses (c++ [clang])         3335"
+    },
+    {
+      "line": 74395,
+      "text": "2026-09-05T11:51:58.0542190Z Cache misses (rust)                  81"
+    },
+    {
+      "line": 74396,
+      "text": "2026-09-05T11:51:58.0542381Z Cache hits rate                   50.26 %"
+    },
+    {
+      "line": 74397,
+      "text": "2026-09-05T11:51:58.0542583Z Cache hits rate (c [clang])        8.48 %"
+    },
+    {
+      "line": 74398,
+      "text": "2026-09-05T11:51:58.0542776Z Cache hits rate (c++ [clang])     68.52 %"
+    },
+    {
+      "line": 74399,
+      "text": "2026-09-05T11:51:58.0542974Z Cache hits rate (rust)            86.59 %"
+    },
+    {
+      "line": 74427,
+      "text": "2026-09-05T11:51:58.0548460Z ##[endgroup]"
+    },
+    {
+      "line": 74428,
+      "text": "2026-09-05T11:51:58.0548705Z ##[group]Clock drift check"
+    },
+    {
+      "line": 74431,
+      "text": "2026-09-05T11:51:58.1564500Z ##[endgroup]"
+    },
+    {
+      "line": 74432,
+      "text": "2026-09-05T11:52:06.7592853Z ##[group]Run src/ci/scripts/create-doc-artifacts.sh"
+    },
+    {
+      "line": 74456,
+      "text": "2026-09-05T11:52:06.7841613Z ##[endgroup]"
+    },
+    {
+      "line": 74470,
+      "text": "2026-09-05T11:52:06.8178908Z ##[group]Run echo \"disk usage:\""
+    },
+    {
+      "line": 74496,
+      "text": "2026-09-05T11:52:06.8194175Z ##[endgroup]"
+    },
+    {
+      "line": 74509,
+      "text": "2026-09-05T11:52:06.8331964Z ##[group]Run actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
+    },
+    {
+      "line": 74541,
+      "text": "2026-09-05T11:52:06.8339768Z ##[endgroup]"
+    },
+    {
+      "line": 74543,
+      "text": "2026-09-05T11:52:07.2774010Z ##[group]Run src/ci/scripts/upload-artifacts.sh"
+    },
+    {
+      "line": 74570,
+      "text": "2026-09-05T11:52:07.2789885Z ##[endgroup]"
+    },
+    {
+      "line": 74629,
+      "text": "2026-09-05T11:52:12.8452307Z ##[group]Run if [ -f build/metrics.json ]; then"
+    },
+    {
+      "line": 74669,
+      "text": "2026-09-05T11:52:12.8471101Z ##[endgroup]"
+    },
+    {
+      "line": 74976,
+      "text": "2026-09-05T11:52:13.0036131Z ##[group]Run ./build/citool/debug/citool upload-build-metrics build/cpu-usage.csv"
+    },
+    {
+      "line": 75003,
+      "text": "2026-09-05T11:52:13.0052193Z ##[endgroup]"
+    }
+  ]
+}

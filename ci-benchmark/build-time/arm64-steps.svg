@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="208" viewBox="0 0 1200 208">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial,sans-serif" font-size="13" fill="#0f172a">
+<text x="16" y="24" font-size="19">Arm64 distribution: completed Actions step costs</text>
+<text x="16" y="46">Purple: source | grey: setup | blue: main build incl. docs/tools/package | teal: upload | pale: gaps</text>
+<path d="M330.00,65 V180" stroke="#e2e8f0"/>
+<text x="330.00" y="62">0m</text>
+<path d="M502.38,65 V180" stroke="#e2e8f0"/>
+<text x="502.38" y="62">30m</text>
+<path d="M674.77,65 V180" stroke="#e2e8f0"/>
+<text x="674.77" y="62">60m</text>
+<path d="M847.15,65 V180" stroke="#e2e8f0"/>
+<text x="847.15" y="62">90m</text>
+<path d="M1019.53,65 V180" stroke="#e2e8f0"/>
+<text x="1019.53" y="62">120m</text>
+<text x="16" y="92">33865610474 Arm64 dist</text>
+<rect x="330.000" y="78" width="21.356" height="20" fill="#94a3b8"><title>Setup: 3.717 min</title></rect>
+<rect x="351.356" y="78" width="50.087" height="20" fill="#a78bfa"><title>Source: 8.717 min</title></rect>
+<rect x="401.443" y="78" width="598.842" height="20" fill="#2563eb"><title>Main build: 104.217 min</title></rect>
+<rect x="1000.285" y="78" width="1.915" height="20" fill="#0891b2"><title>Upload: 0.333 min</title></rect>
+<rect x="1002.201" y="78" width="0.383" height="20" fill="#cbd5e1"><title>Unaccounted: 0.067 min</title></rect>
+<text x="1007.584" y="92">117.0m</text>
+<text x="16" y="123">33916006473 Arm64 dist</text>
+<rect x="330.000" y="109" width="21.739" height="20" fill="#94a3b8"><title>Setup: 3.783 min</title></rect>
+<rect x="351.739" y="109" width="72.401" height="20" fill="#a78bfa"><title>Source: 12.600 min</title></rect>
+<rect x="424.141" y="109" width="635.330" height="20" fill="#2563eb"><title>Main build: 110.567 min</title></rect>
+<rect x="1059.470" y="109" width="1.820" height="20" fill="#0891b2"><title>Upload: 0.317 min</title></rect>
+<rect x="1061.290" y="109" width="0.192" height="20" fill="#cbd5e1"><title>Unaccounted: 0.033 min</title></rect>
+<text x="1066.481" y="123">127.3m</text>
+<text x="16" y="154">33961251131 Arm64 dist</text>
+<rect x="330.000" y="140" width="18.866" height="20" fill="#94a3b8"><title>Setup: 3.283 min</title></rect>
+<rect x="348.866" y="140" width="47.501" height="20" fill="#a78bfa"><title>Source: 8.267 min</title></rect>
+<rect x="396.368" y="140" width="639.448" height="20" fill="#2563eb"><title>Main build: 111.283 min</title></rect>
+<rect x="1035.815" y="140" width="1.724" height="20" fill="#0891b2"><title>Upload: 0.300 min</title></rect>
+<rect x="1037.539" y="140" width="0.383" height="20" fill="#cbd5e1"><title>Unaccounted: 0.067 min</title></rect>
+<text x="1042.922" y="154">123.2m</text>
+</g>
+</svg>

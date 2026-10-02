@@ -1,0 +1,133 @@
+{
+  "job_id": 101316889641,
+  "name": "publish toolstate",
+  "source": "https://api.github.com/repos/rust-lang/rust/actions/jobs/101316889641/logs",
+  "sha256": "b44ff91adc15496f360c19666bb06d75a75e282350a6dd62246804101d4dbcd5",
+  "bytes": 19930,
+  "events": [
+    {
+      "line": 2,
+      "text": "2026-09-05T13:50:50.1092681Z ##[group]Runner Image Provisioner"
+    },
+    {
+      "line": 4,
+      "text": "2026-09-05T13:50:50.1095011Z Version: 20260828.587"
+    },
+    {
+      "line": 9,
+      "text": "2026-09-05T13:50:50.1098593Z ##[endgroup]"
+    },
+    {
+      "line": 10,
+      "text": "2026-09-05T13:50:50.1100173Z ##[group]Operating System"
+    },
+    {
+      "line": 14,
+      "text": "2026-09-05T13:50:50.1102532Z ##[endgroup]"
+    },
+    {
+      "line": 15,
+      "text": "2026-09-05T13:50:50.1103108Z ##[group]Runner Image"
+    },
+    {
+      "line": 16,
+      "text": "2026-09-05T13:50:50.1103730Z Image: ubuntu-24.04"
+    },
+    {
+      "line": 17,
+      "text": "2026-09-05T13:50:50.1104833Z Version: 20260831.293.1"
+    },
+    {
+      "line": 20,
+      "text": "2026-09-05T13:50:50.1108759Z ##[endgroup]"
+    },
+    {
+      "line": 21,
+      "text": "2026-09-05T13:50:50.1110076Z ##[group]GITHUB_TOKEN Permissions"
+    },
+    {
+      "line": 25,
+      "text": "2026-09-05T13:50:50.1114554Z ##[endgroup]"
+    },
+    {
+      "line": 32,
+      "text": "2026-09-05T13:50:50.8087244Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "line": 51,
+      "text": "2026-09-05T13:50:50.8101447Z ##[endgroup]"
+    },
+    {
+      "line": 53,
+      "text": "2026-09-05T13:50:50.9097861Z ##[group]Getting Git version info"
+    },
+    {
+      "line": 57,
+      "text": "2026-09-05T13:50:50.9200049Z ##[endgroup]"
+    },
+    {
+      "line": 62,
+      "text": "2026-09-05T13:50:50.9270396Z ##[group]Determining repository object format"
+    },
+    {
+      "line": 63,
+      "text": "2026-09-05T13:50:50.9272115Z ##[endgroup]"
+    },
+    {
+      "line": 64,
+      "text": "2026-09-05T13:50:50.9273610Z ##[group]Initializing the repository"
+    },
+    {
+      "line": 81,
+      "text": "2026-09-05T13:50:50.9457050Z ##[endgroup]"
+    },
+    {
+      "line": 82,
+      "text": "2026-09-05T13:50:50.9457876Z ##[group]Disabling automatic garbage collection"
+    },
+    {
+      "line": 84,
+      "text": "2026-09-05T13:50:50.9489682Z ##[endgroup]"
+    },
+    {
+      "line": 85,
+      "text": "2026-09-05T13:50:50.9490727Z ##[group]Setting up auth"
+    },
+    {
+      "line": 100,
+      "text": "2026-09-05T13:50:51.0589252Z ##[endgroup]"
+    },
+    {
+      "line": 101,
+      "text": "2026-09-05T13:50:51.0590019Z ##[group]Fetching the repository"
+    },
+    {
+      "line": 109,
+      "text": "2026-09-05T13:51:00.0015017Z ##[endgroup]"
+    },
+    {
+      "line": 110,
+      "text": "2026-09-05T13:51:00.0016357Z ##[group]Determining the checkout info"
+    },
+    {
+      "line": 111,
+      "text": "2026-09-05T13:51:00.0017726Z ##[endgroup]"
+    },
+    {
+      "line": 114,
+      "text": "2026-09-05T13:51:00.0108830Z ##[group]Checking out the ref"
+    },
+    {
+      "line": 199,
+      "text": "2026-09-05T13:51:03.1627419Z ##[endgroup]"
+    },
+    {
+      "line": 202,
+      "text": "2026-09-05T13:51:03.1905032Z ##[group]Run src/ci/publish_toolstate.sh"
+    },
+    {
+      "line": 210,
+      "text": "2026-09-05T13:51:03.1948622Z ##[endgroup]"
+    }
+  ]
+}

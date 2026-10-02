@@ -1,0 +1,1417 @@
+{
+  "job_id": 100999918199,
+  "name": "auto - aarch64-msvc-1",
+  "source": "https://api.github.com/repos/rust-lang/rust/actions/jobs/100999918199/logs",
+  "sha256": "0c806d78feaa6559ce6f519b8c6c2fc812ad7a790f3c7bd61c47568431537d41",
+  "bytes": 6295222,
+  "events": [
+    {
+      "line": 2,
+      "text": "2026-09-04T10:57:59.4239407Z ##[group]Runner Image Provisioner"
+    },
+    {
+      "line": 4,
+      "text": "2026-09-04T10:57:59.4241568Z Version: 20260828.587"
+    },
+    {
+      "line": 9,
+      "text": "2026-09-04T10:57:59.4245703Z ##[endgroup]"
+    },
+    {
+      "line": 10,
+      "text": "2026-09-04T10:57:59.4247743Z ##[group]Operating System"
+    },
+    {
+      "line": 14,
+      "text": "2026-09-04T10:57:59.4250803Z ##[endgroup]"
+    },
+    {
+      "line": 15,
+      "text": "2026-09-04T10:57:59.4251466Z ##[group]Runner Image"
+    },
+    {
+      "line": 16,
+      "text": "2026-09-04T10:57:59.4252175Z Image: windows-11-arm64"
+    },
+    {
+      "line": 17,
+      "text": "2026-09-04T10:57:59.4252938Z Version: 20260830.155.1"
+    },
+    {
+      "line": 20,
+      "text": "2026-09-04T10:57:59.4257881Z ##[endgroup]"
+    },
+    {
+      "line": 21,
+      "text": "2026-09-04T10:57:59.4259364Z ##[group]GITHUB_TOKEN Permissions"
+    },
+    {
+      "line": 25,
+      "text": "2026-09-04T10:57:59.4264439Z ##[endgroup]"
+    },
+    {
+      "line": 33,
+      "text": "2026-09-04T10:58:02.0585242Z ##[group]Run git config --global core.autocrlf false"
+    },
+    {
+      "line": 49,
+      "text": "2026-09-04T10:58:02.0637971Z ##[endgroup]"
+    },
+    {
+      "line": 50,
+      "text": "2026-09-04T10:58:03.1539065Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "line": 79,
+      "text": "2026-09-04T10:58:03.1557457Z ##[endgroup]"
+    },
+    {
+      "line": 81,
+      "text": "2026-09-04T10:58:03.3996914Z ##[group]Getting Git version info"
+    },
+    {
+      "line": 85,
+      "text": "2026-09-04T10:58:03.5772219Z ##[endgroup]"
+    },
+    {
+      "line": 91,
+      "text": "2026-09-04T10:58:03.6363347Z ##[group]Determining repository object format"
+    },
+    {
+      "line": 92,
+      "text": "2026-09-04T10:58:03.6365524Z ##[endgroup]"
+    },
+    {
+      "line": 93,
+      "text": "2026-09-04T10:58:03.6366160Z ##[group]Initializing the repository"
+    },
+    {
+      "line": 97,
+      "text": "2026-09-04T10:58:03.8708256Z ##[endgroup]"
+    },
+    {
+      "line": 98,
+      "text": "2026-09-04T10:58:03.8709112Z ##[group]Disabling automatic garbage collection"
+    },
+    {
+      "line": 100,
+      "text": "2026-09-04T10:58:03.9250925Z ##[endgroup]"
+    },
+    {
+      "line": 101,
+      "text": "2026-09-04T10:58:03.9251621Z ##[group]Setting up auth"
+    },
+    {
+      "line": 116,
+      "text": "2026-09-04T10:58:08.9213981Z ##[endgroup]"
+    },
+    {
+      "line": 117,
+      "text": "2026-09-04T10:58:08.9214609Z ##[group]Fetching the repository"
+    },
+    {
+      "line": 125,
+      "text": "2026-09-04T10:58:12.2677628Z ##[endgroup]"
+    },
+    {
+      "line": 126,
+      "text": "2026-09-04T10:58:12.2678256Z ##[group]Determining the checkout info"
+    },
+    {
+      "line": 127,
+      "text": "2026-09-04T10:58:12.2678844Z ##[endgroup]"
+    },
+    {
+      "line": 130,
+      "text": "2026-09-04T10:58:12.3962079Z ##[group]Checking out the ref"
+    },
+    {
+      "line": 289,
+      "text": "2026-09-04T10:59:11.2865283Z ##[endgroup]"
+    },
+    {
+      "line": 292,
+      "text": "2026-09-04T10:59:11.4547775Z ##[group]Run echo \"disk usage:\""
+    },
+    {
+      "line": 309,
+      "text": "2026-09-04T10:59:11.4577034Z ##[endgroup]"
+    },
+    {
+      "line": 313,
+      "text": "2026-09-04T10:59:11.8398345Z ##[group]Run src/ci/scripts/setup-environment.sh"
+    },
+    {
+      "line": 338,
+      "text": "2026-09-04T10:59:11.8426783Z ##[endgroup]"
+    },
+    {
+      "line": 346,
+      "text": "2026-09-04T10:59:20.1919374Z ##[group]Run src/ci/scripts/verify-channel.sh"
+    },
+    {
+      "line": 369,
+      "text": "2026-09-04T10:59:20.1948563Z ##[endgroup]"
+    },
+    {
+      "line": 371,
+      "text": "2026-09-04T10:59:20.4792751Z ##[group]Run src/ci/scripts/collect-cpu-stats.sh"
+    },
+    {
+      "line": 394,
+      "text": "2026-09-04T10:59:20.4821976Z ##[endgroup]"
+    },
+    {
+      "line": 395,
+      "text": "2026-09-04T10:59:20.8286431Z ##[group]Run src/ci/scripts/dump-environment.sh"
+    },
+    {
+      "line": 418,
+      "text": "2026-09-04T10:59:20.8316782Z ##[endgroup]"
+    },
+    {
+      "line": 682,
+      "text": "2026-09-04T10:59:29.2089078Z ##[group]Run src/ci/scripts/install-awscli.sh"
+    },
+    {
+      "line": 705,
+      "text": "2026-09-04T10:59:29.2117154Z ##[endgroup]"
+    },
+    {
+      "line": 706,
+      "text": "2026-09-04T10:59:29.4954935Z ##[group]Run src/ci/scripts/install-sccache.sh"
+    },
+    {
+      "line": 729,
+      "text": "2026-09-04T10:59:29.4981782Z ##[endgroup]"
+    },
+    {
+      "line": 737,
+      "text": "2026-09-04T10:59:30.6077265Z ##[group]Run src/ci/scripts/install-clang.sh"
+    },
+    {
+      "line": 760,
+      "text": "2026-09-04T10:59:30.6108658Z ##[endgroup]"
+    },
+    {
+      "line": 791,
+      "text": "2026-09-04T11:00:11.8937129Z ##[group]Run src/ci/scripts/install-tidy.sh"
+    },
+    {
+      "line": 815,
+      "text": "2026-09-04T11:00:11.8966946Z ##[endgroup]"
+    },
+    {
+      "line": 816,
+      "text": "2026-09-04T11:00:12.1746003Z ##[group]Run src/ci/scripts/install-wix.sh"
+    },
+    {
+      "line": 840,
+      "text": "2026-09-04T11:00:12.1775583Z ##[endgroup]"
+    },
+    {
+      "line": 865,
+      "text": "2026-09-04T11:00:13.8842651Z ##[group]Run src/ci/scripts/disable-git-crlf-conversion.sh"
+    },
+    {
+      "line": 890,
+      "text": "2026-09-04T11:00:13.8872230Z ##[endgroup]"
+    },
+    {
+      "line": 891,
+      "text": "2026-09-04T11:00:14.1355408Z ##[group]Run src/ci/scripts/checkout-submodules.sh"
+    },
+    {
+      "line": 916,
+      "text": "2026-09-04T11:00:14.1388790Z ##[endgroup]"
+    },
+    {
+      "line": 1006,
+      "text": "2026-09-04T11:07:36.9481382Z ##[group]Run src/ci/scripts/install-mingw.sh"
+    },
+    {
+      "line": 1031,
+      "text": "2026-09-04T11:07:36.9525664Z ##[endgroup]"
+    },
+    {
+      "line": 1032,
+      "text": "2026-09-04T11:07:37.2563782Z ##[group]Run src/ci/scripts/install-ninja.sh"
+    },
+    {
+      "line": 1057,
+      "text": "2026-09-04T11:07:37.2603002Z ##[endgroup]"
+    },
+    {
+      "line": 1081,
+      "text": "2026-09-04T11:07:38.3370931Z ##[group]Run src/ci/scripts/enable-docker-ipv6.sh"
+    },
+    {
+      "line": 1106,
+      "text": "2026-09-04T11:07:38.3411919Z ##[endgroup]"
+    },
+    {
+      "line": 1107,
+      "text": "2026-09-04T11:07:38.6087774Z ##[group]Run src/ci/scripts/disable-git-crlf-conversion.sh"
+    },
+    {
+      "line": 1132,
+      "text": "2026-09-04T11:07:38.6123875Z ##[endgroup]"
+    },
+    {
+      "line": 1133,
+      "text": "2026-09-04T11:07:38.8595620Z ##[group]Run src/ci/scripts/verify-line-endings.sh"
+    },
+    {
+      "line": 1158,
+      "text": "2026-09-04T11:07:38.8635088Z ##[endgroup]"
+    },
+    {
+      "line": 1213,
+      "text": "2026-09-04T11:07:40.5934076Z ##[group]Run src/ci/scripts/verify-backported-commits.sh"
+    },
+    {
+      "line": 1238,
+      "text": "2026-09-04T11:07:40.5974320Z ##[endgroup]"
+    },
+    {
+      "line": 1240,
+      "text": "2026-09-04T11:07:40.9487969Z ##[group]Run src/ci/scripts/verify-stable-version-number.sh"
+    },
+    {
+      "line": 1265,
+      "text": "2026-09-04T11:07:40.9552878Z ##[endgroup]"
+    },
+    {
+      "line": 1267,
+      "text": "2026-09-04T11:07:41.3108834Z ##[group]Run src/ci/scripts/dump-environment.sh"
+    },
+    {
+      "line": 1292,
+      "text": "2026-09-04T11:07:41.8132602Z ##[endgroup]"
+    },
+    {
+      "line": 1558,
+      "text": "2026-09-04T11:08:42.7701576Z ##[group]Run cd src/ci/citool"
+    },
+    {
+      "line": 1584,
+      "text": "2026-09-04T11:08:42.7733540Z ##[endgroup]"
+    },
+    {
+      "line": 1803,
+      "text": "2026-09-04T11:09:45.3589133Z ##[group]Run set +e"
+    },
+    {
+      "line": 1842,
+      "text": "2026-09-04T11:09:45.3624630Z ##[endgroup]"
+    },
+    {
+      "line": 1849,
+      "text": "2026-09-04T11:09:48.0915028Z ##[group]Clock drift check"
+    },
+    {
+      "line": 1852,
+      "text": "2026-09-04T11:09:48.3394812Z ##[endgroup]"
+    },
+    {
+      "line": 1855,
+      "text": "2026-09-04T11:09:50.2916929Z ##[group]Configure the build"
+    },
+    {
+      "line": 1892,
+      "text": "2026-09-04T11:09:50.2937516Z ##[endgroup]"
+    },
+    {
+      "line": 1900,
+      "text": "2026-09-04T11:10:00.4056720Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 2079,
+      "text": "2026-09-04T11:11:09.2038793Z ##[endgroup]"
+    },
+    {
+      "line": 2080,
+      "text": "2026-09-04T11:11:10.7661850Z ##[group]Building LLVM for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 2081,
+      "text": "2026-09-04T11:11:10.7750394Z ##[endgroup]"
+    },
+    {
+      "line": 2082,
+      "text": "2026-09-04T11:11:10.7785169Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2083,
+      "text": "2026-09-04T11:11:10.7795681Z ##[endgroup]"
+    },
+    {
+      "line": 2085,
+      "text": "2026-09-04T11:11:10.7803327Z ##[group]Building stage1 codegen backend cranelift (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2086,
+      "text": "2026-09-04T11:11:10.7804038Z ##[endgroup]"
+    },
+    {
+      "line": 2087,
+      "text": "2026-09-04T11:11:10.7812632Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2088,
+      "text": "2026-09-04T11:11:10.7835692Z ##[endgroup]"
+    },
+    {
+      "line": 2089,
+      "text": "2026-09-04T11:11:10.7846214Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2090,
+      "text": "2026-09-04T11:11:10.7849185Z ##[endgroup]"
+    },
+    {
+      "line": 2091,
+      "text": "2026-09-04T11:11:10.7854002Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2092,
+      "text": "2026-09-04T11:11:10.7856742Z ##[endgroup]"
+    },
+    {
+      "line": 2093,
+      "text": "2026-09-04T11:11:10.7872909Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2094,
+      "text": "2026-09-04T11:11:10.7878010Z ##[endgroup]"
+    },
+    {
+      "line": 2095,
+      "text": "2026-09-04T11:11:10.7882976Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2096,
+      "text": "2026-09-04T11:11:10.7887150Z ##[endgroup]"
+    },
+    {
+      "line": 2098,
+      "text": "2026-09-04T11:11:10.7894159Z ##[group]Building stage2 codegen backend cranelift (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2099,
+      "text": "2026-09-04T11:11:10.7894836Z ##[endgroup]"
+    },
+    {
+      "line": 2100,
+      "text": "2026-09-04T11:11:10.7900720Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2101,
+      "text": "2026-09-04T11:11:10.7903942Z ##[endgroup]"
+    },
+    {
+      "line": 2102,
+      "text": "2026-09-04T11:11:10.7946648Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2103,
+      "text": "2026-09-04T11:11:10.7949449Z ##[endgroup]"
+    },
+    {
+      "line": 2104,
+      "text": "2026-09-04T11:11:10.7953923Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2105,
+      "text": "2026-09-04T11:11:10.7956330Z ##[endgroup]"
+    },
+    {
+      "line": 2107,
+      "text": "2026-09-04T11:11:10.7978182Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2108,
+      "text": "2026-09-04T11:11:10.7980952Z ##[endgroup]"
+    },
+    {
+      "line": 2109,
+      "text": "2026-09-04T11:11:10.7985682Z ##[group]Building stage2 rust-analyzer (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2110,
+      "text": "2026-09-04T11:11:10.7988161Z ##[endgroup]"
+    },
+    {
+      "line": 2111,
+      "text": "2026-09-04T11:11:10.8005473Z ##[group]Building stage2 rust-analyzer-proc-macro-srv (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2112,
+      "text": "2026-09-04T11:11:10.8007751Z ##[endgroup]"
+    },
+    {
+      "line": 2113,
+      "text": "2026-09-04T11:11:10.8033258Z ##[group]Building stage2 rustdoc-tool-binary (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2114,
+      "text": "2026-09-04T11:11:10.8035441Z ##[endgroup]"
+    },
+    {
+      "line": 2115,
+      "text": "2026-09-04T11:11:10.8042307Z ##[group]Building stage2 clippy-driver (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2116,
+      "text": "2026-09-04T11:11:10.8045096Z ##[endgroup]"
+    },
+    {
+      "line": 2117,
+      "text": "2026-09-04T11:11:10.8050494Z ##[group]Building stage2 cargo-clippy (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2118,
+      "text": "2026-09-04T11:11:10.8053220Z ##[endgroup]"
+    },
+    {
+      "line": 2119,
+      "text": "2026-09-04T11:11:10.8059324Z ##[group]Building stage2 rustfmt (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2120,
+      "text": "2026-09-04T11:11:10.8061601Z ##[endgroup]"
+    },
+    {
+      "line": 2121,
+      "text": "2026-09-04T11:11:10.8067423Z ##[group]Building stage2 cargo-fmt (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2122,
+      "text": "2026-09-04T11:11:10.8070081Z ##[endgroup]"
+    },
+    {
+      "line": 2123,
+      "text": "2026-09-04T11:11:10.8075946Z ##[group]Building stage2 miri (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2124,
+      "text": "2026-09-04T11:11:10.8078527Z ##[endgroup]"
+    },
+    {
+      "line": 2125,
+      "text": "2026-09-04T11:11:10.8085452Z ##[group]Building stage2 cargo-miri (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2126,
+      "text": "2026-09-04T11:11:10.8087963Z ##[endgroup]"
+    },
+    {
+      "line": 2127,
+      "text": "2026-09-04T11:11:10.8170024Z Build completed successfully in 0:01:20"
+    },
+    {
+      "line": 2128,
+      "text": "2026-09-04T11:11:10.8349915Z ##[group]Display CPU and Memory information"
+    },
+    {
+      "line": 2141,
+      "text": "2026-09-04T11:11:11.2522549Z cpu cores\t: 4"
+    },
+    {
+      "line": 2165,
+      "text": "2026-09-04T11:11:11.2532482Z cpu cores\t: 4"
+    },
+    {
+      "line": 2189,
+      "text": "2026-09-04T11:11:11.2541083Z cpu cores\t: 4"
+    },
+    {
+      "line": 2213,
+      "text": "2026-09-04T11:11:11.2549767Z cpu cores\t: 4"
+    },
+    {
+      "line": 2225,
+      "text": "2026-09-04T11:11:11.3104914Z MemTotal:       16767020 kB"
+    },
+    {
+      "line": 2233,
+      "text": "2026-09-04T11:11:11.4521724Z ##[endgroup]"
+    },
+    {
+      "line": 2236,
+      "text": "2026-09-04T11:11:11.7747047Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 2238,
+      "text": "2026-09-04T11:11:11.9559954Z ##[endgroup]"
+    },
+    {
+      "line": 2348,
+      "text": "2026-09-04T11:11:16.6089930Z ##[group]Building LLVM for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 2361,
+      "text": "2026-09-04T11:11:17.2079705Z running: \"cmake\" \"C:\\\\a\\\\rust\\\\rust\\\\src/llvm-project/llvm\" \"-G\" \"Ninja\" \"-DLLVM_ENABLE_ASSERTIONS=ON\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=4\" \"-DLLVM_TARGET_ARCH=aarch64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-pc-windows-msvc\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_ENABLE_ZLIB=OFF\" \"-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.100.0-nightly\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_CXX_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_ASM_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_C_FLAGS= -nologo -MT -Brepro -W0 --target=aarch64-pc-windows-msvc\" \"-DCMAKE_CXX_FLAGS= -nologo -MT -Brepro -W0 --target=aarch64-pc-windows-msvc\" \"-DCMAKE_AR=C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/HostARM64/arm64/lib.exe\" \"-DCMAKE_SHARED_LINKER_FLAGS=\" \"-DCMAKE_MODULE_LINKER_FLAGS=\" \"-DCMAKE_EXE_LINKER_FLAGS=\" \"-DLLVM_ENABLE_ZSTD=OFF\" \"-DCMAKE_INSTALL_PREFIX=C:\\\\a\\\\rust\\\\rust\\\\build\\\\aarch64-pc-windows-msvc\\\\llvm\" \"-DCMAKE_ASM_FLAGS= -nologo -MT -Brepro -W0\" \"-DCMAKE_BUILD_TYPE=Release\""
+    },
+    {
+      "line": 9514,
+      "text": "2026-09-04T11:23:17.2305340Z \tfinished in 720.636 seconds"
+    },
+    {
+      "line": 9515,
+      "text": "2026-09-04T11:23:17.2308614Z ##[endgroup]"
+    },
+    {
+      "line": 9531,
+      "text": "2026-09-04T11:23:17.4449551Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10318,
+      "text": "2026-09-04T11:35:41.6642452Z ##[endgroup]"
+    },
+    {
+      "line": 10322,
+      "text": "2026-09-04T11:35:41.7102988Z ##[group]Building stage1 codegen backend cranelift (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10440,
+      "text": "2026-09-04T11:37:36.8955641Z ##[endgroup]"
+    },
+    {
+      "line": 10444,
+      "text": "2026-09-04T11:37:36.9073428Z ##[group]Building LLD for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 10681,
+      "text": "2026-09-04T11:38:04.9823232Z \tfinished in 28.075 seconds"
+    },
+    {
+      "line": 10682,
+      "text": "2026-09-04T11:38:04.9824102Z ##[endgroup]"
+    },
+    {
+      "line": 10685,
+      "text": "2026-09-04T11:38:08.3123003Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10689,
+      "text": "2026-09-04T11:38:09.8676216Z ##[endgroup]"
+    },
+    {
+      "line": 10694,
+      "text": "2026-09-04T11:38:09.8821349Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10839,
+      "text": "2026-09-04T11:39:11.8393300Z ##[endgroup]"
+    },
+    {
+      "line": 10844,
+      "text": "2026-09-04T11:39:11.8474287Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10917,
+      "text": "2026-09-04T11:39:26.1097762Z ##[endgroup]"
+    },
+    {
+      "line": 10925,
+      "text": "2026-09-04T11:39:26.1238225Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10979,
+      "text": "2026-09-04T11:40:48.5818561Z ##[endgroup]"
+    },
+    {
+      "line": 10981,
+      "text": "2026-09-04T11:40:48.5839404Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11581,
+      "text": "2026-09-04T11:59:56.1195717Z ##[endgroup]"
+    },
+    {
+      "line": 11585,
+      "text": "2026-09-04T11:59:56.1253764Z ##[group]Building stage2 codegen backend cranelift (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11675,
+      "text": "2026-09-04T12:02:53.9433629Z ##[endgroup]"
+    },
+    {
+      "line": 11679,
+      "text": "2026-09-04T12:02:53.9466177Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11683,
+      "text": "2026-09-04T12:02:55.3206519Z ##[endgroup]"
+    },
+    {
+      "line": 11688,
+      "text": "2026-09-04T12:02:55.3304223Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11812,
+      "text": "2026-09-04T12:05:03.5149279Z ##[endgroup]"
+    },
+    {
+      "line": 11817,
+      "text": "2026-09-04T12:05:03.5181239Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11887,
+      "text": "2026-09-04T12:05:33.3302413Z ##[endgroup]"
+    },
+    {
+      "line": 11904,
+      "text": "2026-09-04T12:05:33.3861317Z ##[group]Building stage1 compiletest (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12080,
+      "text": "2026-09-04T12:06:10.6490758Z ##[endgroup]"
+    },
+    {
+      "line": 12088,
+      "text": "2026-09-04T12:06:10.6818298Z ##[group]Building test helpers for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 12090,
+      "text": "2026-09-04T12:06:10.8007922Z ##[endgroup]"
+    },
+    {
+      "line": 12092,
+      "text": "2026-09-04T12:06:10.8297747Z ##[group]Testing stage2 with compiletest suite=ui mode=ui (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 34263,
+      "text": "2026-09-04T12:26:31.8151130Z test result: ok. 21699 passed; 0 failed; 467 ignored; 0 measured; 17 filtered out; finished in 1216.70s"
+    },
+    {
+      "line": 34265,
+      "text": "2026-09-04T12:26:31.8288290Z ##[endgroup]"
+    },
+    {
+      "line": 34270,
+      "text": "2026-09-04T12:26:31.8667227Z ##[group]Testing stage2 with compiletest suite=crashes mode=crashes (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 34476,
+      "text": "2026-09-04T12:26:38.9526358Z test result: ok. 201 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.84s"
+    },
+    {
+      "line": 34478,
+      "text": "2026-09-04T12:26:38.9564780Z ##[endgroup]"
+    },
+    {
+      "line": 34485,
+      "text": "2026-09-04T12:26:38.9831597Z ##[group]Building stage1 coverage-dump (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 34528,
+      "text": "2026-09-04T12:26:44.3921489Z ##[endgroup]"
+    },
+    {
+      "line": 34531,
+      "text": "2026-09-04T12:26:44.3939481Z ##[group]Testing stage2 with compiletest suite=coverage mode=coverage-map (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 34640,
+      "text": "2026-09-04T12:26:51.3382813Z test result: ok. 102 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 6.69s"
+    },
+    {
+      "line": 34642,
+      "text": "2026-09-04T12:26:51.3422471Z ##[endgroup]"
+    },
+    {
+      "line": 34647,
+      "text": "2026-09-04T12:26:51.3716511Z ##[group]Testing stage2 with compiletest suite=coverage mode=coverage-run (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 34758,
+      "text": "2026-09-04T12:26:51.5921258Z test result: ok. 0 passed; 0 failed; 105 ignored; 0 measured; 0 filtered out; finished in 793.20\u00b5s"
+    },
+    {
+      "line": 34760,
+      "text": "2026-09-04T12:26:51.5921991Z ##[endgroup]"
+    },
+    {
+      "line": 34768,
+      "text": "2026-09-04T12:26:51.6161710Z ##[group]Testing stage2 with compiletest suite=mir-opt mode=mir-opt (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 35182,
+      "text": "2026-09-04T12:27:24.4003241Z test result: ok. 404 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 32.45s"
+    },
+    {
+      "line": 35184,
+      "text": "2026-09-04T12:27:24.4034741Z ##[endgroup]"
+    },
+    {
+      "line": 35189,
+      "text": "2026-09-04T12:27:24.4316353Z ##[group]Testing stage2 with compiletest suite=codegen-llvm mode=codegen (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 36405,
+      "text": "2026-09-04T12:28:21.4507533Z test result: ok. 909 passed; 0 failed; 303 ignored; 0 measured; 8 filtered out; finished in 56.56s"
+    },
+    {
+      "line": 36407,
+      "text": "2026-09-04T12:28:21.4548174Z ##[endgroup]"
+    },
+    {
+      "line": 36412,
+      "text": "2026-09-04T12:28:21.4834994Z ##[group]Testing stage2 with compiletest suite=codegen-units mode=codegen-units (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 36462,
+      "text": "2026-09-04T12:28:24.2840861Z test result: ok. 45 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.58s"
+    },
+    {
+      "line": 36464,
+      "text": "2026-09-04T12:28:24.2879879Z ##[endgroup]"
+    },
+    {
+      "line": 36469,
+      "text": "2026-09-04T12:28:24.3159129Z ##[group]Testing stage2 with compiletest suite=assembly-llvm mode=assembly (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 37246,
+      "text": "2026-09-04T12:29:16.3601993Z test result: ok. 670 passed; 0 failed; 103 ignored; 0 measured; 0 filtered out; finished in 51.77s"
+    },
+    {
+      "line": 37248,
+      "text": "2026-09-04T12:29:16.3641148Z ##[endgroup]"
+    },
+    {
+      "line": 37253,
+      "text": "2026-09-04T12:29:16.3920145Z ##[group]Testing stage2 with compiletest suite=incremental mode=incremental (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 37437,
+      "text": "2026-09-04T12:29:54.7087164Z test result: ok. 175 passed; 0 failed; 5 ignored; 0 measured; 0 filtered out; finished in 38.03s"
+    },
+    {
+      "line": 37439,
+      "text": "2026-09-04T12:29:54.7130869Z ##[endgroup]"
+    },
+    {
+      "line": 37446,
+      "text": "2026-09-04T12:29:57.0180859Z ##[group]Testing stage2 with compiletest suite=debuginfo mode=debuginfo (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 37969,
+      "text": "2026-09-04T12:30:33.4213131Z test result: ok. 166 passed; 0 failed; 353 ignored; 0 measured; 0 filtered out; finished in 34.57s"
+    },
+    {
+      "line": 37971,
+      "text": "2026-09-04T12:30:33.4257097Z ##[endgroup]"
+    },
+    {
+      "line": 37981,
+      "text": "2026-09-04T12:30:33.6622523Z ##[group]Testing stage2 with compiletest suite=ui-fulldeps mode=ui (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 38063,
+      "text": "2026-09-04T12:31:11.0956139Z test result: ok. 78 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 37.18s"
+    },
+    {
+      "line": 38065,
+      "text": "2026-09-04T12:31:11.1002040Z ##[endgroup]"
+    },
+    {
+      "line": 38072,
+      "text": "2026-09-04T12:31:11.1338948Z ##[group]Building stage2 rustdoc-tool-binary (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 38274,
+      "text": "2026-09-04T12:34:05.3215451Z ##[endgroup]"
+    },
+    {
+      "line": 38277,
+      "text": "2026-09-04T12:34:05.3251572Z ##[group]Testing stage2 with compiletest suite=rustdoc-html mode=rustdoc-html (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 39084,
+      "text": "2026-09-04T12:36:20.3944162Z test result: ok. 799 passed; 0 failed; 4 ignored; 0 measured; 13 filtered out; finished in 134.65s"
+    },
+    {
+      "line": 39086,
+      "text": "2026-09-04T12:36:20.3984465Z ##[endgroup]"
+    },
+    {
+      "line": 39091,
+      "text": "2026-09-04T12:36:20.4316935Z ##[group]Testing stage2 with compiletest suite=coverage-run-rustdoc mode=coverage-run (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 39098,
+      "text": "2026-09-04T12:36:20.6433922Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 53.60\u00b5s"
+    },
+    {
+      "line": 39100,
+      "text": "2026-09-04T12:36:20.6466203Z ##[endgroup]"
+    },
+    {
+      "line": 39105,
+      "text": "2026-09-04T12:36:20.6751135Z ##[group]Testing stage2 with compiletest suite=pretty mode=pretty (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 39223,
+      "text": "2026-09-04T12:36:25.7410108Z test result: ok. 110 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 4.70s"
+    },
+    {
+      "line": 39225,
+      "text": "2026-09-04T12:36:25.7449708Z ##[endgroup]"
+    },
+    {
+      "line": 39236,
+      "text": "2026-09-04T12:36:25.7906753Z ##[group]Testing stage2 {alloc, alloctests, compiler_builtins, core, coretests, panic_abort, panic_unwind, proc_macro, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 39682,
+      "text": "2026-09-04T12:40:29.3899643Z test result: ok. 334 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 105.75ms"
+    },
+    {
+      "line": 41175,
+      "text": "2026-09-04T12:40:31.1997371Z test result: ok. 1487 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.79s"
+    },
+    {
+      "line": 41182,
+      "text": "2026-09-04T12:40:31.2240206Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 631.20\u00b5s"
+    },
+    {
+      "line": 41189,
+      "text": "2026-09-04T12:40:31.2461033Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 609.60\u00b5s"
+    },
+    {
+      "line": 41767,
+      "text": "2026-09-04T12:40:31.5715666Z test result: ok. 572 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 304.08ms"
+    },
+    {
+      "line": 44581,
+      "text": "2026-09-04T12:40:32.8497667Z test result: ok. 2806 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 1.25s"
+    },
+    {
+      "line": 45181,
+      "text": "2026-09-04T12:40:32.9596542Z test result: ok. 594 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 86.63ms"
+    },
+    {
+      "line": 45187,
+      "text": "2026-09-04T12:40:32.9824521Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 108.70\u00b5s"
+    },
+    {
+      "line": 45613,
+      "text": "2026-09-04T12:40:51.2674834Z test result: ok. 391 passed; 0 failed; 10 ignored; 0 measured; 0 filtered out; finished in 18.26s"
+    },
+    {
+      "line": 45619,
+      "text": "2026-09-04T12:40:51.2929584Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 104.70\u00b5s"
+    },
+    {
+      "line": 45626,
+      "text": "2026-09-04T12:40:51.3158762Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 479.20\u00b5s"
+    },
+    {
+      "line": 45633,
+      "text": "2026-09-04T12:40:51.3405780Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.05ms"
+    },
+    {
+      "line": 45647,
+      "text": "2026-09-04T12:40:51.3640479Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.18ms"
+    },
+    {
+      "line": 45661,
+      "text": "2026-09-04T12:40:51.3881393Z test result: ok. 7 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.31ms"
+    },
+    {
+      "line": 45668,
+      "text": "2026-09-04T12:40:51.4211512Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 491.00\u00b5s"
+    },
+    {
+      "line": 45688,
+      "text": "2026-09-04T12:40:51.4615510Z test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 18.40ms"
+    },
+    {
+      "line": 45699,
+      "text": "2026-09-04T12:40:51.4856062Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 913.10\u00b5s"
+    },
+    {
+      "line": 45706,
+      "text": "2026-09-04T12:40:51.5100677Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 630.70\u00b5s"
+    },
+    {
+      "line": 45713,
+      "text": "2026-09-04T12:40:51.5332552Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 506.00\u00b5s"
+    },
+    {
+      "line": 45744,
+      "text": "2026-09-04T12:40:51.5573652Z test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.04ms"
+    },
+    {
+      "line": 45751,
+      "text": "2026-09-04T12:40:51.5795362Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 492.20\u00b5s"
+    },
+    {
+      "line": 45791,
+      "text": "2026-09-04T12:40:51.6057050Z test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.45ms"
+    },
+    {
+      "line": 45800,
+      "text": "2026-09-04T12:40:51.7010106Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 38.53ms"
+    },
+    {
+      "line": 45806,
+      "text": "2026-09-04T12:40:51.7230144Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 102.40\u00b5s"
+    },
+    {
+      "line": 45813,
+      "text": "2026-09-04T12:40:51.7450815Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 511.10\u00b5s"
+    },
+    {
+      "line": 45820,
+      "text": "2026-09-04T12:40:51.7685819Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 508.70\u00b5s"
+    },
+    {
+      "line": 45828,
+      "text": "2026-09-04T12:40:51.7924200Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.03ms"
+    },
+    {
+      "line": 46172,
+      "text": "2026-09-04T12:41:01.5060695Z test result: ok. 337 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 9.69s"
+    },
+    {
+      "line": 46183,
+      "text": "2026-09-04T12:41:01.6293217Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 101.13ms"
+    },
+    {
+      "line": 46202,
+      "text": "2026-09-04T12:41:01.6570754Z test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.17ms"
+    },
+    {
+      "line": 46222,
+      "text": "2026-09-04T12:41:02.0813611Z test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 401.96ms"
+    },
+    {
+      "line": 46229,
+      "text": "2026-09-04T12:41:02.1045038Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 472.30\u00b5s"
+    },
+    {
+      "line": 46236,
+      "text": "2026-09-04T12:41:02.1273382Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 456.10\u00b5s"
+    },
+    {
+      "line": 46243,
+      "text": "2026-09-04T12:41:02.1501428Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 868.60\u00b5s"
+    },
+    {
+      "line": 46250,
+      "text": "2026-09-04T12:41:02.1782332Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 609.60\u00b5s"
+    },
+    {
+      "line": 46260,
+      "text": "2026-09-04T12:41:02.2048642Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.39ms"
+    },
+    {
+      "line": 46292,
+      "text": "2026-09-04T12:41:02.2341877Z test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.31ms"
+    },
+    {
+      "line": 46298,
+      "text": "2026-09-04T12:41:02.2569053Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 103.70\u00b5s"
+    },
+    {
+      "line": 46306,
+      "text": "2026-09-04T12:41:02.2793245Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 617.40\u00b5s"
+    },
+    {
+      "line": 46313,
+      "text": "2026-09-04T12:41:02.3029169Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 502.60\u00b5s"
+    },
+    {
+      "line": 46319,
+      "text": "2026-09-04T12:41:02.3250385Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 101.70\u00b5s"
+    },
+    {
+      "line": 46383,
+      "text": "2026-09-04T12:41:02.5798842Z test result: ok. 57 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 233.16ms"
+    },
+    {
+      "line": 47135,
+      "text": "2026-09-04T12:41:23.6500589Z test result: ok. 743 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 6.96s"
+    },
+    {
+      "line": 47141,
+      "text": "2026-09-04T12:41:24.3752113Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.80ms"
+    },
+    {
+      "line": 47390,
+      "text": "2026-09-04T12:41:46.9069776Z test result: ok. 243 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 22.53s"
+    },
+    {
+      "line": 47397,
+      "text": "2026-09-04T12:41:46.9788225Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 63.30\u00b5s"
+    },
+    {
+      "line": 52055,
+      "text": "2026-09-04T12:43:26.6696395Z test result: ok. 4583 passed; 0 failed; 69 ignored; 0 measured; 0 filtered out; finished in 44.64s"
+    },
+    {
+      "line": 52120,
+      "text": "2026-09-04T12:43:28.5567221Z test result: ok. 60 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 596.15ms"
+    },
+    {
+      "line": 52126,
+      "text": "2026-09-04T12:43:29.1445381Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.80ms"
+    },
+    {
+      "line": 52133,
+      "text": "2026-09-04T12:43:29.8331146Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 32.10ms"
+    },
+    {
+      "line": 52139,
+      "text": "2026-09-04T12:43:30.4969415Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.81ms"
+    },
+    {
+      "line": 53677,
+      "text": "2026-09-04T12:45:33.0328794Z test result: ok. 1524 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 122.54s"
+    },
+    {
+      "line": 53684,
+      "text": "2026-09-04T12:45:33.1199613Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 61.40\u00b5s"
+    },
+    {
+      "line": 53690,
+      "text": "2026-09-04T12:45:33.1914744Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 62.80\u00b5s"
+    },
+    {
+      "line": 53696,
+      "text": "2026-09-04T12:45:33.2683858Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 62.20\u00b5s"
+    },
+    {
+      "line": 53704,
+      "text": "2026-09-04T12:45:33.9550561Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 222.60\u00b5s"
+    },
+    {
+      "line": 53710,
+      "text": "2026-09-04T12:45:34.2173920Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 258.11ms"
+    },
+    {
+      "line": 53717,
+      "text": "2026-09-04T12:45:34.2866277Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.10\u00b5s"
+    },
+    {
+      "line": 55167,
+      "text": "2026-09-04T12:47:23.3057260Z test result: ok. 1262 passed; 0 failed; 182 ignored; 0 measured; 0 filtered out; finished in 102.46s"
+    },
+    {
+      "line": 55174,
+      "text": "2026-09-04T12:47:23.4430726Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 51.60\u00b5s"
+    },
+    {
+      "line": 55180,
+      "text": "2026-09-04T12:47:23.5207974Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 63.30\u00b5s"
+    },
+    {
+      "line": 55186,
+      "text": "2026-09-04T12:47:23.7004944Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.90\u00b5s"
+    },
+    {
+      "line": 55192,
+      "text": "2026-09-04T12:47:23.7695597Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 60.70\u00b5s"
+    },
+    {
+      "line": 55194,
+      "text": "2026-09-04T12:47:23.7928972Z ##[endgroup]"
+    },
+    {
+      "line": 55195,
+      "text": "2026-09-04T12:47:23.7929311Z \tfinished in 658.037 seconds"
+    },
+    {
+      "line": 55283,
+      "text": "2026-09-04T12:47:23.7990173Z ##[group]Testing stage1 tidy (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 55570,
+      "text": "2026-09-04T12:48:23.7209887Z test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 890.98ms"
+    },
+    {
+      "line": 55578,
+      "text": "2026-09-04T12:48:24.4588632Z test result: ok. 1 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 22.69ms"
+    },
+    {
+      "line": 55581,
+      "text": "2026-09-04T12:48:24.4904509Z ##[endgroup]"
+    },
+    {
+      "line": 55582,
+      "text": "2026-09-04T12:48:24.4905043Z \tfinished in 60.694 seconds"
+    },
+    {
+      "line": 55592,
+      "text": "2026-09-04T12:48:24.4971370Z ##[group]Building stage2 error_index_generator (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 55872,
+      "text": "2026-09-04T12:49:57.3437131Z ##[endgroup]"
+    },
+    {
+      "line": 55875,
+      "text": "2026-09-04T12:49:57.3455721Z ##[group]Testing stage2 error-index (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 55876,
+      "text": "2026-09-04T12:49:57.3923457Z ##[endgroup]"
+    },
+    {
+      "line": 56996,
+      "text": "2026-09-04T12:50:47.5458097Z test result: ok. 1036 passed; 0 failed; 80 ignored; 0 measured; 0 filtered out; finished in 49.63s"
+    },
+    {
+      "line": 56998,
+      "text": "2026-09-04T12:50:47.5578678Z \tfinished in 50.214 seconds"
+    },
+    {
+      "line": 57005,
+      "text": "2026-09-04T12:50:47.5759371Z ##[group]Testing stage1 stdarch-verify (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 57061,
+      "text": "2026-09-04T12:51:21.2416953Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 51.47ms"
+    },
+    {
+      "line": 57068,
+      "text": "2026-09-04T12:51:21.2672841Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.37ms"
+    },
+    {
+      "line": 57075,
+      "text": "2026-09-04T12:51:21.3683189Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 78.15ms"
+    },
+    {
+      "line": 57081,
+      "text": "2026-09-04T12:51:21.4780844Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 58.00\u00b5s"
+    },
+    {
+      "line": 57083,
+      "text": "2026-09-04T12:51:21.5080601Z ##[endgroup]"
+    },
+    {
+      "line": 57084,
+      "text": "2026-09-04T12:51:21.5080935Z \tfinished in 33.933 seconds"
+    },
+    {
+      "line": 57090,
+      "text": "2026-09-04T12:51:21.5449528Z ##[group]Documenting stage2 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in HTML format (stage2 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 57141,
+      "text": "2026-09-04T12:54:31.3765468Z ##[endgroup]"
+    },
+    {
+      "line": 57144,
+      "text": "2026-09-04T12:54:31.3801240Z ##[group]Testing stage2 rustdoc-js-std (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 57212,
+      "text": "2026-09-04T12:55:17.9202228Z ##[endgroup]"
+    },
+    {
+      "line": 57216,
+      "text": "2026-09-04T12:55:17.9915236Z ##[group]Testing stage2 with compiletest suite=rustdoc-js mode=rustdoc-js (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 57299,
+      "text": "2026-09-04T12:55:43.5267830Z test result: ok. 79 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 25.19s"
+    },
+    {
+      "line": 57301,
+      "text": "2026-09-04T12:55:43.5307500Z ##[endgroup]"
+    },
+    {
+      "line": 57307,
+      "text": "2026-09-04T12:55:43.5835394Z ##[group]Testing stage2 with compiletest suite=rustdoc-ui mode=ui (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 57757,
+      "text": "2026-09-04T12:56:20.9142413Z test result: ok. 437 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 37.02s"
+    },
+    {
+      "line": 57759,
+      "text": "2026-09-04T12:56:20.9191603Z ##[endgroup]"
+    },
+    {
+      "line": 57766,
+      "text": "2026-09-04T12:56:20.9659756Z ##[group]Building stage1 jsondocck (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 57895,
+      "text": "2026-09-04T12:56:45.6459534Z ##[endgroup]"
+    },
+    {
+      "line": 57900,
+      "text": "2026-09-04T12:56:45.6483669Z ##[group]Building stage1 jsondoclint (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 57951,
+      "text": "2026-09-04T12:56:59.4389916Z ##[endgroup]"
+    },
+    {
+      "line": 57954,
+      "text": "2026-09-04T12:56:59.4401721Z ##[group]Testing stage2 with compiletest suite=rustdoc-json mode=rustdoc-json (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 58150,
+      "text": "2026-09-04T12:57:17.9762639Z test result: ok. 183 passed; 0 failed; 9 ignored; 0 measured; 2 filtered out; finished in 18.30s"
+    },
+    {
+      "line": 58152,
+      "text": "2026-09-04T12:57:17.9802113Z ##[endgroup]"
+    },
+    {
+      "line": 58161,
+      "text": "2026-09-04T12:57:18.0365052Z ##[group]Building stage1 run_make_support (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 58241,
+      "text": "2026-09-04T12:57:31.7249257Z ##[endgroup]"
+    },
+    {
+      "line": 58244,
+      "text": "2026-09-04T12:57:31.7288014Z ##[group]Testing stage2 with compiletest suite=run-make mode=run-make (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 58769,
+      "text": "2026-09-04T13:01:30.1791449Z test result: ok. 357 passed; 0 failed; 164 ignored; 0 measured; 6 filtered out; finished in 238.10s"
+    },
+    {
+      "line": 58771,
+      "text": "2026-09-04T13:01:30.1793758Z ##[endgroup]"
+    },
+    {
+      "line": 58778,
+      "text": "2026-09-04T13:01:30.2513436Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 59711,
+      "text": "2026-09-04T13:10:48.5064017Z ##[endgroup]"
+    },
+    {
+      "line": 59714,
+      "text": "2026-09-04T13:10:48.5095266Z ##[group]Testing stage2 with compiletest suite=run-make-cargo mode=run-make (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 59735,
+      "text": "2026-09-04T13:14:32.0164806Z test result: ok. 8 passed; 0 failed; 6 ignored; 0 measured; 1 filtered out; finished in 223.28s"
+    },
+    {
+      "line": 59737,
+      "text": "2026-09-04T13:14:32.0201523Z ##[endgroup]"
+    },
+    {
+      "line": 59743,
+      "text": "2026-09-04T13:14:32.2662436Z Build completed successfully in 2:03:20"
+    },
+    {
+      "line": 59744,
+      "text": "2026-09-04T13:14:32.4105205Z ##[group]sccache stats"
+    },
+    {
+      "line": 59747,
+      "text": "2026-09-04T13:14:32.5420852Z Cache hits                          3593"
+    },
+    {
+      "line": 59748,
+      "text": "2026-09-04T13:14:32.5421253Z Cache hits (c [msvc])                 22"
+    },
+    {
+      "line": 59749,
+      "text": "2026-09-04T13:14:32.5421573Z Cache hits (c++ [msvc])             3447"
+    },
+    {
+      "line": 59750,
+      "text": "2026-09-04T13:14:32.5422608Z Cache hits (rust)                    124"
+    },
+    {
+      "line": 59751,
+      "text": "2026-09-04T13:14:32.5423000Z Cache misses                          16"
+    },
+    {
+      "line": 59752,
+      "text": "2026-09-04T13:14:32.5423709Z Cache misses (rust)                   16"
+    },
+    {
+      "line": 59753,
+      "text": "2026-09-04T13:14:32.5424055Z Cache hits rate                    99.56 %"
+    },
+    {
+      "line": 59754,
+      "text": "2026-09-04T13:14:32.5424452Z Cache hits rate (c [msvc])        100.00 %"
+    },
+    {
+      "line": 59755,
+      "text": "2026-09-04T13:14:32.5425090Z Cache hits rate (c++ [msvc])      100.00 %"
+    },
+    {
+      "line": 59756,
+      "text": "2026-09-04T13:14:32.5425423Z Cache hits rate (rust)             88.57 %"
+    },
+    {
+      "line": 59780,
+      "text": "2026-09-04T13:14:32.5543961Z ##[endgroup]"
+    },
+    {
+      "line": 59781,
+      "text": "2026-09-04T13:14:32.5613650Z ##[group]Clock drift check"
+    },
+    {
+      "line": 59784,
+      "text": "2026-09-04T13:14:32.9564815Z ##[endgroup]"
+    },
+    {
+      "line": 59785,
+      "text": "2026-09-04T13:14:33.1559710Z ##[group]Run src/ci/scripts/create-doc-artifacts.sh"
+    },
+    {
+      "line": 59810,
+      "text": "2026-09-04T13:14:33.1734817Z ##[endgroup]"
+    },
+    {
+      "line": 59824,
+      "text": "2026-09-04T13:14:33.6542998Z ##[group]Run echo \"disk usage:\""
+    },
+    {
+      "line": 59851,
+      "text": "2026-09-04T13:14:33.6598001Z ##[endgroup]"
+    },
+    {
+      "line": 59855,
+      "text": "2026-09-04T13:14:33.8745472Z ##[group]Run actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
+    },
+    {
+      "line": 59888,
+      "text": "2026-09-04T13:14:33.8766618Z ##[endgroup]"
+    },
+    {
+      "line": 59890,
+      "text": "2026-09-04T13:14:34.5239247Z ##[group]Run src/ci/scripts/upload-artifacts.sh"
+    },
+    {
+      "line": 59918,
+      "text": "2026-09-04T13:14:34.5277341Z ##[endgroup]"
+    },
+    {
+      "line": 59931,
+      "text": "2026-09-04T13:14:42.7683086Z ##[group]Run if [ -f build/metrics.json ]; then"
+    },
+    {
+      "line": 59972,
+      "text": "2026-09-04T13:14:42.7740731Z ##[endgroup]"
+    },
+    {
+      "line": 60089,
+      "text": "2026-09-04T13:14:50.1840877Z ##[group]Run ./build/citool/debug/citool upload-build-metrics build/cpu-usage.csv"
+    },
+    {
+      "line": 60117,
+      "text": "2026-09-04T13:14:50.1904624Z ##[endgroup]"
+    }
+  ]
+}

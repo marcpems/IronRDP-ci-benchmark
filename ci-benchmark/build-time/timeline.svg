@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="425" viewBox="0 0 1200 425">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial,sans-serif" font-size="13" fill="#0f172a">
+<text x="16" y="24" font-size="19">Completed merge CI: selected job timeline</text>
+<text x="16" y="46">2026-09-04 run 33865610474 | actual starts; bars overlap; all 96 jobs in inventory</text>
+<path d="M330.00,65 V397" stroke="#e2e8f0"/>
+<text x="330.00" y="62">0m</text>
+<path d="M445.53,65 V397" stroke="#e2e8f0"/>
+<text x="445.53" y="62">30m</text>
+<path d="M561.05,65 V397" stroke="#e2e8f0"/>
+<text x="561.05" y="62">60m</text>
+<path d="M676.58,65 V397" stroke="#e2e8f0"/>
+<text x="676.58" y="62">90m</text>
+<path d="M792.11,65 V397" stroke="#e2e8f0"/>
+<text x="792.11" y="62">120m</text>
+<path d="M907.64,65 V397" stroke="#e2e8f0"/>
+<text x="907.64" y="62">150m</text>
+<path d="M1023.16,65 V397" stroke="#e2e8f0"/>
+<text x="1023.16" y="62">180m</text>
+<text x="16" y="92">Calculate job matrix</text>
+<rect x="330.321" y="78" width="3.723" height="20" fill="#2563eb"><title>Main build: 0.967 min</title></rect>
+<text x="339.043" y="92">1.0m</text>
+<text x="16" y="123">dist-aarch64-linux</text>
+<rect x="338.023" y="109" width="273.672" height="20" fill="#2563eb"><title>Main build: 71.067 min</title></rect>
+<text x="616.695" y="123">71.1m</text>
+<text x="16" y="154">dist-x86_64-linux</text>
+<rect x="338.408" y="140" width="402.998" height="20" fill="#2563eb"><title>Main build: 104.650 min</title></rect>
+<text x="746.406" y="154">104.7m</text>
+<text x="16" y="185">i686-msvc-1</text>
+<rect x="334.621" y="171" width="725.256" height="20" fill="#2563eb"><title>Main build: 188.333 min</title></rect>
+<text x="1064.877" y="185">188.3m</text>
+<text x="16" y="216">aarch64-msvc-2</text>
+<rect x="334.429" y="202" width="405.437" height="20" fill="#2563eb"><title>Main build: 105.283 min</title></rect>
+<text x="744.866" y="216">105.3m</text>
+<text x="16" y="247">x86_64-mingw-1</text>
+<rect x="334.429" y="233" width="714.281" height="20" fill="#2563eb"><title>Main build: 185.483 min</title></rect>
+<text x="1053.709" y="247">185.5m</text>
+<text x="16" y="278">dist-aarch64-msvc</text>
+<rect x="334.557" y="264" width="450.750" height="20" fill="#2563eb"><title>Main build: 117.050 min</title></rect>
+<text x="790.307" y="278">117.0m</text>
+<text x="16" y="309">dist-x86_64-msvc</text>
+<rect x="334.493" y="295" width="693.422" height="20" fill="#2563eb"><title>Main build: 180.067 min</title></rect>
+<text x="1032.914" y="309">180.1m</text>
+<text x="16" y="340">aarch64-msvc-1</text>
+<rect x="334.429" y="326" width="527.961" height="20" fill="#2563eb"><title>Main build: 137.100 min</title></rect>
+<text x="867.389" y="340">137.1m</text>
+<text x="16" y="371">publish toolstate</text>
+<rect x="1060.198" y="357" width="1.284" height="20" fill="#2563eb"><title>Main build: 0.333 min</title></rect>
+<text x="1066.481" y="371">0.3m</text>
+</g>
+</svg>

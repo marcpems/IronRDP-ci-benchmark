@@ -1,0 +1,2937 @@
+{
+  "job_id": 101163499284,
+  "name": "auto - aarch64-msvc-2",
+  "source": "https://api.github.com/repos/rust-lang/rust/actions/jobs/101163499284/logs",
+  "sha256": "4f0e5dcfa14e0488da06e0b9a7024b17a1c9549ac089d033c7f7b4f7140d163d",
+  "bytes": 3176188,
+  "events": [
+    {
+      "line": 2,
+      "text": "2026-09-04T20:24:58.7632588Z ##[group]Runner Image Provisioner"
+    },
+    {
+      "line": 4,
+      "text": "2026-09-04T20:24:58.7634130Z Version: 20260828.587"
+    },
+    {
+      "line": 9,
+      "text": "2026-09-04T20:24:58.7637727Z ##[endgroup]"
+    },
+    {
+      "line": 10,
+      "text": "2026-09-04T20:24:58.7639766Z ##[group]Operating System"
+    },
+    {
+      "line": 14,
+      "text": "2026-09-04T20:24:58.7642373Z ##[endgroup]"
+    },
+    {
+      "line": 15,
+      "text": "2026-09-04T20:24:58.7642961Z ##[group]Runner Image"
+    },
+    {
+      "line": 16,
+      "text": "2026-09-04T20:24:58.7643588Z Image: windows-11-arm64"
+    },
+    {
+      "line": 17,
+      "text": "2026-09-04T20:24:58.7644242Z Version: 20260830.155.1"
+    },
+    {
+      "line": 20,
+      "text": "2026-09-04T20:24:58.7648455Z ##[endgroup]"
+    },
+    {
+      "line": 21,
+      "text": "2026-09-04T20:24:58.7649700Z ##[group]GITHUB_TOKEN Permissions"
+    },
+    {
+      "line": 25,
+      "text": "2026-09-04T20:24:58.7653851Z ##[endgroup]"
+    },
+    {
+      "line": 33,
+      "text": "2026-09-04T20:24:59.9308454Z ##[group]Run git config --global core.autocrlf false"
+    },
+    {
+      "line": 49,
+      "text": "2026-09-04T20:24:59.9357158Z ##[endgroup]"
+    },
+    {
+      "line": 50,
+      "text": "2026-09-04T20:25:00.8637416Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "line": 79,
+      "text": "2026-09-04T20:25:00.8660111Z ##[endgroup]"
+    },
+    {
+      "line": 81,
+      "text": "2026-09-04T20:25:01.1093804Z ##[group]Getting Git version info"
+    },
+    {
+      "line": 85,
+      "text": "2026-09-04T20:25:01.2762799Z ##[endgroup]"
+    },
+    {
+      "line": 91,
+      "text": "2026-09-04T20:25:01.3359536Z ##[group]Determining repository object format"
+    },
+    {
+      "line": 92,
+      "text": "2026-09-04T20:25:01.3360692Z ##[endgroup]"
+    },
+    {
+      "line": 93,
+      "text": "2026-09-04T20:25:01.3361463Z ##[group]Initializing the repository"
+    },
+    {
+      "line": 97,
+      "text": "2026-09-04T20:25:01.5529414Z ##[endgroup]"
+    },
+    {
+      "line": 98,
+      "text": "2026-09-04T20:25:01.5530143Z ##[group]Disabling automatic garbage collection"
+    },
+    {
+      "line": 100,
+      "text": "2026-09-04T20:25:01.6063349Z ##[endgroup]"
+    },
+    {
+      "line": 101,
+      "text": "2026-09-04T20:25:01.6064068Z ##[group]Setting up auth"
+    },
+    {
+      "line": 116,
+      "text": "2026-09-04T20:25:06.1832281Z ##[endgroup]"
+    },
+    {
+      "line": 117,
+      "text": "2026-09-04T20:25:06.1832777Z ##[group]Fetching the repository"
+    },
+    {
+      "line": 125,
+      "text": "2026-09-04T20:25:09.0659156Z ##[endgroup]"
+    },
+    {
+      "line": 126,
+      "text": "2026-09-04T20:25:09.0659697Z ##[group]Determining the checkout info"
+    },
+    {
+      "line": 127,
+      "text": "2026-09-04T20:25:09.0660204Z ##[endgroup]"
+    },
+    {
+      "line": 130,
+      "text": "2026-09-04T20:25:09.1818076Z ##[group]Checking out the ref"
+    },
+    {
+      "line": 281,
+      "text": "2026-09-04T20:25:56.9150932Z ##[endgroup]"
+    },
+    {
+      "line": 284,
+      "text": "2026-09-04T20:25:57.0652571Z ##[group]Run echo \"disk usage:\""
+    },
+    {
+      "line": 301,
+      "text": "2026-09-04T20:25:57.0677333Z ##[endgroup]"
+    },
+    {
+      "line": 305,
+      "text": "2026-09-04T20:25:57.5342102Z ##[group]Run src/ci/scripts/setup-environment.sh"
+    },
+    {
+      "line": 330,
+      "text": "2026-09-04T20:25:57.5370641Z ##[endgroup]"
+    },
+    {
+      "line": 338,
+      "text": "2026-09-04T20:26:04.9956641Z ##[group]Run src/ci/scripts/verify-channel.sh"
+    },
+    {
+      "line": 361,
+      "text": "2026-09-04T20:26:04.9984588Z ##[endgroup]"
+    },
+    {
+      "line": 363,
+      "text": "2026-09-04T20:26:05.2587690Z ##[group]Run src/ci/scripts/collect-cpu-stats.sh"
+    },
+    {
+      "line": 386,
+      "text": "2026-09-04T20:26:05.2614620Z ##[endgroup]"
+    },
+    {
+      "line": 387,
+      "text": "2026-09-04T20:26:05.7277436Z ##[group]Run src/ci/scripts/dump-environment.sh"
+    },
+    {
+      "line": 410,
+      "text": "2026-09-04T20:26:05.7305001Z ##[endgroup]"
+    },
+    {
+      "line": 674,
+      "text": "2026-09-04T20:26:10.5302826Z ##[group]Run src/ci/scripts/install-awscli.sh"
+    },
+    {
+      "line": 697,
+      "text": "2026-09-04T20:26:10.5328808Z ##[endgroup]"
+    },
+    {
+      "line": 698,
+      "text": "2026-09-04T20:26:10.8061619Z ##[group]Run src/ci/scripts/install-sccache.sh"
+    },
+    {
+      "line": 721,
+      "text": "2026-09-04T20:26:10.8088006Z ##[endgroup]"
+    },
+    {
+      "line": 729,
+      "text": "2026-09-04T20:26:12.9749249Z ##[group]Run src/ci/scripts/install-clang.sh"
+    },
+    {
+      "line": 752,
+      "text": "2026-09-04T20:26:12.9778338Z ##[endgroup]"
+    },
+    {
+      "line": 784,
+      "text": "2026-09-04T20:26:43.7973362Z ##[group]Run src/ci/scripts/install-tidy.sh"
+    },
+    {
+      "line": 808,
+      "text": "2026-09-04T20:26:43.8000779Z ##[endgroup]"
+    },
+    {
+      "line": 809,
+      "text": "2026-09-04T20:26:44.0681747Z ##[group]Run src/ci/scripts/install-wix.sh"
+    },
+    {
+      "line": 833,
+      "text": "2026-09-04T20:26:44.0710600Z ##[endgroup]"
+    },
+    {
+      "line": 858,
+      "text": "2026-09-04T20:26:45.7809755Z ##[group]Run src/ci/scripts/disable-git-crlf-conversion.sh"
+    },
+    {
+      "line": 883,
+      "text": "2026-09-04T20:26:45.7836815Z ##[endgroup]"
+    },
+    {
+      "line": 884,
+      "text": "2026-09-04T20:26:46.0479714Z ##[group]Run src/ci/scripts/checkout-submodules.sh"
+    },
+    {
+      "line": 909,
+      "text": "2026-09-04T20:26:46.0507817Z ##[endgroup]"
+    },
+    {
+      "line": 1224,
+      "text": "2026-09-04T20:35:31.1687392Z ##[group]Run src/ci/scripts/install-mingw.sh"
+    },
+    {
+      "line": 1249,
+      "text": "2026-09-04T20:35:31.1728461Z ##[endgroup]"
+    },
+    {
+      "line": 1250,
+      "text": "2026-09-04T20:35:31.4581548Z ##[group]Run src/ci/scripts/install-ninja.sh"
+    },
+    {
+      "line": 1275,
+      "text": "2026-09-04T20:35:31.4624293Z ##[endgroup]"
+    },
+    {
+      "line": 1299,
+      "text": "2026-09-04T20:35:32.6084217Z ##[group]Run src/ci/scripts/enable-docker-ipv6.sh"
+    },
+    {
+      "line": 1324,
+      "text": "2026-09-04T20:35:32.6126140Z ##[endgroup]"
+    },
+    {
+      "line": 1325,
+      "text": "2026-09-04T20:35:32.9309736Z ##[group]Run src/ci/scripts/disable-git-crlf-conversion.sh"
+    },
+    {
+      "line": 1350,
+      "text": "2026-09-04T20:35:32.9350146Z ##[endgroup]"
+    },
+    {
+      "line": 1351,
+      "text": "2026-09-04T20:35:33.1941927Z ##[group]Run src/ci/scripts/verify-line-endings.sh"
+    },
+    {
+      "line": 1376,
+      "text": "2026-09-04T20:35:33.1983858Z ##[endgroup]"
+    },
+    {
+      "line": 1431,
+      "text": "2026-09-04T20:35:33.7410985Z ##[group]Run src/ci/scripts/verify-backported-commits.sh"
+    },
+    {
+      "line": 1456,
+      "text": "2026-09-04T20:35:33.7649440Z ##[endgroup]"
+    },
+    {
+      "line": 1458,
+      "text": "2026-09-04T20:35:34.0887984Z ##[group]Run src/ci/scripts/verify-stable-version-number.sh"
+    },
+    {
+      "line": 1483,
+      "text": "2026-09-04T20:35:34.0928892Z ##[endgroup]"
+    },
+    {
+      "line": 1485,
+      "text": "2026-09-04T20:35:34.3998938Z ##[group]Run src/ci/scripts/dump-environment.sh"
+    },
+    {
+      "line": 1510,
+      "text": "2026-09-04T20:35:34.4043152Z ##[endgroup]"
+    },
+    {
+      "line": 1776,
+      "text": "2026-09-04T20:36:59.7704081Z ##[group]Run cd src/ci/citool"
+    },
+    {
+      "line": 1802,
+      "text": "2026-09-04T20:36:59.7736767Z ##[endgroup]"
+    },
+    {
+      "line": 2001,
+      "text": "2026-09-04T20:37:51.4812056Z ##[group]Run set +e"
+    },
+    {
+      "line": 2040,
+      "text": "2026-09-04T20:37:51.4874002Z ##[endgroup]"
+    },
+    {
+      "line": 2047,
+      "text": "2026-09-04T20:37:54.1364459Z ##[group]Clock drift check"
+    },
+    {
+      "line": 2050,
+      "text": "2026-09-04T20:37:54.4568932Z ##[endgroup]"
+    },
+    {
+      "line": 2053,
+      "text": "2026-09-04T20:37:56.2676437Z ##[group]Configure the build"
+    },
+    {
+      "line": 2090,
+      "text": "2026-09-04T20:37:56.2698229Z ##[endgroup]"
+    },
+    {
+      "line": 2098,
+      "text": "2026-09-04T20:38:05.5884786Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 2277,
+      "text": "2026-09-04T20:39:19.2296568Z ##[endgroup]"
+    },
+    {
+      "line": 2278,
+      "text": "2026-09-04T20:39:20.7168339Z ##[group]Building LLVM for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 2279,
+      "text": "2026-09-04T20:39:20.7259504Z ##[endgroup]"
+    },
+    {
+      "line": 2280,
+      "text": "2026-09-04T20:39:21.4588094Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2281,
+      "text": "2026-09-04T20:39:21.4601257Z ##[endgroup]"
+    },
+    {
+      "line": 2283,
+      "text": "2026-09-04T20:39:21.4609851Z ##[group]Building stage1 codegen backend cranelift (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2284,
+      "text": "2026-09-04T20:39:21.4610804Z ##[endgroup]"
+    },
+    {
+      "line": 2285,
+      "text": "2026-09-04T20:39:21.4618247Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2286,
+      "text": "2026-09-04T20:39:21.4638411Z ##[endgroup]"
+    },
+    {
+      "line": 2287,
+      "text": "2026-09-04T20:39:21.4649834Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2288,
+      "text": "2026-09-04T20:39:21.4652221Z ##[endgroup]"
+    },
+    {
+      "line": 2289,
+      "text": "2026-09-04T20:39:21.4658402Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2290,
+      "text": "2026-09-04T20:39:21.4659508Z ##[endgroup]"
+    },
+    {
+      "line": 2291,
+      "text": "2026-09-04T20:39:21.4675298Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2292,
+      "text": "2026-09-04T20:39:21.4680552Z ##[endgroup]"
+    },
+    {
+      "line": 2293,
+      "text": "2026-09-04T20:39:21.4685550Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2294,
+      "text": "2026-09-04T20:39:21.4690084Z ##[endgroup]"
+    },
+    {
+      "line": 2296,
+      "text": "2026-09-04T20:39:21.4698038Z ##[group]Building stage2 codegen backend cranelift (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2297,
+      "text": "2026-09-04T20:39:21.4699005Z ##[endgroup]"
+    },
+    {
+      "line": 2298,
+      "text": "2026-09-04T20:39:21.4704931Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2299,
+      "text": "2026-09-04T20:39:21.4708202Z ##[endgroup]"
+    },
+    {
+      "line": 2300,
+      "text": "2026-09-04T20:39:21.4719216Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2301,
+      "text": "2026-09-04T20:39:21.4721752Z ##[endgroup]"
+    },
+    {
+      "line": 2302,
+      "text": "2026-09-04T20:39:21.4725834Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2303,
+      "text": "2026-09-04T20:39:21.4728357Z ##[endgroup]"
+    },
+    {
+      "line": 2305,
+      "text": "2026-09-04T20:39:21.4749711Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2306,
+      "text": "2026-09-04T20:39:21.4752998Z ##[endgroup]"
+    },
+    {
+      "line": 2307,
+      "text": "2026-09-04T20:39:21.4757991Z ##[group]Building stage2 rust-analyzer (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2308,
+      "text": "2026-09-04T20:39:21.4760089Z ##[endgroup]"
+    },
+    {
+      "line": 2309,
+      "text": "2026-09-04T20:39:21.4766202Z ##[group]Building stage2 rust-analyzer-proc-macro-srv (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2310,
+      "text": "2026-09-04T20:39:21.4768335Z ##[endgroup]"
+    },
+    {
+      "line": 2311,
+      "text": "2026-09-04T20:39:21.4776225Z ##[group]Building stage2 rustdoc_tool_binary (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2312,
+      "text": "2026-09-04T20:39:21.4779132Z ##[endgroup]"
+    },
+    {
+      "line": 2313,
+      "text": "2026-09-04T20:39:21.4785834Z ##[group]Building stage2 clippy-driver (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2314,
+      "text": "2026-09-04T20:39:21.4788440Z ##[endgroup]"
+    },
+    {
+      "line": 2315,
+      "text": "2026-09-04T20:39:21.4795824Z ##[group]Building stage2 cargo-clippy (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2316,
+      "text": "2026-09-04T20:39:21.4798107Z ##[endgroup]"
+    },
+    {
+      "line": 2317,
+      "text": "2026-09-04T20:39:21.4804275Z ##[group]Building stage2 rustfmt (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2318,
+      "text": "2026-09-04T20:39:21.4807327Z ##[endgroup]"
+    },
+    {
+      "line": 2319,
+      "text": "2026-09-04T20:39:21.4813098Z ##[group]Building stage2 cargo-fmt (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2320,
+      "text": "2026-09-04T20:39:21.4816448Z ##[endgroup]"
+    },
+    {
+      "line": 2321,
+      "text": "2026-09-04T20:39:21.4912652Z Build completed successfully in 0:01:25"
+    },
+    {
+      "line": 2322,
+      "text": "2026-09-04T20:39:21.5144506Z ##[group]Display CPU and Memory information"
+    },
+    {
+      "line": 2335,
+      "text": "2026-09-04T20:39:21.5802280Z cpu cores\t: 4"
+    },
+    {
+      "line": 2359,
+      "text": "2026-09-04T20:39:21.5814245Z cpu cores\t: 4"
+    },
+    {
+      "line": 2383,
+      "text": "2026-09-04T20:39:21.5827187Z cpu cores\t: 4"
+    },
+    {
+      "line": 2407,
+      "text": "2026-09-04T20:39:21.5839965Z cpu cores\t: 4"
+    },
+    {
+      "line": 2419,
+      "text": "2026-09-04T20:39:21.6385069Z MemTotal:       16767020 kB"
+    },
+    {
+      "line": 2427,
+      "text": "2026-09-04T20:39:21.7810358Z ##[endgroup]"
+    },
+    {
+      "line": 2430,
+      "text": "2026-09-04T20:39:24.8181480Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 2432,
+      "text": "2026-09-04T20:39:25.0126783Z ##[endgroup]"
+    },
+    {
+      "line": 2442,
+      "text": "2026-09-04T20:39:26.5405945Z ##[group]Building stage1 tidy (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2770,
+      "text": "2026-09-04T20:40:25.9325446Z ##[endgroup]"
+    },
+    {
+      "line": 3344,
+      "text": "2026-09-04T20:44:39.9328324Z test result: ok. 273 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 85.65s"
+    },
+    {
+      "line": 3346,
+      "text": "2026-09-04T20:44:39.9457848Z \tfinished in 149.245 seconds"
+    },
+    {
+      "line": 3367,
+      "text": "2026-09-04T20:44:39.9534008Z ##[group]Building LLVM for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 3380,
+      "text": "2026-09-04T20:44:40.0325618Z running: \"cmake\" \"C:\\\\a\\\\rust\\\\rust\\\\src/llvm-project/llvm\" \"-G\" \"Ninja\" \"-DLLVM_ENABLE_ASSERTIONS=ON\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=4\" \"-DLLVM_TARGET_ARCH=aarch64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-pc-windows-msvc\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_ENABLE_ZLIB=OFF\" \"-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.99.0-beta\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_CXX_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_ASM_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_C_FLAGS= -nologo -MT -Brepro -W0 --target=aarch64-pc-windows-msvc\" \"-DCMAKE_CXX_FLAGS= -nologo -MT -Brepro -W0 --target=aarch64-pc-windows-msvc\" \"-DCMAKE_AR=C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/HostARM64/arm64/lib.exe\" \"-DCMAKE_SHARED_LINKER_FLAGS=\" \"-DCMAKE_MODULE_LINKER_FLAGS=\" \"-DCMAKE_EXE_LINKER_FLAGS=\" \"-DLLVM_ENABLE_ZSTD=OFF\" \"-DCMAKE_INSTALL_PREFIX=C:\\\\a\\\\rust\\\\rust\\\\build\\\\aarch64-pc-windows-msvc\\\\llvm\" \"-DCMAKE_ASM_FLAGS= -nologo -MT -Brepro -W0\" \"-DCMAKE_BUILD_TYPE=Release\""
+    },
+    {
+      "line": 10533,
+      "text": "2026-09-04T20:56:27.2441362Z \tfinished in 707.306 seconds"
+    },
+    {
+      "line": 10534,
+      "text": "2026-09-04T20:56:27.2443504Z ##[endgroup]"
+    },
+    {
+      "line": 10539,
+      "text": "2026-09-04T20:56:27.3494064Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11145,
+      "text": "2026-09-04T21:09:27.0228383Z ##[endgroup]"
+    },
+    {
+      "line": 11149,
+      "text": "2026-09-04T21:09:27.0488760Z ##[group]Building stage1 codegen backend cranelift (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11239,
+      "text": "2026-09-04T21:11:35.3851334Z ##[endgroup]"
+    },
+    {
+      "line": 11243,
+      "text": "2026-09-04T21:11:35.3962170Z ##[group]Building LLD for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 11480,
+      "text": "2026-09-04T21:12:04.6954738Z \tfinished in 29.300 seconds"
+    },
+    {
+      "line": 11481,
+      "text": "2026-09-04T21:12:04.6956157Z ##[endgroup]"
+    },
+    {
+      "line": 11484,
+      "text": "2026-09-04T21:12:07.5361906Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11488,
+      "text": "2026-09-04T21:12:08.6846307Z ##[endgroup]"
+    },
+    {
+      "line": 11493,
+      "text": "2026-09-04T21:12:08.7015832Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11597,
+      "text": "2026-09-04T21:13:13.5998198Z ##[endgroup]"
+    },
+    {
+      "line": 11602,
+      "text": "2026-09-04T21:13:13.6065191Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11672,
+      "text": "2026-09-04T21:13:29.0011839Z ##[endgroup]"
+    },
+    {
+      "line": 11685,
+      "text": "2026-09-04T21:13:29.0386324Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11736,
+      "text": "2026-09-04T21:14:44.4684120Z ##[endgroup]"
+    },
+    {
+      "line": 11738,
+      "text": "2026-09-04T21:14:44.5213295Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12344,
+      "text": "2026-09-04T21:33:18.4492100Z ##[endgroup]"
+    },
+    {
+      "line": 12348,
+      "text": "2026-09-04T21:33:18.4546565Z ##[group]Building stage2 codegen backend cranelift (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12438,
+      "text": "2026-09-04T21:36:25.1860838Z ##[endgroup]"
+    },
+    {
+      "line": 12442,
+      "text": "2026-09-04T21:36:25.1891668Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12446,
+      "text": "2026-09-04T21:36:26.5559189Z ##[endgroup]"
+    },
+    {
+      "line": 12451,
+      "text": "2026-09-04T21:36:26.5649653Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12575,
+      "text": "2026-09-04T21:37:57.7176762Z ##[endgroup]"
+    },
+    {
+      "line": 12580,
+      "text": "2026-09-04T21:37:57.7204215Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12650,
+      "text": "2026-09-04T21:38:19.6987455Z ##[endgroup]"
+    },
+    {
+      "line": 12673,
+      "text": "2026-09-04T21:38:19.7174484Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12702,
+      "text": "2026-09-04T21:38:20.0973189Z ##[endgroup]"
+    },
+    {
+      "line": 12706,
+      "text": "2026-09-04T21:38:20.1023605Z ##[group]Building stage1 rustdoc_tool_binary (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12887,
+      "text": "2026-09-04T21:40:09.3217127Z ##[endgroup]"
+    },
+    {
+      "line": 12890,
+      "text": "2026-09-04T21:40:09.3378511Z ##[group]Testing stage2 {rustc-main, rustc_abi, rustc_arena, rustc_ast, rustc_ast_ir, rustc_ast_lowering, rustc_ast_passes, rustc_ast_pretty, rustc_attr_ir, rustc_attr_parsing, rustc_baked_icu_data, rustc_borrowck, rustc_builtin_macros, rustc_codegen_llvm, rustc_codegen_ssa, rustc_const_eval, rustc_crate_store, rustc_data_structures, rustc_driver, rustc_driver_impl, rustc_error_codes, rustc_error_messages, rustc_errors, rustc_expand, rustc_feature, rustc_fs_util, rustc_graphviz, rustc_hashes, rustc_hir, rustc_hir_analysis, rustc_hir_id, rustc_hir_pretty, rustc_hir_typeck, rustc_incremental, rustc_index, rustc_index_macros, rustc_infer, rustc_interface, rustc_lexer, rustc_lint, rustc_lint_defs, rustc_llvm, rustc_log, rustc_macros, rustc_metadata, rustc_middle, rustc_mir_build, rustc_mir_dataflow, rustc_mir_transform, rustc_monomorphize, rustc_next_trait_solver, rustc_parse, rustc_parse_format, rustc_passes, rustc_pattern_analysis, rustc_privacy, rustc_proc_macro, rustc_public, rustc_public_bridge, rustc_query_impl, rustc_resolve, rustc_sanitizers, rustc_serialize, rustc_session, rustc_span, rustc_symbol_mangling, rustc_target, rustc_thread_pool, rustc_trait_selection, rustc_traits, rustc_transmute, rustc_ty_utils, rustc_ty_walk, rustc_type_ir, rustc_type_ir_macros, rustc_windows_rc} (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13382,
+      "text": "2026-09-04T21:43:32.3377181Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 122.30\u00b5s"
+    },
+    {
+      "line": 13396,
+      "text": "2026-09-04T21:43:32.3595296Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.19ms"
+    },
+    {
+      "line": 13416,
+      "text": "2026-09-04T21:43:32.3920285Z test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.98ms"
+    },
+    {
+      "line": 13428,
+      "text": "2026-09-04T21:43:32.4163124Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.43ms"
+    },
+    {
+      "line": 13434,
+      "text": "2026-09-04T21:43:32.4416639Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 336.00\u00b5s"
+    },
+    {
+      "line": 13440,
+      "text": "2026-09-04T21:43:32.4679517Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 111.60\u00b5s"
+    },
+    {
+      "line": 13446,
+      "text": "2026-09-04T21:43:32.4892258Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 106.50\u00b5s"
+    },
+    {
+      "line": 13455,
+      "text": "2026-09-04T21:43:32.5127245Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23ms"
+    },
+    {
+      "line": 13461,
+      "text": "2026-09-04T21:43:32.5358871Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 111.80\u00b5s"
+    },
+    {
+      "line": 13467,
+      "text": "2026-09-04T21:43:32.5589118Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 112.70\u00b5s"
+    },
+    {
+      "line": 13473,
+      "text": "2026-09-04T21:43:32.5820958Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 107.90\u00b5s"
+    },
+    {
+      "line": 13479,
+      "text": "2026-09-04T21:43:32.6053121Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 113.50\u00b5s"
+    },
+    {
+      "line": 13493,
+      "text": "2026-09-04T21:43:32.6297874Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.40ms"
+    },
+    {
+      "line": 13506,
+      "text": "2026-09-04T21:43:32.6529357Z test result: ok. 3 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 711.40\u00b5s"
+    },
+    {
+      "line": 13512,
+      "text": "2026-09-04T21:43:32.6743676Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 108.40\u00b5s"
+    },
+    {
+      "line": 13518,
+      "text": "2026-09-04T21:43:32.6953151Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 109.60\u00b5s"
+    },
+    {
+      "line": 13642,
+      "text": "2026-09-04T21:43:47.9300505Z test result: ok. 118 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 15.21s"
+    },
+    {
+      "line": 13648,
+      "text": "2026-09-04T21:43:47.9645043Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 109.90\u00b5s"
+    },
+    {
+      "line": 13654,
+      "text": "2026-09-04T21:43:47.9964100Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 115.70\u00b5s"
+    },
+    {
+      "line": 13660,
+      "text": "2026-09-04T21:43:48.0209040Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 104.80\u00b5s"
+    },
+    {
+      "line": 13666,
+      "text": "2026-09-04T21:43:48.0426412Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 104.00\u00b5s"
+    },
+    {
+      "line": 13701,
+      "text": "2026-09-04T21:43:48.0720889Z test result: ok. 29 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.72ms"
+    },
+    {
+      "line": 13707,
+      "text": "2026-09-04T21:43:48.0943209Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 120.60\u00b5s"
+    },
+    {
+      "line": 13714,
+      "text": "2026-09-04T21:43:48.1160459Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 499.70\u00b5s"
+    },
+    {
+      "line": 13720,
+      "text": "2026-09-04T21:43:48.1379129Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 121.10\u00b5s"
+    },
+    {
+      "line": 13737,
+      "text": "2026-09-04T21:43:48.1614066Z test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.53ms"
+    },
+    {
+      "line": 13743,
+      "text": "2026-09-04T21:43:48.1833963Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 105.50\u00b5s"
+    },
+    {
+      "line": 13755,
+      "text": "2026-09-04T21:43:48.2060425Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 999.40\u00b5s"
+    },
+    {
+      "line": 13762,
+      "text": "2026-09-04T21:43:48.2283916Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 736.00\u00b5s"
+    },
+    {
+      "line": 13768,
+      "text": "2026-09-04T21:43:48.2501508Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 111.40\u00b5s"
+    },
+    {
+      "line": 13774,
+      "text": "2026-09-04T21:43:48.2720913Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 105.80\u00b5s"
+    },
+    {
+      "line": 13783,
+      "text": "2026-09-04T21:43:48.2947516Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 708.80\u00b5s"
+    },
+    {
+      "line": 13822,
+      "text": "2026-09-04T21:43:48.3890154Z test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 73.03ms"
+    },
+    {
+      "line": 13828,
+      "text": "2026-09-04T21:43:48.4120287Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 103.50\u00b5s"
+    },
+    {
+      "line": 13834,
+      "text": "2026-09-04T21:43:48.4333804Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 107.20\u00b5s"
+    },
+    {
+      "line": 13862,
+      "text": "2026-09-04T21:43:48.5212674Z test result: ok. 18 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 56.84ms"
+    },
+    {
+      "line": 13885,
+      "text": "2026-09-04T21:43:48.5495741Z test result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.18ms"
+    },
+    {
+      "line": 13896,
+      "text": "2026-09-04T21:43:48.5719235Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.21ms"
+    },
+    {
+      "line": 13902,
+      "text": "2026-09-04T21:43:48.5940165Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 135.70\u00b5s"
+    },
+    {
+      "line": 13908,
+      "text": "2026-09-04T21:43:48.6155622Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 111.10\u00b5s"
+    },
+    {
+      "line": 13914,
+      "text": "2026-09-04T21:43:48.6374330Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 116.80\u00b5s"
+    },
+    {
+      "line": 13924,
+      "text": "2026-09-04T21:43:48.8122353Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 153.06ms"
+    },
+    {
+      "line": 13930,
+      "text": "2026-09-04T21:43:48.8343824Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 106.30\u00b5s"
+    },
+    {
+      "line": 13945,
+      "text": "2026-09-04T21:43:48.8570205Z test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.31ms"
+    },
+    {
+      "line": 13951,
+      "text": "2026-09-04T21:43:48.8779444Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 109.10\u00b5s"
+    },
+    {
+      "line": 13959,
+      "text": "2026-09-04T21:43:48.9019021Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.51ms"
+    },
+    {
+      "line": 13969,
+      "text": "2026-09-04T21:43:48.9252753Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 979.30\u00b5s"
+    },
+    {
+      "line": 13975,
+      "text": "2026-09-04T21:43:48.9474363Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 108.40\u00b5s"
+    },
+    {
+      "line": 13981,
+      "text": "2026-09-04T21:43:48.9717620Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 108.50\u00b5s"
+    },
+    {
+      "line": 14050,
+      "text": "2026-09-04T21:43:49.0062410Z test result: ok. 63 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 14.07ms"
+    },
+    {
+      "line": 14084,
+      "text": "2026-09-04T21:43:49.0338250Z test result: ok. 28 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.12ms"
+    },
+    {
+      "line": 14090,
+      "text": "2026-09-04T21:43:49.0545743Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 105.80\u00b5s"
+    },
+    {
+      "line": 14096,
+      "text": "2026-09-04T21:43:49.0767166Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 108.70\u00b5s"
+    },
+    {
+      "line": 14104,
+      "text": "2026-09-04T21:43:49.1084284Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.79ms"
+    },
+    {
+      "line": 14114,
+      "text": "2026-09-04T21:43:49.1324245Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.74ms"
+    },
+    {
+      "line": 14122,
+      "text": "2026-09-04T21:43:49.1550794Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.22ms"
+    },
+    {
+      "line": 14128,
+      "text": "2026-09-04T21:43:49.1766716Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 117.40\u00b5s"
+    },
+    {
+      "line": 14144,
+      "text": "2026-09-04T21:43:49.1996627Z test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.43ms"
+    },
+    {
+      "line": 14150,
+      "text": "2026-09-04T21:43:49.2210805Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 111.20\u00b5s"
+    },
+    {
+      "line": 14156,
+      "text": "2026-09-04T21:43:49.2424818Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 131.40\u00b5s"
+    },
+    {
+      "line": 14164,
+      "text": "2026-09-04T21:43:49.2654485Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 741.80\u00b5s"
+    },
+    {
+      "line": 14170,
+      "text": "2026-09-04T21:43:49.2867441Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 123.70\u00b5s"
+    },
+    {
+      "line": 14210,
+      "text": "2026-09-04T21:43:49.3383367Z test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.80ms"
+    },
+    {
+      "line": 14221,
+      "text": "2026-09-04T21:43:49.3621249Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.20ms"
+    },
+    {
+      "line": 14269,
+      "text": "2026-09-04T21:43:49.5080768Z test result: ok. 42 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 125.30ms"
+    },
+    {
+      "line": 14275,
+      "text": "2026-09-04T21:43:49.5303686Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 124.40\u00b5s"
+    },
+    {
+      "line": 14617,
+      "text": "2026-09-04T21:43:49.6015602Z test result: ok. 336 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 47.94ms"
+    },
+    {
+      "line": 14724,
+      "text": "2026-09-04T21:43:52.3305243Z test result: ok. 75 passed; 0 failed; 26 ignored; 0 measured; 0 filtered out; finished in 2.71s"
+    },
+    {
+      "line": 14731,
+      "text": "2026-09-04T21:43:52.3536965Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 784.00\u00b5s"
+    },
+    {
+      "line": 14738,
+      "text": "2026-09-04T21:43:52.3749968Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 797.10\u00b5s"
+    },
+    {
+      "line": 14745,
+      "text": "2026-09-04T21:43:52.3969290Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26ms"
+    },
+    {
+      "line": 14754,
+      "text": "2026-09-04T21:43:52.4193278Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.58ms"
+    },
+    {
+      "line": 14761,
+      "text": "2026-09-04T21:43:52.4409101Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 956.50\u00b5s"
+    },
+    {
+      "line": 14770,
+      "text": "2026-09-04T21:43:52.4629028Z test result: ok. 0 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 215.20\u00b5s"
+    },
+    {
+      "line": 14776,
+      "text": "2026-09-04T21:43:52.4842422Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 106.40\u00b5s"
+    },
+    {
+      "line": 14782,
+      "text": "2026-09-04T21:43:52.5048708Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 106.10\u00b5s"
+    },
+    {
+      "line": 14814,
+      "text": "2026-09-04T21:43:52.7979901Z test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 271.93ms"
+    },
+    {
+      "line": 14820,
+      "text": "2026-09-04T21:43:52.8201398Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 103.70\u00b5s"
+    },
+    {
+      "line": 14826,
+      "text": "2026-09-04T21:43:52.8405641Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 103.90\u00b5s"
+    },
+    {
+      "line": 14832,
+      "text": "2026-09-04T21:43:52.8606755Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 104.10\u00b5s"
+    },
+    {
+      "line": 14838,
+      "text": "2026-09-04T21:43:52.8810206Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 100.70\u00b5s"
+    },
+    {
+      "line": 14844,
+      "text": "2026-09-04T21:43:52.9016014Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 106.10\u00b5s"
+    },
+    {
+      "line": 14852,
+      "text": "2026-09-04T21:43:54.5166227Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 30.86ms"
+    },
+    {
+      "line": 14859,
+      "text": "2026-09-04T21:43:54.6019456Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 80.30\u00b5s"
+    },
+    {
+      "line": 14875,
+      "text": "2026-09-04T21:43:56.2295436Z test result: ok. 4 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 49.84ms"
+    },
+    {
+      "line": 14883,
+      "text": "2026-09-04T21:43:56.2347796Z test result: ok. 0 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 990.90\u00b5s"
+    },
+    {
+      "line": 14890,
+      "text": "2026-09-04T21:43:56.3960587Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 56.50\u00b5s"
+    },
+    {
+      "line": 14897,
+      "text": "2026-09-04T21:43:57.2175523Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 213.00\u00b5s"
+    },
+    {
+      "line": 14918,
+      "text": "2026-09-04T21:43:58.0518710Z test result: ok. 2 passed; 0 failed; 12 ignored; 0 measured; 0 filtered out; finished in 32.18ms"
+    },
+    {
+      "line": 14933,
+      "text": "2026-09-04T21:43:59.3101110Z test result: ok. 2 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 31.89ms"
+    },
+    {
+      "line": 14940,
+      "text": "2026-09-04T21:43:59.3151737Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 684.70\u00b5s"
+    },
+    {
+      "line": 14948,
+      "text": "2026-09-04T21:44:00.6228196Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.74ms"
+    },
+    {
+      "line": 14956,
+      "text": "2026-09-04T21:44:01.1722673Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 233.90\u00b5s"
+    },
+    {
+      "line": 14972,
+      "text": "2026-09-04T21:44:03.2369920Z test result: ok. 5 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 62.04ms"
+    },
+    {
+      "line": 14984,
+      "text": "2026-09-04T21:44:03.4036320Z test result: ok. 5 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 161.81ms"
+    },
+    {
+      "line": 14994,
+      "text": "2026-09-04T21:44:04.8568975Z test result: ok. 1 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 21.64ms"
+    },
+    {
+      "line": 15000,
+      "text": "2026-09-04T21:44:04.8612080Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 364.40\u00b5s"
+    },
+    {
+      "line": 15008,
+      "text": "2026-09-04T21:44:05.9805282Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 229.89ms"
+    },
+    {
+      "line": 15019,
+      "text": "2026-09-04T21:44:08.0469357Z test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 51.30ms"
+    },
+    {
+      "line": 15026,
+      "text": "2026-09-04T21:44:08.3115660Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.20\u00b5s"
+    },
+    {
+      "line": 15038,
+      "text": "2026-09-04T21:44:09.6285843Z test result: ok. 5 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 62.00ms"
+    },
+    {
+      "line": 15045,
+      "text": "2026-09-04T21:44:09.9918758Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 48.70\u00b5s"
+    },
+    {
+      "line": 15051,
+      "text": "2026-09-04T21:44:10.0637700Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 61.60\u00b5s"
+    },
+    {
+      "line": 15057,
+      "text": "2026-09-04T21:44:10.2703399Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.50\u00b5s"
+    },
+    {
+      "line": 15067,
+      "text": "2026-09-04T21:44:11.2101669Z test result: ok. 0 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 283.70\u00b5s"
+    },
+    {
+      "line": 15074,
+      "text": "2026-09-04T21:44:11.4375050Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 49.30\u00b5s"
+    },
+    {
+      "line": 15080,
+      "text": "2026-09-04T21:44:11.5206624Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 68.10\u00b5s"
+    },
+    {
+      "line": 15089,
+      "text": "2026-09-04T21:44:12.1110637Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 818.60\u00b5s"
+    },
+    {
+      "line": 15097,
+      "text": "2026-09-04T21:44:12.6574316Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 542.09ms"
+    },
+    {
+      "line": 15104,
+      "text": "2026-09-04T21:44:12.7298782Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.90\u00b5s"
+    },
+    {
+      "line": 15118,
+      "text": "2026-09-04T21:44:13.9534894Z test result: ok. 4 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 50.25ms"
+    },
+    {
+      "line": 15126,
+      "text": "2026-09-04T21:44:13.9585285Z test result: ok. 0 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 967.70\u00b5s"
+    },
+    {
+      "line": 15133,
+      "text": "2026-09-04T21:44:14.1469764Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.90\u00b5s"
+    },
+    {
+      "line": 15139,
+      "text": "2026-09-04T21:44:14.4086808Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 75.80\u00b5s"
+    },
+    {
+      "line": 15173,
+      "text": "2026-09-04T21:44:16.7403924Z test result: ok. 11 passed; 0 failed; 17 ignored; 0 measured; 0 filtered out; finished in 101.51ms"
+    },
+    {
+      "line": 15179,
+      "text": "2026-09-04T21:44:17.3882730Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.93ms"
+    },
+    {
+      "line": 15195,
+      "text": "2026-09-04T21:44:17.6166799Z test result: ok. 7 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 224.25ms"
+    },
+    {
+      "line": 15203,
+      "text": "2026-09-04T21:44:18.4334865Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 258.30\u00b5s"
+    },
+    {
+      "line": 15211,
+      "text": "2026-09-04T21:44:18.6683190Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 89.74ms"
+    },
+    {
+      "line": 15217,
+      "text": "2026-09-04T21:44:18.8103453Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.20\u00b5s"
+    },
+    {
+      "line": 15223,
+      "text": "2026-09-04T21:44:19.1670976Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 82.90\u00b5s"
+    },
+    {
+      "line": 15229,
+      "text": "2026-09-04T21:44:19.2632315Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 56.20\u00b5s"
+    },
+    {
+      "line": 15309,
+      "text": "2026-09-04T21:44:21.9850407Z test result: ok. 66 passed; 0 failed; 8 ignored; 0 measured; 0 filtered out; finished in 620.05ms"
+    },
+    {
+      "line": 15317,
+      "text": "2026-09-04T21:44:22.6844702Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 31.40ms"
+    },
+    {
+      "line": 15325,
+      "text": "2026-09-04T21:44:23.4175400Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 41.19ms"
+    },
+    {
+      "line": 15377,
+      "text": "2026-09-04T21:44:26.1049768Z test result: ok. 46 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 2.68s"
+    },
+    {
+      "line": 15462,
+      "text": "2026-09-04T21:44:27.8832076Z test result: ok. 50 passed; 0 failed; 28 ignored; 0 measured; 0 filtered out; finished in 456.04ms"
+    },
+    {
+      "line": 15472,
+      "text": "2026-09-04T21:44:28.5780840Z test result: ok. 4 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 52.48ms"
+    },
+    {
+      "line": 15478,
+      "text": "2026-09-04T21:44:29.2035765Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.21ms"
+    },
+    {
+      "line": 15484,
+      "text": "2026-09-04T21:44:29.8172178Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.18ms"
+    },
+    {
+      "line": 15566,
+      "text": "2026-09-04T21:44:31.8499703Z test result: ok. 71 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 2.03s"
+    },
+    {
+      "line": 15573,
+      "text": "2026-09-04T21:44:31.9270018Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 58.50\u00b5s"
+    },
+    {
+      "line": 15580,
+      "text": "2026-09-04T21:44:32.8437950Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 21.18ms"
+    },
+    {
+      "line": 15595,
+      "text": "2026-09-04T21:44:33.7854122Z test result: ok. 2 passed; 0 failed; 6 ignored; 0 measured; 0 filtered out; finished in 30.46ms"
+    },
+    {
+      "line": 15602,
+      "text": "2026-09-04T21:44:33.7906952Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 738.90\u00b5s"
+    },
+    {
+      "line": 15610,
+      "text": "2026-09-04T21:44:35.0215139Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 22.29ms"
+    },
+    {
+      "line": 15616,
+      "text": "2026-09-04T21:44:35.0855119Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 59.53ms"
+    },
+    {
+      "line": 15704,
+      "text": "2026-09-04T21:44:40.0246849Z test result: ok. 42 passed; 0 failed; 39 ignored; 0 measured; 0 filtered out; finished in 378.89ms"
+    },
+    {
+      "line": 15735,
+      "text": "2026-09-04T21:44:40.6038657Z test result: ok. 13 passed; 0 failed; 13 ignored; 0 measured; 0 filtered out; finished in 574.77ms"
+    },
+    {
+      "line": 15768,
+      "text": "2026-09-04T21:44:42.3270877Z test result: ok. 11 passed; 0 failed; 15 ignored; 0 measured; 0 filtered out; finished in 134.42ms"
+    },
+    {
+      "line": 15776,
+      "text": "2026-09-04T21:44:42.5775851Z test result: ok. 1 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 245.25ms"
+    },
+    {
+      "line": 15788,
+      "text": "2026-09-04T21:44:43.6507702Z test result: ok. 3 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 39.98ms"
+    },
+    {
+      "line": 15820,
+      "text": "2026-09-04T21:44:45.8409088Z test result: ok. 9 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 98.44ms"
+    },
+    {
+      "line": 15832,
+      "text": "2026-09-04T21:44:45.8473959Z test result: ok. 0 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 2.01ms"
+    },
+    {
+      "line": 15843,
+      "text": "2026-09-04T21:44:46.8517990Z test result: ok. 2 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 30.61ms"
+    },
+    {
+      "line": 15858,
+      "text": "2026-09-04T21:44:48.0658524Z test result: ok. 1 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 21.83ms"
+    },
+    {
+      "line": 15866,
+      "text": "2026-09-04T21:44:48.0713125Z test result: ok. 0 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 912.90\u00b5s"
+    },
+    {
+      "line": 15878,
+      "text": "2026-09-04T21:44:49.5920841Z test result: ok. 1 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 20.73ms"
+    },
+    {
+      "line": 15891,
+      "text": "2026-09-04T21:44:49.6637354Z test result: ok. 1 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 67.62ms"
+    },
+    {
+      "line": 15898,
+      "text": "2026-09-04T21:44:49.7594679Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 49.90\u00b5s"
+    },
+    {
+      "line": 15905,
+      "text": "2026-09-04T21:44:50.8329852Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.78ms"
+    },
+    {
+      "line": 15922,
+      "text": "2026-09-04T21:44:51.9203993Z test result: ok. 7 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 78.77ms"
+    },
+    {
+      "line": 15939,
+      "text": "2026-09-04T21:44:52.3037945Z test result: ok. 11 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 378.89ms"
+    },
+    {
+      "line": 15946,
+      "text": "2026-09-04T21:44:52.5753791Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 55.20\u00b5s"
+    },
+    {
+      "line": 15958,
+      "text": "2026-09-04T21:44:53.8350782Z test result: ok. 1 passed; 0 failed; 5 ignored; 0 measured; 0 filtered out; finished in 21.06ms"
+    },
+    {
+      "line": 15964,
+      "text": "2026-09-04T21:44:53.8394190Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 385.20\u00b5s"
+    },
+    {
+      "line": 15971,
+      "text": "2026-09-04T21:44:54.0877794Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.20\u00b5s"
+    },
+    {
+      "line": 15977,
+      "text": "2026-09-04T21:44:56.4733656Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 48.90\u00b5s"
+    },
+    {
+      "line": 15993,
+      "text": "2026-09-04T21:44:57.9741107Z test result: ok. 3 passed; 0 failed; 7 ignored; 0 measured; 0 filtered out; finished in 40.64ms"
+    },
+    {
+      "line": 16006,
+      "text": "2026-09-04T21:44:58.3361165Z test result: ok. 6 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 357.58ms"
+    },
+    {
+      "line": 16013,
+      "text": "2026-09-04T21:44:58.6305892Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.00\u00b5s"
+    },
+    {
+      "line": 16019,
+      "text": "2026-09-04T21:44:58.7526142Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.90\u00b5s"
+    },
+    {
+      "line": 16026,
+      "text": "2026-09-04T21:44:59.8976512Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.98ms"
+    },
+    {
+      "line": 16036,
+      "text": "2026-09-04T21:45:00.8163123Z test result: ok. 0 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 238.70\u00b5s"
+    },
+    {
+      "line": 16043,
+      "text": "2026-09-04T21:45:01.0406823Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 220.74ms"
+    },
+    {
+      "line": 16050,
+      "text": "2026-09-04T21:45:01.3004593Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 58.00\u00b5s"
+    },
+    {
+      "line": 16056,
+      "text": "2026-09-04T21:45:02.5189215Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 62.20\u00b5s"
+    },
+    {
+      "line": 16089,
+      "text": "2026-09-04T21:45:06.5746785Z test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.88s"
+    },
+    {
+      "line": 16116,
+      "text": "2026-09-04T21:45:08.8658074Z test result: ok. 6 passed; 0 failed; 15 ignored; 0 measured; 0 filtered out; finished in 59.50ms"
+    },
+    {
+      "line": 16138,
+      "text": "2026-09-04T21:45:09.1057499Z test result: ok. 7 passed; 0 failed; 10 ignored; 0 measured; 0 filtered out; finished in 235.65ms"
+    },
+    {
+      "line": 16145,
+      "text": "2026-09-04T21:45:09.3584686Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.40\u00b5s"
+    },
+    {
+      "line": 16151,
+      "text": "2026-09-04T21:45:09.6387054Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 51.10\u00b5s"
+    },
+    {
+      "line": 16157,
+      "text": "2026-09-04T21:45:10.0334130Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 55.00\u00b5s"
+    },
+    {
+      "line": 16163,
+      "text": "2026-09-04T21:45:10.2600888Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 52.70\u00b5s"
+    },
+    {
+      "line": 16186,
+      "text": "2026-09-04T21:45:12.2147021Z test result: ok. 8 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 86.53ms"
+    },
+    {
+      "line": 16204,
+      "text": "2026-09-04T21:45:12.4689427Z test result: ok. 2 passed; 0 failed; 11 ignored; 0 measured; 0 filtered out; finished in 250.13ms"
+    },
+    {
+      "line": 16211,
+      "text": "2026-09-04T21:45:12.5728768Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 56.70\u00b5s"
+    },
+    {
+      "line": 16217,
+      "text": "2026-09-04T21:45:12.6464999Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.20\u00b5s"
+    },
+    {
+      "line": 16219,
+      "text": "2026-09-04T21:45:12.6718487Z ##[endgroup]"
+    },
+    {
+      "line": 16220,
+      "text": "2026-09-04T21:45:12.6718756Z \tfinished in 303.349 seconds"
+    },
+    {
+      "line": 16224,
+      "text": "2026-09-04T21:45:12.6825646Z ##[group]Testing stage2 rustdoc (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 16544,
+      "text": "2026-09-04T21:48:04.9128371Z test result: ok. 132 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 27.09ms"
+    },
+    {
+      "line": 16561,
+      "text": "2026-09-04T21:48:06.7543399Z test result: ok. 2 passed; 0 failed; 9 ignored; 0 measured; 0 filtered out; finished in 31.83ms"
+    },
+    {
+      "line": 16567,
+      "text": "2026-09-04T21:48:09.1157633Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.36s"
+    },
+    {
+      "line": 16570,
+      "text": "2026-09-04T21:48:09.1462622Z ##[endgroup]"
+    },
+    {
+      "line": 16571,
+      "text": "2026-09-04T21:48:09.1462996Z \tfinished in 176.472 seconds"
+    },
+    {
+      "line": 16574,
+      "text": "2026-09-04T21:48:09.1552523Z ##[group]Testing stage2 rustdoc-json-types (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 16645,
+      "text": "2026-09-04T21:48:44.9875077Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.10ms"
+    },
+    {
+      "line": 16683,
+      "text": "2026-09-04T21:48:47.2850294Z test result: ok. 27 passed; 0 failed; 5 ignored; 0 measured; 0 filtered out; finished in 297.87ms"
+    },
+    {
+      "line": 16692,
+      "text": "2026-09-04T21:48:47.2913588Z test result: ok. 0 passed; 0 failed; 4 ignored; 0 measured; 0 filtered out; finished in 1.23ms"
+    },
+    {
+      "line": 16695,
+      "text": "2026-09-04T21:48:47.3168773Z ##[endgroup]"
+    },
+    {
+      "line": 16696,
+      "text": "2026-09-04T21:48:47.3169133Z \tfinished in 38.163 seconds"
+    },
+    {
+      "line": 16700,
+      "text": "2026-09-04T21:48:47.3215164Z ##[group]Testing stage1 coverage-dump (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 16753,
+      "text": "2026-09-04T21:48:59.6434823Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.78ms"
+    },
+    {
+      "line": 16755,
+      "text": "2026-09-04T21:48:59.6577979Z ##[endgroup]"
+    },
+    {
+      "line": 16756,
+      "text": "2026-09-04T21:48:59.6578356Z \tfinished in 12.336 seconds"
+    },
+    {
+      "line": 16759,
+      "text": "2026-09-04T21:48:59.6596602Z ##[group]Testing stage1 jsondoclint (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 16826,
+      "text": "2026-09-04T21:49:13.8292330Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.77ms"
+    },
+    {
+      "line": 16828,
+      "text": "2026-09-04T21:49:13.8427648Z ##[endgroup]"
+    },
+    {
+      "line": 16829,
+      "text": "2026-09-04T21:49:13.8428011Z \tfinished in 14.183 seconds"
+    },
+    {
+      "line": 16832,
+      "text": "2026-09-04T21:49:13.8442073Z ##[group]Testing stage1 replace-version-placeholder (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 16961,
+      "text": "2026-09-04T21:49:15.6138357Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 81.60\u00b5s"
+    },
+    {
+      "line": 16963,
+      "text": "2026-09-04T21:49:15.6286279Z ##[endgroup]"
+    },
+    {
+      "line": 16964,
+      "text": "2026-09-04T21:49:15.6286794Z \tfinished in 1.784 seconds"
+    },
+    {
+      "line": 16967,
+      "text": "2026-09-04T21:49:15.6299682Z ##[group]Testing stage1 remote-test-client (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 16998,
+      "text": "2026-09-04T21:49:22.4438586Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 83.30\u00b5s"
+    },
+    {
+      "line": 17006,
+      "text": "2026-09-04T21:49:26.5301055Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.06s"
+    },
+    {
+      "line": 17008,
+      "text": "2026-09-04T21:49:26.5417208Z ##[endgroup]"
+    },
+    {
+      "line": 17009,
+      "text": "2026-09-04T21:49:26.5417792Z \tfinished in 10.912 seconds"
+    },
+    {
+      "line": 17013,
+      "text": "2026-09-04T21:49:26.5435654Z ##[group]Testing stage2 platform support check (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 17018,
+      "text": "2026-09-04T21:49:27.7888810Z ##[endgroup]"
+    },
+    {
+      "line": 17021,
+      "text": "2026-09-04T21:49:27.7936559Z ##[group]Testing stage2 rust-analyzer (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 17683,
+      "text": "2026-09-04T22:06:15.1721599Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.23ms"
+    },
+    {
+      "line": 17699,
+      "text": "2026-09-04T22:06:15.2127479Z test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.03ms"
+    },
+    {
+      "line": 17705,
+      "text": "2026-09-04T22:06:15.2405821Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 103.60\u00b5s"
+    },
+    {
+      "line": 17711,
+      "text": "2026-09-04T22:06:15.2744021Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 106.10\u00b5s"
+    },
+    {
+      "line": 18215,
+      "text": "2026-09-04T22:06:15.5569353Z test result: ok. 497 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 244.54ms"
+    },
+    {
+      "line": 18254,
+      "text": "2026-09-04T22:06:15.6055491Z test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.89ms"
+    },
+    {
+      "line": 19292,
+      "text": "2026-09-04T22:06:17.7878540Z test result: ok. 1029 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 2.14s"
+    },
+    {
+      "line": 20631,
+      "text": "2026-09-04T22:06:18.6442915Z test result: ok. 1333 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 811.05ms"
+    },
+    {
+      "line": 23446,
+      "text": "2026-09-04T22:06:20.5591967Z test result: ok. 2806 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 1.87s"
+    },
+    {
+      "line": 24199,
+      "text": "2026-09-04T22:06:21.2261726Z test result: ok. 747 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 620.02ms"
+    },
+    {
+      "line": 24401,
+      "text": "2026-09-04T22:06:21.3495820Z test result: ok. 196 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 79.31ms"
+    },
+    {
+      "line": 25117,
+      "text": "2026-09-04T22:06:21.8930619Z test result: ok. 709 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 500.45ms"
+    },
+    {
+      "line": 25200,
+      "text": "2026-09-04T22:06:21.9990585Z test result: ok. 77 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 62.03ms"
+    },
+    {
+      "line": 25210,
+      "text": "2026-09-04T22:06:22.0298167Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.17ms"
+    },
+    {
+      "line": 25216,
+      "text": "2026-09-04T22:06:22.0516601Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 110.10\u00b5s"
+    },
+    {
+      "line": 25238,
+      "text": "2026-09-04T22:06:22.3541902Z test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 281.37ms"
+    },
+    {
+      "line": 25256,
+      "text": "2026-09-04T22:06:25.7460231Z test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.36s"
+    },
+    {
+      "line": 25272,
+      "text": "2026-09-04T22:06:26.7938393Z test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.01s"
+    },
+    {
+      "line": 25278,
+      "text": "2026-09-04T22:06:26.8158201Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 105.00\u00b5s"
+    },
+    {
+      "line": 25291,
+      "text": "2026-09-04T22:06:26.8503272Z test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.85ms"
+    },
+    {
+      "line": 25620,
+      "text": "2026-09-04T22:06:27.0075208Z test result: ok. 323 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 121.08ms"
+    },
+    {
+      "line": 25626,
+      "text": "2026-09-04T22:06:27.0352155Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 107.50\u00b5s"
+    },
+    {
+      "line": 25634,
+      "text": "2026-09-04T22:06:27.0690659Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.56ms"
+    },
+    {
+      "line": 25661,
+      "text": "2026-09-04T22:06:27.2092697Z test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 102.65ms"
+    },
+    {
+      "line": 25667,
+      "text": "2026-09-04T22:06:27.2498727Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 134.20\u00b5s"
+    },
+    {
+      "line": 25673,
+      "text": "2026-09-04T22:06:27.2884483Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 100.50\u00b5s"
+    },
+    {
+      "line": 25691,
+      "text": "2026-09-04T22:06:27.3544114Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.11ms"
+    },
+    {
+      "line": 25709,
+      "text": "2026-09-04T22:06:27.4216171Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 29.10ms"
+    },
+    {
+      "line": 25715,
+      "text": "2026-09-04T22:06:27.4497136Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 114.50\u00b5s"
+    },
+    {
+      "line": 25721,
+      "text": "2026-09-04T22:06:27.4705510Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 104.20\u00b5s"
+    },
+    {
+      "line": 25747,
+      "text": "2026-09-04T22:06:27.8006331Z test result: ok. 20 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 298.01ms"
+    },
+    {
+      "line": 25842,
+      "text": "2026-09-04T22:06:27.8802769Z test result: ok. 89 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 40.05ms"
+    },
+    {
+      "line": 25848,
+      "text": "2026-09-04T22:06:27.9198275Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 109.00\u00b5s"
+    },
+    {
+      "line": 25896,
+      "text": "2026-09-04T22:06:27.9641130Z test result: ok. 40 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 5.19ms"
+    },
+    {
+      "line": 25903,
+      "text": "2026-09-04T22:06:27.9904595Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 478.20\u00b5s"
+    },
+    {
+      "line": 25934,
+      "text": "2026-09-04T22:06:28.0787984Z test result: ok. 25 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 68.09ms"
+    },
+    {
+      "line": 25940,
+      "text": "2026-09-04T22:06:28.1014448Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 96.40\u00b5s"
+    },
+    {
+      "line": 25955,
+      "text": "2026-09-04T22:06:28.1356807Z test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.47ms"
+    },
+    {
+      "line": 25967,
+      "text": "2026-09-04T22:06:28.1628280Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.02ms"
+    },
+    {
+      "line": 26028,
+      "text": "2026-09-04T22:06:28.5879390Z test result: ok. 55 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 393.22ms"
+    },
+    {
+      "line": 26043,
+      "text": "2026-09-04T22:06:28.6371775Z test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.20ms"
+    },
+    {
+      "line": 26049,
+      "text": "2026-09-04T22:06:28.6737319Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 102.80\u00b5s"
+    },
+    {
+      "line": 26061,
+      "text": "2026-09-04T22:06:28.7016002Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.97ms"
+    },
+    {
+      "line": 26067,
+      "text": "2026-09-04T22:06:28.7230634Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 109.00\u00b5s"
+    },
+    {
+      "line": 26073,
+      "text": "2026-09-04T22:06:28.7446697Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 109.90\u00b5s"
+    },
+    {
+      "line": 26080,
+      "text": "2026-09-04T22:06:28.7667541Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 497.40\u00b5s"
+    },
+    {
+      "line": 26087,
+      "text": "2026-09-04T22:06:28.7894481Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 516.40\u00b5s"
+    },
+    {
+      "line": 26101,
+      "text": "2026-09-04T22:06:28.8119627Z test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.19ms"
+    },
+    {
+      "line": 26107,
+      "text": "2026-09-04T22:06:28.8344969Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 108.30\u00b5s"
+    },
+    {
+      "line": 26113,
+      "text": "2026-09-04T22:06:28.8667371Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 116.90\u00b5s"
+    },
+    {
+      "line": 26120,
+      "text": "2026-09-04T22:06:28.8932267Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 536.30\u00b5s"
+    },
+    {
+      "line": 26126,
+      "text": "2026-09-04T22:06:28.9146568Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 111.40\u00b5s"
+    },
+    {
+      "line": 26142,
+      "text": "2026-09-04T22:06:28.9375021Z test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.06ms"
+    },
+    {
+      "line": 26148,
+      "text": "2026-09-04T22:06:28.9582934Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 103.50\u00b5s"
+    },
+    {
+      "line": 26154,
+      "text": "2026-09-04T22:06:29.0425754Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.10\u00b5s"
+    },
+    {
+      "line": 26174,
+      "text": "2026-09-04T22:06:30.1024978Z test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 144.32ms"
+    },
+    {
+      "line": 26181,
+      "text": "2026-09-04T22:06:30.2046966Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 53.80\u00b5s"
+    },
+    {
+      "line": 26187,
+      "text": "2026-09-04T22:06:30.5170993Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 54.90\u00b5s"
+    },
+    {
+      "line": 26197,
+      "text": "2026-09-04T22:06:36.0218998Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 33.09ms"
+    },
+    {
+      "line": 26204,
+      "text": "2026-09-04T22:06:36.1429216Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 63.90\u00b5s"
+    },
+    {
+      "line": 26210,
+      "text": "2026-09-04T22:06:36.2490531Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 58.90\u00b5s"
+    },
+    {
+      "line": 26216,
+      "text": "2026-09-04T22:06:36.5135977Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 50.80\u00b5s"
+    },
+    {
+      "line": 26222,
+      "text": "2026-09-04T22:06:36.7790652Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 55.10\u00b5s"
+    },
+    {
+      "line": 26240,
+      "text": "2026-09-04T22:06:37.7358706Z test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 139.35ms"
+    },
+    {
+      "line": 26247,
+      "text": "2026-09-04T22:06:37.8337103Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 55.70\u00b5s"
+    },
+    {
+      "line": 26249,
+      "text": "2026-09-04T22:06:37.8591675Z ##[endgroup]"
+    },
+    {
+      "line": 26250,
+      "text": "2026-09-04T22:06:37.8591948Z \tfinished in 1030.119 seconds"
+    },
+    {
+      "line": 26255,
+      "text": "2026-09-04T22:06:37.8695873Z ##[group]Building stage2 error_index_generator (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 26458,
+      "text": "2026-09-04T22:08:01.4471511Z ##[endgroup]"
+    },
+    {
+      "line": 26461,
+      "text": "2026-09-04T22:08:01.4482891Z ##[group]Testing stage2 error-index (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 26462,
+      "text": "2026-09-04T22:08:01.5011021Z ##[endgroup]"
+    },
+    {
+      "line": 26472,
+      "text": "2026-09-04T22:08:01.5337929Z ##[group]Building stage2 rustdoc_tool_binary (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 26575,
+      "text": "2026-09-04T22:08:03.6032730Z ##[endgroup]"
+    },
+    {
+      "line": 27697,
+      "text": "2026-09-04T22:08:54.8892584Z test result: ok. 1036 passed; 0 failed; 80 ignored; 0 measured; 0 filtered out; finished in 50.75s"
+    },
+    {
+      "line": 27699,
+      "text": "2026-09-04T22:08:54.9010636Z \tfinished in 53.455 seconds"
+    },
+    {
+      "line": 27703,
+      "text": "2026-09-04T22:08:54.9055815Z ##[group]Testing stage2 book rustdoc (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 27710,
+      "text": "2026-09-04T22:08:55.2082179Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 27716,
+      "text": "2026-09-04T22:08:55.4792321Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 27722,
+      "text": "2026-09-04T22:08:55.5895985Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s"
+    },
+    {
+      "line": 27742,
+      "text": "2026-09-04T22:08:56.9051368Z test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.26s"
+    },
+    {
+      "line": 27748,
+      "text": "2026-09-04T22:08:57.1859503Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 27755,
+      "text": "2026-09-04T22:08:57.2381306Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27793,
+      "text": "2026-09-04T22:08:57.8248964Z test result: ok. 7 passed; 0 failed; 26 ignored; 0 measured; 0 filtered out; finished in 0.52s"
+    },
+    {
+      "line": 27801,
+      "text": "2026-09-04T22:08:58.1774692Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s"
+    },
+    {
+      "line": 27837,
+      "text": "2026-09-04T22:09:00.2710556Z test result: ok. 31 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.03s"
+    },
+    {
+      "line": 27849,
+      "text": "2026-09-04T22:09:01.0557606Z test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.73s"
+    },
+    {
+      "line": 27868,
+      "text": "2026-09-04T22:09:01.3367146Z test result: ok. 1 passed; 0 failed; 13 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 27892,
+      "text": "2026-09-04T22:09:01.7474960Z test result: ok. 18 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.35s"
+    },
+    {
+      "line": 27898,
+      "text": "2026-09-04T22:09:02.0364395Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 27900,
+      "text": "2026-09-04T22:09:02.0477858Z \tfinished in 7.142 seconds"
+    },
+    {
+      "line": 27901,
+      "text": "2026-09-04T22:09:02.0479043Z ##[endgroup]"
+    },
+    {
+      "line": 27906,
+      "text": "2026-09-04T22:09:02.0499005Z ##[group]Testing stage2 book unstable-book (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 27910,
+      "text": "2026-09-04T22:09:02.1264615Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27916,
+      "text": "2026-09-04T22:09:02.4218071Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 27921,
+      "text": "2026-09-04T22:09:02.4718941Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27926,
+      "text": "2026-09-04T22:09:02.5205468Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27932,
+      "text": "2026-09-04T22:09:02.5715674Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27937,
+      "text": "2026-09-04T22:09:02.6207448Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27942,
+      "text": "2026-09-04T22:09:02.6698226Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27949,
+      "text": "2026-09-04T22:09:02.9780832Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s"
+    },
+    {
+      "line": 27955,
+      "text": "2026-09-04T22:09:03.0988963Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s"
+    },
+    {
+      "line": 27961,
+      "text": "2026-09-04T22:09:03.3792070Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 27966,
+      "text": "2026-09-04T22:09:03.4311338Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27972,
+      "text": "2026-09-04T22:09:03.7256712Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 27977,
+      "text": "2026-09-04T22:09:03.7747338Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27982,
+      "text": "2026-09-04T22:09:03.8242697Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27987,
+      "text": "2026-09-04T22:09:03.8768378Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 27994,
+      "text": "2026-09-04T22:09:04.0003896Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s"
+    },
+    {
+      "line": 27999,
+      "text": "2026-09-04T22:09:04.0507808Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28004,
+      "text": "2026-09-04T22:09:04.1000995Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28009,
+      "text": "2026-09-04T22:09:04.1504691Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28014,
+      "text": "2026-09-04T22:09:04.2014588Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28019,
+      "text": "2026-09-04T22:09:04.2524638Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28024,
+      "text": "2026-09-04T22:09:04.3001705Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28042,
+      "text": "2026-09-04T22:09:05.4158825Z test result: ok. 10 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 1.06s"
+    },
+    {
+      "line": 28047,
+      "text": "2026-09-04T22:09:05.4691055Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28052,
+      "text": "2026-09-04T22:09:05.5185013Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28058,
+      "text": "2026-09-04T22:09:05.7970581Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 28064,
+      "text": "2026-09-04T22:09:06.0871363Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28070,
+      "text": "2026-09-04T22:09:06.1389566Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28076,
+      "text": "2026-09-04T22:09:06.1890395Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28082,
+      "text": "2026-09-04T22:09:06.2395665Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28088,
+      "text": "2026-09-04T22:09:06.2897258Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28094,
+      "text": "2026-09-04T22:09:06.5820814Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28101,
+      "text": "2026-09-04T22:09:06.8914860Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s"
+    },
+    {
+      "line": 28110,
+      "text": "2026-09-04T22:09:07.2328636Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s"
+    },
+    {
+      "line": 28116,
+      "text": "2026-09-04T22:09:07.2859025Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28126,
+      "text": "2026-09-04T22:09:07.6525619Z test result: ok. 3 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.31s"
+    },
+    {
+      "line": 28132,
+      "text": "2026-09-04T22:09:07.9718325Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s"
+    },
+    {
+      "line": 28138,
+      "text": "2026-09-04T22:09:08.2506369Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28144,
+      "text": "2026-09-04T22:09:08.5300406Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28150,
+      "text": "2026-09-04T22:09:08.8037430Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 28156,
+      "text": "2026-09-04T22:09:09.0820129Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28162,
+      "text": "2026-09-04T22:09:09.1340868Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28173,
+      "text": "2026-09-04T22:09:09.7792957Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.59s"
+    },
+    {
+      "line": 28179,
+      "text": "2026-09-04T22:09:10.0546234Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 28185,
+      "text": "2026-09-04T22:09:10.3356687Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28193,
+      "text": "2026-09-04T22:09:10.7020478Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s"
+    },
+    {
+      "line": 28202,
+      "text": "2026-09-04T22:09:11.1579438Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.40s"
+    },
+    {
+      "line": 28210,
+      "text": "2026-09-04T22:09:11.4650068Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s"
+    },
+    {
+      "line": 28221,
+      "text": "2026-09-04T22:09:11.7896719Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s"
+    },
+    {
+      "line": 28227,
+      "text": "2026-09-04T22:09:11.8911472Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s"
+    },
+    {
+      "line": 28233,
+      "text": "2026-09-04T22:09:12.1809566Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28239,
+      "text": "2026-09-04T22:09:12.4563185Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 28245,
+      "text": "2026-09-04T22:09:12.5661352Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s"
+    },
+    {
+      "line": 28251,
+      "text": "2026-09-04T22:09:12.8370590Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 28257,
+      "text": "2026-09-04T22:09:12.8879142Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28263,
+      "text": "2026-09-04T22:09:13.2145539Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s"
+    },
+    {
+      "line": 28270,
+      "text": "2026-09-04T22:09:13.5016829Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28277,
+      "text": "2026-09-04T22:09:13.8043744Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s"
+    },
+    {
+      "line": 28283,
+      "text": "2026-09-04T22:09:14.1507547Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s"
+    },
+    {
+      "line": 28289,
+      "text": "2026-09-04T22:09:14.4272271Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28297,
+      "text": "2026-09-04T22:09:14.7579916Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s"
+    },
+    {
+      "line": 28303,
+      "text": "2026-09-04T22:09:14.8105092Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28309,
+      "text": "2026-09-04T22:09:14.9206007Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s"
+    },
+    {
+      "line": 28316,
+      "text": "2026-09-04T22:09:14.9721603Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28326,
+      "text": "2026-09-04T22:09:15.5683437Z test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s"
+    },
+    {
+      "line": 28333,
+      "text": "2026-09-04T22:09:15.8848809Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s"
+    },
+    {
+      "line": 28339,
+      "text": "2026-09-04T22:09:16.1680558Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28348,
+      "text": "2026-09-04T22:09:16.5273681Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s"
+    },
+    {
+      "line": 28354,
+      "text": "2026-09-04T22:09:16.8655332Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s"
+    },
+    {
+      "line": 28360,
+      "text": "2026-09-04T22:09:17.1396997Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 28366,
+      "text": "2026-09-04T22:09:17.4299133Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28372,
+      "text": "2026-09-04T22:09:17.7232920Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28378,
+      "text": "2026-09-04T22:09:18.0006814Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28384,
+      "text": "2026-09-04T22:09:18.2818731Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28390,
+      "text": "2026-09-04T22:09:18.5604270Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28397,
+      "text": "2026-09-04T22:09:18.8540402Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28403,
+      "text": "2026-09-04T22:09:18.9675045Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s"
+    },
+    {
+      "line": 28408,
+      "text": "2026-09-04T22:09:19.0183036Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28416,
+      "text": "2026-09-04T22:09:19.3702656Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s"
+    },
+    {
+      "line": 28422,
+      "text": "2026-09-04T22:09:19.6451995Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 28428,
+      "text": "2026-09-04T22:09:19.9635053Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s"
+    },
+    {
+      "line": 28436,
+      "text": "2026-09-04T22:09:20.3174611Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s"
+    },
+    {
+      "line": 28442,
+      "text": "2026-09-04T22:09:20.6370593Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s"
+    },
+    {
+      "line": 28451,
+      "text": "2026-09-04T22:09:21.0039374Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s"
+    },
+    {
+      "line": 28457,
+      "text": "2026-09-04T22:09:21.3226844Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s"
+    },
+    {
+      "line": 28463,
+      "text": "2026-09-04T22:09:21.5974371Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 28469,
+      "text": "2026-09-04T22:09:21.9204651Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s"
+    },
+    {
+      "line": 28475,
+      "text": "2026-09-04T22:09:22.2091760Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28484,
+      "text": "2026-09-04T22:09:22.5402217Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s"
+    },
+    {
+      "line": 28490,
+      "text": "2026-09-04T22:09:22.8207659Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28498,
+      "text": "2026-09-04T22:09:23.1594259Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.29s"
+    },
+    {
+      "line": 28504,
+      "text": "2026-09-04T22:09:23.4579608Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s"
+    },
+    {
+      "line": 28506,
+      "text": "2026-09-04T22:09:23.4695742Z \tfinished in 21.420 seconds"
+    },
+    {
+      "line": 28507,
+      "text": "2026-09-04T22:09:23.4696437Z ##[endgroup]"
+    },
+    {
+      "line": 28512,
+      "text": "2026-09-04T22:09:23.4718615Z ##[group]Testing stage2 book rustc (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 28517,
+      "text": "2026-09-04T22:09:23.5275630Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28525,
+      "text": "2026-09-04T22:09:23.8755181Z test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s"
+    },
+    {
+      "line": 28530,
+      "text": "2026-09-04T22:09:23.9271136Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28535,
+      "text": "2026-09-04T22:09:23.9770100Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28544,
+      "text": "2026-09-04T22:09:24.2969512Z test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.27s"
+    },
+    {
+      "line": 28549,
+      "text": "2026-09-04T22:09:24.3475979Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28554,
+      "text": "2026-09-04T22:09:24.4067311Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28559,
+      "text": "2026-09-04T22:09:24.4558706Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28564,
+      "text": "2026-09-04T22:09:24.5044949Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28569,
+      "text": "2026-09-04T22:09:24.5548425Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28574,
+      "text": "2026-09-04T22:09:24.6039697Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28591,
+      "text": "2026-09-04T22:09:25.4328979Z test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.77s"
+    },
+    {
+      "line": 28596,
+      "text": "2026-09-04T22:09:25.4843300Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28601,
+      "text": "2026-09-04T22:09:25.5347971Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28606,
+      "text": "2026-09-04T22:09:25.5844730Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28613,
+      "text": "2026-09-04T22:09:25.6379668Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28618,
+      "text": "2026-09-04T22:09:25.6872049Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28623,
+      "text": "2026-09-04T22:09:25.7360860Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28628,
+      "text": "2026-09-04T22:09:25.7866220Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28633,
+      "text": "2026-09-04T22:09:25.8354715Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28638,
+      "text": "2026-09-04T22:09:25.8864835Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28644,
+      "text": "2026-09-04T22:09:25.9395839Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28650,
+      "text": "2026-09-04T22:09:26.2190832Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s"
+    },
+    {
+      "line": 28656,
+      "text": "2026-09-04T22:09:26.5111600Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28661,
+      "text": "2026-09-04T22:09:26.5624422Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28666,
+      "text": "2026-09-04T22:09:26.6117130Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28671,
+      "text": "2026-09-04T22:09:26.6599485Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28676,
+      "text": "2026-09-04T22:09:26.7097462Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28681,
+      "text": "2026-09-04T22:09:26.7594081Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28686,
+      "text": "2026-09-04T22:09:26.8572915Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28691,
+      "text": "2026-09-04T22:09:26.8573936Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28696,
+      "text": "2026-09-04T22:09:26.9562037Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28701,
+      "text": "2026-09-04T22:09:26.9563579Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28706,
+      "text": "2026-09-04T22:09:27.0044755Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28711,
+      "text": "2026-09-04T22:09:27.0534879Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28716,
+      "text": "2026-09-04T22:09:27.1031291Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28721,
+      "text": "2026-09-04T22:09:27.1523079Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28726,
+      "text": "2026-09-04T22:09:27.2021566Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28731,
+      "text": "2026-09-04T22:09:27.2521343Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28736,
+      "text": "2026-09-04T22:09:27.3012282Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28741,
+      "text": "2026-09-04T22:09:27.3499341Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28746,
+      "text": "2026-09-04T22:09:27.4007146Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28751,
+      "text": "2026-09-04T22:09:27.4495565Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28756,
+      "text": "2026-09-04T22:09:27.4992007Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28763,
+      "text": "2026-09-04T22:09:27.8000974Z test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s"
+    },
+    {
+      "line": 28768,
+      "text": "2026-09-04T22:09:27.8519374Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28773,
+      "text": "2026-09-04T22:09:27.9025014Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28778,
+      "text": "2026-09-04T22:09:27.9528928Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28785,
+      "text": "2026-09-04T22:09:28.0051770Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28791,
+      "text": "2026-09-04T22:09:28.2944281Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 28796,
+      "text": "2026-09-04T22:09:28.3464406Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28801,
+      "text": "2026-09-04T22:09:28.3971101Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28806,
+      "text": "2026-09-04T22:09:28.4468802Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28811,
+      "text": "2026-09-04T22:09:28.4968828Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28816,
+      "text": "2026-09-04T22:09:28.5463687Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28821,
+      "text": "2026-09-04T22:09:28.5954713Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28826,
+      "text": "2026-09-04T22:09:28.6439988Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28831,
+      "text": "2026-09-04T22:09:28.6933035Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28836,
+      "text": "2026-09-04T22:09:28.7427269Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28841,
+      "text": "2026-09-04T22:09:28.7917698Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28846,
+      "text": "2026-09-04T22:09:28.8403533Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28851,
+      "text": "2026-09-04T22:09:28.8879149Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28856,
+      "text": "2026-09-04T22:09:28.9374939Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28861,
+      "text": "2026-09-04T22:09:28.9869181Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28866,
+      "text": "2026-09-04T22:09:29.0360766Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28871,
+      "text": "2026-09-04T22:09:29.0846859Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28876,
+      "text": "2026-09-04T22:09:29.1345900Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28881,
+      "text": "2026-09-04T22:09:29.1844610Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28886,
+      "text": "2026-09-04T22:09:29.2348075Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28891,
+      "text": "2026-09-04T22:09:29.2839926Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28896,
+      "text": "2026-09-04T22:09:29.3330123Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28901,
+      "text": "2026-09-04T22:09:29.3825693Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28906,
+      "text": "2026-09-04T22:09:29.4318675Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28911,
+      "text": "2026-09-04T22:09:29.4819623Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28916,
+      "text": "2026-09-04T22:09:29.5314526Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28921,
+      "text": "2026-09-04T22:09:29.5804994Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28926,
+      "text": "2026-09-04T22:09:29.6294890Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28931,
+      "text": "2026-09-04T22:09:29.6787716Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28936,
+      "text": "2026-09-04T22:09:29.7279137Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28941,
+      "text": "2026-09-04T22:09:29.7767955Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28946,
+      "text": "2026-09-04T22:09:29.8258486Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28952,
+      "text": "2026-09-04T22:09:29.8772945Z test result: ok. 0 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28957,
+      "text": "2026-09-04T22:09:29.9267502Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28962,
+      "text": "2026-09-04T22:09:29.9776167Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28967,
+      "text": "2026-09-04T22:09:30.0266837Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28975,
+      "text": "2026-09-04T22:09:30.0786834Z test result: ok. 0 passed; 0 failed; 3 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28980,
+      "text": "2026-09-04T22:09:30.1280188Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28985,
+      "text": "2026-09-04T22:09:30.1766819Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28990,
+      "text": "2026-09-04T22:09:30.2265139Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 28997,
+      "text": "2026-09-04T22:09:30.2792254Z test result: ok. 0 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29002,
+      "text": "2026-09-04T22:09:30.3295723Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29007,
+      "text": "2026-09-04T22:09:30.4265966Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29012,
+      "text": "2026-09-04T22:09:30.4266743Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29017,
+      "text": "2026-09-04T22:09:30.4759381Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29022,
+      "text": "2026-09-04T22:09:30.5243301Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29027,
+      "text": "2026-09-04T22:09:30.5725184Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29032,
+      "text": "2026-09-04T22:09:30.6210277Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29037,
+      "text": "2026-09-04T22:09:30.6696944Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29042,
+      "text": "2026-09-04T22:09:30.7200917Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29047,
+      "text": "2026-09-04T22:09:30.7711103Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29052,
+      "text": "2026-09-04T22:09:30.8215848Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29057,
+      "text": "2026-09-04T22:09:30.8711286Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29062,
+      "text": "2026-09-04T22:09:30.9198100Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29067,
+      "text": "2026-09-04T22:09:30.9695326Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29072,
+      "text": "2026-09-04T22:09:31.0180935Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29077,
+      "text": "2026-09-04T22:09:31.0670550Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29082,
+      "text": "2026-09-04T22:09:31.1163792Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29087,
+      "text": "2026-09-04T22:09:31.1652944Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29092,
+      "text": "2026-09-04T22:09:31.2150888Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29113,
+      "text": "2026-09-04T22:09:32.5229073Z test result: ok. 16 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.24s"
+    },
+    {
+      "line": 29118,
+      "text": "2026-09-04T22:09:32.5753026Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29123,
+      "text": "2026-09-04T22:09:32.6254599Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29128,
+      "text": "2026-09-04T22:09:32.6746521Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s"
+    },
+    {
+      "line": 29134,
+      "text": "2026-09-04T22:09:32.9463858Z test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.22s"
+    },
+    {
+      "line": 29142,
+      "text": "2026-09-04T22:09:33.2328346Z test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.24s"
+    },
+    {
+      "line": 29144,
+      "text": "2026-09-04T22:09:33.2444520Z \tfinished in 9.773 seconds"
+    },
+    {
+      "line": 29145,
+      "text": "2026-09-04T22:09:33.2446052Z ##[endgroup]"
+    },
+    {
+      "line": 29153,
+      "text": "2026-09-04T22:09:33.3184174Z ##[group]Building stage1 lint-docs (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 29180,
+      "text": "2026-09-04T22:09:36.9265488Z ##[endgroup]"
+    },
+    {
+      "line": 29183,
+      "text": "2026-09-04T22:09:36.9902744Z ##[group]Running stage2 lint-docs (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 29184,
+      "text": "2026-09-04T22:10:08.5557288Z ##[endgroup]"
+    },
+    {
+      "line": 29188,
+      "text": "2026-09-04T22:10:08.5588567Z ##[group]Building stage1 rustbook (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 29521,
+      "text": "2026-09-04T22:11:23.8274311Z ##[endgroup]"
+    },
+    {
+      "line": 29540,
+      "text": "2026-09-04T22:11:24.7394087Z ##[group]Building stage1 rustdoc-themes (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 29544,
+      "text": "2026-09-04T22:11:26.3060868Z ##[endgroup]"
+    },
+    {
+      "line": 29555,
+      "text": "2026-09-04T22:11:26.4369585Z ##[group]Testing stage1 rust-installer (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 29632,
+      "text": "2026-09-04T22:11:53.2287375Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 77.80\u00b5s"
+    },
+    {
+      "line": 29638,
+      "text": "2026-09-04T22:11:53.2537185Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 89.20\u00b5s"
+    },
+    {
+      "line": 29644,
+      "text": "2026-09-04T22:11:53.4871426Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 294.60\u00b5s"
+    },
+    {
+      "line": 29646,
+      "text": "2026-09-04T22:11:53.5107504Z \tfinished in 27.074 seconds"
+    },
+    {
+      "line": 29647,
+      "text": "2026-09-04T22:11:53.5108369Z ##[endgroup]"
+    },
+    {
+      "line": 29650,
+      "text": "2026-09-04T22:11:53.5137105Z ##[group]Testing stage3 test-float-parse (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 29732,
+      "text": "2026-09-04T22:12:39.1876500Z test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.34s"
+    },
+    {
+      "line": 29738,
+      "text": "2026-09-04T22:12:39.4530154Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 105.20\u00b5s"
+    },
+    {
+      "line": 29744,
+      "text": "2026-09-04T22:12:39.5777888Z test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 71.00\u00b5s"
+    },
+    {
+      "line": 29746,
+      "text": "2026-09-04T22:12:39.6005799Z ##[endgroup]"
+    },
+    {
+      "line": 29747,
+      "text": "2026-09-04T22:12:39.6006135Z \tfinished in 46.089 seconds"
+    },
+    {
+      "line": 29874,
+      "text": "2026-09-04T22:13:57.8695707Z Build completed successfully in 1:34:33"
+    },
+    {
+      "line": 29875,
+      "text": "2026-09-04T22:13:58.7660924Z ##[group]sccache stats"
+    },
+    {
+      "line": 29878,
+      "text": "2026-09-04T22:13:58.8857269Z Cache hits                          3660"
+    },
+    {
+      "line": 29879,
+      "text": "2026-09-04T22:13:58.8857638Z Cache hits (c [msvc])                 22"
+    },
+    {
+      "line": 29880,
+      "text": "2026-09-04T22:13:58.8857965Z Cache hits (c++ [msvc])             3447"
+    },
+    {
+      "line": 29881,
+      "text": "2026-09-04T22:13:58.8858308Z Cache hits (rust)                    191"
+    },
+    {
+      "line": 29882,
+      "text": "2026-09-04T22:13:58.8858634Z Cache misses                          54"
+    },
+    {
+      "line": 29883,
+      "text": "2026-09-04T22:13:58.8858995Z Cache misses (rust)                   54"
+    },
+    {
+      "line": 29884,
+      "text": "2026-09-04T22:13:58.8859372Z Cache hits rate                    98.55 %"
+    },
+    {
+      "line": 29885,
+      "text": "2026-09-04T22:13:58.8859705Z Cache hits rate (c [msvc])        100.00 %"
+    },
+    {
+      "line": 29886,
+      "text": "2026-09-04T22:13:58.8860026Z Cache hits rate (c++ [msvc])      100.00 %"
+    },
+    {
+      "line": 29887,
+      "text": "2026-09-04T22:13:58.8860381Z Cache hits rate (rust)             77.96 %"
+    },
+    {
+      "line": 29911,
+      "text": "2026-09-04T22:13:58.8931578Z ##[endgroup]"
+    },
+    {
+      "line": 29912,
+      "text": "2026-09-04T22:13:58.8983666Z ##[group]Clock drift check"
+    },
+    {
+      "line": 29915,
+      "text": "2026-09-04T22:13:59.2656812Z ##[endgroup]"
+    },
+    {
+      "line": 29916,
+      "text": "2026-09-04T22:13:59.3644393Z ##[group]Run src/ci/scripts/create-doc-artifacts.sh"
+    },
+    {
+      "line": 29941,
+      "text": "2026-09-04T22:13:59.3744922Z ##[endgroup]"
+    },
+    {
+      "line": 29955,
+      "text": "2026-09-04T22:13:59.8414609Z ##[group]Run echo \"disk usage:\""
+    },
+    {
+      "line": 29982,
+      "text": "2026-09-04T22:13:59.8449189Z ##[endgroup]"
+    },
+    {
+      "line": 29986,
+      "text": "2026-09-04T22:14:00.0526575Z ##[group]Run actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
+    },
+    {
+      "line": 30019,
+      "text": "2026-09-04T22:14:00.0541411Z ##[endgroup]"
+    },
+    {
+      "line": 30021,
+      "text": "2026-09-04T22:14:00.7867553Z ##[group]Run src/ci/scripts/upload-artifacts.sh"
+    },
+    {
+      "line": 30049,
+      "text": "2026-09-04T22:14:00.7901783Z ##[endgroup]"
+    },
+    {
+      "line": 30062,
+      "text": "2026-09-04T22:14:09.6531788Z ##[group]Run if [ -f build/metrics.json ]; then"
+    },
+    {
+      "line": 30103,
+      "text": "2026-09-04T22:14:09.6572245Z ##[endgroup]"
+    },
+    {
+      "line": 30190,
+      "text": "2026-09-04T22:14:11.0181707Z ##[group]Run ./build/citool/debug/citool upload-build-metrics build/cpu-usage.csv"
+    },
+    {
+      "line": 30218,
+      "text": "2026-09-04T22:14:11.0213887Z ##[endgroup]"
+    }
+  ]
+}

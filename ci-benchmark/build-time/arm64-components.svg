@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="208" viewBox="0 0 1200 208">
+<rect width="100%" height="100%" fill="white"/>
+<g font-family="Arial,sans-serif" font-size="13" fill="#0f172a">
+<text x="16" y="24" font-size="19">Arm64 main build: exclusive observed categories</text>
+<text x="16" y="46">Orange: LLVM | blue: rustc | cyan: libraries | purple: tools | green: docs | dark orange: package | pale: unknown</text>
+<path d="M330.00,65 V180" stroke="#e2e8f0"/>
+<text x="330.00" y="62">0m</text>
+<path d="M527.19,65 V180" stroke="#e2e8f0"/>
+<text x="527.19" y="62">30m</text>
+<path d="M724.39,65 V180" stroke="#e2e8f0"/>
+<text x="724.39" y="62">60m</text>
+<path d="M921.58,65 V180" stroke="#e2e8f0"/>
+<text x="921.58" y="62">90m</text>
+<path d="M1118.78,65 V180" stroke="#e2e8f0"/>
+<text x="1118.78" y="62">120m</text>
+<text x="16" y="92">33865610474</text>
+<rect x="330.000" y="78" width="36.339" height="20" fill="#d1d5db"><title>Unresolved build: 5.528 min</title></rect>
+<rect x="366.339" y="78" width="33.752" height="20" fill="#64748b"><title>Build support: 5.135 min</title></rect>
+<rect x="400.092" y="78" width="78.485" height="20" fill="#f59e0b"><title>LLVM/LLD: 11.940 min</title></rect>
+<rect x="478.576" y="78" width="139.617" height="20" fill="#2563eb"><title>Compiler: 21.241 min</title></rect>
+<rect x="618.194" y="78" width="162.403" height="20" fill="#8b5cf6"><title>Tools: 24.707 min</title></rect>
+<rect x="780.596" y="78" width="11.522" height="20" fill="#06b6d4"><title>Libraries: 1.753 min</title></rect>
+<rect x="792.118" y="78" width="60.944" height="20" fill="#22c55e"><title>Docs: 9.272 min</title></rect>
+<rect x="853.062" y="78" width="161.969" height="20" fill="#f97316"><title>Packaging: 24.641 min</title></rect>
+<text x="1020.031" y="92">104.2m</text>
+<text x="16" y="123">33916006473</text>
+<rect x="330.000" y="109" width="45.248" height="20" fill="#d1d5db"><title>Unresolved build: 6.884 min</title></rect>
+<rect x="375.248" y="109" width="41.389" height="20" fill="#64748b"><title>Build support: 6.297 min</title></rect>
+<rect x="416.636" y="109" width="79.626" height="20" fill="#f59e0b"><title>LLVM/LLD: 12.114 min</title></rect>
+<rect x="496.262" y="109" width="151.104" height="20" fill="#2563eb"><title>Compiler: 22.988 min</title></rect>
+<rect x="647.365" y="109" width="151.428" height="20" fill="#8b5cf6"><title>Tools: 23.037 min</title></rect>
+<rect x="798.793" y="109" width="10.711" height="20" fill="#06b6d4"><title>Libraries: 1.630 min</title></rect>
+<rect x="809.505" y="109" width="73.854" height="20" fill="#22c55e"><title>Docs: 11.236 min</title></rect>
+<rect x="883.358" y="109" width="173.412" height="20" fill="#f97316"><title>Packaging: 26.382 min</title></rect>
+<text x="1061.771" y="123">110.6m</text>
+<text x="16" y="154">33961251131</text>
+<rect x="330.000" y="140" width="38.374" height="20" fill="#d1d5db"><title>Unresolved build: 5.838 min</title></rect>
+<rect x="368.374" y="140" width="35.415" height="20" fill="#64748b"><title>Build support: 5.388 min</title></rect>
+<rect x="403.789" y="140" width="80.862" height="20" fill="#f59e0b"><title>LLVM/LLD: 12.302 min</title></rect>
+<rect x="484.651" y="140" width="145.037" height="20" fill="#2563eb"><title>Compiler: 22.065 min</title></rect>
+<rect x="629.688" y="140" width="179.402" height="20" fill="#8b5cf6"><title>Tools: 27.293 min</title></rect>
+<rect x="809.090" y="140" width="12.506" height="20" fill="#06b6d4"><title>Libraries: 1.903 min</title></rect>
+<rect x="821.595" y="140" width="65.776" height="20" fill="#22c55e"><title>Docs: 10.007 min</title></rect>
+<rect x="887.372" y="140" width="174.110" height="20" fill="#f97316"><title>Packaging: 26.488 min</title></rect>
+<text x="1066.481" y="154">111.3m</text>
+</g>
+</svg>

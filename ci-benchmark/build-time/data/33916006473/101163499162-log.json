@@ -1,0 +1,1177 @@
+{
+  "job_id": 101163499162,
+  "name": "auto - dist-aarch64-msvc",
+  "source": "https://api.github.com/repos/rust-lang/rust/actions/jobs/101163499162/logs",
+  "sha256": "8cb4713630b8836bdce566a4dcb680ed0652102c6418c0dc444b10edf6d8cba1",
+  "bytes": 2538630,
+  "events": [
+    {
+      "line": 2,
+      "text": "2026-09-04T20:24:57.3508779Z ##[group]Runner Image Provisioner"
+    },
+    {
+      "line": 4,
+      "text": "2026-09-04T20:24:57.3510586Z Version: 20260828.587"
+    },
+    {
+      "line": 9,
+      "text": "2026-09-04T20:24:57.3514477Z ##[endgroup]"
+    },
+    {
+      "line": 10,
+      "text": "2026-09-04T20:24:57.3516847Z ##[group]Operating System"
+    },
+    {
+      "line": 14,
+      "text": "2026-09-04T20:24:57.3519257Z ##[endgroup]"
+    },
+    {
+      "line": 15,
+      "text": "2026-09-04T20:24:57.3519841Z ##[group]Runner Image"
+    },
+    {
+      "line": 16,
+      "text": "2026-09-04T20:24:57.3520420Z Image: windows-11-arm64"
+    },
+    {
+      "line": 17,
+      "text": "2026-09-04T20:24:57.3521027Z Version: 20260830.155.1"
+    },
+    {
+      "line": 20,
+      "text": "2026-09-04T20:24:57.3526309Z ##[endgroup]"
+    },
+    {
+      "line": 21,
+      "text": "2026-09-04T20:24:57.3527594Z ##[group]GITHUB_TOKEN Permissions"
+    },
+    {
+      "line": 25,
+      "text": "2026-09-04T20:24:57.3532821Z ##[endgroup]"
+    },
+    {
+      "line": 33,
+      "text": "2026-09-04T20:24:58.6143947Z ##[group]Run git config --global core.autocrlf false"
+    },
+    {
+      "line": 49,
+      "text": "2026-09-04T20:24:58.6189233Z ##[endgroup]"
+    },
+    {
+      "line": 50,
+      "text": "2026-09-04T20:24:59.6951399Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
+    },
+    {
+      "line": 79,
+      "text": "2026-09-04T20:24:59.6995141Z ##[endgroup]"
+    },
+    {
+      "line": 81,
+      "text": "2026-09-04T20:24:59.9554781Z ##[group]Getting Git version info"
+    },
+    {
+      "line": 85,
+      "text": "2026-09-04T20:25:00.1408961Z ##[endgroup]"
+    },
+    {
+      "line": 91,
+      "text": "2026-09-04T20:25:00.2009060Z ##[group]Determining repository object format"
+    },
+    {
+      "line": 92,
+      "text": "2026-09-04T20:25:00.2010554Z ##[endgroup]"
+    },
+    {
+      "line": 93,
+      "text": "2026-09-04T20:25:00.2011288Z ##[group]Initializing the repository"
+    },
+    {
+      "line": 97,
+      "text": "2026-09-04T20:25:00.4554446Z ##[endgroup]"
+    },
+    {
+      "line": 98,
+      "text": "2026-09-04T20:25:00.4555454Z ##[group]Disabling automatic garbage collection"
+    },
+    {
+      "line": 100,
+      "text": "2026-09-04T20:25:00.5132442Z ##[endgroup]"
+    },
+    {
+      "line": 101,
+      "text": "2026-09-04T20:25:00.5133320Z ##[group]Setting up auth"
+    },
+    {
+      "line": 116,
+      "text": "2026-09-04T20:25:05.7457542Z ##[endgroup]"
+    },
+    {
+      "line": 117,
+      "text": "2026-09-04T20:25:05.7458110Z ##[group]Fetching the repository"
+    },
+    {
+      "line": 125,
+      "text": "2026-09-04T20:25:10.0546780Z ##[endgroup]"
+    },
+    {
+      "line": 126,
+      "text": "2026-09-04T20:25:10.0547417Z ##[group]Determining the checkout info"
+    },
+    {
+      "line": 127,
+      "text": "2026-09-04T20:25:10.0547934Z ##[endgroup]"
+    },
+    {
+      "line": 130,
+      "text": "2026-09-04T20:25:10.1812938Z ##[group]Checking out the ref"
+    },
+    {
+      "line": 320,
+      "text": "2026-09-04T20:26:39.8037665Z ##[endgroup]"
+    },
+    {
+      "line": 323,
+      "text": "2026-09-04T20:26:39.9624146Z ##[group]Run echo \"disk usage:\""
+    },
+    {
+      "line": 340,
+      "text": "2026-09-04T20:26:39.9654159Z ##[endgroup]"
+    },
+    {
+      "line": 344,
+      "text": "2026-09-04T20:26:40.4632672Z ##[group]Run src/ci/scripts/setup-environment.sh"
+    },
+    {
+      "line": 370,
+      "text": "2026-09-04T20:26:40.4663725Z ##[endgroup]"
+    },
+    {
+      "line": 380,
+      "text": "2026-09-04T20:26:51.7276051Z ##[group]Run src/ci/scripts/verify-channel.sh"
+    },
+    {
+      "line": 405,
+      "text": "2026-09-04T20:26:51.7307103Z ##[endgroup]"
+    },
+    {
+      "line": 407,
+      "text": "2026-09-04T20:26:52.0199531Z ##[group]Run src/ci/scripts/collect-cpu-stats.sh"
+    },
+    {
+      "line": 432,
+      "text": "2026-09-04T20:26:52.0232524Z ##[endgroup]"
+    },
+    {
+      "line": 433,
+      "text": "2026-09-04T20:26:52.3468797Z ##[group]Run src/ci/scripts/dump-environment.sh"
+    },
+    {
+      "line": 458,
+      "text": "2026-09-04T20:26:52.3718414Z ##[endgroup]"
+    },
+    {
+      "line": 724,
+      "text": "2026-09-04T20:26:59.5418294Z ##[group]Run src/ci/scripts/install-awscli.sh"
+    },
+    {
+      "line": 749,
+      "text": "2026-09-04T20:26:59.5448861Z ##[endgroup]"
+    },
+    {
+      "line": 750,
+      "text": "2026-09-04T20:27:00.8578510Z ##[group]Run src/ci/scripts/install-sccache.sh"
+    },
+    {
+      "line": 775,
+      "text": "2026-09-04T20:27:00.8607730Z ##[endgroup]"
+    },
+    {
+      "line": 783,
+      "text": "2026-09-04T20:27:02.3448352Z ##[group]Run src/ci/scripts/install-clang.sh"
+    },
+    {
+      "line": 808,
+      "text": "2026-09-04T20:27:02.3482080Z ##[endgroup]"
+    },
+    {
+      "line": 840,
+      "text": "2026-09-04T20:27:33.4792056Z ##[group]Run src/ci/scripts/install-tidy.sh"
+    },
+    {
+      "line": 866,
+      "text": "2026-09-04T20:27:33.4824836Z ##[endgroup]"
+    },
+    {
+      "line": 867,
+      "text": "2026-09-04T20:27:33.7709637Z ##[group]Run src/ci/scripts/install-wix.sh"
+    },
+    {
+      "line": 893,
+      "text": "2026-09-04T20:27:33.7743396Z ##[endgroup]"
+    },
+    {
+      "line": 918,
+      "text": "2026-09-04T20:27:35.6134302Z ##[group]Run src/ci/scripts/disable-git-crlf-conversion.sh"
+    },
+    {
+      "line": 945,
+      "text": "2026-09-04T20:27:35.6167113Z ##[endgroup]"
+    },
+    {
+      "line": 946,
+      "text": "2026-09-04T20:27:35.8919689Z ##[group]Run src/ci/scripts/checkout-submodules.sh"
+    },
+    {
+      "line": 973,
+      "text": "2026-09-04T20:27:35.8952267Z ##[endgroup]"
+    },
+    {
+      "line": 1288,
+      "text": "2026-09-04T20:38:31.9578013Z ##[group]Run src/ci/scripts/install-mingw.sh"
+    },
+    {
+      "line": 1315,
+      "text": "2026-09-04T20:38:31.9619694Z ##[endgroup]"
+    },
+    {
+      "line": 1316,
+      "text": "2026-09-04T20:38:32.2597905Z ##[group]Run src/ci/scripts/install-ninja.sh"
+    },
+    {
+      "line": 1343,
+      "text": "2026-09-04T20:38:32.2636673Z ##[endgroup]"
+    },
+    {
+      "line": 1367,
+      "text": "2026-09-04T20:38:33.2950222Z ##[group]Run src/ci/scripts/enable-docker-ipv6.sh"
+    },
+    {
+      "line": 1394,
+      "text": "2026-09-04T20:38:33.2999796Z ##[endgroup]"
+    },
+    {
+      "line": 1395,
+      "text": "2026-09-04T20:38:33.5920782Z ##[group]Run src/ci/scripts/disable-git-crlf-conversion.sh"
+    },
+    {
+      "line": 1422,
+      "text": "2026-09-04T20:38:33.5963951Z ##[endgroup]"
+    },
+    {
+      "line": 1423,
+      "text": "2026-09-04T20:38:33.8405649Z ##[group]Run src/ci/scripts/verify-line-endings.sh"
+    },
+    {
+      "line": 1450,
+      "text": "2026-09-04T20:38:34.5051018Z ##[endgroup]"
+    },
+    {
+      "line": 1505,
+      "text": "2026-09-04T20:38:35.0253244Z ##[group]Run src/ci/scripts/verify-backported-commits.sh"
+    },
+    {
+      "line": 1532,
+      "text": "2026-09-04T20:38:35.0296763Z ##[endgroup]"
+    },
+    {
+      "line": 1534,
+      "text": "2026-09-04T20:38:35.3376455Z ##[group]Run src/ci/scripts/verify-stable-version-number.sh"
+    },
+    {
+      "line": 1561,
+      "text": "2026-09-04T20:38:35.3411993Z ##[endgroup]"
+    },
+    {
+      "line": 1563,
+      "text": "2026-09-04T20:38:35.9061085Z ##[group]Run src/ci/scripts/dump-environment.sh"
+    },
+    {
+      "line": 1590,
+      "text": "2026-09-04T20:38:35.9095778Z ##[endgroup]"
+    },
+    {
+      "line": 1858,
+      "text": "2026-09-04T20:40:05.9895403Z ##[group]Run cd src/ci/citool"
+    },
+    {
+      "line": 1886,
+      "text": "2026-09-04T20:40:05.9929375Z ##[endgroup]"
+    },
+    {
+      "line": 2085,
+      "text": "2026-09-04T20:41:06.0814607Z ##[group]Run set +e"
+    },
+    {
+      "line": 2126,
+      "text": "2026-09-04T20:41:06.0855345Z ##[endgroup]"
+    },
+    {
+      "line": 2133,
+      "text": "2026-09-04T20:41:09.6940733Z ##[group]Clock drift check"
+    },
+    {
+      "line": 2136,
+      "text": "2026-09-04T20:41:09.9920154Z ##[endgroup]"
+    },
+    {
+      "line": 2139,
+      "text": "2026-09-04T20:41:12.1055719Z ##[group]Configure the build"
+    },
+    {
+      "line": 2176,
+      "text": "2026-09-04T20:41:12.1075605Z ##[endgroup]"
+    },
+    {
+      "line": 2184,
+      "text": "2026-09-04T20:41:21.4165454Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 2363,
+      "text": "2026-09-04T20:42:37.6277411Z ##[endgroup]"
+    },
+    {
+      "line": 2364,
+      "text": "2026-09-04T20:42:39.4016266Z ##[group]Building LLVM for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 2365,
+      "text": "2026-09-04T20:42:39.4112910Z ##[endgroup]"
+    },
+    {
+      "line": 2366,
+      "text": "2026-09-04T20:42:39.9527445Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2367,
+      "text": "2026-09-04T20:42:39.9538705Z ##[endgroup]"
+    },
+    {
+      "line": 2369,
+      "text": "2026-09-04T20:42:39.9551164Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2370,
+      "text": "2026-09-04T20:42:39.9583130Z ##[endgroup]"
+    },
+    {
+      "line": 2371,
+      "text": "2026-09-04T20:42:39.9596313Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2372,
+      "text": "2026-09-04T20:42:39.9599495Z ##[endgroup]"
+    },
+    {
+      "line": 2373,
+      "text": "2026-09-04T20:42:39.9605962Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2374,
+      "text": "2026-09-04T20:42:39.9608550Z ##[endgroup]"
+    },
+    {
+      "line": 2375,
+      "text": "2026-09-04T20:42:39.9627147Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2376,
+      "text": "2026-09-04T20:42:39.9631477Z ##[endgroup]"
+    },
+    {
+      "line": 2377,
+      "text": "2026-09-04T20:42:39.9637372Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2378,
+      "text": "2026-09-04T20:42:39.9641826Z ##[endgroup]"
+    },
+    {
+      "line": 2380,
+      "text": "2026-09-04T20:42:39.9649917Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2381,
+      "text": "2026-09-04T20:42:39.9653262Z ##[endgroup]"
+    },
+    {
+      "line": 2382,
+      "text": "2026-09-04T20:42:39.9664044Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2383,
+      "text": "2026-09-04T20:42:39.9666744Z ##[endgroup]"
+    },
+    {
+      "line": 2384,
+      "text": "2026-09-04T20:42:39.9671671Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2385,
+      "text": "2026-09-04T20:42:39.9674373Z ##[endgroup]"
+    },
+    {
+      "line": 2387,
+      "text": "2026-09-04T20:42:39.9732973Z ##[group]Building stage1 library artifacts (stage1:aarch64-pc-windows-msvc -> stage1:arm64ec-pc-windows-msvc)"
+    },
+    {
+      "line": 2388,
+      "text": "2026-09-04T20:42:39.9738525Z ##[endgroup]"
+    },
+    {
+      "line": 2390,
+      "text": "2026-09-04T20:42:39.9785481Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2391,
+      "text": "2026-09-04T20:42:39.9788313Z ##[endgroup]"
+    },
+    {
+      "line": 2392,
+      "text": "2026-09-04T20:42:39.9794084Z ##[group]Building stage2 rust-analyzer (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2393,
+      "text": "2026-09-04T20:42:39.9796971Z ##[endgroup]"
+    },
+    {
+      "line": 2394,
+      "text": "2026-09-04T20:42:39.9802887Z ##[group]Building stage2 rust-analyzer-proc-macro-srv (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2395,
+      "text": "2026-09-04T20:42:39.9805724Z ##[endgroup]"
+    },
+    {
+      "line": 2396,
+      "text": "2026-09-04T20:42:39.9814118Z ##[group]Building stage2 rustdoc_tool_binary (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2397,
+      "text": "2026-09-04T20:42:39.9816986Z ##[endgroup]"
+    },
+    {
+      "line": 2398,
+      "text": "2026-09-04T20:42:39.9824692Z ##[group]Building stage2 clippy-driver (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2399,
+      "text": "2026-09-04T20:42:39.9827317Z ##[endgroup]"
+    },
+    {
+      "line": 2400,
+      "text": "2026-09-04T20:42:39.9834544Z ##[group]Building stage2 cargo-clippy (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2401,
+      "text": "2026-09-04T20:42:39.9837460Z ##[endgroup]"
+    },
+    {
+      "line": 2402,
+      "text": "2026-09-04T20:42:39.9844435Z ##[group]Building stage2 rustfmt (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2403,
+      "text": "2026-09-04T20:42:39.9847041Z ##[endgroup]"
+    },
+    {
+      "line": 2404,
+      "text": "2026-09-04T20:42:39.9853937Z ##[group]Building stage2 cargo-fmt (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 2405,
+      "text": "2026-09-04T20:42:39.9856815Z ##[endgroup]"
+    },
+    {
+      "line": 2406,
+      "text": "2026-09-04T20:42:39.9969101Z Build completed successfully in 0:01:27"
+    },
+    {
+      "line": 2407,
+      "text": "2026-09-04T20:42:40.0164517Z ##[group]Display CPU and Memory information"
+    },
+    {
+      "line": 2420,
+      "text": "2026-09-04T20:42:40.0820900Z cpu cores\t: 4"
+    },
+    {
+      "line": 2444,
+      "text": "2026-09-04T20:42:40.0831620Z cpu cores\t: 4"
+    },
+    {
+      "line": 2468,
+      "text": "2026-09-04T20:42:40.0838673Z cpu cores\t: 4"
+    },
+    {
+      "line": 2492,
+      "text": "2026-09-04T20:42:40.0845116Z cpu cores\t: 4"
+    },
+    {
+      "line": 2504,
+      "text": "2026-09-04T20:42:40.1415577Z MemTotal:       16767020 kB"
+    },
+    {
+      "line": 2512,
+      "text": "2026-09-04T20:42:40.2951532Z ##[endgroup]"
+    },
+    {
+      "line": 2515,
+      "text": "2026-09-04T20:42:40.5441979Z ##[group]Building bootstrap"
+    },
+    {
+      "line": 2517,
+      "text": "2026-09-04T20:42:40.7433048Z ##[endgroup]"
+    },
+    {
+      "line": 2525,
+      "text": "2026-09-04T20:42:43.7029548Z ##[group]Building LLVM for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 2538,
+      "text": "2026-09-04T20:42:43.7802058Z running: \"cmake\" \"C:\\\\a\\\\rust\\\\rust\\\\src/llvm-project/llvm\" \"-G\" \"Ninja\" \"-DLLVM_ENABLE_ASSERTIONS=OFF\" \"-DLLVM_UNREACHABLE_OPTIMIZE=OFF\" \"-DLLVM_ENABLE_PLUGINS=OFF\" \"-DLLVM_TARGETS_TO_BUILD=AArch64;AMDGPU;ARM;BPF;Hexagon;LoongArch;MSP430;Mips;NVPTX;PowerPC;RISCV;Sparc;SystemZ;WebAssembly;X86\" \"-DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=AVR;M68k;CSKY;Xtensa\" \"-DLLVM_INCLUDE_EXAMPLES=OFF\" \"-DLLVM_INCLUDE_DOCS=OFF\" \"-DLLVM_INCLUDE_BENCHMARKS=OFF\" \"-DLLVM_INCLUDE_TESTS=OFF\" \"-DLLVM_ENABLE_LIBEDIT=OFF\" \"-DLLVM_ENABLE_BINDINGS=OFF\" \"-DLLVM_ENABLE_Z3_SOLVER=OFF\" \"-DLLVM_PARALLEL_COMPILE_JOBS=4\" \"-DLLVM_TARGET_ARCH=aarch64\" \"-DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-pc-windows-msvc\" \"-DLLVM_ENABLE_WARNINGS=OFF\" \"-DLLVM_INSTALL_UTILS=ON\" \"-DLLVM_ENABLE_ZLIB=OFF\" \"-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded\" \"-DLLVM_ENABLE_LIBXML2=OFF\" \"-DLLVM_VERSION_SUFFIX=-rust-1.99.0-beta\" \"-DCMAKE_INSTALL_MESSAGE=LAZY\" \"-DCMAKE_C_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_CXX_COMPILER_LAUNCHER=sccache\" \"-DCMAKE_C_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_CXX_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_ASM_COMPILER=C:/a/rust/rust/citools/clang-rust/bin/clang-cl.exe\" \"-DCMAKE_C_FLAGS= -nologo -MT -Brepro -W0 --target=aarch64-pc-windows-msvc\" \"-DCMAKE_CXX_FLAGS= -nologo -MT -Brepro -W0 --target=aarch64-pc-windows-msvc\" \"-DCMAKE_AR=C:/Program Files/Microsoft Visual Studio/2022/Enterprise/VC/Tools/MSVC/14.44.35207/bin/HostARM64/arm64/lib.exe\" \"-DCMAKE_SHARED_LINKER_FLAGS=\" \"-DCMAKE_MODULE_LINKER_FLAGS=\" \"-DCMAKE_EXE_LINKER_FLAGS=\" \"-DLLVM_ENABLE_ZSTD=OFF\" \"-DCMAKE_INSTALL_PREFIX=C:\\\\a\\\\rust\\\\rust\\\\build\\\\aarch64-pc-windows-msvc\\\\llvm\" \"-DCMAKE_ASM_FLAGS= -nologo -MT -Brepro -W0\" \"-DCMAKE_BUILD_TYPE=Release\""
+    },
+    {
+      "line": 9689,
+      "text": "2026-09-04T20:54:24.9759150Z \tfinished in 701.291 seconds"
+    },
+    {
+      "line": 9690,
+      "text": "2026-09-04T20:54:24.9764170Z ##[endgroup]"
+    },
+    {
+      "line": 9701,
+      "text": "2026-09-04T20:54:25.0909195Z ##[group]Building stage1 compiler artifacts (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10497,
+      "text": "2026-09-04T21:05:58.8336114Z ##[endgroup]"
+    },
+    {
+      "line": 10502,
+      "text": "2026-09-04T21:05:58.8490796Z ##[group]Building LLD for aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 10737,
+      "text": "2026-09-04T21:06:24.3919511Z \tfinished in 25.543 seconds"
+    },
+    {
+      "line": 10738,
+      "text": "2026-09-04T21:06:24.3920276Z ##[endgroup]"
+    },
+    {
+      "line": 10741,
+      "text": "2026-09-04T21:06:24.3953128Z ##[group]Building stage1 lld-wrapper (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10745,
+      "text": "2026-09-04T21:06:27.7512570Z ##[endgroup]"
+    },
+    {
+      "line": 10750,
+      "text": "2026-09-04T21:06:27.7667983Z ##[group]Building stage1 wasm-component-ld (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10897,
+      "text": "2026-09-04T21:07:33.6699162Z ##[endgroup]"
+    },
+    {
+      "line": 10902,
+      "text": "2026-09-04T21:07:33.6774553Z ##[group]Building stage1 llvm-bitcode-linker (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 10975,
+      "text": "2026-09-04T21:07:48.8355216Z ##[endgroup]"
+    },
+    {
+      "line": 10982,
+      "text": "2026-09-04T21:07:48.8569326Z ##[group]Building stage1 library artifacts (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11040,
+      "text": "2026-09-04T21:08:39.4761473Z ##[endgroup]"
+    },
+    {
+      "line": 11047,
+      "text": "2026-09-04T21:08:39.5038436Z ##[group]Building stage1 unstable-book-gen (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11291,
+      "text": "2026-09-04T21:09:32.3147396Z ##[endgroup]"
+    },
+    {
+      "line": 11298,
+      "text": "2026-09-04T21:09:33.9164028Z ##[group]Building stage1 rustbook (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11726,
+      "text": "2026-09-04T21:10:54.2577324Z ##[endgroup]"
+    },
+    {
+      "line": 11741,
+      "text": "2026-09-04T21:10:58.1836782Z ##[group]Building stage1 library artifacts (stage1:aarch64-pc-windows-msvc -> stage1:arm64ec-pc-windows-msvc)"
+    },
+    {
+      "line": 11793,
+      "text": "2026-09-04T21:11:45.3380640Z ##[endgroup]"
+    },
+    {
+      "line": 11835,
+      "text": "2026-09-04T21:11:52.5071145Z ##[group]Documenting stage2 book redirect pages (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 11838,
+      "text": "2026-09-04T21:11:52.5254156Z ##[endgroup]"
+    },
+    {
+      "line": 11839,
+      "text": "2026-09-04T21:11:52.5256084Z ##[group]Building stage1 rustdoc_tool_binary (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12039,
+      "text": "2026-09-04T21:13:39.2531439Z ##[endgroup]"
+    },
+    {
+      "line": 12040,
+      "text": "2026-09-04T21:13:39.2538516Z ##[group]Documenting stage2 book redirect pages (stage1 -> stage2, aarch64-pc-windows-msvc) (continued)"
+    },
+    {
+      "line": 12043,
+      "text": "2026-09-04T21:13:42.6724402Z ##[endgroup]"
+    },
+    {
+      "line": 12073,
+      "text": "2026-09-04T21:13:44.2415412Z ##[group]Documenting stage2 book redirect pages (stage1:aarch64-pc-windows-msvc -> stage2:arm64ec-pc-windows-msvc)"
+    },
+    {
+      "line": 12074,
+      "text": "2026-09-04T21:13:47.5110095Z ##[endgroup]"
+    },
+    {
+      "line": 12077,
+      "text": "2026-09-04T21:13:47.5141418Z ##[group]Documenting stage2 standalone (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12078,
+      "text": "2026-09-04T21:13:48.7888596Z ##[endgroup]"
+    },
+    {
+      "line": 12081,
+      "text": "2026-09-04T21:13:48.7902880Z ##[group]Documenting stage2 standalone (stage1:aarch64-pc-windows-msvc -> stage2:arm64ec-pc-windows-msvc)"
+    },
+    {
+      "line": 12082,
+      "text": "2026-09-04T21:13:50.0622120Z ##[endgroup]"
+    },
+    {
+      "line": 12085,
+      "text": "2026-09-04T21:13:50.0755849Z ##[group]Documenting stage1 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, profiler_builtins, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in HTML format (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12133,
+      "text": "2026-09-04T21:16:54.8372340Z ##[endgroup]"
+    },
+    {
+      "line": 12137,
+      "text": "2026-09-04T21:16:54.8410730Z ##[group]Documenting stage1 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, profiler_builtins, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in HTML format (stage1:aarch64-pc-windows-msvc -> stage1:arm64ec-pc-windows-msvc)"
+    },
+    {
+      "line": 12185,
+      "text": "2026-09-04T21:19:53.6831971Z ##[endgroup]"
+    },
+    {
+      "line": 12194,
+      "text": "2026-09-04T21:19:53.6994801Z ##[group]Building stage2 compiler artifacts (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12800,
+      "text": "2026-09-04T21:31:19.2357471Z ##[endgroup]"
+    },
+    {
+      "line": 12805,
+      "text": "2026-09-04T21:31:19.2410162Z ##[group]Building stage2 lld-wrapper (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12809,
+      "text": "2026-09-04T21:31:20.3777440Z ##[endgroup]"
+    },
+    {
+      "line": 12814,
+      "text": "2026-09-04T21:31:20.3886058Z ##[group]Building stage2 wasm-component-ld (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 12938,
+      "text": "2026-09-04T21:32:33.7088121Z ##[endgroup]"
+    },
+    {
+      "line": 12943,
+      "text": "2026-09-04T21:32:33.7117921Z ##[group]Building stage2 llvm-bitcode-linker (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13013,
+      "text": "2026-09-04T21:32:50.4471656Z ##[endgroup]"
+    },
+    {
+      "line": 13021,
+      "text": "2026-09-04T21:32:50.4534110Z ##[group]Building stage2 error_index_generator (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13244,
+      "text": "2026-09-04T21:34:00.0537029Z ##[endgroup]"
+    },
+    {
+      "line": 13461,
+      "text": "2026-09-04T21:34:34.3119900Z ##[group]Building stage1 lint-docs (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13489,
+      "text": "2026-09-04T21:34:37.9991761Z ##[endgroup]"
+    },
+    {
+      "line": 13492,
+      "text": "2026-09-04T21:34:38.0494197Z ##[group]Running stage2 lint-docs (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13493,
+      "text": "2026-09-04T21:35:09.0400543Z ##[endgroup]"
+    },
+    {
+      "line": 13595,
+      "text": "2026-09-04T21:35:13.6647110Z ##[group]Documenting stage2 releases (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13596,
+      "text": "2026-09-04T21:35:13.9292874Z ##[endgroup]"
+    },
+    {
+      "line": 13599,
+      "text": "2026-09-04T21:35:13.9299678Z ##[group]Documenting stage2 releases (stage1:aarch64-pc-windows-msvc -> stage2:arm64ec-pc-windows-msvc)"
+    },
+    {
+      "line": 13600,
+      "text": "2026-09-04T21:35:14.1535023Z ##[endgroup]"
+    },
+    {
+      "line": 13604,
+      "text": "2026-09-04T21:36:11.0217313Z ##[group]Building stage1 rust-installer (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13681,
+      "text": "2026-09-04T21:36:40.1956938Z ##[endgroup]"
+    },
+    {
+      "line": 13684,
+      "text": "2026-09-04T21:36:40.2534293Z Dist rust-docs-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 13685,
+      "text": "2026-09-04T21:38:45.8280064Z \tfinished in 125.580 seconds"
+    },
+    {
+      "line": 13688,
+      "text": "2026-09-04T21:39:43.0063179Z Dist rust-docs-beta-arm64ec-pc-windows-msvc"
+    },
+    {
+      "line": 13689,
+      "text": "2026-09-04T21:41:44.4868345Z \tfinished in 121.486 seconds"
+    },
+    {
+      "line": 13693,
+      "text": "2026-09-04T21:41:44.4979648Z ##[group]Documenting stage1 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, profiler_builtins, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in JSON format (stage1 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13724,
+      "text": "2026-09-04T21:42:00.3903905Z ##[endgroup]"
+    },
+    {
+      "line": 13726,
+      "text": "2026-09-04T21:42:00.4741229Z Dist rust-docs-json-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 13727,
+      "text": "2026-09-04T21:42:08.0187584Z \tfinished in 7.544 seconds"
+    },
+    {
+      "line": 13731,
+      "text": "2026-09-04T21:42:08.0230140Z ##[group]Documenting stage1 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, profiler_builtins, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in JSON format (stage1:aarch64-pc-windows-msvc -> stage1:arm64ec-pc-windows-msvc)"
+    },
+    {
+      "line": 13762,
+      "text": "2026-09-04T21:42:21.8421359Z ##[endgroup]"
+    },
+    {
+      "line": 13764,
+      "text": "2026-09-04T21:42:21.9192517Z Dist rust-docs-json-beta-arm64ec-pc-windows-msvc"
+    },
+    {
+      "line": 13765,
+      "text": "2026-09-04T21:42:29.1108738Z \tfinished in 7.191 seconds"
+    },
+    {
+      "line": 13774,
+      "text": "2026-09-04T21:42:29.1254056Z ##[group]Building stage2 rustdoc_tool_binary (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 13947,
+      "text": "2026-09-04T21:44:03.1175117Z ##[endgroup]"
+    },
+    {
+      "line": 13952,
+      "text": "2026-09-04T21:44:03.1399745Z ##[group]Building stage2 rust-analyzer-proc-macro-srv (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 14146,
+      "text": "2026-09-04T21:44:51.1851564Z ##[endgroup]"
+    },
+    {
+      "line": 14153,
+      "text": "2026-09-04T21:44:51.2758379Z ##[group]Vendoring sources to \"C:\\\\a\\\\rust\\\\rust\""
+    },
+    {
+      "line": 16738,
+      "text": "2026-09-04T21:49:43.3002906Z ##[endgroup]"
+    },
+    {
+      "line": 16740,
+      "text": "2026-09-04T21:49:43.3017090Z ##[group]generate-copyright"
+    },
+    {
+      "line": 16743,
+      "text": "2026-09-04T21:49:43.3033205Z ##[endgroup]"
+    },
+    {
+      "line": 16744,
+      "text": "2026-09-04T21:49:43.3033803Z ##[group]Building stage1 generate-copyright (stage0 -> stage1, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 16888,
+      "text": "2026-09-04T21:50:30.9876483Z ##[endgroup]"
+    },
+    {
+      "line": 16889,
+      "text": "2026-09-04T21:50:30.9885692Z ##[group]generate-copyright (continued)"
+    },
+    {
+      "line": 21239,
+      "text": "2026-09-04T21:50:36.8430719Z ##[endgroup]"
+    },
+    {
+      "line": 21241,
+      "text": "2026-09-04T21:50:36.9340215Z Dist rustc-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 21242,
+      "text": "2026-09-04T21:51:31.8146267Z \tfinished in 54.883 seconds"
+    },
+    {
+      "line": 21245,
+      "text": "2026-09-04T21:51:32.6486111Z Dist rust-std-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 21246,
+      "text": "2026-09-04T21:51:46.1456288Z \tfinished in 13.497 seconds"
+    },
+    {
+      "line": 21249,
+      "text": "2026-09-04T21:51:46.2659078Z Dist rust-std-beta-arm64ec-pc-windows-msvc"
+    },
+    {
+      "line": 21250,
+      "text": "2026-09-04T21:51:58.8284030Z \tfinished in 12.563 seconds"
+    },
+    {
+      "line": 21253,
+      "text": "2026-09-04T21:52:05.3940898Z Dist rustc-dev-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 21254,
+      "text": "2026-09-04T21:53:32.2292758Z \tfinished in 86.839 seconds"
+    },
+    {
+      "line": 21257,
+      "text": "2026-09-04T21:53:32.3173384Z Dist rust-analysis-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 21258,
+      "text": "2026-09-04T21:53:32.3792748Z \tfinished in 0.061 seconds"
+    },
+    {
+      "line": 21261,
+      "text": "2026-09-04T21:53:32.4782448Z Dist rust-analysis-beta-arm64ec-pc-windows-msvc"
+    },
+    {
+      "line": 21262,
+      "text": "2026-09-04T21:53:32.5360155Z \tfinished in 0.057 seconds"
+    },
+    {
+      "line": 21266,
+      "text": "2026-09-04T21:53:35.4735135Z ##[group]Vendoring sources to \"C:\\\\a\\\\rust\\\\rust\\\\build\\\\tmp\\\\tarball\\\\rust-src\\\\image\\\\lib/rustlib/src/rust\""
+    },
+    {
+      "line": 21299,
+      "text": "2026-09-04T21:53:38.1937060Z ##[endgroup]"
+    },
+    {
+      "line": 21301,
+      "text": "2026-09-04T21:53:38.2654080Z Dist rust-src-beta"
+    },
+    {
+      "line": 21302,
+      "text": "2026-09-04T21:53:51.8983542Z \tfinished in 13.633 seconds"
+    },
+    {
+      "line": 21307,
+      "text": "2026-09-04T21:53:51.9012656Z ##[group]Building stage2 cargo (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 22019,
+      "text": "2026-09-04T21:59:56.3425707Z ##[endgroup]"
+    },
+    {
+      "line": 22022,
+      "text": "2026-09-04T21:59:56.4564988Z Dist cargo-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 22023,
+      "text": "2026-09-04T22:00:07.0352441Z \tfinished in 10.579 seconds"
+    },
+    {
+      "line": 22028,
+      "text": "2026-09-04T22:00:07.0629008Z ##[group]Building stage2 rust-analyzer (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 22518,
+      "text": "2026-09-04T22:05:49.1584784Z ##[endgroup]"
+    },
+    {
+      "line": 22521,
+      "text": "2026-09-04T22:05:49.2459461Z Dist rust-analyzer-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 22522,
+      "text": "2026-09-04T22:05:59.9923010Z \tfinished in 10.746 seconds"
+    },
+    {
+      "line": 22527,
+      "text": "2026-09-04T22:05:59.9994490Z ##[group]Building stage2 rustfmt (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 22697,
+      "text": "2026-09-04T22:07:01.9722912Z ##[endgroup]"
+    },
+    {
+      "line": 22702,
+      "text": "2026-09-04T22:07:01.9762610Z ##[group]Building stage2 cargo-fmt (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 22808,
+      "text": "2026-09-04T22:07:02.6010336Z ##[endgroup]"
+    },
+    {
+      "line": 22811,
+      "text": "2026-09-04T22:07:02.6818828Z Dist rustfmt-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 22812,
+      "text": "2026-09-04T22:07:07.5887319Z \tfinished in 4.907 seconds"
+    },
+    {
+      "line": 22817,
+      "text": "2026-09-04T22:07:07.5916854Z ##[group]Building stage2 clippy-driver (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 22978,
+      "text": "2026-09-04T22:08:58.8285442Z ##[endgroup]"
+    },
+    {
+      "line": 22983,
+      "text": "2026-09-04T22:08:58.8340780Z ##[group]Building stage2 cargo-clippy (stage1 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 23084,
+      "text": "2026-09-04T22:08:59.4677934Z ##[endgroup]"
+    },
+    {
+      "line": 23087,
+      "text": "2026-09-04T22:08:59.5529039Z Dist clippy-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 23088,
+      "text": "2026-09-04T22:09:07.4050144Z \tfinished in 7.852 seconds"
+    },
+    {
+      "line": 23093,
+      "text": "2026-09-04T22:09:07.5079213Z Dist llvm-tools-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 23094,
+      "text": "2026-09-04T22:09:47.3229991Z \tfinished in 39.817 seconds"
+    },
+    {
+      "line": 23097,
+      "text": "2026-09-04T22:09:47.4198114Z Dist llvm-bitcode-linker-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 23098,
+      "text": "2026-09-04T22:09:48.9636152Z \tfinished in 1.543 seconds"
+    },
+    {
+      "line": 23103,
+      "text": "2026-09-04T22:09:53.1583900Z Dist rust-dev-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 23104,
+      "text": "2026-09-04T22:14:52.2397232Z \tfinished in 299.098 seconds"
+    },
+    {
+      "line": 23107,
+      "text": "2026-09-04T22:14:52.2507824Z Dist extended stage2 (aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 23110,
+      "text": "2026-09-04T22:14:52.3518721Z ##[group]Documenting stage2 library{alloc, compiler_builtins, core, panic_abort, panic_unwind, proc_macro, profiler_builtins, rustc-std-workspace-core, std, std_detect, sysroot, test, unwind} in JSON format (stage2 -> stage2, aarch64-pc-windows-msvc)"
+    },
+    {
+      "line": 23161,
+      "text": "2026-09-04T22:15:26.0051503Z ##[endgroup]"
+    },
+    {
+      "line": 23163,
+      "text": "2026-09-04T22:15:26.1004797Z Dist rust-docs-json-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 23164,
+      "text": "2026-09-04T22:15:34.2217194Z \tfinished in 8.121 seconds"
+    },
+    {
+      "line": 23166,
+      "text": "2026-09-04T22:15:34.3002456Z Dist rust-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 23167,
+      "text": "2026-09-04T22:22:35.7216355Z \tfinished in 421.445 seconds"
+    },
+    {
+      "line": 23179,
+      "text": "2026-09-04T22:26:03.5169109Z building `msi` installer with \"C:/a/rust/rust/wix\\\\bin/light.exe\""
+    },
+    {
+      "line": 23181,
+      "text": "2026-09-04T22:31:30.8316969Z \tfinished in 327.334 seconds"
+    },
+    {
+      "line": 23186,
+      "text": "2026-09-04T22:31:31.0584480Z Dist bootstrap-beta-aarch64-pc-windows-msvc"
+    },
+    {
+      "line": 23187,
+      "text": "2026-09-04T22:31:39.2731480Z \tfinished in 8.215 seconds"
+    },
+    {
+      "line": 23189,
+      "text": "2026-09-04T22:31:39.3778614Z Build completed successfully in 1:48:58"
+    },
+    {
+      "line": 23190,
+      "text": "2026-09-04T22:31:39.5423735Z ##[group]sccache stats"
+    },
+    {
+      "line": 23193,
+      "text": "2026-09-04T22:31:39.7301799Z Cache hits                          3665"
+    },
+    {
+      "line": 23194,
+      "text": "2026-09-04T22:31:39.7302411Z Cache hits (c [msvc])                 22"
+    },
+    {
+      "line": 23195,
+      "text": "2026-09-04T22:31:39.7303101Z Cache hits (c++ [msvc])             3447"
+    },
+    {
+      "line": 23196,
+      "text": "2026-09-04T22:31:39.7303563Z Cache hits (rust)                    196"
+    },
+    {
+      "line": 23197,
+      "text": "2026-09-04T22:31:39.7304371Z Cache misses                          88"
+    },
+    {
+      "line": 23198,
+      "text": "2026-09-04T22:31:39.7304720Z Cache misses (rust)                   88"
+    },
+    {
+      "line": 23199,
+      "text": "2026-09-04T22:31:39.7305220Z Cache hits rate                    97.66 %"
+    },
+    {
+      "line": 23200,
+      "text": "2026-09-04T22:31:39.7306658Z Cache hits rate (c [msvc])        100.00 %"
+    },
+    {
+      "line": 23201,
+      "text": "2026-09-04T22:31:39.7307107Z Cache hits rate (c++ [msvc])      100.00 %"
+    },
+    {
+      "line": 23202,
+      "text": "2026-09-04T22:31:39.7307874Z Cache hits rate (rust)             69.01 %"
+    },
+    {
+      "line": 23226,
+      "text": "2026-09-04T22:31:39.7454238Z ##[endgroup]"
+    },
+    {
+      "line": 23227,
+      "text": "2026-09-04T22:31:39.7507189Z ##[group]Clock drift check"
+    },
+    {
+      "line": 23230,
+      "text": "2026-09-04T22:31:40.1734056Z ##[endgroup]"
+    },
+    {
+      "line": 23231,
+      "text": "2026-09-04T22:31:40.3968687Z ##[group]Run src/ci/scripts/create-doc-artifacts.sh"
+    },
+    {
+      "line": 23258,
+      "text": "2026-09-04T22:31:40.4298308Z ##[endgroup]"
+    },
+    {
+      "line": 23272,
+      "text": "2026-09-04T22:31:40.9288972Z ##[group]Run echo \"disk usage:\""
+    },
+    {
+      "line": 23301,
+      "text": "2026-09-04T22:31:40.9331807Z ##[endgroup]"
+    },
+    {
+      "line": 23305,
+      "text": "2026-09-04T22:31:41.1902008Z ##[group]Run actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a"
+    },
+    {
+      "line": 23340,
+      "text": "2026-09-04T22:31:41.1923582Z ##[endgroup]"
+    },
+    {
+      "line": 23342,
+      "text": "2026-09-04T22:31:42.0720523Z ##[group]Run src/ci/scripts/upload-artifacts.sh"
+    },
+    {
+      "line": 23372,
+      "text": "2026-09-04T22:31:42.0761338Z ##[endgroup]"
+    },
+    {
+      "line": 23427,
+      "text": "2026-09-04T22:32:00.3787353Z ##[group]Run if [ -f build/metrics.json ]; then"
+    },
+    {
+      "line": 23470,
+      "text": "2026-09-04T22:32:00.3836251Z ##[endgroup]"
+    },
+    {
+      "line": 23638,
+      "text": "2026-09-04T22:32:01.1077288Z ##[group]Run ./build/citool/debug/citool upload-build-metrics build/cpu-usage.csv"
+    },
+    {
+      "line": 23668,
+      "text": "2026-09-04T22:32:01.1114199Z ##[endgroup]"
+    }
+  ]
+}

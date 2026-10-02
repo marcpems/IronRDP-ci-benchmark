@@ -1,0 +1,58 @@
+[
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": ".github/workflows/ci.yml",
+    "local": "rust-.github_workflows_ci.yml",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/.github/workflows/ci.yml"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/ci/github-actions/jobs.yml",
+    "local": "rust-src_ci_github-actions_jobs.yml",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/ci/github-actions/jobs.yml"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/ci/scripts/checkout-submodules.sh",
+    "local": "rust-src_ci_scripts_checkout-submodules.sh",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/ci/scripts/checkout-submodules.sh"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/ci/scripts/run-build-from-ci.sh",
+    "local": "rust-src_ci_scripts_run-build-from-ci.sh",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/ci/scripts/run-build-from-ci.sh"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/ci/run.sh",
+    "local": "rust-src_ci_run.sh",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/ci/run.sh"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/tools/opt-dist/src/main.rs",
+    "local": "rust-src_tools_opt-dist_src_main.rs",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/tools/opt-dist/src/main.rs"
+  },
+  {
+    "repo": "rust-lang/rust",
+    "sha": "0ed41eb4142dda2df61eb1145a312c1a9d62eb56",
+    "path": "src/tools/opt-dist/src/training.rs",
+    "local": "rust-src_tools_opt-dist_src_training.rs",
+    "url": "https://github.com/rust-lang/rust/blob/0ed41eb4142dda2df61eb1145a312c1a9d62eb56/src/tools/opt-dist/src/training.rs"
+  },
+  {
+    "repo": "rust-lang/promote-release",
+    "sha": "f699a3c4abdf090f09afb062794e5f5b7fd34d9f",
+    "path": "run.sh",
+    "local": "promote-release-run.sh",
+    "url": "https://github.com/rust-lang/promote-release/blob/f699a3c4abdf090f09afb062794e5f5b7fd34d9f/run.sh"
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "id": 33961251131,
+  "name": "CI",
+  "event": "push",
+  "head_sha": "0f819a1602c3814642aa63799b43772b7bb456e8",
+  "head_branch": "automation/bors/auto",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-09-05T10:39:32Z",
+  "run_started_at": "2026-09-05T10:39:32Z",
+  "updated_at": "2026-09-05T13:51:07Z",
+  "html_url": "https://github.com/rust-lang/rust/actions/runs/33961251131"
+}
