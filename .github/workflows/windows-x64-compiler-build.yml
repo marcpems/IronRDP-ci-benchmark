@@ -1,0 +1,73 @@
+name: Build matched Windows x64 PGO and ThinLTO compilers
+on:
+  push:
+    branches: [ci/windows-x64-compiler-build]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: windows-2025
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [pgo-control, optimized]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: marcpems/rust-arm64-compiler-ab
+          ref: e408947bfd200af42db322daf0fadfe7e26d3bd1
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Prepare pinned native source and support tools
+        shell: pwsh
+        run: |
+          git -C rust-source config core.longpaths true
+          git -C rust-source remote set-url --push origin DISABLED-UPSTREAM-PUSH
+          git -C rust-source submodule update --init --depth 1 src/llvm-project src/tools/rustc-perf library/backtrace
+          if ($LASTEXITCODE -ne 0) { throw 'Submodule checkout failed' }
+          rustup toolchain install 1.94.1-x86_64-pc-windows-msvc --profile minimal --target wasm32-unknown-unknown
+          if ($LASTEXITCODE -ne 0) { throw 'Official reference installation failed' }
+          New-Item -ItemType Directory -Path x64-tools -Force | Out-Null
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-win64.exe -o x64-tools\LLVM-20.1.3-win64.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Pinned clang download failed' }
+          7z x -y -bd -bso0 -ox64-tools\clang20 x64-tools\LLVM-20.1.3-win64.exe
+          if ($LASTEXITCODE -ne 0) { throw 'Clang extraction failed' }
+          Get-Volume | Select-Object DriveLetter,SizeRemaining,Size
+          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors
+      - name: Validate compiler builder
+        shell: pwsh
+        run: |
+          $env:PYTHONDONTWRITEBYTECODE = '1'
+          python -m unittest discover -s .github/scripts -p test_build_windows_x64_compilers.py
+          if ($LASTEXITCODE -ne 0) { throw 'Builder validation failed' }
+      - name: Build and verify native x64 compiler
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vs = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vs) { throw 'Native x64 MSVC installation missing' }
+          $vcvars = Join-Path $vs 'VC\Auxiliary\Build\vcvars64.bat'
+          $python = (Get-Command python).Source
+          & $env:ComSpec /d /s /c "call `"$vcvars`" >nul && `"$python`" .github\scripts\build_windows_x64_compilers.py --source rust-source --output x64-output --clang x64-tools\clang20 --variant ${{ matrix.variant }}"
+          if ($LASTEXITCODE -ne 0) { throw 'Compiler build or provenance validation failed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: x64-compiler-${{ matrix.variant }}
+          path: |
+            x64-output/*.zip
+            x64-output/*.json
+            x64-output/*.toml
+            x64-output/*.txt
+            x64-output/*.profdata
+            x64-output/logs
+          if-no-files-found: warn
+          retention-days: 30
