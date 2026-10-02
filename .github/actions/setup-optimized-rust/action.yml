@@ -1,4 +1,4 @@
-name: Setup optimized Windows Arm64 Rust
+name: Setup optimized native Windows Rust
 description: Install and verify the pinned experimental Rust compiler; preserve official Cargo and target libraries.
 inputs:
   activate:
@@ -17,20 +17,32 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: Require native Windows Arm64
+    - name: Select native Windows architecture
+      id: platform
       shell: pwsh
       run: |
-        if ($env:RUNNER_OS -ne 'Windows' -or $env:RUNNER_ARCH -ne 'ARM64') {
-          throw 'The optimized compiler supports native Windows Arm64 only'
+        if ($env:RUNNER_OS -ne 'Windows') { throw 'The optimized compiler requires Windows' }
+        if ($env:RUNNER_ARCH -eq 'ARM64') {
+          "python=arm64" >> $env:GITHUB_OUTPUT
+          "host=aarch64-pc-windows-msvc" >> $env:GITHUB_OUTPUT
+          "manifest=manifest.json" >> $env:GITHUB_OUTPUT
+          "directory=optimized-rust-1.94.1-arm64-v2" >> $env:GITHUB_OUTPUT
+        } elseif ($env:RUNNER_ARCH -eq 'X64') {
+          "python=x64" >> $env:GITHUB_OUTPUT
+          "host=x86_64-pc-windows-msvc" >> $env:GITHUB_OUTPUT
+          "manifest=manifest-x64.json" >> $env:GITHUB_OUTPUT
+          "directory=optimized-rust-1.94.1-x64-v1" >> $env:GITHUB_OUTPUT
+        } else {
+          throw 'The optimized compiler requires native Windows Arm64 or x64'
         }
     - uses: actions/setup-python@v6
       with:
         python-version: "3.13"
-        architecture: arm64
+        architecture: ${{ steps.platform.outputs.python }}
     - name: Install matching official support tools
       shell: pwsh
       run: |
-        rustup toolchain install 1.94.1-aarch64-pc-windows-msvc --profile minimal --component clippy --component rustfmt --target wasm32-unknown-unknown
+        rustup toolchain install 1.94.1-${{ steps.platform.outputs.host }} --profile minimal --component clippy --component rustfmt --target wasm32-unknown-unknown
         if ($LASTEXITCODE -ne 0) { throw 'Official support toolchain installation failed' }
     - name: Install verified optimized compiler
       id: install
@@ -44,7 +56,7 @@ runs:
         if ($env:ACTIVATE_COMPILER -eq 'true') { $extra += '--activate' }
         elseif ($env:ACTIVATE_COMPILER -ne 'false') { throw 'activate must be true or false' }
         python (Join-Path $env:ACTION_DIRECTORY '..\..\scripts\install_optimized_rust.py') `
-          --manifest (Join-Path $env:ACTION_DIRECTORY 'manifest.json') `
-          --destination (Join-Path $env:RUNNER_TEMP 'optimized-rust-1.94.1-arm64-v2') `
+          --manifest (Join-Path $env:ACTION_DIRECTORY '${{ steps.platform.outputs.manifest }}') `
+          --destination (Join-Path $env:RUNNER_TEMP '${{ steps.platform.outputs.directory }}') `
           --github-outputs @extra
         if ($LASTEXITCODE -ne 0) { throw 'Optimized toolchain installation or validation failed' }

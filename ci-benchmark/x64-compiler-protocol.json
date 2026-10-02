@@ -1,0 +1,39 @@
+{
+  "schema": 3,
+  "suite": "compiler",
+  "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+  "rust_version": "1.94.1",
+  "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+  "host": "x86_64-pc-windows-msvc",
+  "hosts": {
+    "windows-x64": "x86_64-pc-windows-msvc",
+    "linux-x64": "x86_64-unknown-linux-gnu"
+  },
+  "platforms": ["windows-x64", "linux-x64"],
+  "compiler_archive_sha256": {
+    "pgo-control": "c917ce3130fc56585ae777665df49e44a06182f5089390d244778745bde7e3ac",
+    "optimized": "a71c308facf775b9a1e1607636835b19fb60d6053f143e0bd43184ee24802dfc"
+  },
+  "compiler_metadata_sha256": {
+    "pgo-control": "c3df1c9fa0458328bd0e2c030f5ad4d12c19fd121b2d27da9ac284d9533ef80d",
+    "optimized": "e0bba6835e9dbd39e010ee8123b33abfcd8431da697ca77dbc5b53a351bd914e"
+  },
+  "llvm_profile_coverage_required": true,
+  "independent_vms_per_os": 5,
+  "warmup_rounds": 1,
+  "measured_rounds": 3,
+  "windows_variants": ["official", "pgo-control", "optimized"],
+  "linux_variants": ["official"],
+  "runner_labels": ["windows-2025", "ubuntu-24.04"],
+  "primary_endpoint": "graphics-project-4/cpu_seconds",
+  "primary_contrast": "official Windows to optimized Windows: practical adoption",
+  "secondary_contrast": "pgo-control to optimized: added ThinLTO with identical profiles",
+  "secondary_endpoints": "Wall/CPU for graphics and direct yuv native/WASM metadata/full compilation on one/four CPUs; direct replays spawn no linker",
+  "evaluation_stdlib": "Byte-identical official x64 native and WASM target libraries, verified against every custom compiler file",
+  "profile": "Same isolation profile as Arm64: opt-level=1, codegen-units=16, debug=0, incremental=0",
+  "order": "Counterbalanced rotation by VM and round, reversing alternate rounds",
+  "aggregation": "Average measured rounds within VM, equal VM weights; preserve compiler pairing",
+  "uncertainty": "10000 seeded paired Windows / independent Linux whole-VM bootstrap draws; 95% percentile intervals",
+  "exclusions": "Pilots and predetermined warmups excluded; reject incomplete/failed matrices and mixed attempts; no slow-sample trimming",
+  "limitations": "No official-build equivalence gate or linker-only control: practical adoption and matched ThinLTO effects, not attribution solely to missing official optimizations. Standard OS runners are not hardware-identical."
+}

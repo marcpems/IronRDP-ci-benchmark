@@ -1,0 +1,115 @@
+name: Validate optimized Windows x64 Rust
+on:
+  push:
+    branches: [ci/windows-x64-validation-pilot, ci/windows-x64-validation-full]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ matrix.suite }} / ${{ matrix.platform }} / VM ${{ matrix.vm }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [native, compiler]
+        vm: ${{ fromJSON(github.ref_name == 'ci/windows-x64-validation-full' && '[1,2,3,4,5]' || '[1]') }}
+        platform: [windows-x64, linux-x64]
+        include:
+          - platform: windows-x64
+            runner: windows-2025
+            host: x86_64-pc-windows-msvc
+          - platform: linux-x64
+            runner: ubuntu-24.04
+            host: x86_64-unknown-linux-gnu
+    env:
+      BENCHMARK_HOST: ${{ matrix.host }}
+      BENCHMARK_PLATFORM: ${{ matrix.platform }}
+      BENCHMARK_REPLICATE: ${{ matrix.vm }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_BUILD_JOBS: "4"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - uses: ./.github/actions/install-build-deps
+      - name: Install official reference tools
+        shell: pwsh
+        run: |
+          $toolchain = '1.94.1-${{ matrix.host }}'
+          rustup toolchain install $toolchain --profile minimal --target wasm32-unknown-unknown
+          if ($LASTEXITCODE -ne 0) { throw 'Official reference installation failed' }
+          "RUSTUP_TOOLCHAIN=$toolchain" >> $env:GITHUB_ENV
+      - name: Verify reusable optimized installation without activating it
+        if: runner.os == 'Windows'
+        uses: ./.github/actions/setup-optimized-rust
+        with:
+          activate: "false"
+      - name: Opt out of optional telemetry on disposable Windows runners
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+          New-Item -Path $key -Force | Out-Null
+          New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+          if ((Get-ItemPropertyValue -Path $key -Name OptIn) -ne 0) { throw 'Telemetry policy was not applied' }
+      - name: Fetch dependencies outside measurement
+        shell: pwsh
+        working-directory: workload
+        run: |
+          cargo fetch --locked
+          if ($LASTEXITCODE -ne 0) { throw 'Dependency preparation failed' }
+      - name: Verify measurement harness and build compiler meter
+        shell: pwsh
+        run: |
+          $meter = Join-Path $env:RUNNER_TEMP 'rustc-metrics'
+          if ($IsWindows) { $meter += '.exe' }
+          rustc .github/scripts/rustc_metrics.rs --edition=2024 -O -o $meter
+          if ($LASTEXITCODE -ne 0) { throw 'Compiler meter build failed' }
+          $env:COMPILER_METER = $meter
+          python -m unittest discover -s .github/scripts -p 'test_*probe.py'
+          if ($LASTEXITCODE -ne 0) { throw 'CPU accounting validation failed' }
+          python -m unittest discover -s .github/scripts -p test_arm_ab.py
+          if ($LASTEXITCODE -ne 0) { throw 'Compiler controls failed' }
+          "COMPILER_METER=$meter" >> $env:GITHUB_ENV
+      - name: Measure paired offline builds and check correctness
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $extra = @()
+          if ('${{ github.ref_name }}' -ne 'ci/windows-x64-validation-full') { $extra += '--pilot' }
+          $common = @('--source', 'workload', '--output', 'x64-results',
+            '--protocol', 'ci-benchmark/x64-${{ matrix.suite }}-protocol.json',
+            '--compilers', (Join-Path $env:RUNNER_TEMP 'x64-compilers'), '--release-tag', 'x64-compiler-ab-v1')
+          if ('${{ matrix.suite }}' -eq 'native') {
+            python .github/scripts/native_ci_probe.py @common @extra
+          } else {
+            python .github/scripts/arm_ab_probe.py @common --wrapper "$env:COMPILER_METER" @extra
+          }
+          if ($LASTEXITCODE -ne 0) { throw 'Paired x64 measurement failed' }
+      - name: Verify unchanged original workload
+        shell: pwsh
+        working-directory: workload
+        run: |
+          git diff --exit-code
+          if ($LASTEXITCODE -ne 0) { throw 'Workload was changed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: x64-${{ matrix.suite }}-${{ matrix.platform }}-${{ matrix.vm }}
+          path: x64-results
+          if-no-files-found: warn
+          retention-days: 30
