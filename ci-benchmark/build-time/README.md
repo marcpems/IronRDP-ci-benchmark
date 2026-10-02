@@ -250,3 +250,9 @@ data, inventories and visuals reproduce byte-for-byte. The two source-probe
 jobs completed with negative qualification results, preserved separately from
 production baselines. No full compiler build or upstream CI configuration was
 changed by this investigation.
+
+Separate full-distribution feasibility work is cross-referenced, not duplicated:
+[corrected run 36991902911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911)
+was still in progress at the October 2 10:13 UTC follow-up. Its initial setup
+attempt failed and contributes no production baseline; see [status and pinned
+report](OPTIONS.md#final-ranking-by-expected-impact-and-remaining-blockers).
