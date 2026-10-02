@@ -76,7 +76,10 @@ percentiles or core-linear scaling are inferred from two observations.
 
 ## Fork experiment
 
-Initial setup run:
+Full experiment:
+[36991902911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911),
+commit `e00e642302874b9605cecf022d8ef9cc3ac6de3c`.
+Initial setup-only run:
 [36991037745](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991037745).
 The harness is isolated at branch `ci/arm-release-feasibility` in
 `marcpems/IronRDP-ci-benchmark`; no existing compiler checkout/build/run is modified.
@@ -102,11 +105,20 @@ Minute memory/commit/disk samples and stage progress stream to logs; preflight
 artifacts upload before compilation; deadline handling reserves diagnostic time.
 Profiles must show **nonzero AArch64TargetLowering and InstCombine execution**.
 
-**Results pending.** Initial preflight also exposed a harness invocation defect:
-top-level `configure` is a shell wrapper, so Python must invoke
-`src/bootstrap/configure.py`. The corrected invocation was integration-tested
-against the pinned source without writing to the shared checkout. Setup-only
-failures are not compiler build-time results.
+**Build results pending.** Initial preflight failed before any compiler build:
+baseline stopped at 9m20s because top-level `configure` is a shell wrapper;
+treatment stopped at 10m24s because patch context encountered checkout line-ending
+differences. Python now invokes `src/bootstrap/configure.py`; Git line-ending
+settings are established before checkout and patch application tolerates whitespace.
+The corrected configure invocation was integration-tested against pinned source;
+both minimal patches also pass application checks against pinned and current-main
+source copies. No shared checkout was written. Setup-only failures are not compiler
+build-time results, and neither job was canceled or rerun.
+
+Initial preflight measured **Cobalt 100, 4 cores / 4 logical processors**, ~16 GiB
+RAM, native ARM64 Python 3.13.15, image `win11-vs2026-arm64` 20260924.168.1,
+and ~123.7 GiB free on a ~255.45 GiB C: volume before source setup. These are
+machine observations, not compiler peak-memory/disk measurements.
 
 ## Full distribution versus release qualification
 
