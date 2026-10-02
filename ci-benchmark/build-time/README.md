@@ -7,6 +7,20 @@ Next: **[prioritized easy wins, critical-path models and deeper pipeline options
 The [completed two-runner source probe](SOURCE-PROBE.md) found **no useful
 archive-only fetch saving** and did not qualify checkout equivalence.
 
+## Decision update: balanced production proposal
+
+**[Preferred path, verified native Arm64 hardware/prices, acceptance gates and
+fallbacks](BALANCED-PROPOSAL.md):** one 32-vCPU/128-GB native Windows Arm64 runner,
+fresh rustc/LLVM PGO and final-only ThinLTO; two sequential jobs if cold-build
+headroom is insufficient. Conditional planning: **136 minutes / $13.68 compute
+per qualified build**, not a measured optimized result. GitHub now explicitly
+lists native Windows Arm64 16/32-vCPU larger runners at **$0.050/$0.098 per
+minute**; organization eligibility/capacity still needs confirmation.
+The completed cold full-dist baseline is **141.82 minutes**, without PGO/ThinLTO.
+See [nonlinear scaling / billed-SUM / retry tables](BALANCED-TABLES.md) and
+[model inputs](balanced-inputs.json). Earlier projections below remain separate
+historical scenarios, not measured bounds.
+
 ## New: expected cost of adding PGO + ThinLTO
 
 **[Read the offline production projection](PGO-LTO-PROJECTION.md)** before
@@ -276,7 +290,7 @@ local evidence paths. Hosted source-probe reproduction is isolated in
 [`arm-build-time-source-probe.yml`](../../.github/workflows/arm-build-time-source-probe.yml).
 The [options report](OPTIONS.md) separates measured, modeled and unknown effects.
 
-**Investigation validation:** eighteen focused tests pass; all 313 job totals
+**Investigation validation:** twenty-six focused tests pass; all 313 job totals
 reconcile; four completed-log and two projected SVGs parse as XML; local links/source snapshots exist; generated
 data, inventories and visuals reproduce byte-for-byte. The two source-probe
 jobs completed with negative qualification results, preserved separately from
@@ -284,7 +298,9 @@ production baselines. No full compiler build or upstream CI configuration was
 changed by this investigation.
 
 Separate full-distribution feasibility work is cross-referenced, not duplicated:
-[corrected run 36991902911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911)
-was still in progress at the October 2 10:13 UTC follow-up. Its initial setup
-attempt failed and contributes no production baseline; see [status and pinned
-report](OPTIONS.md#final-ranking-by-expected-impact-and-remaining-blockers).
+[baseline job 110789801580](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911/job/110789801580)
+completed successfully in **141.82 minutes** (132.44-minute dist command);
+the enclosing workflow's earlier treatment setup failed. The
+[pinned updated report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/95eb8b6f792e7851c8e4be7b47edacd5aa21c32b/arm-feasibility/FEASIBILITY.md)
+supplies the cold baseline used in the balanced proposal. The corrected
+treatment is not awaited or claimed successful here.

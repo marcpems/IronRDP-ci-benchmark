@@ -1,0 +1,68 @@
+{
+  "as_of": "2026-10-02",
+  "classification": "Conditional engineering scenarios, not measured optimized Arm64 results",
+  "sources": {
+    "hardware": "https://docs.github.com/en/actions/reference/runners/larger-runners",
+    "prices": "https://docs.github.com/en/billing/reference/actions-runner-pricing",
+    "public_standard": "https://docs.github.com/en/actions/reference/runners/github-hosted-runners",
+    "billing": "https://docs.github.com/en/actions/concepts/billing-and-usage",
+    "image_ga": "https://github.blog/changelog/2026-08-20-windows-11-arm64-vs2026-image-generally-available/",
+    "cold_baseline": "https://github.com/marcpems/IronRDP-ci-benchmark/blob/95eb8b6f792e7851c8e4be7b47edacd5aa21c32b/arm-feasibility/FEASIBILITY.md"
+  },
+  "verified_source_facts": {
+    "hardware_quote": "16 | 64 GB | 600 GB | x64, arm64 | Ubuntu, Windows; 32 | 128 GB | 1200 GB | x64, arm64 | Ubuntu, Windows",
+    "arm64_price_quote": "Windows 16-core | windows_16_core_arm | $0.050; Windows 32-core | windows_32_core_arm | $0.098",
+    "billing_quote": "GitHub rounds the minutes and partial minutes each job uses up to the nearest whole minute.",
+    "eligibility": "Larger runners require an organization/enterprise on Team or Enterprise Cloud; charged for public repos; included minutes do not apply. Catalog availability is not account-specific entitlement or capacity.",
+    "standard": "Public windows-11-arm: 4 CPU, 16 GB RAM, standard runner compute free. Do not apply private 2-core Arm pricing or x64 larger-runner prices."
+  },
+  "cold_baseline": {
+    "run_id": 36991902911,
+    "job_id": 110789801580,
+    "job_minutes": 141.82,
+    "dist_command_minutes": 132.44,
+    "llvm_minutes": 50.84,
+    "rustc_std_minutes": 22.94,
+    "tools_minutes": 25.52,
+    "docs_minutes": 5.51,
+    "packaging_minutes": 22.50,
+    "vendoring_minutes": 3.75,
+    "note": "Green baseline job, enclosing workflow red from earlier treatment setup. Exclusive bootstrap categories; rustc/std removed together and replaced by modeled full optimized core. Setup, vendoring and unassigned remainder retained, not added twice."
+  },
+  "hardware": {
+    "public4": {"vcpus": 4, "ram_gb": 16, "usd_per_minute": 0, "sku": "standard public windows-11-arm"},
+    "native16": {"vcpus": 16, "ram_gb": 64, "ssd_gb": 600, "usd_per_minute": 0.050, "sku": "windows_16_core_arm"},
+    "native32": {"vcpus": 32, "ram_gb": 128, "ssd_gb": 1200, "usd_per_minute": 0.098, "sku": "windows_32_core_arm"}
+  },
+  "scaling": {
+    "balanced": {
+      "efficiency": 0.8,
+      "compile_serial_fraction": 0.10,
+      "training_serial_fraction": 0.30,
+      "tools_serial_fraction": 0.15,
+      "docs_serial_fraction": 0.30,
+      "packaging_serial_fraction": 0.55,
+      "memory_multiplier": 1.0
+    },
+    "constrained": {
+      "efficiency": 0.55,
+      "compile_serial_fraction": 0.25,
+      "training_serial_fraction": 0.50,
+      "tools_serial_fraction": 0.30,
+      "docs_serial_fraction": 0.50,
+      "packaging_serial_fraction": 0.75,
+      "memory_multiplier": 1.25
+    }
+  },
+  "assumptions": {
+    "qualification_success_probability": 0.95,
+    "failed_attempt_fraction": 0.5,
+    "queue_minutes_per_job": 5,
+    "instrument_cache_hit_probability": 0.8,
+    "instrument_restore_minutes": 10,
+    "operational_job_minutes": 350,
+    "acceptance_job_minutes": 300,
+    "hard_job_minutes": 360,
+    "note": "Probabilities, scaling, queue, restore and failure work are assumptions, not empirical rates. No cache hit required for feasibility. Prices exclude tax, plans, artifact/cache storage and operations."
+  }
+}

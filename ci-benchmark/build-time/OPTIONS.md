@@ -4,6 +4,13 @@ Read the [completed-log baseline and visuals](README.md) first. Times below
 refer to producing Rust, **not** to downstream IronRDP compilation.
 This investigation does not change Rust/LLVM implementation code or upstream CI.
 
+**Current decision:** [balanced proposal](BALANCED-PROPOSAL.md) combines the
+completed 141.82-minute cold baseline with verified native Windows Arm64
+16/32-vCPU hardware/pricing, nonlinear scaling, billed SUM and qualification/
+retry costs. Prefer one native 32-vCPU job; retain a two-job profile/final-build
+fallback before a broader DAG. Funding does not limit the choice. Earlier
+rankings below address stock four-CPU jobs or the original hypothetical budgets.
+
 ## Updated priority when adding PGO and ThinLTO
 
 The original stock-only savings below are small compared with the possible cost
@@ -250,16 +257,17 @@ branch's workflow was launched. See the [complete measured outcome](SOURCE-PROBE
 Outstanding: private promotion timings/deployed-state confirmation; complete
 Arm64 fresh-PGO full-distribution timings and qualification from the separate
 feasibility investigation; real artifact transfer and compression measurements.
-The separate agent was notified before/after the bounded source probe. Its
-[corrected baseline/treatment experiment 36991902911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911)
-uses commit `e00e642302874b9605cecf022d8ef9cc3ac6de3c`, branch
-`ci/arm-release-feasibility`; it remained **in progress** when checked
-2026-10-02 at approximately 10:13 UTC. The
+The separate agent was notified before/after the bounded source probe. The
+[baseline job in 36991902911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991902911/job/110789801580)
+subsequently completed successfully in **141.82 minutes**, including a
+132.44-minute full-dist command. Its enclosing workflow is red from the earlier
+treatment setup failure, not a failed baseline build. The
 [initial setup attempt 36991037745](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36991037745)
 was **completed/failure** and is excluded from production timing baselines.
-Neither run was cancelled, rerun or duplicated by this investigation.
+No run was cancelled, rerun or duplicated by this investigation.
 
-The separate [immutable interim feasibility report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/e00e642302874b9605cecf022d8ef9cc3ac6de3c/arm-feasibility/FEASIBILITY.md)
-documents its patches and the same 360-minute CI / 240-minute promotion limits.
-No terminal corrected-build results or upstream-ready compiler/distribution
-claim are incorporated here.
+The [updated immutable feasibility report](https://github.com/marcpems/IronRDP-ci-benchmark/blob/95eb8b6f792e7851c8e4be7b47edacd5aa21c32b/arm-feasibility/FEASIBILITY.md)
+documents the cold baseline and the same 360-minute CI / 240-minute promotion
+limits. The corrected optimized treatment is not awaited, and no optimized
+Arm64 full-build or upstream-readiness claim is made. The
+[balanced proposal](BALANCED-PROPOSAL.md) incorporates only the completed baseline.

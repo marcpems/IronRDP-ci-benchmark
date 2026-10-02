@@ -4,6 +4,12 @@
 was launched, no feasibility result awaited, and no downstream performance
 measurement was used as a compiler-production speedup.**
 
+**Later decision update:** [BALANCED-PROPOSAL.md](BALANCED-PROPOSAL.md) adds the
+completed cold baseline, verified native Arm64 larger-runner availability/rates,
+nonlinear 16/32-vCPU sensitivities, sequential fallback and cost per qualified
+build. This original four-CPU projection is preserved for provenance; its stage
+budgets and 250–680-minute scenarios are assumptions, not measured bounds.
+
 ## Headline
 
 Adding fresh frontend/LLVM PGO and final-stage Rust/LLVM ThinLTO can plausibly

@@ -1,0 +1,4044 @@
+{
+  "classification": "Conditional engineering scenarios, not measured optimized Arm64 results",
+  "cold_accounting": {
+    "retained_minutes": 68.03999999999999,
+    "stock_minutes": 141.82,
+    "stock_llvm_minutes": 50.84,
+    "retained_prefix_minutes": 14.509999999999991,
+    "retained_tail_minutes": 53.53
+  },
+  "results": [
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "public4",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 410.88,
+          "finish_minutes": 410.88,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 45.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 20.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 20.0
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 60.0
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 90.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 20.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 410.88,
+      "elapsed_with_assumed_queue_minutes": 415.88,
+      "sum_runner_wall_minutes": 410.88,
+      "sum_job_rounded_minutes": 411,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 410.88,
+      "headroom_to_360_minutes": -50.879999999999995,
+      "fits_350": false,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": null,
+      "failure_probability_sensitivity_usd": {
+        "0.8": null,
+        "0.95": null,
+        "0.99": null
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 410.88,
+        "hit_elapsed_minutes": 360.88,
+        "expected_elapsed_minutes": 370.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "public4",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 250.35,
+          "finish_minutes": 250.35,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 45.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 20.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 20.0
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 60.0
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 250.35,
+          "duration_minutes": 176.53,
+          "finish_minutes": 426.88,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 90.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 20.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 426.88,
+      "elapsed_with_assumed_queue_minutes": 436.88,
+      "sum_runner_wall_minutes": 426.88,
+      "sum_job_rounded_minutes": 428,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 250.35,
+      "headroom_to_360_minutes": 109.65,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": 0.0,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 0.0,
+        "0.95": 0.0,
+        "0.99": 0.0
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 426.88,
+        "hit_elapsed_minutes": 376.88,
+        "expected_elapsed_minutes": 386.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 445.88,
+        "sum_runner_wall_minutes": 445.88,
+        "longest_job_minutes": 257.35,
+        "expected_compute_usd_per_qualified_build": 0.0
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "public4",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 163.35,
+          "finish_minutes": 163.35,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 45.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 20.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 20.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 87.50999999999999,
+          "finish_minutes": 87.50999999999999,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 60.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 163.35,
+          "duration_minutes": 46.0,
+          "finish_minutes": 209.35,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 16
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 209.35,
+          "duration_minutes": 176.53,
+          "finish_minutes": 385.88,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 90.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 20.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 385.88,
+      "elapsed_with_assumed_queue_minutes": 400.88,
+      "sum_runner_wall_minutes": 473.39,
+      "sum_job_rounded_minutes": 475,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 176.53,
+      "headroom_to_360_minutes": 183.47,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": 0.0,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 0.0,
+        "0.95": 0.0,
+        "0.99": 0.0
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 385.88,
+        "hit_elapsed_minutes": 385.88,
+        "expected_elapsed_minutes": 385.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 430.88,
+        "sum_runner_wall_minutes": 525.39,
+        "longest_job_minutes": 188.53,
+        "expected_compute_usd_per_qualified_build": 0.0
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "native16",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 182.01176470588234,
+          "finish_minutes": 182.01176470588234,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 18.541647058823532
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 16.411764705882355
+            },
+            {
+              "name": "FE training",
+              "minutes": 10.117647058823529
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 7.294117647058824
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 21.88235294117647
+            },
+            {
+              "name": "Static relink",
+              "minutes": 4.376470588235295
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 7.588235294117647
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 32.82352941176471
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 28.348352941176472
+            },
+            {
+              "name": "Qualification",
+              "minutes": 10.117647058823529
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 182.01176470588234,
+      "elapsed_with_assumed_queue_minutes": 187.01176470588234,
+      "sum_runner_wall_minutes": 182.01176470588234,
+      "sum_job_rounded_minutes": 183,
+      "billed_compute_minutes": 183,
+      "longest_job_minutes": 182.01176470588234,
+      "headroom_to_360_minutes": 177.98823529411766,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 9.15,
+      "expected_compute_usd_per_qualified_build": 9.392105263157895,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 10.3,
+        "0.95": 9.392105263157895,
+        "0.99": 9.196464646464646
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 182.01176470588234,
+        "hit_elapsed_minutes": 170.12941176470588,
+        "expected_elapsed_minutes": 172.50588235294117,
+        "expected_uncapped_attempt_usd": 8.67,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "native16",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 113.72223529411764,
+          "finish_minutes": 113.72223529411764,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 18.541647058823532
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 16.411764705882355
+            },
+            {
+              "name": "FE training",
+              "minutes": 10.117647058823529
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 7.294117647058824
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 21.88235294117647
+            },
+            {
+              "name": "Static relink",
+              "minutes": 4.376470588235295
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 7.588235294117647
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 113.72223529411764,
+          "duration_minutes": 84.2895294117647,
+          "finish_minutes": 198.01176470588234,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 32.82352941176471
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 28.348352941176472
+            },
+            {
+              "name": "Qualification",
+              "minutes": 10.117647058823529
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 198.01176470588234,
+      "elapsed_with_assumed_queue_minutes": 208.01176470588234,
+      "sum_runner_wall_minutes": 198.01176470588234,
+      "sum_job_rounded_minutes": 199,
+      "billed_compute_minutes": 199,
+      "longest_job_minutes": 113.72223529411764,
+      "headroom_to_360_minutes": 246.27776470588236,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 9.950000000000001,
+      "expected_compute_usd_per_qualified_build": 10.213157894736844,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 11.200000000000001,
+        "0.95": 10.213157894736844,
+        "0.99": 10.000505050505051
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 198.01176470588234,
+        "hit_elapsed_minutes": 186.12941176470588,
+        "expected_elapsed_minutes": 188.50588235294117,
+        "expected_uncapped_attempt_usd": 9.47,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 217.01176470588234,
+        "sum_runner_wall_minutes": 217.01176470588234,
+        "longest_job_minutes": 120.72223529411764,
+        "expected_compute_usd_per_qualified_build": 11.189473684210528
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "native16",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 79.87517647058823,
+          "finish_minutes": 79.87517647058823,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 18.541647058823532
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 16.411764705882355
+            },
+            {
+              "name": "FE training",
+              "minutes": 10.117647058823529
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 7.294117647058824
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 49.39235294117646,
+          "finish_minutes": 49.39235294117646,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 21.88235294117647
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 79.87517647058823,
+          "duration_minutes": 30.964705882352938,
+          "finish_minutes": 110.83988235294117,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 16
+            },
+            {
+              "name": "Static relink",
+              "minutes": 4.376470588235295
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 7.588235294117647
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 110.83988235294117,
+          "duration_minutes": 84.2895294117647,
+          "finish_minutes": 195.12941176470588,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 32.82352941176471
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 28.348352941176472
+            },
+            {
+              "name": "Qualification",
+              "minutes": 10.117647058823529
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 195.12941176470588,
+      "elapsed_with_assumed_queue_minutes": 210.12941176470588,
+      "sum_runner_wall_minutes": 244.52176470588233,
+      "sum_job_rounded_minutes": 246,
+      "billed_compute_minutes": 246,
+      "longest_job_minutes": 84.2895294117647,
+      "headroom_to_360_minutes": 275.7104705882353,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 12.3,
+      "expected_compute_usd_per_qualified_build": 12.626315789473685,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 13.85,
+        "0.95": 12.626315789473685,
+        "0.99": 12.362626262626263
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 195.12941176470588,
+        "hit_elapsed_minutes": 195.12941176470588,
+        "expected_elapsed_minutes": 195.12941176470588,
+        "expected_uncapped_attempt_usd": 11.82,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 240.12941176470588,
+        "sum_runner_wall_minutes": 296.52176470588233,
+        "longest_job_minutes": 96.2895294117647,
+        "expected_compute_usd_per_qualified_build": 15.297368421052632
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "native32",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 135.77575757575758,
+          "finish_minutes": 135.77575757575758,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 12.016727272727273
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 10.636363636363637
+            },
+            {
+              "name": "FE training",
+              "minutes": 8.121212121212121
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 4.7272727272727275
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 14.181818181818182
+            },
+            {
+              "name": "Static relink",
+              "minutes": 2.8363636363636364
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 6.09090909090909
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 21.272727272727273
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 23.261151515151514
+            },
+            {
+              "name": "Qualification",
+              "minutes": 8.121212121212121
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 135.77575757575758,
+      "elapsed_with_assumed_queue_minutes": 140.77575757575758,
+      "sum_runner_wall_minutes": 135.77575757575758,
+      "sum_job_rounded_minutes": 136,
+      "billed_compute_minutes": 136,
+      "longest_job_minutes": 135.77575757575758,
+      "headroom_to_360_minutes": 224.22424242424242,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 13.328000000000001,
+      "expected_compute_usd_per_qualified_build": 13.678736842105264,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 14.994000000000002,
+        "0.95": 13.678736842105264,
+        "0.99": 13.395313131313133
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 135.77575757575758,
+        "hit_elapsed_minutes": 131.5939393939394,
+        "expected_elapsed_minutes": 132.43030303030304,
+        "expected_uncapped_attempt_usd": 13.0144,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "native32",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 86.12066666666666,
+          "finish_minutes": 86.12066666666666,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 12.016727272727273
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 10.636363636363637
+            },
+            {
+              "name": "FE training",
+              "minutes": 8.121212121212121
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 4.7272727272727275
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 14.181818181818182
+            },
+            {
+              "name": "Static relink",
+              "minutes": 2.8363636363636364
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 6.09090909090909
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 86.12066666666666,
+          "duration_minutes": 65.65509090909092,
+          "finish_minutes": 151.77575757575758,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 21.272727272727273
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 23.261151515151514
+            },
+            {
+              "name": "Qualification",
+              "minutes": 8.121212121212121
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 151.77575757575758,
+      "elapsed_with_assumed_queue_minutes": 161.77575757575758,
+      "sum_runner_wall_minutes": 151.77575757575758,
+      "sum_job_rounded_minutes": 153,
+      "billed_compute_minutes": 153,
+      "longest_job_minutes": 86.12066666666666,
+      "headroom_to_360_minutes": 273.8793333333333,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 14.994,
+      "expected_compute_usd_per_qualified_build": 15.391157894736843,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 16.880499999999998,
+        "0.95": 15.391157894736843,
+        "0.99": 15.070222222222222
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 151.77575757575758,
+        "hit_elapsed_minutes": 147.5939393939394,
+        "expected_elapsed_minutes": 148.43030303030304,
+        "expected_uncapped_attempt_usd": 14.602,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 170.77575757575758,
+        "sum_runner_wall_minutes": 170.77575757575758,
+        "longest_job_minutes": 93.12066666666666,
+        "expected_compute_usd_per_qualified_build": 17.299578947368424
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "balanced",
+      "hardware": "native32",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 63.01157575757575,
+          "finish_minutes": 63.01157575757575,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 12.016727272727273
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 10.636363636363637
+            },
+            {
+              "name": "FE training",
+              "minutes": 8.121212121212121
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 4.7272727272727275
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 41.69181818181817,
+          "finish_minutes": 41.69181818181817,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 14.181818181818182
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 63.01157575757575,
+          "duration_minutes": 27.927272727272726,
+          "finish_minutes": 90.93884848484848,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 16
+            },
+            {
+              "name": "Static relink",
+              "minutes": 2.8363636363636364
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 6.09090909090909
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 90.93884848484848,
+          "duration_minutes": 65.65509090909092,
+          "finish_minutes": 156.5939393939394,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 21.272727272727273
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 23.261151515151514
+            },
+            {
+              "name": "Qualification",
+              "minutes": 8.121212121212121
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 156.5939393939394,
+      "elapsed_with_assumed_queue_minutes": 171.5939393939394,
+      "sum_runner_wall_minutes": 198.28575757575757,
+      "sum_job_rounded_minutes": 200,
+      "billed_compute_minutes": 200,
+      "longest_job_minutes": 65.65509090909092,
+      "headroom_to_360_minutes": 294.3449090909091,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 19.6,
+      "expected_compute_usd_per_qualified_build": 20.115789473684213,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 22.05,
+        "0.95": 20.115789473684213,
+        "0.99": 19.6989898989899
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 156.5939393939394,
+        "hit_elapsed_minutes": 156.5939393939394,
+        "expected_elapsed_minutes": 156.5939393939394,
+        "expected_uncapped_attempt_usd": 19.2864,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 201.59393939393937,
+        "sum_runner_wall_minutes": 250.28575757575754,
+        "longest_job_minutes": 77.65509090909092,
+        "expected_compute_usd_per_qualified_build": 25.35105263157895
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "public4",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 410.88,
+          "finish_minutes": 410.88,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 45.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 20.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 20.0
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 60.0
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 90.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 20.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 410.88,
+      "elapsed_with_assumed_queue_minutes": 415.88,
+      "sum_runner_wall_minutes": 410.88,
+      "sum_job_rounded_minutes": 411,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 410.88,
+      "headroom_to_360_minutes": -50.879999999999995,
+      "fits_350": false,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": null,
+      "failure_probability_sensitivity_usd": {
+        "0.8": null,
+        "0.95": null,
+        "0.99": null
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 410.88,
+        "hit_elapsed_minutes": 360.88,
+        "expected_elapsed_minutes": 370.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "public4",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 250.35,
+          "finish_minutes": 250.35,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 45.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 20.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 20.0
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 60.0
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 250.35,
+          "duration_minutes": 176.53,
+          "finish_minutes": 426.88,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 90.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 20.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 426.88,
+      "elapsed_with_assumed_queue_minutes": 436.88,
+      "sum_runner_wall_minutes": 426.88,
+      "sum_job_rounded_minutes": 428,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 250.35,
+      "headroom_to_360_minutes": 109.65,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": 0.0,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 0.0,
+        "0.95": 0.0,
+        "0.99": 0.0
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 426.88,
+        "hit_elapsed_minutes": 376.88,
+        "expected_elapsed_minutes": 386.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 445.88,
+        "sum_runner_wall_minutes": 445.88,
+        "longest_job_minutes": 257.35,
+        "expected_compute_usd_per_qualified_build": 0.0
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "public4",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 163.35,
+          "finish_minutes": 163.35,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 45.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 20.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 20.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 87.50999999999999,
+          "finish_minutes": 87.50999999999999,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 60.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 163.35,
+          "duration_minutes": 46.0,
+          "finish_minutes": 209.35,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 16
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 209.35,
+          "duration_minutes": 176.53,
+          "finish_minutes": 385.88,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 90.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 20.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 385.88,
+      "elapsed_with_assumed_queue_minutes": 400.88,
+      "sum_runner_wall_minutes": 473.39,
+      "sum_job_rounded_minutes": 475,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 176.53,
+      "headroom_to_360_minutes": 183.47,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": 0.0,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 0.0,
+        "0.95": 0.0,
+        "0.99": 0.0
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 385.88,
+        "hit_elapsed_minutes": 385.88,
+        "expected_elapsed_minutes": 385.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 430.88,
+        "sum_runner_wall_minutes": 525.39,
+        "longest_job_minutes": 188.53,
+        "expected_compute_usd_per_qualified_build": 0.0
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "native16",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 303.4608962264151,
+          "finish_minutes": 303.4608962264151,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 33.87334905660377
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 29.982311320754715
+            },
+            {
+              "name": "FE training",
+              "minutes": 17.21698113207547
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 13.325471698113205
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 39.97641509433962
+            },
+            {
+              "name": "Static relink",
+              "minutes": 7.995283018867924
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 12.912735849056602
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 59.96462264150943
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 46.48674528301886
+            },
+            {
+              "name": "Qualification",
+              "minutes": 17.21698113207547
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 303.4608962264151,
+      "elapsed_with_assumed_queue_minutes": 308.4608962264151,
+      "sum_runner_wall_minutes": 303.4608962264151,
+      "sum_job_rounded_minutes": 304,
+      "billed_compute_minutes": 304,
+      "longest_job_minutes": 303.4608962264151,
+      "headroom_to_360_minutes": 56.539103773584884,
+      "fits_350": true,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 15.200000000000001,
+      "expected_compute_usd_per_qualified_build": 15.600000000000001,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 17.1,
+        "0.95": 15.600000000000001,
+        "0.99": 15.276767676767678
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 303.4608962264151,
+        "hit_elapsed_minutes": 273.4844811320755,
+        "expected_elapsed_minutes": 279.4797641509434,
+        "expected_uncapped_attempt_usd": 14.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "native16",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 182.79254716981131,
+          "finish_minutes": 182.79254716981131,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 33.87334905660377
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 29.982311320754715
+            },
+            {
+              "name": "FE training",
+              "minutes": 17.21698113207547
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 13.325471698113205
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 39.97641509433962
+            },
+            {
+              "name": "Static relink",
+              "minutes": 7.995283018867924
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 12.912735849056602
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 182.79254716981131,
+          "duration_minutes": 136.66834905660377,
+          "finish_minutes": 319.4608962264151,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 59.96462264150943
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 46.48674528301886
+            },
+            {
+              "name": "Qualification",
+              "minutes": 17.21698113207547
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 319.4608962264151,
+      "elapsed_with_assumed_queue_minutes": 329.4608962264151,
+      "sum_runner_wall_minutes": 319.4608962264151,
+      "sum_job_rounded_minutes": 320,
+      "billed_compute_minutes": 320,
+      "longest_job_minutes": 182.79254716981131,
+      "headroom_to_360_minutes": 177.20745283018869,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 16.0,
+      "expected_compute_usd_per_qualified_build": 16.423684210526318,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 18.0125,
+        "0.95": 16.423684210526318,
+        "0.99": 16.08131313131313
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 319.4608962264151,
+        "hit_elapsed_minutes": 289.4844811320754,
+        "expected_elapsed_minutes": 295.47976415094337,
+        "expected_uncapped_attempt_usd": 14.8,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 338.4608962264151,
+        "sum_runner_wall_minutes": 338.4608962264151,
+        "longest_job_minutes": 189.79254716981131,
+        "expected_compute_usd_per_qualified_build": 17.397368421052633
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "native16",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 121.90811320754716,
+          "finish_minutes": 121.90811320754716,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 33.87334905660377
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 29.982311320754715
+            },
+            {
+              "name": "FE training",
+              "minutes": 17.21698113207547
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 13.325471698113205
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 67.4864150943396,
+          "finish_minutes": 67.4864150943396,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 39.97641509433962
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 121.90811320754716,
+          "duration_minutes": 39.908018867924525,
+          "finish_minutes": 161.81613207547167,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 16
+            },
+            {
+              "name": "Static relink",
+              "minutes": 7.995283018867924
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 12.912735849056602
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 161.81613207547167,
+          "duration_minutes": 136.66834905660377,
+          "finish_minutes": 298.4844811320754,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 59.96462264150943
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 46.48674528301886
+            },
+            {
+              "name": "Qualification",
+              "minutes": 17.21698113207547
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 298.4844811320754,
+      "elapsed_with_assumed_queue_minutes": 313.4844811320754,
+      "sum_runner_wall_minutes": 365.9708962264151,
+      "sum_job_rounded_minutes": 367,
+      "billed_compute_minutes": 367,
+      "longest_job_minutes": 136.66834905660377,
+      "headroom_to_360_minutes": 223.33165094339623,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 18.35,
+      "expected_compute_usd_per_qualified_build": 18.83421052631579,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 20.650000000000002,
+        "0.95": 18.83421052631579,
+        "0.99": 18.442929292929293
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 298.4844811320754,
+        "hit_elapsed_minutes": 298.4844811320754,
+        "expected_elapsed_minutes": 298.4844811320754,
+        "expected_uncapped_attempt_usd": 17.150000000000002,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 343.4844811320754,
+        "sum_runner_wall_minutes": 417.9708962264151,
+        "longest_job_minutes": 148.66834905660377,
+        "expected_compute_usd_per_qualified_build": 21.505263157894742
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "native32",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 247.37523195876284,
+          "finish_minutes": 247.37523195876284,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 25.714819587628867
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 22.760953608247423
+            },
+            {
+              "name": "FE training",
+              "minutes": 15.077319587628866
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 10.1159793814433
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 30.347938144329895
+            },
+            {
+              "name": "Static relink",
+              "minutes": 6.06958762886598
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 11.30798969072165
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 45.521907216494846
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 40.8714175257732
+            },
+            {
+              "name": "Qualification",
+              "minutes": 15.077319587628866
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 247.37523195876284,
+      "elapsed_with_assumed_queue_minutes": 252.37523195876284,
+      "sum_runner_wall_minutes": 247.37523195876284,
+      "sum_job_rounded_minutes": 248,
+      "billed_compute_minutes": 248,
+      "longest_job_minutes": 247.37523195876284,
+      "headroom_to_360_minutes": 112.62476804123716,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 24.304000000000002,
+      "expected_compute_usd_per_qualified_build": 24.943578947368422,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 27.342000000000002,
+        "0.95": 24.943578947368422,
+        "0.99": 24.426747474747476
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 247.37523195876284,
+        "hit_elapsed_minutes": 227.02729381443297,
+        "expected_elapsed_minutes": 231.09688144329894,
+        "expected_uncapped_attempt_usd": 22.736000000000004,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "native32",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 148.90458762886595,
+          "finish_minutes": 148.90458762886595,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 10
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 25.714819587628867
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 22.760953608247423
+            },
+            {
+              "name": "FE training",
+              "minutes": 15.077319587628866
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 10.1159793814433
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 30.347938144329895
+            },
+            {
+              "name": "Static relink",
+              "minutes": 6.06958762886598
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 11.30798969072165
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 148.90458762886595,
+          "duration_minutes": 114.47064432989691,
+          "finish_minutes": 263.37523195876287,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 45.521907216494846
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 40.8714175257732
+            },
+            {
+              "name": "Qualification",
+              "minutes": 15.077319587628866
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 263.37523195876287,
+      "elapsed_with_assumed_queue_minutes": 273.37523195876287,
+      "sum_runner_wall_minutes": 263.37523195876287,
+      "sum_job_rounded_minutes": 264,
+      "billed_compute_minutes": 264,
+      "longest_job_minutes": 148.90458762886595,
+      "headroom_to_360_minutes": 211.09541237113405,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 25.872,
+      "expected_compute_usd_per_qualified_build": 26.558,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 29.130499999999998,
+        "0.95": 26.558,
+        "0.99": 26.003656565656566
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 263.37523195876287,
+        "hit_elapsed_minutes": 243.027293814433,
+        "expected_elapsed_minutes": 247.09688144329897,
+        "expected_uncapped_attempt_usd": 24.304000000000002,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 282.37523195876287,
+        "sum_runner_wall_minutes": 282.37523195876287,
+        "longest_job_minutes": 155.90458762886595,
+        "expected_compute_usd_per_qualified_build": 28.46642105263158
+      }
+    },
+    {
+      "budget": "planning",
+      "scaling": "constrained",
+      "hardware": "native32",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 101.17907216494844,
+          "finish_minutes": 101.17907216494844,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 25.714819587628867
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 22.760953608247423
+            },
+            {
+              "name": "FE training",
+              "minutes": 15.077319587628866
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 10.1159793814433
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 57.857938144329886,
+          "finish_minutes": 57.857938144329886,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 24.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 30.347938144329895
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 101.17907216494844,
+          "duration_minutes": 36.37757731958763,
+          "finish_minutes": 137.55664948453608,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 16
+            },
+            {
+              "name": "Static relink",
+              "minutes": 6.06958762886598
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 11.30798969072165
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 3.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 137.55664948453608,
+          "duration_minutes": 114.47064432989691,
+          "finish_minutes": 252.027293814433,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 13.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 45.521907216494846
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 40.8714175257732
+            },
+            {
+              "name": "Qualification",
+              "minutes": 15.077319587628866
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 252.027293814433,
+      "elapsed_with_assumed_queue_minutes": 267.027293814433,
+      "sum_runner_wall_minutes": 309.88523195876286,
+      "sum_job_rounded_minutes": 312,
+      "billed_compute_minutes": 312,
+      "longest_job_minutes": 114.47064432989691,
+      "headroom_to_360_minutes": 245.5293556701031,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 30.576,
+      "expected_compute_usd_per_qualified_build": 31.385789473684213,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 34.4225,
+        "0.95": 31.385789473684213,
+        "0.99": 30.73141414141414
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 252.027293814433,
+        "hit_elapsed_minutes": 252.027293814433,
+        "expected_elapsed_minutes": 252.027293814433,
+        "expected_uncapped_attempt_usd": 29.008,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 297.027293814433,
+        "sum_runner_wall_minutes": 361.88523195876286,
+        "longest_job_minutes": 126.4706443298969,
+        "expected_compute_usd_per_qualified_build": 36.621052631578955
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "public4",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 643.88,
+          "finish_minutes": 643.88,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 70.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 35.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 35.0
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 100.0
+            },
+            {
+              "name": "Static relink",
+              "minutes": 25.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 30.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 180.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 30.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 643.88,
+      "elapsed_with_assumed_queue_minutes": 648.88,
+      "sum_runner_wall_minutes": 643.88,
+      "sum_job_rounded_minutes": 644,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 643.88,
+      "headroom_to_360_minutes": -283.88,
+      "fits_350": false,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": null,
+      "failure_probability_sensitivity_usd": {
+        "0.8": null,
+        "0.95": null,
+        "0.99": null
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 643.88,
+        "hit_elapsed_minutes": 553.88,
+        "expected_elapsed_minutes": 571.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "public4",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 385.35,
+          "finish_minutes": 385.35,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 70.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 35.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 35.0
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 100.0
+            },
+            {
+              "name": "Static relink",
+              "minutes": 25.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 30.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 385.35,
+          "duration_minutes": 283.53,
+          "finish_minutes": 668.88,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 180.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 30.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 668.88,
+      "elapsed_with_assumed_queue_minutes": 678.88,
+      "sum_runner_wall_minutes": 668.88,
+      "sum_job_rounded_minutes": 670,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 385.35,
+      "headroom_to_360_minutes": -25.350000000000023,
+      "fits_350": false,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": null,
+      "failure_probability_sensitivity_usd": {
+        "0.8": null,
+        "0.95": null,
+        "0.99": null
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 668.88,
+        "hit_elapsed_minutes": 578.88,
+        "expected_elapsed_minutes": 596.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 678.88,
+        "sum_runner_wall_minutes": 678.88,
+        "longest_job_minutes": 390.35,
+        "expected_compute_usd_per_qualified_build": null
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "public4",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 230.35,
+          "finish_minutes": 230.35,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 70.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 35.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 35.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 139.51,
+          "finish_minutes": 139.51,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 100.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 230.35,
+          "duration_minutes": 85.0,
+          "finish_minutes": 315.35,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 25
+            },
+            {
+              "name": "Static relink",
+              "minutes": 25.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 30.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 315.35,
+          "duration_minutes": 283.53,
+          "finish_minutes": 598.88,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 180.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 30.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 598.88,
+      "elapsed_with_assumed_queue_minutes": 613.88,
+      "sum_runner_wall_minutes": 738.39,
+      "sum_job_rounded_minutes": 740,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 283.53,
+      "headroom_to_360_minutes": 76.47000000000003,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": 0.0,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 0.0,
+        "0.95": 0.0,
+        "0.99": 0.0
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 598.88,
+        "hit_elapsed_minutes": 598.88,
+        "expected_elapsed_minutes": 598.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 623.88,
+        "sum_runner_wall_minutes": 768.39,
+        "longest_job_minutes": 288.53,
+        "expected_compute_usd_per_qualified_build": 0.0
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "native16",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 278.9882352941177,
+          "finish_minutes": 278.9882352941177,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 18.541647058823532
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 25.529411764705884
+            },
+            {
+              "name": "FE training",
+              "minutes": 17.705882352941174
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 12.764705882352942
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 36.47058823529412
+            },
+            {
+              "name": "Static relink",
+              "minutes": 9.11764705882353
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.176470588235293
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 65.64705882352942
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 28.348352941176472
+            },
+            {
+              "name": "Qualification",
+              "minutes": 15.176470588235293
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 278.9882352941177,
+      "elapsed_with_assumed_queue_minutes": 283.9882352941177,
+      "sum_runner_wall_minutes": 278.9882352941177,
+      "sum_job_rounded_minutes": 279,
+      "billed_compute_minutes": 279,
+      "longest_job_minutes": 278.9882352941177,
+      "headroom_to_360_minutes": 81.01176470588229,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 13.950000000000001,
+      "expected_compute_usd_per_qualified_build": 14.31842105263158,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 15.700000000000001,
+        "0.95": 14.31842105263158,
+        "0.99": 14.020707070707072
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 278.9882352941177,
+        "hit_elapsed_minutes": 252.51764705882354,
+        "expected_elapsed_minutes": 257.81176470588235,
+        "expected_uncapped_attempt_usd": 12.91,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "native16",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 174.8163529411765,
+          "finish_minutes": 174.8163529411765,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 18.541647058823532
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 25.529411764705884
+            },
+            {
+              "name": "FE training",
+              "minutes": 17.705882352941174
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 12.764705882352942
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 36.47058823529412
+            },
+            {
+              "name": "Static relink",
+              "minutes": 9.11764705882353
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.176470588235293
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 174.8163529411765,
+          "duration_minutes": 129.1718823529412,
+          "finish_minutes": 303.98823529411766,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 65.64705882352942
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 28.348352941176472
+            },
+            {
+              "name": "Qualification",
+              "minutes": 15.176470588235293
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 303.98823529411766,
+      "elapsed_with_assumed_queue_minutes": 313.98823529411766,
+      "sum_runner_wall_minutes": 303.98823529411766,
+      "sum_job_rounded_minutes": 305,
+      "billed_compute_minutes": 305,
+      "longest_job_minutes": 174.8163529411765,
+      "headroom_to_360_minutes": 185.1836470588235,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 15.25,
+      "expected_compute_usd_per_qualified_build": 15.65263157894737,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 17.1625,
+        "0.95": 15.65263157894737,
+        "0.99": 15.327272727272728
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 303.98823529411766,
+        "hit_elapsed_minutes": 277.5176470588235,
+        "expected_elapsed_minutes": 282.81176470588235,
+        "expected_uncapped_attempt_usd": 14.21,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 313.98823529411766,
+        "sum_runner_wall_minutes": 313.98823529411766,
+        "longest_job_minutes": 179.8163529411765,
+        "expected_compute_usd_per_qualified_build": 16.16578947368421
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "native16",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 114.05164705882352,
+          "finish_minutes": 114.05164705882352,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 18.541647058823532
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 25.529411764705884
+            },
+            {
+              "name": "FE training",
+              "minutes": 17.705882352941174
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 12.764705882352942
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 75.9805882352941,
+          "finish_minutes": 75.9805882352941,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 36.47058823529412
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 114.05164705882352,
+          "duration_minutes": 54.294117647058826,
+          "finish_minutes": 168.34576470588235,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 25
+            },
+            {
+              "name": "Static relink",
+              "minutes": 9.11764705882353
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 15.176470588235293
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 168.34576470588235,
+          "duration_minutes": 129.1718823529412,
+          "finish_minutes": 297.5176470588235,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 65.64705882352942
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 28.348352941176472
+            },
+            {
+              "name": "Qualification",
+              "minutes": 15.176470588235293
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 297.5176470588235,
+      "elapsed_with_assumed_queue_minutes": 312.5176470588235,
+      "sum_runner_wall_minutes": 373.49823529411765,
+      "sum_job_rounded_minutes": 376,
+      "billed_compute_minutes": 376,
+      "longest_job_minutes": 129.1718823529412,
+      "headroom_to_360_minutes": 230.8281176470588,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 18.8,
+      "expected_compute_usd_per_qualified_build": 19.29736842105263,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 21.1625,
+        "0.95": 19.29736842105263,
+        "0.99": 18.895454545454545
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 297.5176470588235,
+        "hit_elapsed_minutes": 297.5176470588235,
+        "expected_elapsed_minutes": 297.5176470588235,
+        "expected_uncapped_attempt_usd": 17.759999999999998,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 322.5176470588235,
+        "sum_runner_wall_minutes": 403.49823529411765,
+        "longest_job_minutes": 134.1718823529412,
+        "expected_compute_usd_per_qualified_build": 20.83684210526316
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "native32",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 205.27272727272728,
+          "finish_minutes": 205.27272727272728,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 12.016727272727273
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 16.545454545454547
+            },
+            {
+              "name": "FE training",
+              "minutes": 14.212121212121211
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 8.272727272727273
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 23.636363636363637
+            },
+            {
+              "name": "Static relink",
+              "minutes": 5.909090909090909
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 12.18181818181818
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 42.54545454545455
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 23.261151515151514
+            },
+            {
+              "name": "Qualification",
+              "minutes": 12.18181818181818
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 205.27272727272728,
+      "elapsed_with_assumed_queue_minutes": 210.27272727272728,
+      "sum_runner_wall_minutes": 205.27272727272728,
+      "sum_job_rounded_minutes": 206,
+      "billed_compute_minutes": 206,
+      "longest_job_minutes": 205.27272727272728,
+      "headroom_to_360_minutes": 154.72727272727272,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 20.188000000000002,
+      "expected_compute_usd_per_qualified_build": 20.71926315789474,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 22.7115,
+        "0.95": 20.71926315789474,
+        "0.99": 20.289959595959598
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 205.27272727272728,
+        "hit_elapsed_minutes": 191.63636363636365,
+        "expected_elapsed_minutes": 194.36363636363637,
+        "expected_uncapped_attempt_usd": 19.090400000000002,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "native32",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 132.28430303030302,
+          "finish_minutes": 132.28430303030302,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 12.016727272727273
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 16.545454545454547
+            },
+            {
+              "name": "FE training",
+              "minutes": 14.212121212121211
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 8.272727272727273
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 23.636363636363637
+            },
+            {
+              "name": "Static relink",
+              "minutes": 5.909090909090909
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 12.18181818181818
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 132.28430303030302,
+          "duration_minutes": 97.98842424242423,
+          "finish_minutes": 230.27272727272725,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 42.54545454545455
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 23.261151515151514
+            },
+            {
+              "name": "Qualification",
+              "minutes": 12.18181818181818
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 230.27272727272725,
+      "elapsed_with_assumed_queue_minutes": 240.27272727272725,
+      "sum_runner_wall_minutes": 230.27272727272725,
+      "sum_job_rounded_minutes": 231,
+      "billed_compute_minutes": 231,
+      "longest_job_minutes": 132.28430303030302,
+      "headroom_to_360_minutes": 227.71569696969698,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 22.638,
+      "expected_compute_usd_per_qualified_build": 23.236315789473686,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 25.48,
+        "0.95": 23.236315789473686,
+        "0.99": 22.752828282828286
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 230.27272727272725,
+        "hit_elapsed_minutes": 216.63636363636363,
+        "expected_elapsed_minutes": 219.36363636363635,
+        "expected_uncapped_attempt_usd": 21.5404,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 240.27272727272725,
+        "sum_runner_wall_minutes": 240.27272727272725,
+        "longest_job_minutes": 137.28430303030302,
+        "expected_compute_usd_per_qualified_build": 24.242105263157896
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "balanced",
+      "hardware": "native32",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 90.5570303030303,
+          "finish_minutes": 90.5570303030303,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 12.016727272727273
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 16.545454545454547
+            },
+            {
+              "name": "FE training",
+              "minutes": 14.212121212121211
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 8.272727272727273
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 63.14636363636363,
+          "finish_minutes": 63.14636363636363,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 23.636363636363637
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 90.5570303030303,
+          "duration_minutes": 48.09090909090909,
+          "finish_minutes": 138.6479393939394,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 25
+            },
+            {
+              "name": "Static relink",
+              "minutes": 5.909090909090909
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 12.18181818181818
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 138.6479393939394,
+          "duration_minutes": 97.98842424242423,
+          "finish_minutes": 236.63636363636363,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 42.54545454545455
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 23.261151515151514
+            },
+            {
+              "name": "Qualification",
+              "minutes": 12.18181818181818
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 236.63636363636363,
+      "elapsed_with_assumed_queue_minutes": 251.63636363636363,
+      "sum_runner_wall_minutes": 299.78272727272724,
+      "sum_job_rounded_minutes": 302,
+      "billed_compute_minutes": 302,
+      "longest_job_minutes": 97.98842424242423,
+      "headroom_to_360_minutes": 262.01157575757577,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 29.596,
+      "expected_compute_usd_per_qualified_build": 30.380000000000003,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 33.32,
+        "0.95": 30.380000000000003,
+        "0.99": 29.746464646464645
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 236.63636363636363,
+        "hit_elapsed_minutes": 236.63636363636363,
+        "expected_elapsed_minutes": 236.63636363636363,
+        "expected_uncapped_attempt_usd": 28.4984,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 261.6363636363636,
+        "sum_runner_wall_minutes": 329.78272727272724,
+        "longest_job_minutes": 102.98842424242423,
+        "expected_compute_usd_per_qualified_build": 33.39736842105263
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "public4",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 643.88,
+          "finish_minutes": 643.88,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 70.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 35.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 35.0
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 100.0
+            },
+            {
+              "name": "Static relink",
+              "minutes": 25.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 30.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 180.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 30.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 643.88,
+      "elapsed_with_assumed_queue_minutes": 648.88,
+      "sum_runner_wall_minutes": 643.88,
+      "sum_job_rounded_minutes": 644,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 643.88,
+      "headroom_to_360_minutes": -283.88,
+      "fits_350": false,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": null,
+      "failure_probability_sensitivity_usd": {
+        "0.8": null,
+        "0.95": null,
+        "0.99": null
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 643.88,
+        "hit_elapsed_minutes": 553.88,
+        "expected_elapsed_minutes": 571.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "public4",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 385.35,
+          "finish_minutes": 385.35,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 70.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 35.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 35.0
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 100.0
+            },
+            {
+              "name": "Static relink",
+              "minutes": 25.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 30.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 385.35,
+          "duration_minutes": 283.53,
+          "finish_minutes": 668.88,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 180.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 30.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 668.88,
+      "elapsed_with_assumed_queue_minutes": 678.88,
+      "sum_runner_wall_minutes": 668.88,
+      "sum_job_rounded_minutes": 670,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 385.35,
+      "headroom_to_360_minutes": -25.350000000000023,
+      "fits_350": false,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": null,
+      "failure_probability_sensitivity_usd": {
+        "0.8": null,
+        "0.95": null,
+        "0.99": null
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 668.88,
+        "hit_elapsed_minutes": 578.88,
+        "expected_elapsed_minutes": 596.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 678.88,
+        "sum_runner_wall_minutes": 678.88,
+        "longest_job_minutes": 390.35,
+        "expected_compute_usd_per_qualified_build": null
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "public4",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 230.35,
+          "finish_minutes": 230.35,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 50.84
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 70.0
+            },
+            {
+              "name": "FE training",
+              "minutes": 35.0
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 35.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 139.51,
+          "finish_minutes": 139.51,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 100.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 230.35,
+          "duration_minutes": 85.0,
+          "finish_minutes": 315.35,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 25
+            },
+            {
+              "name": "Static relink",
+              "minutes": 25.0
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 30.0
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 315.35,
+          "duration_minutes": 283.53,
+          "finish_minutes": 598.88,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 180.0
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 53.53
+            },
+            {
+              "name": "Qualification",
+              "minutes": 30.0
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 598.88,
+      "elapsed_with_assumed_queue_minutes": 613.88,
+      "sum_runner_wall_minutes": 738.39,
+      "sum_job_rounded_minutes": 740,
+      "billed_compute_minutes": 0,
+      "longest_job_minutes": 283.53,
+      "headroom_to_360_minutes": 76.47000000000003,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 0,
+      "expected_compute_usd_per_qualified_build": 0.0,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 0.0,
+        "0.95": 0.0,
+        "0.99": 0.0
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 598.88,
+        "hit_elapsed_minutes": 598.88,
+        "expected_elapsed_minutes": 598.88,
+        "expected_uncapped_attempt_usd": 0.0,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 623.88,
+        "sum_runner_wall_minutes": 768.39,
+        "longest_job_minutes": 288.53,
+        "expected_compute_usd_per_qualified_build": 0.0
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "native16",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 469.8229245283019,
+          "finish_minutes": 469.8229245283019,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 33.87334905660377
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 46.63915094339622
+            },
+            {
+              "name": "FE training",
+              "minutes": 30.129716981132077
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 23.31957547169811
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 66.62735849056604
+            },
+            {
+              "name": "Static relink",
+              "minutes": 16.65683962264151
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 25.825471698113205
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 119.92924528301886
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 46.48674528301886
+            },
+            {
+              "name": "Qualification",
+              "minutes": 25.825471698113205
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 469.8229245283019,
+      "elapsed_with_assumed_queue_minutes": 474.8229245283019,
+      "sum_runner_wall_minutes": 469.8229245283019,
+      "sum_job_rounded_minutes": 470,
+      "billed_compute_minutes": 470,
+      "longest_job_minutes": 469.8229245283019,
+      "headroom_to_360_minutes": -109.82292452830188,
+      "fits_350": false,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 23.5,
+      "expected_compute_usd_per_qualified_build": null,
+      "failure_probability_sensitivity_usd": {
+        "0.8": null,
+        "0.95": null,
+        "0.99": null
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 469.8229245283019,
+        "hit_elapsed_minutes": 413.19556603773583,
+        "expected_elapsed_minutes": 424.52103773584906,
+        "expected_uncapped_attempt_usd": 21.26,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "native16",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 282.5814622641509,
+          "finish_minutes": 282.5814622641509,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 33.87334905660377
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 46.63915094339622
+            },
+            {
+              "name": "FE training",
+              "minutes": 30.129716981132077
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 23.31957547169811
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 66.62735849056604
+            },
+            {
+              "name": "Static relink",
+              "minutes": 16.65683962264151
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 25.825471698113205
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 282.5814622641509,
+          "duration_minutes": 212.24146226415095,
+          "finish_minutes": 494.8229245283019,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 119.92924528301886
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 46.48674528301886
+            },
+            {
+              "name": "Qualification",
+              "minutes": 25.825471698113205
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 494.8229245283019,
+      "elapsed_with_assumed_queue_minutes": 504.8229245283019,
+      "sum_runner_wall_minutes": 494.8229245283019,
+      "sum_job_rounded_minutes": 496,
+      "billed_compute_minutes": 496,
+      "longest_job_minutes": 282.5814622641509,
+      "headroom_to_360_minutes": 77.4185377358491,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 24.8,
+      "expected_compute_usd_per_qualified_build": 25.455263157894738,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 27.9125,
+        "0.95": 25.455263157894738,
+        "0.99": 24.925757575757576
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 494.8229245283019,
+        "hit_elapsed_minutes": 438.19556603773583,
+        "expected_elapsed_minutes": 449.52103773584906,
+        "expected_uncapped_attempt_usd": 22.520000000000003,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 504.8229245283019,
+        "sum_runner_wall_minutes": 504.8229245283019,
+        "longest_job_minutes": 287.5814622641509,
+        "expected_compute_usd_per_qualified_build": 25.96578947368421
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "native16",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 173.47179245283016,
+          "finish_minutes": 173.47179245283016,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 33.87334905660377
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 46.63915094339622
+            },
+            {
+              "name": "FE training",
+              "minutes": 30.129716981132077
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 23.31957547169811
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 106.13735849056603,
+          "finish_minutes": 106.13735849056603,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 66.62735849056604
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 173.47179245283016,
+          "duration_minutes": 72.48231132075472,
+          "finish_minutes": 245.95410377358488,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 25
+            },
+            {
+              "name": "Static relink",
+              "minutes": 16.65683962264151
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 25.825471698113205
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 245.95410377358488,
+          "duration_minutes": 212.24146226415095,
+          "finish_minutes": 458.19556603773583,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 119.92924528301886
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 46.48674528301886
+            },
+            {
+              "name": "Qualification",
+              "minutes": 25.825471698113205
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 458.19556603773583,
+      "elapsed_with_assumed_queue_minutes": 473.19556603773583,
+      "sum_runner_wall_minutes": 564.3329245283019,
+      "sum_job_rounded_minutes": 567,
+      "billed_compute_minutes": 567,
+      "longest_job_minutes": 212.24146226415095,
+      "headroom_to_360_minutes": 147.75853773584905,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 28.35,
+      "expected_compute_usd_per_qualified_build": 29.1,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 31.9125,
+        "0.95": 29.1,
+        "0.99": 28.493939393939396
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 458.19556603773583,
+        "hit_elapsed_minutes": 458.19556603773583,
+        "expected_elapsed_minutes": 458.19556603773583,
+        "expected_uncapped_attempt_usd": 26.07,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 483.19556603773583,
+        "sum_runner_wall_minutes": 594.3329245283019,
+        "longest_job_minutes": 217.24146226415095,
+        "expected_compute_usd_per_qualified_build": 30.63684210526316
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "native32",
+      "layout": "serial",
+      "jobs": [
+        {
+          "name": "fresh_dual_pgo_thinlto",
+          "start_minutes": 0,
+          "duration_minutes": 380.0910824742268,
+          "finish_minutes": 380.0910824742268,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 25.714819587628867
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 35.40592783505155
+            },
+            {
+              "name": "FE training",
+              "minutes": 26.385309278350512
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 17.702963917525775
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 50.579896907216494
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.644974226804123
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 22.6159793814433
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 91.04381443298969
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 40.8714175257732
+            },
+            {
+              "name": "Qualification",
+              "minutes": 22.6159793814433
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 380.0910824742268,
+      "elapsed_with_assumed_queue_minutes": 385.0910824742268,
+      "sum_runner_wall_minutes": 380.0910824742268,
+      "sum_job_rounded_minutes": 381,
+      "billed_compute_minutes": 381,
+      "longest_job_minutes": 380.0910824742268,
+      "headroom_to_360_minutes": -20.091082474226823,
+      "fits_350": false,
+      "fits_300_acceptance_target": false,
+      "complete_uncapped_attempt_usd": 37.338,
+      "expected_compute_usd_per_qualified_build": null,
+      "failure_probability_sensitivity_usd": {
+        "0.8": null,
+        "0.95": null,
+        "0.99": null
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 380.0910824742268,
+        "hit_elapsed_minutes": 339.51118556701033,
+        "expected_elapsed_minutes": 347.6271649484536,
+        "expected_uncapped_attempt_usd": 34.1236,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "native32",
+      "layout": "two_job",
+      "jobs": [
+        {
+          "name": "Fresh profile producer",
+          "start_minutes": 0,
+          "duration_minutes": 230.55987113402063,
+          "finish_minutes": 230.55987113402063,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 14.509999999999991
+            },
+            {
+              "name": "Setup/support",
+              "minutes": 20
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 25.714819587628867
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 35.40592783505155
+            },
+            {
+              "name": "FE training",
+              "minutes": 26.385309278350512
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 17.702963917525775
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 50.579896907216494
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.644974226804123
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 22.6159793814433
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 230.55987113402063,
+          "duration_minutes": 174.5312113402062,
+          "finish_minutes": 405.0910824742268,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 91.04381443298969
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 40.8714175257732
+            },
+            {
+              "name": "Qualification",
+              "minutes": 22.6159793814433
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 405.0910824742268,
+      "elapsed_with_assumed_queue_minutes": 415.0910824742268,
+      "sum_runner_wall_minutes": 405.0910824742268,
+      "sum_job_rounded_minutes": 406,
+      "billed_compute_minutes": 406,
+      "longest_job_minutes": 230.55987113402063,
+      "headroom_to_360_minutes": 129.44012886597937,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 39.788000000000004,
+      "expected_compute_usd_per_qualified_build": 40.84021052631579,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 44.786,
+        "0.95": 40.84021052631579,
+        "0.99": 39.989939393939395
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 405.0910824742268,
+        "hit_elapsed_minutes": 364.51118556701033,
+        "expected_elapsed_minutes": 372.6271649484536,
+        "expected_uncapped_attempt_usd": 36.5736,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 415.0910824742268,
+        "sum_runner_wall_minutes": 415.0910824742268,
+        "longest_job_minutes": 235.55987113402063,
+        "expected_compute_usd_per_qualified_build": 41.84084210526316
+      }
+    },
+    {
+      "budget": "stress",
+      "scaling": "constrained",
+      "hardware": "native32",
+      "layout": "four_job",
+      "jobs": [
+        {
+          "name": "Frontend producer",
+          "start_minutes": 0,
+          "duration_minutes": 144.7190206185567,
+          "finish_minutes": 144.7190206185567,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "Seed LLVM",
+              "minutes": 25.714819587628867
+            },
+            {
+              "name": "FE instrumentation",
+              "minutes": 35.40592783505155
+            },
+            {
+              "name": "FE training",
+              "minutes": 26.385309278350512
+            },
+            {
+              "name": "FE profile-use",
+              "minutes": 17.702963917525775
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Instrumented LLVM build",
+          "start_minutes": 0,
+          "duration_minutes": 90.08989690721648,
+          "finish_minutes": 90.08989690721648,
+          "phases": [
+            {
+              "name": "Setup/support",
+              "minutes": 34.50999999999999
+            },
+            {
+              "name": "LLVM instrumentation",
+              "minutes": 50.579896907216494
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Backend relink + training",
+          "start_minutes": 144.7190206185567,
+          "duration_minutes": 65.26095360824742,
+          "finish_minutes": 209.97997422680413,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 25
+            },
+            {
+              "name": "Static relink",
+              "minutes": 12.644974226804123
+            },
+            {
+              "name": "LLVM training",
+              "minutes": 22.6159793814433
+            },
+            {
+              "name": "Handoff/setup",
+              "minutes": 5.0
+            }
+          ]
+        },
+        {
+          "name": "Final compiler + full dist + qualification",
+          "start_minutes": 209.97997422680413,
+          "duration_minutes": 174.5312113402062,
+          "finish_minutes": 384.51118556701033,
+          "phases": [
+            {
+              "name": "Handoff/setup",
+              "minutes": 20.0
+            },
+            {
+              "name": "Final compiler",
+              "minutes": 91.04381443298969
+            },
+            {
+              "name": "Full dist remainder",
+              "minutes": 40.8714175257732
+            },
+            {
+              "name": "Qualification",
+              "minutes": 22.6159793814433
+            }
+          ]
+        }
+      ],
+      "elapsed_minutes": 384.51118556701033,
+      "elapsed_with_assumed_queue_minutes": 399.51118556701033,
+      "sum_runner_wall_minutes": 474.6010824742268,
+      "sum_job_rounded_minutes": 477,
+      "billed_compute_minutes": 477,
+      "longest_job_minutes": 174.5312113402062,
+      "headroom_to_360_minutes": 185.4687886597938,
+      "fits_350": true,
+      "fits_300_acceptance_target": true,
+      "complete_uncapped_attempt_usd": 46.746,
+      "expected_compute_usd_per_qualified_build": 47.98389473684211,
+      "failure_probability_sensitivity_usd": {
+        "0.8": 52.626000000000005,
+        "0.95": 47.98389473684211,
+        "0.99": 46.98357575757576
+      },
+      "cache_sensitivity": {
+        "hit_probability_assumed": 0.8,
+        "cold_elapsed_minutes": 384.51118556701033,
+        "hit_elapsed_minutes": 384.51118556701033,
+        "expected_elapsed_minutes": 384.51118556701033,
+        "expected_uncapped_attempt_usd": 43.5316,
+        "note": "Fresh profiles and static relinks retained; cold path controls acceptance."
+      },
+      "large_handoff_sensitivity": {
+        "elapsed_minutes": 409.51118556701033,
+        "sum_runner_wall_minutes": 504.6010824742268,
+        "longest_job_minutes": 179.5312113402062,
+        "expected_compute_usd_per_qualified_build": 50.996105263157894
+      }
+    }
+  ]
+}
