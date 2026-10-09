@@ -21,10 +21,11 @@ runs:
         python-version: "3.13"
         architecture: ${{ inputs.architecture }}
     - shell: pwsh
+      working-directory: ${{ github.workspace }}/harness
       run: |
-        git -C rust-source config core.longpaths true
-        git -C rust-source remote set-url --push origin DISABLED-UPSTREAM-PUSH
-        git -C rust-source submodule update --init --depth 1 src/llvm-project src/tools/rustc-perf src/tools/cargo library/backtrace
+        git -C ..\rust-source config core.longpaths true
+        git -C ..\rust-source remote set-url --push origin DISABLED-UPSTREAM-PUSH
+        git -C ..\rust-source submodule update --init --depth 1 src/llvm-project src/tools/rustc-perf src/tools/cargo library/backtrace
         if ($LASTEXITCODE) { throw 'Pinned submodules failed' }
         $suffix = if ('${{ inputs.architecture }}' -eq 'arm64') { 'woa64' } else { 'win64' }
         New-Item -ItemType Directory -Path tools -Force | Out-Null

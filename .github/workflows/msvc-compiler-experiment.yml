@@ -10,6 +10,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+defaults:
+  run:
+    working-directory: harness
 jobs:
   initial:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
@@ -30,26 +33,28 @@ jobs:
             host: aarch64-pc-windows-msvc
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/prepare-msvc-experiment
+        with:
+          path: harness
+      - uses: ./harness/.github/actions/prepare-msvc-experiment
         with:
           architecture: ${{ matrix.arch }}
           rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
       - name: Build control or train rustc
         shell: pwsh
         run: |
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase ${{ matrix.phase }}
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase ${{ matrix.phase }}
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: msvc-${{ matrix.arch }}-${{ matrix.phase }}
           path: |
-            evidence/*.json
-            evidence/*.toml
-            evidence/*.txt
-            evidence/*.stdout
-            evidence/*.stderr
-            evidence/*.profdata
-            evidence/*.zip
+            harness/evidence/*.json
+            harness/evidence/*.toml
+            harness/evidence/*.txt
+            harness/evidence/*.stdout
+            harness/evidence/*.stderr
+            harness/evidence/*.profdata
+            harness/evidence/*.zip
           if-no-files-found: error
           retention-days: 30
   llvm-profile:
@@ -69,29 +74,31 @@ jobs:
             host: aarch64-pc-windows-msvc
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/prepare-msvc-experiment
+        with:
+          path: harness
+      - uses: ./harness/.github/actions/prepare-msvc-experiment
         with:
           architecture: ${{ matrix.arch }}
           rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
       - uses: actions/download-artifact@v6
         with:
           name: msvc-${{ matrix.arch }}-rustc-profile
-          path: profiles
+          path: harness/profiles
       - name: Build and train instrumented LLVM with relinked rustc
         shell: pwsh
         run: |
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase llvm-profile --profiles profiles
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase llvm-profile --profiles profiles
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: msvc-${{ matrix.arch }}-llvm-profile
           path: |
-            evidence/*.json
-            evidence/*.toml
-            evidence/*.txt
-            evidence/*.stdout
-            evidence/*.stderr
-            evidence/*.profdata
+            harness/evidence/*.json
+            harness/evidence/*.toml
+            harness/evidence/*.txt
+            harness/evidence/*.stdout
+            harness/evidence/*.stderr
+            harness/evidence/*.profdata
           if-no-files-found: error
           retention-days: 30
   final:
@@ -113,29 +120,31 @@ jobs:
             host: aarch64-pc-windows-msvc
     steps:
       - uses: actions/checkout@v6
-      - uses: ./.github/actions/prepare-msvc-experiment
+        with:
+          path: harness
+      - uses: ./harness/.github/actions/prepare-msvc-experiment
         with:
           architecture: ${{ matrix.arch }}
           rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
       - uses: actions/download-artifact@v6
         with:
           name: msvc-${{ matrix.arch }}-llvm-profile
-          path: profiles
+          path: harness/profiles
       - name: Build final compiler from identical verified profiles
         shell: pwsh
         run: |
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase ${{ matrix.phase }} --profiles profiles
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase ${{ matrix.phase }} --profiles profiles
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: msvc-${{ matrix.arch }}-${{ matrix.phase }}
           path: |
-            evidence/*.json
-            evidence/*.toml
-            evidence/*.txt
-            evidence/*.stdout
-            evidence/*.stderr
-            evidence/*.profdata
-            evidence/*.zip
+            harness/evidence/*.json
+            harness/evidence/*.toml
+            harness/evidence/*.txt
+            harness/evidence/*.stdout
+            harness/evidence/*.stderr
+            harness/evidence/*.profdata
+            harness/evidence/*.zip
           if-no-files-found: error
           retention-days: 30
