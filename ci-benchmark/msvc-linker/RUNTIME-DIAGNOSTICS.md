@@ -125,3 +125,40 @@ Windows directory junction back into the source tree and confirms that the
 archive contains the compiler and helper binaries without traversing that
 junction. Only the single Arm64 diagnostic job is being repeated; the valid
 x64 profile and both baseline artifacts remain unchanged.
+
+### Captured compiler: online-merge crash reproduced
+
+[Run 37993684565](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37993684565)
+successfully preserved the instrumented compiler before reproducing the
+training failure. Its diagnostic ZIP was downloaded and verified against
+SHA-256 `524dd89ccaed9317ac09509536082eabc37fc28db90ba14ae4275fdee4f103ee`.
+
+Locally, the captured compiler completed 16 concurrent `-vV` invocations with
+unique raw-profile paths; its captured collector wrapper also completed 12.
+When forced to reuse an online-merge file (`LLVM_PROFILE_FILE=default_%m.profraw`),
+the first invocation succeeded and the next five all exited with
+`0xc0000005`. Microsoft CDB located the exception in
+`lprofMergeValueProfData`, called by `__llvm_profile_merge_from_buffer`,
+`openFileForMerging`, and `__llvm_profile_write_file` during process exit.
+Windows process-ID reuse makes an equivalent collision possible with the
+training pattern `%m_%p`; actual PID reuse in the hosted failure was not logged.
+
+The profile writer emits `PaddingBytesAfterBitmapBytes`, but the online-merge
+reader omitted it when locating the names and subsequent value-profile data.
+This causes the value merger to interpret bytes at the wrong offset. A second
+candidate source fix adds that header field to `SrcNameStart`.
+
+With **both** source fixes rebuilt into a separate diagnostic runtime, the
+small rlib and dylib programs each completed 40 concurrent executions sharing
+their online-merge files, and llvm-profdata merged both successfully. The rlib
+profile reports exactly 40 main calls and 4,000 loop iterations, matching
+40 executions of a 100-iteration loop. An attempted counter-sentinel alignment
+change did not fix the crash and was reverted.
+
+The preserved compiler itself has not yet been rebuilt with the fixes.
+The isolated diagnostic branch now applies the exact two-file runtime patch
+before compiler construction, records the modified source hashes, preserves
+the compiler, and requires eight repeated online-merge version queries plus
+an offline merge before running all original training workloads. This is a
+feasibility check, not permission to mix patched and unpatched toolchains
+in the final benchmark. The original review branch is unchanged.
