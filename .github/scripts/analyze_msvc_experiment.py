@@ -157,16 +157,63 @@ def markdown(result):
     return "\n".join(lines)
 
 
+def build_summary(root, result):
+    phases = ("baseline", "rustc-profile", "llvm-profile", "pgo", "pgo-rust-thin")
+    records = {}
+    for path in root.rglob("metadata.json"):
+        item = json.loads(path.read_text())
+        key = (item["host"], item["phase"])
+        if key in records or item["run_id"] != result["build_run"]:
+            raise ValueError("Duplicate or mixed compiler build artifacts")
+        if item["rust_sha"] != result["protocol"]["rust_sha"]:
+            raise ValueError("Wrong compiler source in build report")
+        timing = {}
+        for stage in ("build", "training", "merge", "training-lockfile", "smoke-compile", "smoke-run"):
+            measurement = path.parent / f"{stage}.json"
+            if measurement.is_file():
+                row = json.loads(measurement.read_text())
+                if row["exit_code"] != 0:
+                    raise ValueError(f"Failed build stage: {measurement}")
+                timing[stage] = {key: row[key] for key in ("wall_seconds", "cpu_seconds")}
+        if "build" not in timing:
+            raise ValueError("Missing compiler construction timing")
+        if item["phase"].endswith("-profile") and not {"training", "merge"} <= timing.keys():
+            raise ValueError("Missing profile collection timing")
+        records[key] = timing
+    if set(records) != {(host, phase) for host in HOSTS for phase in phases}:
+        raise ValueError("Incomplete compiler construction artifact matrix")
+    lines = ["", "## Toolchain construction", "",
+             "| Architecture | Phase | Bootstrap wall (min) | Training wall (min) | Bootstrap CPU (min) |",
+             "|---|---|---:|---:|---:|"]
+    for host in HOSTS:
+        for phase in phases:
+            timing = records[host, phase]
+            training = timing.get("training", {}).get("wall_seconds", 0) / 60
+            lines.append(f"| {host} | {phase} | {timing['build']['wall_seconds']/60:.2f} | "
+                         f"{training:.2f} | {timing['build']['cpu_seconds']/60:.2f} |")
+    lines += ["", "Bootstrap-command time includes stage0 acquisition, bootstrap compilation, LLVM",
+              "and Rust compilation. It is not a pure offline compiler CPU measurement.",
+              "Training and profile merging are separately recorded. Source/tool setup and",
+              "artifact transfers are excluded from this table. Jobs rebuild prerequisites",
+              "independently; their summed time is not the workflow critical path.", ""]
+    return {"stages": {f"{host}/{phase}": timing for (host, phase), timing in records.items()}}, "\n".join(lines)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input", type=Path, required=True)
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--build-input", type=Path)
     args = parser.parse_args()
     result = analyze(args.input, json.loads(args.protocol.read_text()))
     args.output.mkdir(parents=True, exist_ok=True)
+    report = markdown(result)
+    if args.build_input:
+        result["construction"], appendix = build_summary(args.build_input, result)
+        report += appendix
     save(args.output / "results.json", result)
-    (args.output / "RESULTS.md").write_text(markdown(result), encoding="utf-8")
+    (args.output / "RESULTS.md").write_text(report, encoding="utf-8")
 
 
 if __name__ == "__main__":

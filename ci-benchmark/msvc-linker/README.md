@@ -51,10 +51,29 @@ are not compiler-performance measurements.
 
 ## Results
 
-Not yet available. Build, training, compatibility, and IronRDP results will be
-reported only after the corresponding jobs complete. An unsuccessful build
-will be reported as a failure, not as a zero improvement or a successful
-optimized toolchain.
+Compiler build and IronRDP performance results are not yet available.
+[The current compiler workflow](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37949154663)
+is generating the toolchains and profiles.
+
+The initial x64 compatibility probes completed:
+
+| Input objects | Microsoft link.exe | Result |
+|---|---|---|
+| clang-cl native objects | Ordinary linking | Linked and executed successfully |
+| clang-cl ThinLTO bitcode | Ordinary linking | Rejected as invalid/corrupt input |
+| clang-cl ThinLTO bitcode | `/LTCG` | Rejected as invalid/corrupt input |
+| cl.exe `/GL` objects | `/LTCG` | Linked and executed successfully |
+
+These are format/compatibility results, not compiler-speed results.
+[Evidence: initial x64 baseline job](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37948218037/job/113879940009).
+That run subsequently failed before compiler construction because the Rust
+checkout was nested inside the harness's Cargo workspace. The corrected run
+uses sibling checkouts. A short intermediate run was cancelled before expensive
+training to include the already-known, dependency-preserving training lockfile
+migration. Neither setup attempt contributes to performance measurements.
+
+An unsuccessful build will be reported as a failure, not as a zero improvement
+or a successful optimized toolchain.
 
 ## Sources
 
