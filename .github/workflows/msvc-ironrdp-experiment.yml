@@ -1,5 +1,7 @@
 name: Measure same-tools Windows compilers on IronRDP
 on:
+  push:
+    branches: [experiment/windows-msvc-pilot, experiment/windows-msvc-full]
   workflow_dispatch:
     inputs:
       build_run:
@@ -13,6 +15,8 @@ on:
 permissions:
   contents: read
   actions: read
+env:
+  COMPILER_BUILD_RUN: ${{ inputs.build_run || '37948218037' }}
 jobs:
   measure:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
@@ -23,7 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: [x64, arm64]
-        vm: ${{ fromJSON(inputs.pilot && '[1]' || '[1,2,3,4,5]') }}
+        vm: ${{ fromJSON((inputs.pilot || github.ref_name == 'experiment/windows-msvc-pilot') && '[1]' || '[1,2,3,4,5]') }}
         include:
           - arch: x64
             runner: windows-2025
@@ -57,19 +61,19 @@ jobs:
         with:
           name: msvc-${{ matrix.arch }}-baseline
           path: compilers/baseline
-          run-id: ${{ inputs.build_run }}
+          run-id: ${{ env.COMPILER_BUILD_RUN }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v6
         with:
           name: msvc-${{ matrix.arch }}-pgo
           path: compilers/pgo
-          run-id: ${{ inputs.build_run }}
+          run-id: ${{ env.COMPILER_BUILD_RUN }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v6
         with:
           name: msvc-${{ matrix.arch }}-pgo-rust-thin
           path: compilers/pgo-rust-thin
-          run-id: ${{ inputs.build_run }}
+          run-id: ${{ env.COMPILER_BUILD_RUN }}
           github-token: ${{ github.token }}
       - name: Prepare identical native support tools
         shell: pwsh
@@ -87,8 +91,8 @@ jobs:
         shell: pwsh
         run: |
           $extra = @()
-          if ('${{ inputs.pilot }}' -eq 'true') { $extra += '--pilot' }
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_ironrdp_probe.py --source workload --compilers compilers --output results --clang tools\clang\bin --build-run '${{ inputs.build_run }}' --protocol ci-benchmark\msvc-linker\protocol.json @extra
+          if ('${{ inputs.pilot }}' -eq 'true' -or '${{ github.ref_name }}' -eq 'experiment/windows-msvc-pilot') { $extra += '--pilot' }
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_ironrdp_probe.py --source workload --compilers compilers --output results --clang tools\clang\bin --build-run "$env:COMPILER_BUILD_RUN" --protocol ci-benchmark\msvc-linker\protocol.json @extra
       - uses: actions/upload-artifact@v6
         if: always()
         with:
