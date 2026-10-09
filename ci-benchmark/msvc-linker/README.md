@@ -52,8 +52,8 @@ are not compiler-performance measurements.
 ## Results
 
 Valid same-tools compiler packages and IronRDP performance results are not yet
-available. The compiler workflow is being restarted after the native-tool
-audit rejected a completed build, as described below.
+available. [The restarted compiler workflow](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37957091081)
+includes the native-tool selection fix described below.
 
 The initial x64 compatibility probes completed:
 

@@ -16,7 +16,7 @@ permissions:
   contents: read
   actions: read
 env:
-  COMPILER_BUILD_RUN: ${{ inputs.build_run || '37949623212' }}
+  COMPILER_BUILD_RUN: ${{ inputs.build_run || '37957091081' }}
 jobs:
   measure:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
