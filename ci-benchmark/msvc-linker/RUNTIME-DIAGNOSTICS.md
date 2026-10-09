@@ -109,3 +109,19 @@ compiler. Only after all training workloads and strict profile-integrity
 checks succeed should final PGO compilers and IronRDP benchmarks run.
 The original Rust review branch and pinned experimental Rust source have not
 been changed by these local diagnostics.
+
+### Instrumented-compiler capture attempt
+
+[Diagnostic run 37975403778](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37975403778)
+reproduced training failure, but the new diagnostic archiver then exhausted
+memory while recursively enumerating the stage2 sysroot. It had not applied
+the source-junction exclusions used by the existing successful baseline
+packager. The uploaded ZIP is empty and is **not** a usable compiler artifact.
+
+The diagnostic branch now reuses the existing sysroot-copy exclusions,
+preserves the compiler before training, and renames the archive from a partial
+file only after successful completion. A regression test constructs an actual
+Windows directory junction back into the source tree and confirms that the
+archive contains the compiler and helper binaries without traversing that
+junction. Only the single Arm64 diagnostic job is being repeated; the valid
+x64 profile and both baseline artifacts remain unchanged.
