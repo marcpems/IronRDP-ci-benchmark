@@ -1,0 +1,40 @@
+name: Prepare native MSVC compiler experiment
+description: Install the pinned Clang package and compiler sources without replacing Microsoft tools.
+inputs:
+  architecture:
+    required: true
+    description: Native host architecture
+  rust-revision:
+    required: true
+    description: Exact experimental Rust commit
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v6
+      with:
+        repository: marcpems/rust-arm64-compiler-ab
+        ref: ${{ inputs.rust-revision }}
+        path: rust-source
+        persist-credentials: false
+    - uses: actions/setup-python@v6
+      with:
+        python-version: "3.13"
+        architecture: ${{ inputs.architecture }}
+    - shell: pwsh
+      run: |
+        git -C rust-source config core.longpaths true
+        git -C rust-source remote set-url --push origin DISABLED-UPSTREAM-PUSH
+        git -C rust-source submodule update --init --depth 1 src/llvm-project src/tools/rustc-perf src/tools/cargo library/backtrace
+        if ($LASTEXITCODE) { throw 'Pinned submodules failed' }
+        $suffix = if ('${{ inputs.architecture }}' -eq 'arm64') { 'woa64' } else { 'win64' }
+        New-Item -ItemType Directory -Path tools -Force | Out-Null
+        curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o tools\clang-installer.exe
+        if ($LASTEXITCODE) { throw 'Clang download failed' }
+        7z x -y -bd -bso0 -otools\clang tools\clang-installer.exe
+        if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+        Get-FileHash tools\clang-installer.exe -Algorithm SHA256
+        Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors
+        Get-Volume | Select-Object DriveLetter,SizeRemaining,Size
+        $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+        New-Item -Path $key -Force | Out-Null
+        New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null

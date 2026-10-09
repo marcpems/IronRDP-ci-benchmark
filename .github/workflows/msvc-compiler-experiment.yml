@@ -1,0 +1,141 @@
+name: Build same-tools Windows PGO experiment
+on:
+  push:
+    branches: [experiment/windows-msvc-pgo]
+    paths:
+      - .github/workflows/msvc-compiler-experiment.yml
+      - .github/scripts/msvc_experiment.py
+      - .github/scripts/invoke_msvc_experiment.ps1
+      - .github/actions/prepare-msvc-experiment/action.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  initial:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ matrix.arch }} / ${{ matrix.phase }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        phase: [baseline, rustc-profile]
+        include:
+          - arch: x64
+            runner: windows-2025
+            host: x86_64-pc-windows-msvc
+          - arch: arm64
+            runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/prepare-msvc-experiment
+        with:
+          architecture: ${{ matrix.arch }}
+          rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
+      - name: Build control or train rustc
+        shell: pwsh
+        run: |
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase ${{ matrix.phase }}
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: msvc-${{ matrix.arch }}-${{ matrix.phase }}
+          path: |
+            evidence/*.json
+            evidence/*.toml
+            evidence/*.txt
+            evidence/*.stdout
+            evidence/*.stderr
+            evidence/*.profdata
+            evidence/*.zip
+          if-no-files-found: error
+          retention-days: 30
+  llvm-profile:
+    needs: initial
+    name: ${{ matrix.arch }} / llvm-profile
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: windows-2025
+            host: x86_64-pc-windows-msvc
+          - arch: arm64
+            runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/prepare-msvc-experiment
+        with:
+          architecture: ${{ matrix.arch }}
+          rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-${{ matrix.arch }}-rustc-profile
+          path: profiles
+      - name: Build and train instrumented LLVM with relinked rustc
+        shell: pwsh
+        run: |
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase llvm-profile --profiles profiles
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: msvc-${{ matrix.arch }}-llvm-profile
+          path: |
+            evidence/*.json
+            evidence/*.toml
+            evidence/*.txt
+            evidence/*.stdout
+            evidence/*.stderr
+            evidence/*.profdata
+          if-no-files-found: error
+          retention-days: 30
+  final:
+    needs: llvm-profile
+    name: ${{ matrix.arch }} / ${{ matrix.phase }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        phase: [pgo, pgo-rust-thin]
+        include:
+          - arch: x64
+            runner: windows-2025
+            host: x86_64-pc-windows-msvc
+          - arch: arm64
+            runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/prepare-msvc-experiment
+        with:
+          architecture: ${{ matrix.arch }}
+          rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-${{ matrix.arch }}-llvm-profile
+          path: profiles
+      - name: Build final compiler from identical verified profiles
+        shell: pwsh
+        run: |
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase ${{ matrix.phase }} --profiles profiles
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: msvc-${{ matrix.arch }}-${{ matrix.phase }}
+          path: |
+            evidence/*.json
+            evidence/*.toml
+            evidence/*.txt
+            evidence/*.stdout
+            evidence/*.stderr
+            evidence/*.profdata
+            evidence/*.zip
+          if-no-files-found: error
+          retention-days: 30
