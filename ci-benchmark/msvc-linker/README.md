@@ -52,7 +52,7 @@ are not compiler-performance measurements.
 ## Results
 
 Compiler build and IronRDP performance results are not yet available.
-[The current compiler workflow](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37949154663)
+[The current compiler workflow](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37949623212)
 is generating the toolchains and profiles.
 
 The initial x64 compatibility probes completed:
@@ -71,6 +71,11 @@ checkout was nested inside the harness's Cargo workspace. The corrected run
 uses sibling checkouts. A short intermediate run was cancelled before expensive
 training to include the already-known, dependency-preserving training lockfile
 migration. Neither setup attempt contributes to performance measurements.
+
+The next attempt exposed bootstrap splitting a space-containing absolute
+linker path in `RUSTFLAGS`. The harness now selects `link.exe` from the
+verified native MSVC environment, retaining the same executable rather than
+changing linkers. CMake's linker and librarian identities are also checked.
 
 An unsuccessful build will be reported as a failure, not as a zero improvement
 or a successful optimized toolchain.

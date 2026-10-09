@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from analyze_msvc_experiment import HOSTS, analyze, contrast
+from analyze_msvc_experiment import HOSTS, analyze, build_summary, contrast
 from msvc_experiment import VARIANTS
 from msvc_ironrdp_probe import validate_metadata
 from native_ci_probe import COMMANDS, NATIVE_COMMANDS, paired_order
@@ -26,6 +26,28 @@ def compiler_metadata(host):
 
 
 class AnalysisTests(unittest.TestCase):
+    def test_build_summary_requires_all_successful_phases(self):
+        result = {"build_run": "build", "protocol": {"rust_sha": "rust"}}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for host in HOSTS:
+                for phase in ("baseline", "rustc-profile", "llvm-profile", "pgo", "pgo-rust-thin"):
+                    directory = root / f"{host}-{phase}"
+                    directory.mkdir()
+                    (directory / "metadata.json").write_text(json.dumps({
+                        "host": host, "phase": phase, "run_id": "build", "rust_sha": "rust"}))
+                    stages = ["build"] + (["training", "merge"] if phase.endswith("-profile") else [])
+                    for stage in stages:
+                        (directory / f"{stage}.json").write_text(json.dumps({
+                            "exit_code": 0, "wall_seconds": 120, "cpu_seconds": 400}))
+            summary, text = build_summary(root, result)
+            self.assertEqual(len(summary["stages"]), 10)
+            self.assertIn("not a pure offline", text)
+            (directory / "build.json").write_text(json.dumps({
+                "exit_code": 1, "wall_seconds": 120, "cpu_seconds": 400}))
+            with self.assertRaises(ValueError):
+                build_summary(root, result)
+
     def test_paired_reduction(self):
         result = contrast([100, 200, 300, 400, 500], [80, 160, 240, 320, 400])
         self.assertAlmostEqual(result["reduction_percent"], 20)
