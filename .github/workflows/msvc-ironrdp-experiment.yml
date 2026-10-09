@@ -1,0 +1,98 @@
+name: Measure same-tools Windows compilers on IronRDP
+on:
+  workflow_dispatch:
+    inputs:
+      build_run:
+        description: Successful same-tools compiler build workflow run ID
+        required: true
+        type: string
+      pilot:
+        description: One VM and one round per architecture before the full study
+        type: boolean
+        default: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  measure:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ matrix.arch }} / VM ${{ matrix.vm }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        vm: ${{ fromJSON(inputs.pilot && '[1]' || '[1,2,3,4,5]') }}
+        include:
+          - arch: x64
+            runner: windows-2025
+            host: x86_64-pc-windows-msvc
+          - arch: arm64
+            runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+    env:
+      BENCHMARK_HOST: ${{ matrix.host }}
+      BENCHMARK_PLATFORM: windows-${{ matrix.arch }}
+      BENCHMARK_REPLICATE: ${{ matrix.vm }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      CARGO_INCREMENTAL: "0"
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_BUILD_JOBS: "4"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: ${{ matrix.arch }}
+      - uses: ./.github/actions/install-build-deps
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-${{ matrix.arch }}-baseline
+          path: compilers/baseline
+          run-id: ${{ inputs.build_run }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-${{ matrix.arch }}-pgo
+          path: compilers/pgo
+          run-id: ${{ inputs.build_run }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-${{ matrix.arch }}-pgo-rust-thin
+          path: compilers/pgo-rust-thin
+          run-id: ${{ inputs.build_run }}
+          github-token: ${{ github.token }}
+      - name: Prepare identical native support tools
+        shell: pwsh
+        run: |
+          $suffix = if ('${{ matrix.arch }}' -eq 'arm64') { 'woa64' } else { 'win64' }
+          New-Item -ItemType Directory -Path tools -Force | Out-Null
+          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o tools\clang-installer.exe
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          7z x -y -bd -bso0 -otools\clang tools\clang-installer.exe
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+          New-Item -Path $key -Force | Out-Null
+          New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+      - name: Replay offline native builds and original tests
+        shell: pwsh
+        run: |
+          $extra = @()
+          if ('${{ inputs.pilot }}' -eq 'true') { $extra += '--pilot' }
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_ironrdp_probe.py --source workload --compilers compilers --output results --clang tools\clang\bin --build-run '${{ inputs.build_run }}' --protocol ci-benchmark\msvc-linker\protocol.json @extra
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: msvc-ironrdp-${{ matrix.arch }}-${{ matrix.vm }}
+          path: results
+          if-no-files-found: error
+          retention-days: 30
