@@ -52,8 +52,8 @@ are not compiler-performance measurements.
 ## Results
 
 Valid same-tools compiler packages and IronRDP performance results are not yet
-available. The next compiler run includes the native-tool, WASM runtime and
-training-helper fixes described below.
+available. [The current compiler run](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37965170591)
+includes the native-tool, WASM runtime and training-helper fixes described below.
 
 The initial x64 compatibility probes completed:
 
