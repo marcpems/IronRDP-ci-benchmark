@@ -21,6 +21,14 @@ jobs:
         with:
           architecture: arm64
           rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
+      - name: Apply locally validated profiling-runtime padding fixes
+        shell: pwsh
+        run: |
+          $patch = (Resolve-Path .github\scripts\msvc-profile-runtime.patch).Path
+          git -C ..\rust-source\src\llvm-project apply --check $patch
+          if ($LASTEXITCODE) { throw 'Runtime patch does not match pinned LLVM source' }
+          git -C ..\rust-source\src\llvm-project apply $patch
+          if ($LASTEXITCODE) { throw 'Runtime patch application failed' }
       - name: Reproduce full training and retain the failing compiler
         shell: pwsh
         run: |
@@ -36,6 +44,7 @@ jobs:
             harness/evidence/*.txt
             harness/evidence/*.stdout
             harness/evidence/*.stderr
+            harness/evidence/*.profdata
             harness/evidence/instrumented-diagnostic.zip
           if-no-files-found: error
           retention-days: 30

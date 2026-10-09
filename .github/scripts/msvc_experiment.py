@@ -238,6 +238,17 @@ def train(source, output, host, env, backend, clang, preserve_compiler=False):
             raise RuntimeError(f"Missing training executable after collector build: {name}")
     if preserve_compiler:
         preserve_training_compiler(source, output, host)
+        runtime_raw = output / "runtime-smoke-raw"
+        runtime_raw.mkdir()
+        runtime_env = {**env, "LLVM_PROFILE_FILE": str(runtime_raw / "shared_%m.profraw")}
+        for iteration in range(8):
+            execute([build / "stage2/bin/rustc.exe", "-vV"], source, runtime_env,
+                    output, f"runtime-smoke-{iteration}", timeout=120)
+        execute([build / "llvm/build/bin/llvm-profdata.exe", "merge", "-o",
+                 output / "runtime-smoke.profdata", runtime_raw],
+                source, env, output, "runtime-smoke-merge", timeout=600)
+        for profile in runtime_raw.glob("*.profraw"):
+            profile.unlink()
     command = [
         stage0 / "cargo.exe", "run", "--locked", "-p", "collector", "--bin", "collector", "--",
         "profile_local", "eprintln", build / "stage2/bin/rustc.exe", "--id", "MSVC-experiment",
@@ -417,6 +428,10 @@ def main():
         "profiles": {}, "scope": "compiler-only, not release packaging or full tool PGO",
         "llvm_sha": subprocess.check_output(["git", "-C", source / "src/llvm-project", "rev-parse", "HEAD"], text=True).strip(),
         "perf_sha": subprocess.check_output(["git", "-C", source / "src/tools/rustc-perf", "rev-parse", "HEAD"], text=True).strip(),
+        "profiling_runtime_sources": {
+            name: digest(source / "src/llvm-project/compiler-rt/lib/profile" / name)
+            for name in ("InstrProfilingMerge.c", "InstrProfilingPlatformWindows.c")
+        },
     }
     save(output / "started.json", metadata)
     cmake_preflight(output, clang, env, identity)
@@ -448,7 +463,7 @@ def main():
         metadata.setdefault("training", {})[args.phase] = train(
             source, output, args.host, env, args.phase == "llvm-profile", clang,
             preserve_compiler=args.preserve_training_compiler)
-    metadata["profiles"] = {p.name: digest(p) for p in output.glob("*.profdata")}
+    metadata["profiles"] = {p.name: digest(p) for p in output.glob("*-pgo.profdata")}
     if args.phase in VARIANTS:
         package(source, output, args.host, env, metadata)
     save(output / "metadata.json", metadata)
