@@ -70,6 +70,8 @@ lto = "{'thin' if phase == 'pgo-rust-thin' else 'thin-local'}"
 [target.{host}]
 linker = "{link.name}"
 ar = "{librarian.as_posix()}"
+[target.wasm32-unknown-unknown]
+profiler = false
 [pgo.rustc]
 {rustc_use}
 {rustc_generate}
@@ -229,6 +231,11 @@ def train(source, output, host, env, backend, clang):
     if before["package"] != after["package"]:
         raise RuntimeError("Training lockfile migration changed the dependency graph")
     crates = training_crates(source, backend)
+    execute([stage0 / "cargo.exe", "build", "--locked", "-p", "collector", "--bins"],
+            training, child, output, "training-tools", timeout=1800)
+    for name in ("collector.exe", "rustc-fake.exe"):
+        if not (training / "target/debug" / name).is_file():
+            raise RuntimeError(f"Missing training executable after collector build: {name}")
     command = [
         stage0 / "cargo.exe", "run", "--locked", "-p", "collector", "--bin", "collector", "--",
         "profile_local", "eprintln", build / "stage2/bin/rustc.exe", "--id", "MSVC-experiment",

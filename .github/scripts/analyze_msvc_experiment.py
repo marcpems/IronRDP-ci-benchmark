@@ -168,7 +168,7 @@ def build_summary(root, result):
         if item["rust_sha"] != result["protocol"]["rust_sha"]:
             raise ValueError("Wrong compiler source in build report")
         timing = {}
-        for stage in ("build", "training", "merge", "training-lockfile", "smoke-compile", "smoke-run"):
+        for stage in ("build", "training-tools", "training", "merge", "training-lockfile", "smoke-compile", "smoke-run"):
             measurement = path.parent / f"{stage}.json"
             if measurement.is_file():
                 row = json.loads(measurement.read_text())
@@ -177,23 +177,24 @@ def build_summary(root, result):
                 timing[stage] = {key: row[key] for key in ("wall_seconds", "cpu_seconds")}
         if "build" not in timing:
             raise ValueError("Missing compiler construction timing")
-        if item["phase"].endswith("-profile") and not {"training", "merge"} <= timing.keys():
+        if item["phase"].endswith("-profile") and not {"training-tools", "training", "merge"} <= timing.keys():
             raise ValueError("Missing profile collection timing")
         records[key] = timing
     if set(records) != {(host, phase) for host in HOSTS for phase in phases}:
         raise ValueError("Incomplete compiler construction artifact matrix")
     lines = ["", "## Toolchain construction", "",
-             "| Architecture | Phase | Bootstrap wall (min) | Training wall (min) | Bootstrap CPU (min) |",
-             "|---|---|---:|---:|---:|"]
+             "| Architecture | Phase | Bootstrap wall (min) | Collector build (min) | Training wall (min) | Bootstrap CPU (min) |",
+             "|---|---|---:|---:|---:|---:|"]
     for host in HOSTS:
         for phase in phases:
             timing = records[host, phase]
             training = timing.get("training", {}).get("wall_seconds", 0) / 60
+            tools = timing.get("training-tools", {}).get("wall_seconds", 0) / 60
             lines.append(f"| {host} | {phase} | {timing['build']['wall_seconds']/60:.2f} | "
-                         f"{training:.2f} | {timing['build']['cpu_seconds']/60:.2f} |")
+                         f"{tools:.2f} | {training:.2f} | {timing['build']['cpu_seconds']/60:.2f} |")
     lines += ["", "Bootstrap-command time includes stage0 acquisition, bootstrap compilation, LLVM",
               "and Rust compilation. It is not a pure offline compiler CPU measurement.",
-              "Training and profile merging are separately recorded. Source/tool setup and",
+              "Collector construction, training and profile merging are separately recorded. Source/tool setup and",
               "artifact transfers are excluded from this table. Jobs rebuild prerequisites",
               "independently; their summed time is not the workflow critical path.", ""]
     return {"stages": {f"{host}/{phase}": timing for (host, phase), timing in records.items()}}, "\n".join(lines)

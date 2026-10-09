@@ -36,7 +36,7 @@ class AnalysisTests(unittest.TestCase):
                     directory.mkdir()
                     (directory / "metadata.json").write_text(json.dumps({
                         "host": host, "phase": phase, "run_id": "build", "rust_sha": "rust"}))
-                    stages = ["build"] + (["training", "merge"] if phase.endswith("-profile") else [])
+                    stages = ["build"] + (["training-tools", "training", "merge"] if phase.endswith("-profile") else [])
                     for stage in stages:
                         (directory / f"{stage}.json").write_text(json.dumps({
                             "exit_code": 0, "wall_seconds": 120, "cpu_seconds": 400}))

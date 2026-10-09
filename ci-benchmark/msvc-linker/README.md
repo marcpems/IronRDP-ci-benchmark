@@ -52,8 +52,8 @@ are not compiler-performance measurements.
 ## Results
 
 Valid same-tools compiler packages and IronRDP performance results are not yet
-available. [The restarted compiler workflow](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37957091081)
-includes the native-tool selection fix described below.
+available. The next compiler run includes the native-tool, WASM runtime and
+training-helper fixes described below.
 
 The initial x64 compatibility probes completed:
 
@@ -90,6 +90,18 @@ tool hashes before starting the expensive bootstrap build. Final audits check
 both LLVM and rust-lld CMake caches. A native local Arm64 fixture with Clang
 20.1.3 and CMake 4.4.3 passed; CI must repeat it with the experiment's Clang
 22.1.8. Local fixture timing is not part of the performance study.
+
+[Run 37957091081](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37957091081)
+passed the Arm64 native-tool audits and completed the instrumented compiler
+build in 49.74 minutes. Training then failed because `cargo run --bin collector`
+had not built the separate `rustc-fake.exe` helper. The harness now explicitly
+builds all collector binaries and verifies their presence before training;
+native Arm64 local execution confirmed the helper can launch stage0 rustc.
+Both baseline jobs independently failed building the optional profiler runtime
+for bare WASM (`errno.h` unavailable). The configuration now disables that
+runtime only for `wasm32-unknown-unknown`, retaining native profiler support.
+No training crates, workload commands or optimization treatments were removed.
+Collector-build time is recorded separately from profile collection.
 
 An unsuccessful build will be reported as a failure, not as a zero improvement
 or a successful optimized toolchain.

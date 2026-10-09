@@ -4,12 +4,43 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+from unittest.mock import patch
 
-from msvc_experiment import PHASES, audit_cmake_tools, cmake_toolchain, configuration, equivalent_tools, verify_profiles
+from msvc_experiment import PHASES, audit_cmake_tools, cmake_toolchain, configuration, equivalent_tools, train, verify_profiles
 from build_arm_compilers import digest
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_training_builds_and_requires_all_collector_binaries(self):
+        for provide_wrapper in (False, True):
+            with self.subTest(provide_wrapper=provide_wrapper), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                source, output = root / "source", root / "output"
+                fixture = source / "src/tools/rustc-perf/collector/compile-benchmarks/token-stream-stress"
+                fixture.mkdir(parents=True)
+                (fixture / "Cargo.lock").write_text('[[package]]\nname="token-stream-stress"\nversion="0.0.0"\n')
+                output.mkdir()
+                stages = []
+
+                def execute(command, cwd, env, directory, name, **kwargs):
+                    stages.append(name)
+                    if name == "training-tools":
+                        self.assertEqual(command[1:], ["build", "--locked", "-p", "collector", "--bins"])
+                        binaries = cwd / "target/debug"
+                        binaries.mkdir(parents=True)
+                        (binaries / "collector.exe").touch()
+                        if provide_wrapper:
+                            (binaries / "rustc-fake.exe").touch()
+                    if name == "training":
+                        raise RuntimeError("training reached")
+
+                message = "training reached" if provide_wrapper else "Missing training executable"
+                with patch("msvc_experiment.execute", side_effect=execute), \
+                     patch("msvc_experiment.training_crates", return_value=["token-stream-stress"]):
+                    with self.assertRaisesRegex(RuntimeError, message):
+                        train(source, output, "host", {}, False, root / "clang")
+                self.assertEqual("training" in stages, provide_wrapper)
+
     def test_cmake_audit_rejects_a_different_linker(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -49,6 +80,8 @@ class ConfigurationTests(unittest.TestCase):
                 self.assertEqual(config["target"][host]["linker"], "link.exe")
                 self.assertTrue(config["target"][host]["ar"].endswith("/lib.exe"))
                 self.assertEqual(config["build"]["host"], [host])
+                self.assertTrue(config["build"]["profiler"])
+                self.assertFalse(config["target"]["wasm32-unknown-unknown"]["profiler"])
             treatment = configs["pgo-rust-thin"]
             self.assertEqual(treatment["rust"]["lto"], "thin")
             treatment["rust"]["lto"] = "thin-local"
