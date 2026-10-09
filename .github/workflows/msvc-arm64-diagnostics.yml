@@ -1,0 +1,41 @@
+name: Diagnose Microsoft-linked Arm64 PGO runtime
+on:
+  push:
+    branches: [experiment/windows-msvc-diagnostics]
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    working-directory: harness
+jobs:
+  reproduce:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: windows-11-arm
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+      - uses: ./harness/.github/actions/prepare-msvc-experiment
+        with:
+          architecture: arm64
+          rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
+      - name: Reproduce full training and retain the failing compiler
+        shell: pwsh
+        run: |
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture arm64 -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host aarch64-pc-windows-msvc --phase rustc-profile --preserve-training-compiler
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: msvc-arm64-instrumented-diagnostics
+          path: |
+            harness/evidence/*.json
+            harness/evidence/*.toml
+            harness/evidence/*.cmake
+            harness/evidence/*.txt
+            harness/evidence/*.stdout
+            harness/evidence/*.stderr
+            harness/evidence/instrumented-diagnostic.zip
+          if-no-files-found: error
+          retention-days: 30

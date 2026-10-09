@@ -364,6 +364,24 @@ def package(source, output, host, env, metadata):
         metadata["archive_sha256"] = digest(archive)
 
 
+def preserve_training_compiler(source, output, host):
+    stage = source / "build" / host / "stage2"
+    archive = output / "instrumented-diagnostic.zip"
+    with zipfile.ZipFile(archive, "x", zipfile.ZIP_DEFLATED, compresslevel=1) as bundle:
+        for path in sorted(stage.rglob("*")):
+            if path.is_file():
+                bundle.write(path, Path("sysroot") / path.relative_to(stage))
+        for name in ("collector.exe", "rustc-fake.exe"):
+            bundle.write(output / "training/target/debug" / name, Path("training-tools") / name)
+        bundle.write(source / "build" / host / "stage0/bin/cargo.exe", "training-tools/cargo.exe")
+        for name in ("COPYRIGHT", "LICENSE-MIT", "LICENSE-APACHE"):
+            bundle.write(source / name, name)
+    save(output / "instrumented-diagnostic.json", {
+        "diagnostic_only": True, "archive_sha256": digest(archive),
+        "warning": "Instrumented compiler from failed training; not a benchmark candidate.",
+    })
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
@@ -372,6 +390,7 @@ def main():
     parser.add_argument("--host", required=True)
     parser.add_argument("--phase", choices=PHASES, required=True)
     parser.add_argument("--profiles", type=Path)
+    parser.add_argument("--preserve-training-compiler", action="store_true")
     args = parser.parse_args()
     machine = platform.machine().lower()
     expected = ("arm64", "aarch64") if args.host.startswith("aarch64") else ("amd64", "x86_64")
@@ -417,8 +436,13 @@ def main():
     if metrics.is_file():
         shutil.copy2(metrics, output / "bootstrap-metrics.json")
     if args.phase.endswith("-profile"):
-        metadata.setdefault("training", {})[args.phase] = train(
-            source, output, args.host, env, args.phase == "llvm-profile", clang)
+        try:
+            metadata.setdefault("training", {})[args.phase] = train(
+                source, output, args.host, env, args.phase == "llvm-profile", clang)
+        except RuntimeError:
+            if args.preserve_training_compiler:
+                preserve_training_compiler(source, output, args.host)
+            raise
     metadata["profiles"] = {p.name: digest(p) for p in output.glob("*.profdata")}
     if args.phase in VARIANTS:
         package(source, output, args.host, env, metadata)

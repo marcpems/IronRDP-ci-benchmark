@@ -4,13 +4,34 @@ from pathlib import Path
 import tempfile
 import tomllib
 import unittest
+import zipfile
 from unittest.mock import patch
 
-from msvc_experiment import PHASES, audit_cmake_tools, cmake_toolchain, configuration, equivalent_tools, train, verify_profiles
+from msvc_experiment import PHASES, audit_cmake_tools, cmake_toolchain, configuration, equivalent_tools, preserve_training_compiler, train, verify_profiles
 from build_arm_compilers import digest
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_failed_training_archive_is_explicitly_diagnostic(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "output"
+            for path in (source / "build/host/stage2/bin/rustc.exe",
+                         source / "build/host/stage0/bin/cargo.exe",
+                         output / "training/target/debug/collector.exe",
+                         output / "training/target/debug/rustc-fake.exe",
+                         *(source / name for name in ("COPYRIGHT", "LICENSE-MIT", "LICENSE-APACHE"))):
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"fixture")
+            preserve_training_compiler(source, output, "host")
+            metadata = json.loads((output / "instrumented-diagnostic.json").read_text())
+            self.assertTrue(metadata["diagnostic_only"])
+            self.assertEqual(metadata["archive_sha256"], digest(output / "instrumented-diagnostic.zip"))
+            with zipfile.ZipFile(output / "instrumented-diagnostic.zip") as archive:
+                self.assertIn("sysroot/bin/rustc.exe", archive.namelist())
+                self.assertIn("training-tools/rustc-fake.exe", archive.namelist())
+            self.assertFalse((output / "metadata.json").exists())
+            self.assertFalse((output / "compiler.zip").exists())
+
     def test_training_builds_and_requires_all_collector_binaries(self):
         for provide_wrapper in (False, True):
             with self.subTest(provide_wrapper=provide_wrapper), tempfile.TemporaryDirectory() as tmp:
