@@ -20,7 +20,7 @@ class ConfigurationTests(unittest.TestCase):
                 configs[phase] = config
                 self.assertFalse(config["llvm"]["thin-lto"])
                 self.assertFalse(config["llvm"]["link-shared"])
-                self.assertTrue(config["target"][host]["linker"].endswith("/link.exe"))
+                self.assertEqual(config["target"][host]["linker"], "link.exe")
                 self.assertTrue(config["target"][host]["ar"].endswith("/lib.exe"))
                 self.assertEqual(config["build"]["host"], [host])
             treatment = configs["pgo-rust-thin"]
@@ -31,6 +31,14 @@ class ConfigurationTests(unittest.TestCase):
             self.assertIn("generate", configs["rustc-profile"]["pgo"]["rustc"])
             self.assertIn("generate", configs["llvm-profile"]["pgo"]["llvm"])
             self.assertIn("use", configs["llvm-profile"]["pgo"]["rustc"])
+
+    def test_bootstrap_linker_flag_has_no_space_separated_path(self):
+        config = tomllib.loads(configuration(
+            "x86_64-pc-windows-msvc", Path("D:/clang"),
+            Path("C:/Program Files/Microsoft Visual Studio/link.exe"),
+            Path("C:/Program Files/Microsoft Visual Studio/lib.exe"),
+            "baseline", Path("D:/profiles")))
+        self.assertEqual(config["target"]["x86_64-pc-windows-msvc"]["linker"], "link.exe")
 
     def test_tool_comparison_ignores_install_location_not_binary(self):
         left = {"msvc": "v1", "sdk": "s1", "files": {"link.exe": {"path": "a", "sha256": "hash"}}}

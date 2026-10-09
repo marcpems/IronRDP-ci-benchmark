@@ -68,7 +68,7 @@ llvm-tools = true
 llvm-bitcode-linker = false
 lto = "{'thin' if phase == 'pgo-rust-thin' else 'thin-local'}"
 [target.{host}]
-linker = "{link.as_posix()}"
+linker = "{link.name}"
 ar = "{librarian.as_posix()}"
 [pgo.rustc]
 {rustc_use}
@@ -267,6 +267,8 @@ def audit_build(source, host, phase, output, identity):
         raise RuntimeError("LLVM LTO unexpectedly enabled")
     if digest(Path(cache["CMAKE_LINKER"])) != identity["files"]["link.exe"]["sha256"]:
         raise RuntimeError("LLVM CMake is not using the pinned Microsoft linker")
+    if digest(Path(cache["CMAKE_AR"])) != identity["files"]["lib.exe"]["sha256"]:
+        raise RuntimeError("LLVM CMake is not using the pinned Microsoft librarian")
     if digest(Path(cache["CMAKE_CXX_COMPILER"])) != identity["files"]["clang-cl.exe"]["sha256"]:
         raise RuntimeError("LLVM C++ compiler changed")
     expected_instrumented = phase == "llvm-profile"
