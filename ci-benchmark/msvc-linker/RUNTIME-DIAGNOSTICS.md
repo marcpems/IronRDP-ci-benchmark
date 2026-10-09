@@ -14,8 +14,25 @@ token-stream-stress, tuple-stress, and diesel-2.2.10.
 Some failures occurred during Cargo's compiler target-information query, not
 while compiling workload source. The collector wrapper propagates the child
 compiler's exit status. These failures do not justify dropping the affected
-workloads or using the incomplete profiles. The x64 profile job is still
-running at this update.
+workloads or using the incomplete profiles.
+
+The x64 frontend-profile job subsequently **succeeded**: all nine upstream
+training workloads completed, the merged profile hash verified, and the
+native-tool audit passed. Coverage included 10,104 active `rustc_middle`
+functions and 1,633 active `rustc_mir_transform` functions.
+
+| x64 frontend-profile stage | Wall time (minutes) |
+|---|---:|
+| Bootstrap/compiler construction | 74.02 |
+| Collector binaries | 2.64 |
+| Training | 23.07 |
+| Profile merge | 1.45 |
+
+These are compiler-construction/training times, not IronRDP compilation
+times. GitHub skipped LLVM-profile and final-compiler jobs because the
+original workflow gates both architectures on the complete initial matrix.
+The x64 frontend profile is valid, but LLVM PGO and the final Rust-ThinLTO
+compiler have not yet been qualified.
 
 ## Independent local reproduction
 
