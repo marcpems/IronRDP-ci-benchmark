@@ -50,6 +50,7 @@ jobs:
           path: |
             harness/evidence/*.json
             harness/evidence/*.toml
+            harness/evidence/*.cmake
             harness/evidence/*.txt
             harness/evidence/*.stdout
             harness/evidence/*.stderr
@@ -95,6 +96,7 @@ jobs:
           path: |
             harness/evidence/*.json
             harness/evidence/*.toml
+            harness/evidence/*.cmake
             harness/evidence/*.txt
             harness/evidence/*.stdout
             harness/evidence/*.stderr
@@ -141,6 +143,7 @@ jobs:
           path: |
             harness/evidence/*.json
             harness/evidence/*.toml
+            harness/evidence/*.cmake
             harness/evidence/*.txt
             harness/evidence/*.stdout
             harness/evidence/*.stderr

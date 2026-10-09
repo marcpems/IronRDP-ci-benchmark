@@ -51,9 +51,9 @@ are not compiler-performance measurements.
 
 ## Results
 
-Compiler build and IronRDP performance results are not yet available.
-[The current compiler workflow](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37949623212)
-is generating the toolchains and profiles.
+Valid same-tools compiler packages and IronRDP performance results are not yet
+available. The compiler workflow is being restarted after the native-tool
+audit rejected a completed build, as described below.
 
 The initial x64 compatibility probes completed:
 
@@ -76,6 +76,20 @@ The next attempt exposed bootstrap splitting a space-containing absolute
 linker path in `RUSTFLAGS`. The harness now selects `link.exe` from the
 verified native MSVC environment, retaining the same executable rather than
 changing linkers. CMake's linker and librarian identities are also checked.
+
+In [run 37949623212](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37949623212),
+the Arm64 instrumented-rustc bootstrap command completed in 49.86 minutes,
+but the post-build audit rejected CMake's linker identity before PGO training.
+This is **not** a valid same-tools result; the remaining jobs were cancelled.
+A local Arm64 reproduction showed that CMake discovers `lld-link.exe` and
+`llvm-lib.exe` next to clang-cl even when Microsoft tools precede them on PATH.
+The harness now supplies a `CMAKE_TOOLCHAIN_FILE` pinning both Microsoft tools
+for every CMake invocation, including the build of the shipped rust-lld.
+Every phase first configures, builds and runs a small CMake fixture and checks
+tool hashes before starting the expensive bootstrap build. Final audits check
+both LLVM and rust-lld CMake caches. A native local Arm64 fixture with Clang
+20.1.3 and CMake 4.4.3 passed; CI must repeat it with the experiment's Clang
+22.1.8. Local fixture timing is not part of the performance study.
 
 An unsuccessful build will be reported as a failure, not as a zero improvement
 or a successful optimized toolchain.

@@ -5,11 +5,37 @@ import tempfile
 import tomllib
 import unittest
 
-from msvc_experiment import PHASES, configuration, equivalent_tools, verify_profiles
+from msvc_experiment import PHASES, audit_cmake_tools, cmake_toolchain, configuration, equivalent_tools, verify_profiles
 from build_arm_compilers import digest
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_cmake_audit_rejects_a_different_linker(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            tools = {}
+            lines = []
+            for variable, name in (("CMAKE_LINKER", "link.exe"), ("CMAKE_AR", "lib.exe"),
+                                   ("CMAKE_CXX_COMPILER", "clang-cl.exe")):
+                binary = root / name
+                binary.write_bytes(name.encode())
+                tools[name] = {"sha256": digest(binary)}
+                lines.append(f"{variable}:FILEPATH={binary.as_posix()}")
+            cache = root / "CMakeCache.txt"
+            cache.write_text("\n".join(lines))
+            audit_cmake_tools(cache, {"files": tools})
+            (root / "link.exe").write_bytes(b"different linker")
+            with self.assertRaisesRegex(RuntimeError, "expected pinned link.exe"):
+                audit_cmake_tools(cache, {"files": tools})
+
+    def test_cmake_toolchain_pins_native_tools_with_spaces(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tools = {"files": {name: {"path": f"C:/Program Files/MSVC/{name}"}
+                               for name in ("link.exe", "lib.exe")}}
+            text = cmake_toolchain(Path(tmp), tools).read_text()
+            self.assertIn('set(CMAKE_LINKER "C:/Program Files/MSVC/link.exe" CACHE FILEPATH "" FORCE)', text)
+            self.assertIn('set(CMAKE_AR "C:/Program Files/MSVC/lib.exe" CACHE FILEPATH "" FORCE)', text)
+
     def test_only_rust_lto_differs_between_pgo_variants(self):
         for host in ("x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc"):
             configs = {}

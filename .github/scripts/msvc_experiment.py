@@ -102,6 +102,15 @@ def equivalent_tools(left, right):
             == {k: v["sha256"] for k, v in right["files"].items()})
 
 
+def cmake_toolchain(output, identity):
+    path = output / "native-tools.cmake"
+    definitions = {"CMAKE_LINKER": "link.exe", "CMAKE_AR": "lib.exe"}
+    path.write_text("".join(
+        f'set({variable} "{Path(identity["files"][tool]["path"]).as_posix()}" CACHE FILEPATH "" FORCE)\n'
+        for variable, tool in definitions.items()), encoding="utf-8")
+    return path
+
+
 def environment(output, clang):
     allowed = {
         "PATH", "SYSTEMROOT", "SYSTEMDRIVE", "WINDIR", "COMSPEC", "PATHEXT",
@@ -256,21 +265,47 @@ def verify_profiles(root, phase, identity, source_sha, host):
     return metadata
 
 
-def audit_build(source, host, phase, output, identity):
-    cache_path = source / "build" / host / "llvm/build/CMakeCache.txt"
+def audit_cmake_tools(cache_path, identity):
     cache = {}
     for line in cache_path.read_text().splitlines():
         if line and not line.startswith(("#", "//")) and ":" in line and "=" in line:
             name, value = line.split("=", 1)
             cache[name.split(":", 1)[0]] = value
+    for variable, tool in (("CMAKE_LINKER", "link.exe"), ("CMAKE_AR", "lib.exe"),
+                           ("CMAKE_CXX_COMPILER", "clang-cl.exe")):
+        if digest(Path(cache[variable])) != identity["files"][tool]["sha256"]:
+            raise RuntimeError(f"{cache_path}: expected pinned {tool}, found {cache[variable]}")
+    return cache
+
+
+def cmake_preflight(output, clang, env, identity):
+    source = output / "cmake-probe"
+    source.mkdir()
+    (source / "CMakeLists.txt").write_text(
+        'cmake_minimum_required(VERSION 3.21)\nproject(native_probe LANGUAGES CXX)\n'
+        'add_library(probe_lib STATIC lib.cpp)\nadd_executable(probe main.cpp)\n'
+        'target_link_libraries(probe PRIVATE probe_lib)\n')
+    (source / "lib.cpp").write_text("int answer() { return 42; }\n")
+    (source / "main.cpp").write_text("int answer(); int main() { return answer() == 42 ? 0 : 1; }\n")
+    build = source / "build"
+    execute(["cmake", "-S", source, "-B", build, "-G", "Ninja",
+             f"-DCMAKE_CXX_COMPILER={(clang / 'clang-cl.exe').as_posix()}",
+             "-DCMAKE_BUILD_TYPE=Release"], source, env, output, "cmake-configure", timeout=120)
+    shutil.copy2(build / "CMakeCache.txt", output / "preflight-CMakeCache.txt")
+    audit_cmake_tools(build / "CMakeCache.txt", identity)
+    execute(["cmake", "--build", build, "--verbose"], source, env, output, "cmake-build", timeout=120)
+    execute([build / "probe.exe"], source, env, output, "cmake-run", timeout=120)
+
+
+def audit_build(source, host, phase, output, identity):
+    cache_path = source / "build" / host / "llvm/build/CMakeCache.txt"
+    shutil.copy2(cache_path, output / "CMakeCache.txt")
+    cache = audit_cmake_tools(cache_path, identity)
+    lld_cache = source / "build" / host / "lld/build/CMakeCache.txt"
+    shutil.copy2(lld_cache, output / "lld-CMakeCache.txt")
+    audit_cmake_tools(lld_cache, identity)
     if cache.get("LLVM_ENABLE_LTO", "OFF").upper() not in ("", "OFF"):
         raise RuntimeError("LLVM LTO unexpectedly enabled")
-    if digest(Path(cache["CMAKE_LINKER"])) != identity["files"]["link.exe"]["sha256"]:
-        raise RuntimeError("LLVM CMake is not using the pinned Microsoft linker")
-    if digest(Path(cache["CMAKE_AR"])) != identity["files"]["lib.exe"]["sha256"]:
-        raise RuntimeError("LLVM CMake is not using the pinned Microsoft librarian")
-    if digest(Path(cache["CMAKE_CXX_COMPILER"])) != identity["files"]["clang-cl.exe"]["sha256"]:
-        raise RuntimeError("LLVM C++ compiler changed")
     expected_instrumented = phase == "llvm-profile"
     instrumented = cache.get("LLVM_BUILD_INSTRUMENTED", "OFF") not in ("", "OFF")
     if instrumented != expected_instrumented:
@@ -286,7 +321,6 @@ def audit_build(source, host, phase, output, identity):
         raise RuntimeError("No evidence that Rust-side dylib ThinLTO was enabled")
     if phase in ("pgo", "pgo-rust-thin") and "-Cprofile-use=" not in log:
         raise RuntimeError("No evidence of rustc PGO use")
-    shutil.copy2(cache_path, output / "CMakeCache.txt")
     save(output / "audit.json", {"llvm_lto": False, "microsoft_linker": True,
                                "clang_cpp_compiler": True, "rust_thin_lto": phase == "pgo-rust-thin"})
 
@@ -340,6 +374,7 @@ def main():
     output.mkdir(parents=True, exist_ok=False)
     identity = tool_identity(clang)
     env = environment(output, clang)
+    env["CMAKE_TOOLCHAIN_FILE"] = str(cmake_toolchain(output, identity))
     source_sha = subprocess.check_output(["git", "-C", source, "rev-parse", "HEAD"], text=True).strip()
     metadata = {
         "phase": args.phase, "host": args.host, "rust_sha": source_sha, "tools": identity,
@@ -349,6 +384,7 @@ def main():
         "perf_sha": subprocess.check_output(["git", "-C", source / "src/tools/rustc-perf", "rev-parse", "HEAD"], text=True).strip(),
     }
     save(output / "started.json", metadata)
+    cmake_preflight(output, clang, env, identity)
     if args.phase == "baseline":
         preflight(output, clang, env, identity)
     if args.phase in ("llvm-profile", "pgo", "pgo-rust-thin"):
