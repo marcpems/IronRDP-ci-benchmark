@@ -51,9 +51,12 @@ are not compiler-performance measurements.
 
 ## Results
 
-Valid same-tools compiler packages and IronRDP performance results are not yet
-available. [The current compiler run](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37965170591)
-includes the native-tool, WASM runtime and training-helper fixes described below.
+Audited Arm64 and x64 baseline compiler packages are now available from
+[run 37965170591](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37965170591).
+Arm64 PGO training is blocked by compiler access violations; a separate local
+probe also confirmed malformed profile data caused by name-section padding.
+See [the runtime diagnostic report](RUNTIME-DIAGNOSTICS.md).
+No optimized compiler comparison or IronRDP performance results are available.
 
 The initial x64 compatibility probes completed:
 
