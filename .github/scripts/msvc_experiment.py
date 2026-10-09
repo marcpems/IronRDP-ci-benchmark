@@ -212,6 +212,13 @@ def train(source, output, host, env, backend, clang):
     raw.mkdir(exist_ok=True)
     child = {**env, "RUSTC": str(stage0 / "rustc.exe"),
              "LLVM_PROFILE_FILE": str(raw / "default_%m_%p.profraw")}
+    fixture = training / "collector/compile-benchmarks/token-stream-stress"
+    before = tomllib.loads((fixture / "Cargo.lock").read_text())
+    execute([stage0 / "cargo.exe", "generate-lockfile", "--offline"], fixture, child,
+            output, "training-lockfile", timeout=120)
+    after = tomllib.loads((fixture / "Cargo.lock").read_text())
+    if before["package"] != after["package"]:
+        raise RuntimeError("Training lockfile migration changed the dependency graph")
     crates = training_crates(source, backend)
     command = [
         stage0 / "cargo.exe", "run", "--locked", "-p", "collector", "--bin", "collector", "--",
@@ -232,6 +239,7 @@ def train(source, output, host, env, backend, clang):
     else:
         components = ["rustc_middle", "rustc_mir_transform"]
     return {"crates": crates, "cargo": "pinned stage0 (uninstrumented, compiler-only experiment)",
+            "token_stream_lockfile_sha256": digest(fixture / "Cargo.lock"),
             "coverage": coverage(profdata, merged, components, env, output)}
 
 
