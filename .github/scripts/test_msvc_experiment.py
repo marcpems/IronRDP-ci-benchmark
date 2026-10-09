@@ -1,7 +1,9 @@
 import copy
 import json
+import os
 from pathlib import Path
 import tempfile
+import subprocess
 import tomllib
 import unittest
 import zipfile
@@ -22,6 +24,14 @@ class ConfigurationTests(unittest.TestCase):
                          *(source / name for name in ("COPYRIGHT", "LICENSE-MIT", "LICENSE-APACHE"))):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(b"fixture")
+            rustlib = source / "build/host/stage2/lib/rustlib"
+            rustlib.mkdir(parents=True)
+            if os.name == "nt":
+                subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command",
+                                f"New-Item -ItemType Junction -Path '{rustlib / 'src'}' "
+                                f"-Target '{source}' | Out-Null"], check=True)
+            else:
+                (rustlib / "src").symlink_to(source, target_is_directory=True)
             preserve_training_compiler(source, output, "host")
             metadata = json.loads((output / "instrumented-diagnostic.json").read_text())
             self.assertTrue(metadata["diagnostic_only"])
@@ -29,8 +39,10 @@ class ConfigurationTests(unittest.TestCase):
             with zipfile.ZipFile(output / "instrumented-diagnostic.zip") as archive:
                 self.assertIn("sysroot/bin/rustc.exe", archive.namelist())
                 self.assertIn("training-tools/rustc-fake.exe", archive.namelist())
+                self.assertFalse(any(name.startswith("sysroot/lib/rustlib/src/") for name in archive.namelist()))
             self.assertFalse((output / "metadata.json").exists())
             self.assertFalse((output / "compiler.zip").exists())
+            self.assertFalse((output / "instrumented-diagnostic.partial").exists())
 
     def test_training_builds_and_requires_all_collector_binaries(self):
         for provide_wrapper in (False, True):

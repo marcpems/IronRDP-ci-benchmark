@@ -214,7 +214,7 @@ def preflight(output, clang, env, identity):
     save(output / "preflight.json", rows)
 
 
-def train(source, output, host, env, backend, clang):
+def train(source, output, host, env, backend, clang, preserve_compiler=False):
     build = source / "build" / host
     stage0 = build / "stage0/bin"
     training = output / "training"
@@ -236,6 +236,8 @@ def train(source, output, host, env, backend, clang):
     for name in ("collector.exe", "rustc-fake.exe"):
         if not (training / "target/debug" / name).is_file():
             raise RuntimeError(f"Missing training executable after collector build: {name}")
+    if preserve_compiler:
+        preserve_training_compiler(source, output, host)
     command = [
         stage0 / "cargo.exe", "run", "--locked", "-p", "collector", "--bin", "collector", "--",
         "profile_local", "eprintln", build / "stage2/bin/rustc.exe", "--id", "MSVC-experiment",
@@ -366,19 +368,26 @@ def package(source, output, host, env, metadata):
 
 def preserve_training_compiler(source, output, host):
     stage = source / "build" / host / "stage2"
+    if not (stage / "bin/rustc.exe").is_file():
+        raise RuntimeError("Cannot preserve a missing instrumented compiler")
     archive = output / "instrumented-diagnostic.zip"
-    with zipfile.ZipFile(archive, "x", zipfile.ZIP_DEFLATED, compresslevel=1) as bundle:
-        for path in sorted(stage.rglob("*")):
-            if path.is_file():
-                bundle.write(path, Path("sysroot") / path.relative_to(stage))
-        for name in ("collector.exe", "rustc-fake.exe"):
-            bundle.write(output / "training/target/debug" / name, Path("training-tools") / name)
-        bundle.write(source / "build" / host / "stage0/bin/cargo.exe", "training-tools/cargo.exe")
-        for name in ("COPYRIGHT", "LICENSE-MIT", "LICENSE-APACHE"):
-            bundle.write(source / name, name)
+    partial = archive.with_suffix(".partial")
+    with tempfile.TemporaryDirectory(prefix="diagnostic-package-", dir=output) as temp:
+        sysroot = Path(temp) / "sysroot"
+        shutil.copytree(stage, sysroot, ignore=lambda p, names: excluded_sysroot_entries(stage, p, names))
+        with zipfile.ZipFile(partial, "x", zipfile.ZIP_DEFLATED, compresslevel=1) as bundle:
+            for path in sorted(sysroot.rglob("*")):
+                if path.is_file():
+                    bundle.write(path, Path("sysroot") / path.relative_to(sysroot))
+            for name in ("collector.exe", "rustc-fake.exe"):
+                bundle.write(output / "training/target/debug" / name, Path("training-tools") / name)
+            bundle.write(source / "build" / host / "stage0/bin/cargo.exe", "training-tools/cargo.exe")
+            for name in ("COPYRIGHT", "LICENSE-MIT", "LICENSE-APACHE"):
+                bundle.write(source / name, name)
+    partial.replace(archive)
     save(output / "instrumented-diagnostic.json", {
         "diagnostic_only": True, "archive_sha256": digest(archive),
-        "warning": "Instrumented compiler from failed training; not a benchmark candidate.",
+        "warning": "Instrumented compiler preserved before training; not a benchmark candidate.",
     })
 
 
@@ -436,13 +445,9 @@ def main():
     if metrics.is_file():
         shutil.copy2(metrics, output / "bootstrap-metrics.json")
     if args.phase.endswith("-profile"):
-        try:
-            metadata.setdefault("training", {})[args.phase] = train(
-                source, output, args.host, env, args.phase == "llvm-profile", clang)
-        except RuntimeError:
-            if args.preserve_training_compiler:
-                preserve_training_compiler(source, output, args.host)
-            raise
+        metadata.setdefault("training", {})[args.phase] = train(
+            source, output, args.host, env, args.phase == "llvm-profile", clang,
+            preserve_compiler=args.preserve_training_compiler)
     metadata["profiles"] = {p.name: digest(p) for p in output.glob("*.profdata")}
     if args.phase in VARIANTS:
         package(source, output, args.host, env, metadata)
