@@ -187,7 +187,7 @@ def markdown(result):
 def build_summary(root, result):
     phases = ("baseline", "rustc-profile", "llvm-profile", "pgo", "pgo-rust-thin")
     hosts = tuple(result.get("included_hosts", HOSTS))
-    records, metadata, paths = {}, {}, {}
+    records, metadata, paths, provenance = {}, {}, {}, {}
     for path in root.rglob("metadata.json"):
         item = json.loads(path.read_text())
         key = (item["host"], item["phase"])
@@ -198,7 +198,8 @@ def build_summary(root, result):
         if item["rust_sha"] != result["protocol"]["rust_sha"]:
             raise ValueError("Wrong compiler source in build report")
         timing = {}
-        for stage in ("build", "training-tools", "training", "merge", "training-lockfile", "smoke-compile", "smoke-run"):
+        for stage in ("build", "stage0-bootstrap", "training-tools", "training", "merge",
+                      "training-lockfile", "smoke-compile", "smoke-run"):
             measurement = path.parent / f"{stage}.json"
             if measurement.is_file():
                 row = json.loads(measurement.read_text())
@@ -209,6 +210,25 @@ def build_summary(root, result):
             raise ValueError("Missing compiler construction timing")
         if item["phase"].endswith("-profile") and not {"training-tools", "training", "merge"} <= timing.keys():
             raise ValueError("Missing profile collection timing")
+        resume_keys = ("compiler_build_run", "compiler_build_attempt", "resumed_archive_sha256")
+        resumed = any(name in item for name in resume_keys)
+        if resumed:
+            if (item["phase"] != "llvm-profile" or not all(item.get(name) for name in resume_keys)
+                    or "stage0-bootstrap" not in timing):
+                raise ValueError("Incomplete resumed compiler provenance or stage0 timing")
+            capture = json.loads((path.parent / "instrumented-diagnostic.json").read_text())
+            if capture["stage"] != "stage2" or capture["archive_sha256"] != item["resumed_archive_sha256"]:
+                raise ValueError("Resumed compiler capture mismatch")
+        elif "stage0-bootstrap" in timing:
+            raise ValueError("Resume timing without resumed compiler provenance")
+        provenance[key] = {
+            "run_id": item["run_id"], "attempt": item.get("attempt"),
+            "compiler_build_run": item["compiler_build_run"] if resumed else item["run_id"],
+            "compiler_build_attempt": item["compiler_build_attempt"] if resumed else item.get("attempt"),
+            "metadata_sha256": digest(path),
+        }
+        if resumed:
+            provenance[key]["resumed_archive_sha256"] = item["resumed_archive_sha256"]
         records[key] = timing
         metadata[key], paths[key] = item, path
     if set(records) != {(host, phase) for host in hosts for phase in phases}:
@@ -240,26 +260,36 @@ def build_summary(root, result):
                 if any(item["profiles"].get(name) != checksum for name, checksum in parent["profiles"].items()):
                     raise ValueError("Construction phases did not retain identical input profiles")
     lines = ["", "## Toolchain construction", "",
-             "| Architecture | Phase | Bootstrap wall (min) | Collector build (min) | Training wall (min) | Profile merge (min) | Bootstrap CPU (min) |",
-             "|---|---|---:|---:|---:|---:|---:|"]
+             "| Architecture | Phase | Bootstrap wall (min) | Resume stage0/bootstrap (min) | Collector build (min) | Training wall (min) | Profile merge (min) | Bootstrap CPU (min) |",
+             "|---|---|---:|---:|---:|---:|---:|---:|"]
     for host in hosts:
         for phase in phases:
             timing = records[host, phase]
             training = timing.get("training", {}).get("wall_seconds", 0) / 60
             tools = timing.get("training-tools", {}).get("wall_seconds", 0) / 60
             merge = timing.get("merge", {}).get("wall_seconds", 0) / 60
+            resume = timing.get("stage0-bootstrap", {}).get("wall_seconds", 0) / 60
             lines.append(f"| {host} | {phase} | {timing['build']['wall_seconds']/60:.2f} | "
-                         f"{tools:.2f} | {training:.2f} | {merge:.2f} | "
+                         f"{resume:.2f} | {tools:.2f} | {training:.2f} | {merge:.2f} | "
                          f"{timing['build']['cpu_seconds']/60:.2f} |")
     lines += ["", "Bootstrap-command time includes stage0 acquisition, bootstrap compilation, LLVM",
               "and Rust compilation. It is not a pure offline compiler CPU measurement.",
               "Collector construction, training and profile merging are separately recorded. Source/tool setup and",
               "artifact transfers are excluded from this table. Jobs rebuild prerequisites",
-              "independently; their summed time is not the workflow critical path.", ""]
+              "independently; their summed time is not the workflow critical path.", "",
+              "For a resumed phase, the bootstrap column belongs to the original compiler-build run.",
+              "The resume column records only stage0/bootstrap preparation in the later training run;",
+              "the original compiler build is not counted a second time.", "",
+              "| Architecture | Phase | Compiler-build run | Training/artifact run |",
+              "|---|---|---|---|"]
+    for host in hosts:
+        for phase in phases:
+            item = provenance[host, phase]
+            lines.append(f"| {host} | {phase} | {item['compiler_build_run']} | {item['run_id']} |")
+    lines.append("")
     return {
         "stages": {f"{host}/{phase}": timing for (host, phase), timing in records.items()},
-        "provenance": {f"{host}/{phase}": {"run_id": item["run_id"], "metadata_sha256": digest(paths[host, phase])}
-                       for (host, phase), item in metadata.items()},
+        "provenance": {f"{host}/{phase}": item for (host, phase), item in provenance.items()},
     }, "\n".join(lines)
 
 

@@ -1,0 +1,67 @@
+{
+  "benchmark_run": "38063669491",
+  "attempt": "1",
+  "host": "aarch64-pc-windows-msvc",
+  "vms": [
+    {
+      "vm": 1,
+      "hardware": {
+        "Name": "Cobalt 100",
+        "NumberOfCores": 4,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20261004.176.1",
+      "artifact": "msvc-ironrdp-arm64-1",
+      "index_sha256": "ffd243e6b74b00811fcbe90b6e51abab0e36144953e6b2986bb81b910bc62c08",
+      "baseline_warmup_sha256": "9180ebfd76b7d4c2806f5ff961896284863406a7ebb44ad8740cfc53d46da94c"
+    },
+    {
+      "vm": 2,
+      "hardware": {
+        "Name": "Cobalt 100",
+        "NumberOfCores": 4,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20261004.176.1",
+      "artifact": "msvc-ironrdp-arm64-2",
+      "index_sha256": "c3811710dedd200547eccbac5b63e32056c7a6fc3f5d7dc512fb10de45f95f2a",
+      "baseline_warmup_sha256": "363e701281a19d95c5bbe9e88120432367fb20ed8484a97e53246afc57842605"
+    },
+    {
+      "vm": 3,
+      "hardware": {
+        "Name": "Cobalt 100",
+        "NumberOfCores": 4,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20261004.176.1",
+      "artifact": "msvc-ironrdp-arm64-3",
+      "index_sha256": "7c2845c3a4053074f1da84066331f3429097051e44f8a50c495deb5053034c6a",
+      "baseline_warmup_sha256": "fb7fc9d82ad00ebcf7e8ba84064f5cdbea279c4bd426fb51cacaf52bd31b77d2"
+    },
+    {
+      "vm": 4,
+      "hardware": {
+        "Name": "Cobalt 100",
+        "NumberOfCores": 4,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20261004.176.1",
+      "artifact": "msvc-ironrdp-arm64-4",
+      "index_sha256": "3800b57516bc24d3d9a627ca610d94185ee9d02f282400cee3a5d7b2dda8e04a",
+      "baseline_warmup_sha256": "26d8f83f5d732d7696dbb8e55333a1de129f3423888adc2feedf23cb7f9f6a3a"
+    },
+    {
+      "vm": 5,
+      "hardware": {
+        "Name": "Cobalt 100",
+        "NumberOfCores": 4,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20261004.176.1",
+      "artifact": "msvc-ironrdp-arm64-5",
+      "index_sha256": "4e78ef8e8c97885ad9de71aa99e10ebb56ec646cc33c997f1622a0e30085cab5",
+      "baseline_warmup_sha256": "4195006f0b94e41b1fbe6bbc392d5862d374ab93fcf7bc8f0f4ccea468623202"
+    }
+  ]
+}

@@ -1574,22 +1574,37 @@
     "provenance": {
       "x86_64-pc-windows-msvc/baseline": {
         "run_id": "38021536352",
+        "attempt": "1",
+        "compiler_build_run": "38021536352",
+        "compiler_build_attempt": "1",
         "metadata_sha256": "effbcc2de3bc8ca5b5c2ad49eaf57a0d82dbb93890f4ab2c6fb8de991c0f286b"
       },
       "x86_64-pc-windows-msvc/llvm-profile": {
         "run_id": "38009549235",
+        "attempt": "1",
+        "compiler_build_run": "38009549235",
+        "compiler_build_attempt": "1",
         "metadata_sha256": "baf9e99e1dfd98682bf8e4a3ecd50dd8c5ebaa7e02655156da66adc56c64b366"
       },
       "x86_64-pc-windows-msvc/pgo": {
         "run_id": "38021536352",
+        "attempt": "1",
+        "compiler_build_run": "38021536352",
+        "compiler_build_attempt": "1",
         "metadata_sha256": "e5c7c5ac9df5b0fa10bac32c6959c7d90808fdf9e8dfe26c496937c5257d4835"
       },
       "x86_64-pc-windows-msvc/pgo-rust-thin": {
         "run_id": "38021536352",
+        "attempt": "1",
+        "compiler_build_run": "38021536352",
+        "compiler_build_attempt": "1",
         "metadata_sha256": "6502326a0517a03f36fd653c32761542a9cdfff800ad53238962af8081793af7"
       },
       "x86_64-pc-windows-msvc/rustc-profile": {
         "run_id": "37965170591",
+        "attempt": "1",
+        "compiler_build_run": "37965170591",
+        "compiler_build_attempt": "1",
         "metadata_sha256": "5c596443ee7317b6f06364a846cbdf6d54e2ea62b843e79a9060963602a88933"
       }
     }

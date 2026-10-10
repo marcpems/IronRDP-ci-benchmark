@@ -74,6 +74,38 @@ class AnalysisTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "profile parent mismatch"):
                 build_summary(root, result)
             parent_path.write_text(original_parent)
+            resumed = json.loads(original_parent)
+            resumed.update(compiler_build_run="original-build", compiler_build_attempt="1",
+                           resumed_archive_sha256="a" * 64)
+            parent_path.write_text(json.dumps(resumed))
+            for variant in ("pgo", "pgo-rust-thin"):
+                final_path = root / f"{HOSTS[0]}-{variant}/metadata.json"
+                final = json.loads(final_path.read_text())
+                final["profile_parent_sha256"] = digest(parent_path)
+                final_path.write_text(json.dumps(final))
+                result["compiler_metadata"][HOSTS[0]][variant] = final
+            with self.assertRaisesRegex(ValueError, "Incomplete resumed compiler provenance"):
+                build_summary(root, result)
+            resume_path = parent_path.parent / "stage0-bootstrap.json"
+            resume_path.write_text(json.dumps({
+                "exit_code": 0, "wall_seconds": 90, "cpu_seconds": 240}))
+            capture_path = parent_path.parent / "instrumented-diagnostic.json"
+            capture_path.write_text(json.dumps({"stage": "stage2", "archive_sha256": "b" * 64}))
+            with self.assertRaisesRegex(ValueError, "Resumed compiler capture mismatch"):
+                build_summary(root, result)
+            capture_path.write_text(json.dumps({"stage": "stage2", "archive_sha256": "a" * 64}))
+            summary, text = build_summary(root, result)
+            provenance = summary["provenance"][f"{HOSTS[0]}/llvm-profile"]
+            self.assertEqual(provenance["compiler_build_run"], "original-build")
+            self.assertEqual(provenance["run_id"], "llvm-profile")
+            self.assertEqual(summary["stages"][f"{HOSTS[0]}/llvm-profile"]["stage0-bootstrap"]["wall_seconds"], 90)
+            self.assertIn("| original-build | llvm-profile |", text)
+            resume_path.write_text(json.dumps({
+                "exit_code": 1, "wall_seconds": 90, "cpu_seconds": 240}))
+            with self.assertRaisesRegex(ValueError, "Failed build stage"):
+                build_summary(root, result)
+            resume_path.write_text(json.dumps({
+                "exit_code": 0, "wall_seconds": 90, "cpu_seconds": 240}))
             (directory / "build.json").write_text(json.dumps({
                 "exit_code": 1, "wall_seconds": 120, "cpu_seconds": 400}))
             with self.assertRaises(ValueError):
