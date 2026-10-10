@@ -6,8 +6,8 @@ from pathlib import Path
 import random
 import statistics
 
-from build_arm_compilers import save
-from msvc_experiment import VARIANTS
+from build_arm_compilers import digest, save
+from msvc_experiment import VARIANTS, equivalent_tools
 from msvc_ironrdp_probe import validate_metadata
 from native_ci_probe import COMMANDS, NATIVE_COMMANDS, paired_order
 
@@ -27,7 +27,9 @@ def contrast(control, treatment):
     return {"reduction_percent": estimate, "ci95_percent": [draws[249], draws[9749]]}
 
 
-def analyze(root, protocol):
+def analyze(root, protocol, hosts=HOSTS):
+    if not hosts or len(set(hosts)) != len(hosts) or not set(hosts) <= set(HOSTS):
+        raise ValueError("Select a nonempty, unique subset of the supported architectures")
     cells, identity, benchmark_runs, build_runs = {}, {}, set(), set()
     n = protocol["independent_vms_per_arch"]
     rounds = protocol["warmup_rounds"] + protocol["measured_rounds"]
@@ -38,7 +40,7 @@ def analyze(root, protocol):
         if not index.get("complete") or index["protocol"] != protocol:
             raise ValueError(f"Incomplete or mismatched protocol: {path}")
         host, vm = index["host"], index["vm"]
-        if host not in HOSTS or vm not in range(1, n + 1) or (host, vm) in cells:
+        if host not in hosts or vm not in range(1, n + 1) or (host, vm) in cells:
             raise ValueError("Unexpected or duplicate VM")
         validate_metadata(index["compiler_metadata"], protocol, host, index["build_run"])
         if index["variants"] != list(VARIANTS):
@@ -95,13 +97,14 @@ def analyze(root, protocol):
             variant: {metric: statistics.mean(samples) for metric, samples in metrics.items()}
             for variant, metrics in values.items()
         }
-    if set(cells) != {(host, vm) for host in HOSTS for vm in range(1, n + 1)}:
+    if set(cells) != {(host, vm) for host in hosts for vm in range(1, n + 1)}:
         raise ValueError("Incomplete architecture/VM matrix")
     if len(benchmark_runs) != 1 or len(build_runs) != 1:
         raise ValueError("Mixed workflow runs or benchmark attempts")
     result = {"protocol": protocol, "benchmark_run": list(benchmark_runs)[0],
-              "build_run": list(build_runs)[0], "architectures": {}}
-    for host in HOSTS:
+              "build_run": list(build_runs)[0], "included_hosts": list(hosts), "architectures": {},
+              "compiler_metadata": {host: identity[host]["metadata"] for host in hosts}}
+    for host in hosts:
         metrics = cells[host, 1]["baseline"].keys()
         host_result = {}
         for metric in metrics:
@@ -121,6 +124,8 @@ def analyze(root, protocol):
 def markdown(result):
     lines = [
         "# Same-tools Windows compiler results", "",
+        "Architecture scope: " + ", ".join(result["included_hosts"]) + ".",
+        "No results for omitted architectures are implied.", "",
         f"Compiler build run: https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/{result['build_run']}",
         f"Benchmark run: https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/{result['benchmark_run'][0]}",
         "", "Native clang-cl, link.exe and lib.exe were held constant. Both PGO variants used",
@@ -159,12 +164,15 @@ def markdown(result):
 
 def build_summary(root, result):
     phases = ("baseline", "rustc-profile", "llvm-profile", "pgo", "pgo-rust-thin")
-    records = {}
+    hosts = tuple(result.get("included_hosts", HOSTS))
+    records, metadata, paths = {}, {}, {}
     for path in root.rglob("metadata.json"):
         item = json.loads(path.read_text())
         key = (item["host"], item["phase"])
-        if key in records or item["run_id"] != result["build_run"]:
-            raise ValueError("Duplicate or mixed compiler build artifacts")
+        if key in records:
+            raise ValueError("Duplicate compiler build artifacts")
+        if item["phase"] in VARIANTS and item["run_id"] != result["build_run"]:
+            raise ValueError("Final compiler artifacts are from a different build run")
         if item["rust_sha"] != result["protocol"]["rust_sha"]:
             raise ValueError("Wrong compiler source in build report")
         timing = {}
@@ -180,12 +188,39 @@ def build_summary(root, result):
         if item["phase"].endswith("-profile") and not {"training-tools", "training", "merge"} <= timing.keys():
             raise ValueError("Missing profile collection timing")
         records[key] = timing
-    if set(records) != {(host, phase) for host in HOSTS for phase in phases}:
+        metadata[key], paths[key] = item, path
+    if set(records) != {(host, phase) for host in hosts for phase in phases}:
         raise ValueError("Incomplete compiler construction artifact matrix")
+    for host in hosts:
+        final = {variant: metadata[host, variant] for variant in VARIANTS}
+        validate_metadata(final, result["protocol"], host, result["build_run"])
+        if final != result["compiler_metadata"][host]:
+            raise ValueError("Construction artifacts differ from the benchmark's compiler metadata")
+        for phase in phases:
+            item, path = metadata[host, phase], paths[host, phase]
+            if not equivalent_tools(final["baseline"]["tools"], item["tools"]):
+                raise ValueError("Construction phases used different native tools")
+            if any(item[key] != final["baseline"][key] for key in ("llvm_sha", "perf_sha")):
+                raise ValueError("Construction phases used different source submodules")
+            expected_profiles = set() if phase == "baseline" else {"rustc-pgo.profdata"}
+            if phase not in ("baseline", "rustc-profile"):
+                expected_profiles.add("llvm-pgo.profdata")
+            if set(item["profiles"]) != expected_profiles:
+                raise ValueError("Wrong profiles for construction phase")
+            for name, checksum in item["profiles"].items():
+                if digest(path.parent / name) != checksum:
+                    raise ValueError("Construction profile checksum mismatch")
+            if phase in ("llvm-profile", "pgo", "pgo-rust-thin"):
+                parent_phase = "rustc-profile" if phase == "llvm-profile" else "llvm-profile"
+                parent = metadata[host, parent_phase]
+                if item["profile_parent_sha256"] != digest(paths[host, parent_phase]):
+                    raise ValueError("Construction profile parent mismatch")
+                if any(item["profiles"].get(name) != checksum for name, checksum in parent["profiles"].items()):
+                    raise ValueError("Construction phases did not retain identical input profiles")
     lines = ["", "## Toolchain construction", "",
              "| Architecture | Phase | Bootstrap wall (min) | Collector build (min) | Training wall (min) | Bootstrap CPU (min) |",
              "|---|---|---:|---:|---:|---:|"]
-    for host in HOSTS:
+    for host in hosts:
         for phase in phases:
             timing = records[host, phase]
             training = timing.get("training", {}).get("wall_seconds", 0) / 60
@@ -197,7 +232,11 @@ def build_summary(root, result):
               "Collector construction, training and profile merging are separately recorded. Source/tool setup and",
               "artifact transfers are excluded from this table. Jobs rebuild prerequisites",
               "independently; their summed time is not the workflow critical path.", ""]
-    return {"stages": {f"{host}/{phase}": timing for (host, phase), timing in records.items()}}, "\n".join(lines)
+    return {
+        "stages": {f"{host}/{phase}": timing for (host, phase), timing in records.items()},
+        "provenance": {f"{host}/{phase}": {"run_id": item["run_id"], "metadata_sha256": digest(paths[host, phase])}
+                       for (host, phase), item in metadata.items()},
+    }, "\n".join(lines)
 
 
 def main():
@@ -206,8 +245,10 @@ def main():
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--build-input", type=Path)
+    parser.add_argument("--architecture", choices=("both", "x64", "arm64"), default="both")
     args = parser.parse_args()
-    result = analyze(args.input, json.loads(args.protocol.read_text()))
+    hosts = HOSTS if args.architecture == "both" else (HOSTS[0 if args.architecture == "x64" else 1],)
+    result = analyze(args.input, json.loads(args.protocol.read_text()), hosts)
     args.output.mkdir(parents=True, exist_ok=True)
     report = markdown(result)
     if args.build_input:

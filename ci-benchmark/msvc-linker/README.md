@@ -85,6 +85,14 @@ accidentally appended an Arm64 job to the x64-only scope. Runner/host selection
 now derives from each selected architecture without adding matrix cells.
 The separate five-VM x64 study excludes these pilot measurements.
 
+The analyzer still requires both architectures by default. For the independent
+x64 study, pass `--architecture x64`; the report explicitly names its scope and
+still requires all five VMs and all paired rounds. Data from another
+architecture, incomplete rounds, pilot blocks and mixed benchmark attempts are
+rejected. The construction appendix can follow training artifacts across runs,
+but only through verified parent-metadata hashes and unchanged profile bytes.
+Final construction metadata must match the exact compilers in the benchmark.
+
 The initial x64 compatibility probes completed:
 
 | Input objects | Microsoft link.exe | Result |

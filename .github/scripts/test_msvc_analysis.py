@@ -8,6 +8,7 @@ from analyze_msvc_experiment import HOSTS, analyze, build_summary, contrast
 from msvc_experiment import VARIANTS
 from msvc_ironrdp_probe import validate_metadata
 from native_ci_probe import COMMANDS, NATIVE_COMMANDS, paired_order
+from build_arm_compilers import digest
 
 
 def compiler_metadata(host):
@@ -33,18 +34,45 @@ class AnalysisTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             for host in HOSTS:
-                for phase in ("baseline", "rustc-profile", "llvm-profile", "pgo", "pgo-rust-thin"):
+                for phase in ("rustc-profile", "llvm-profile", "baseline", "pgo", "pgo-rust-thin"):
                     directory = root / f"{host}-{phase}"
                     directory.mkdir()
-                    (directory / "metadata.json").write_text(json.dumps({
-                        "host": host, "phase": phase, "run_id": "build", "rust_sha": "rust"}))
+                    item = compiler_metadata(host)["baseline" if phase == "baseline" else "pgo"]
+                    item["phase"] = phase
+                    item["profiles"] = {}
+                    names = [] if phase == "baseline" else ["rustc-pgo.profdata"]
+                    if phase not in ("baseline", "rustc-profile"):
+                        names.append("llvm-pgo.profdata")
+                    for name in names:
+                        profile = directory / name
+                        profile.write_bytes(name.encode())
+                        item["profiles"][name] = digest(profile)
+                    if phase.endswith("-profile"):
+                        item["run_id"] = phase
+                    if phase in ("llvm-profile", "pgo", "pgo-rust-thin"):
+                        parent = "rustc-profile" if phase == "llvm-profile" else "llvm-profile"
+                        item["profile_parent_sha256"] = digest(root / f"{host}-{parent}/metadata.json")
+                    (directory / "metadata.json").write_text(json.dumps(item))
                     stages = ["build"] + (["training-tools", "training", "merge"] if phase.endswith("-profile") else [])
                     for stage in stages:
                         (directory / f"{stage}.json").write_text(json.dumps({
                             "exit_code": 0, "wall_seconds": 120, "cpu_seconds": 400}))
+            result["compiler_metadata"] = {
+                host: {variant: json.loads((root / f"{host}-{variant}/metadata.json").read_text())
+                       for variant in VARIANTS}
+                for host in HOSTS
+            }
             summary, text = build_summary(root, result)
             self.assertEqual(len(summary["stages"]), 10)
             self.assertIn("not a pure offline", text)
+            parent_path = root / f"{HOSTS[0]}-llvm-profile/metadata.json"
+            original_parent = parent_path.read_text()
+            broken_parent = json.loads(original_parent)
+            broken_parent["profile_parent_sha256"] = "wrong"
+            parent_path.write_text(json.dumps(broken_parent))
+            with self.assertRaisesRegex(ValueError, "profile parent mismatch"):
+                build_summary(root, result)
+            parent_path.write_text(original_parent)
             (directory / "build.json").write_text(json.dumps({
                 "exit_code": 1, "wall_seconds": 120, "cpu_seconds": 400}))
             with self.assertRaises(ValueError):
@@ -107,6 +135,8 @@ class AnalysisTests(unittest.TestCase):
                     (directory / "index.json").write_text(json.dumps(index))
             result = analyze(root, protocol)
             self.assertEqual(result["architectures"][HOSTS[0]]["native-total/wall_seconds"]["means"]["baseline"], 50)
+            with self.assertRaisesRegex(ValueError, "Unexpected or duplicate VM"):
+                analyze(root, protocol, (HOSTS[0],))
             selected = directory / "index.json"
             index = json.loads(selected.read_text())
             original = copy.deepcopy(index)
@@ -121,6 +151,16 @@ class AnalysisTests(unittest.TestCase):
                 selected.write_text(json.dumps(candidate))
                 with self.assertRaises(ValueError):
                     analyze(root, protocol)
+            selected.write_text(json.dumps(original))
+            arm_root = root / "arm-only"
+            arm_root.mkdir()
+            for vm in range(1, 6):
+                (root / f"{HOSTS[1]}-{vm}").rename(arm_root / str(vm))
+            single = analyze(arm_root, protocol, (HOSTS[1],))
+            self.assertEqual(single["included_hosts"], [HOSTS[1]])
+            self.assertEqual(set(single["architectures"]), {HOSTS[1]})
+            with self.assertRaisesRegex(ValueError, "Incomplete architecture/VM matrix"):
+                analyze(arm_root, protocol)
 
 
 if __name__ == "__main__":
