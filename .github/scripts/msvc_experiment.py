@@ -248,7 +248,53 @@ def clang_profile_preflight(output, clang, env, identity, host):
     execute([clang / "llvm-profdata.exe", "merge", "-o",
              output / "clang-profile-smoke.profdata", raw],
             fixture, env, output, "clang-profile-merge", timeout=120)
+    text = subprocess.check_output(
+        [clang / "llvm-profdata.exe", "show", "--all-functions", "--counts", "--ic-targets",
+         output / "clang-profile-smoke.profdata"], env=env, text=True)
+    (output / "clang-profile-counts.txt").write_text(text, encoding="utf-8")
+    if (not re.search(r"main:.*?Block counts: \[800, 8\]", text, re.S)
+            or not re.search(r"bump:.*?Block counts: \[800\]", text, re.S)
+            or not re.search(r"\[\s*0,\s*bump,\s*800\s*\]", text)):
+        raise RuntimeError("Clang runtime probe counters or indirect-call targets are incorrect")
     return provenance
+
+
+def rebuild_clang_runtime(source, output, clang, env, identity, host):
+    revision = subprocess.check_output(["git", "-C", source, "rev-parse", "HEAD"], text=True).strip()
+    if revision != "ca7933e47d3a3451d81e72ac174dcb5aa28b59d1":
+        raise RuntimeError("Clang profiling runtime must use the pinned LLVM 22.1.8 source")
+    build = output / "clang-runtime-build"
+    command = [
+        "cmake", "-S", source / "compiler-rt", "-B", build, "-G", "Ninja",
+        f"-DCMAKE_C_COMPILER={(clang / 'clang-cl.exe').as_posix()}",
+        f"-DCMAKE_CXX_COMPILER={(clang / 'clang-cl.exe').as_posix()}",
+        f"-DCMAKE_C_COMPILER_TARGET={host}", f"-DCMAKE_CXX_COMPILER_TARGET={host}",
+        "-DCMAKE_BUILD_TYPE=Release", "-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON",
+        "-DCOMPILER_RT_BUILD_PROFILE=ON", "-DCOMPILER_RT_INCLUDE_TESTS=OFF",
+        *(f"-DCOMPILER_RT_BUILD_{feature}=OFF" for feature in
+          ("BUILTINS", "SANITIZERS", "XRAY", "LIBFUZZER", "CTX_PROFILE", "MEMPROF", "ORC")),
+    ]
+    execute(command, source, env, output, "clang-runtime-configure", timeout=600)
+    audit_cmake_tools(build / "CMakeCache.txt", identity)
+    shutil.copy2(build / "CMakeCache.txt", output / "clang-runtime-CMakeCache.txt")
+    execute(["cmake", "--build", build, "--target", "profile", "--verbose"],
+            source, env, output, "clang-runtime-build", timeout=600)
+    resource = Path(subprocess.check_output(
+        [clang / "clang-cl.exe", "--print-resource-dir"], env=env, text=True).strip())
+    suffix = "aarch64" if host.startswith("aarch64") else "x86_64"
+    name = f"clang_rt.profile-{suffix}.lib"
+    destination = resource / "lib/windows" / name
+    rebuilt = build / "lib/windows" / name
+    metadata = {
+        "llvm_sha": revision, "original_sha256": digest(destination),
+        "rebuilt_sha256": digest(rebuilt),
+        "sources": {name: digest(source / "compiler-rt/lib/profile" / name)
+                    for name in ("InstrProfilingMerge.c", "InstrProfilingPlatformWindows.c")},
+    }
+    shutil.copy2(destination, output / f"original-{name}")
+    shutil.copy2(rebuilt, destination)
+    save(output / "clang-runtime-rebuild.json", metadata)
+    return metadata
 
 
 def train(source, output, host, env, backend, clang, preserve_compiler=False):
@@ -449,7 +495,10 @@ def main():
     parser.add_argument("--phase", choices=PHASES, required=True)
     parser.add_argument("--profiles", type=Path)
     parser.add_argument("--preserve-training-compiler", action="store_true")
+    parser.add_argument("--clang-runtime-source", type=Path)
     args = parser.parse_args()
+    if args.clang_runtime_source is not None and args.phase != "llvm-profile":
+        parser.error("--clang-runtime-source is only valid for LLVM instrumentation")
     machine = platform.machine().lower()
     expected = ("arm64", "aarch64") if args.host.startswith("aarch64") else ("amd64", "x86_64")
     if os.name != "nt" or machine not in expected or os.cpu_count() != 4:
@@ -485,6 +534,9 @@ def main():
         for name in parent["profiles"]:
             shutil.copy2(args.profiles / name, output / name)
     if args.phase == "llvm-profile":
+        if args.clang_runtime_source is not None:
+            metadata["clang_runtime_rebuild"] = rebuild_clang_runtime(
+                args.clang_runtime_source.resolve(), output, clang, env, identity, args.host)
         metadata["clang_profiling_runtime"] = clang_profile_preflight(
             output, clang, env, identity, args.host)
     config = configuration(args.host, clang, Path(identity["files"]["link.exe"]["path"]),

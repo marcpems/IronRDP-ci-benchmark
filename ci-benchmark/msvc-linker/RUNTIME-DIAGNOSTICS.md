@@ -207,3 +207,39 @@ assuming that repairing Rust's in-tree runtime also repaired Clang's runtime.
 LLVM/backend training, final optimized compiler construction and the matched
 IronRDP comparison remain outstanding. The runtime fixes have only been
 qualified for these tested configurations, not all profiling modes.
+
+### Backend feasibility: x64 succeeds; Clang's Arm64 runtime also needs repair
+
+[Run 38009549235](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38009549235)
+completed the x64 LLVM/backend build and all seven backend training workloads.
+The downloaded LLVM profile's SHA-256 is
+`e5a40cad19e9a43fc34c7a1ddfbb5e3ea12f340231814649ae99f74d8bfd0b8d`.
+Coverage includes 178 active `X86TargetLowering` functions out of 273 and
+645 active `InstCombine` functions out of 979.
+
+| x64 backend component | Wall seconds |
+|---|---:|
+| Compiler/bootstrap build command | 5,712.31 |
+| Collector helper construction | 175.02 |
+| Backend workload training | 1,060.75 |
+| Training-profile merge | 194.40 |
+
+The independent Arm64 job stopped before compiler construction: the new small
+Clang-runtime probe crashed with `0xc0000005` on its second shared-profile
+write. Thus the successful Rust frontend runtime repair does not by itself
+make the separate Clang 22 runtime safe.
+
+Locally, the same Clang 22.1.8 Arm64 package reproduced the second-write crash.
+The two layout corrections were applied to its exact runtime source,
+LLVM `ca7933e47d3a3451d81e72ac174dcb5aa28b59d1`. The entire profiling library
+was rebuilt through compiler-rt's CMake `profile` target using the unchanged
+clang-cl executable and explicitly pinned Microsoft link.exe/lib.exe.
+No library-member surgery or repaired profile bytes were used.
+
+The rebuilt runtime passed all eight shared-profile executions and offline
+merging. The merged result contains exactly eight main invocations, 800 loop
+iterations, 800 calls to `bump`, and 800 recorded indirect calls to `bump`.
+The harness now checks these exact counts, records original/rebuilt library
+hashes, source revision and modified source hashes, and audits its CMake tools.
+Only the Arm64 backend job is being repeated; the successful x64 evidence is
+retained. Hosted backend training with this rebuilt runtime is still pending.

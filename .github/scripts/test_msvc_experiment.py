@@ -33,7 +33,10 @@ class ConfigurationTests(unittest.TestCase):
                         if name == "clang-profile-merge" and fail_merge:
                             raise RuntimeError("malformed profile")
 
-                    with patch("msvc_experiment.subprocess.check_output", return_value=str(resource)), \
+                    counters = ("main:\n Block counts: [800, 8]\n [0, bump, 800]\n"
+                                "bump:\n Block counts: [800]\n")
+                    with patch("msvc_experiment.subprocess.check_output",
+                               side_effect=[str(resource), counters]), \
                          patch("msvc_experiment.execute", side_effect=execute):
                         arguments = (output, output / "clang", {},
                                      {"files": {"link.exe": {"path": "native-link.exe"}}}, host)
