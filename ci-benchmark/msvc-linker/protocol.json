@@ -1,5 +1,5 @@
 {
-  "schema": 1,
+  "schema": 2,
   "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
   "rust_sha": "5b615ab3eb2cd5a26afc6025b5863180ffdc20d7",
   "rust_version": "1.101.0-nightly",
@@ -16,7 +16,9 @@
   "training": "Fresh per-architecture upstream RUSTC_PGO_CRATES and BACKEND_PGO_CRATES, compiler-only collector with common uninstrumented stage0 Cargo. Same verified profiles supplied to both PGO final builds. No training on IronRDP.",
   "tool_policy": "Keep clang-cl for C/C++ and link.exe/lib.exe for native linking/archiving. The existing shipped rust-lld used for WASM is not replaced. cl.exe /GL + link.exe /LTCG is only a compatibility microprobe, not an admissible C++ compiler substitution.",
   "order": "Counterbalanced rotation by VM and round, reversing alternate rounds",
-  "correctness": "All four original native Cargo test commands per compiler/VM after round zero, outside measurements",
+  "correctness": "All four original native Cargo test commands per compiler/VM after round zero, outside measurements; test harness execution is serial for every compiler. No tests skipped or retried.",
+  "correctness_test_threads": 1,
+  "amendment": "Before the replacement full study: serialize correctness test harnesses after an incomplete x64 study and separate 600-run diagnostics. Parallel diagnostics showed a different filesystem-notification failure under PGO-only; all 300 serial runs passed. The original DELETE_PENDING cause remains unproven. Timed compilation remains four-way parallel and unchanged; discard the entire incomplete study, not only its failed VM.",
   "aggregation": "Sum native commands within each block; mean measured rounds within VM; equal-weight VM means per architecture",
   "uncertainty": "10000 seeded paired whole-VM bootstrap draws, 95% percentile intervals",
   "exclusions": "Fixed warmup excluded; no slow-sample trimming; reject incomplete/failed matrices and mixed benchmark attempts",

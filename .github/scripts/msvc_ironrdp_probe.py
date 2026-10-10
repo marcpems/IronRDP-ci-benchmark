@@ -129,7 +129,8 @@ def main():
             name = f"round-{round_index}-{variant}"
             print(f"BEGIN VM {vm} {name}", flush=True)
             run_block(source, output / name, compilers[variant], protocol,
-                      {"variant": variant, "round": round_index}, round_index == 0)
+                      {"variant": variant, "round": round_index}, round_index == 0,
+                      correctness_env={"RUST_TEST_THREADS": str(protocol["correctness_test_threads"])})
             index["runs"].append({
                 "variant": variant, "round": round_index, "position": position,
                 "warmup": round_index < warmups, "path": f"{name}/results.json",

@@ -85,6 +85,19 @@ accidentally appended an Arm64 job to the x64-only scope. Runner/host selection
 now derives from each selected architecture without adding matrix cells.
 The separate five-VM x64 study excludes these pilot measurements.
 
+The first full x64 study (38029169738) is excluded in its entirety: one VM
+failed an original filesystem test with `STATUS_DELETE_PENDING`. A separate
+600-run diagnostic found one parallel PGO-only failure in a different
+filesystem-notification assertion and no failures in 300 serial runs. This
+does not reproduce the exact original failure or prove its root cause.
+
+Protocol schema 2 makes correctness test harnesses serial for every compiler,
+outside measured commands. No tests are removed, ignored or retried; timed
+compilation stays unchanged and four-way parallel. This is a uniform control
+for the replacement study, not proof of release correctness under every
+concurrency pattern. All five VMs are repeated; successful VMs from the
+incomplete attempt are not substituted into the replacement dataset.
+
 The initial x64 compatibility probes completed:
 
 | Input objects | Microsoft link.exe | Result |
