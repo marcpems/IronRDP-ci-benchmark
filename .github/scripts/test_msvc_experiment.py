@@ -178,6 +178,8 @@ class ConfigurationTests(unittest.TestCase):
                 self.assertFalse(config["llvm"]["link-shared"])
                 self.assertEqual(config["target"][host]["linker"], "link.exe")
                 self.assertTrue(config["target"][host]["ar"].endswith("/lib.exe"))
+                self.assertEqual(config["target"][host]["rustflags"],
+                                 ["-Clink-arg=/VERBOSE", "-Wlinker-messages"] if phase == "llvm-profile" else [])
                 self.assertEqual(config["build"]["host"], [host])
                 self.assertTrue(config["build"]["profiler"])
                 self.assertFalse(config["target"]["wasm32-unknown-unknown"]["profiler"])

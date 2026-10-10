@@ -297,3 +297,19 @@ was checked against an actual local link log. The prior x64 standalone runtime
 hash likewise does not prove which library its instrumented compiler loaded;
 its successful profiles and final compiler comparisons remain useful, but
 that provenance limitation must not be concealed.
+
+### Corrected path completes bootstrap; audit flags need target scope
+
+[Run 38026564705](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38026564705)
+completed Arm64 bootstrap successfully in 4,042.88 seconds, with the normalized
+Clang runtime search path visible in the compiler command lines. No compiler
+crash occurred. The post-build runtime audit then rejected the logs because
+they contained no verbose linker output.
+
+The native target configuration's empty extra-flags list shadows the global
+`rust.rustflags` list in this bootstrap version. The audit flags now live in
+the native target section, with a regression assertion covering every phase.
+The diagnostic compiler is also archived immediately after bootstrap, before
+audits, so an audit failure cannot discard another usable investigation
+artifact. Backend training is still pending, and successful bootstrap alone
+is not accepted as successful profile generation.

@@ -67,10 +67,10 @@ lld = true
 llvm-tools = true
 llvm-bitcode-linker = false
 lto = "{'thin' if phase == 'pgo-rust-thin' else 'thin-local'}"
-rustflags = {json.dumps(["-Clink-arg=/VERBOSE", "-Wlinker-messages"] if phase == "llvm-profile" else [])}
 [target.{host}]
 linker = "{link.name}"
 ar = "{librarian.as_posix()}"
+rustflags = {json.dumps(["-Clink-arg=/VERBOSE", "-Wlinker-messages"] if phase == "llvm-profile" else [])}
 [target.wasm32-unknown-unknown]
 profiler = false
 [pgo.rustc]
@@ -321,7 +321,8 @@ def train(source, output, host, env, backend, clang, preserve_compiler=False):
         if not (training / "target/debug" / name).is_file():
             raise RuntimeError(f"Missing training executable after collector build: {name}")
     if preserve_compiler:
-        preserve_training_compiler(source, output, host)
+        if not (output / "instrumented-diagnostic.zip").exists():
+            preserve_training_compiler(source, output, host)
         runtime_raw = output / "runtime-smoke-raw"
         runtime_raw.mkdir()
         runtime_env = {**env, "LLVM_PROFILE_FILE": str(runtime_raw / "shared_%m.profraw")}
@@ -578,6 +579,8 @@ def main():
             preserve_training_compiler(source, output, args.host, stage_name="stage1",
                                        include_training_tools=False)
         raise
+    if args.preserve_training_compiler and args.phase.endswith("-profile"):
+        preserve_training_compiler(source, output, args.host, include_training_tools=False)
     audit_build(source, args.host, args.phase, output, identity)
     metrics = source / "build/metrics.json"
     if metrics.is_file():
