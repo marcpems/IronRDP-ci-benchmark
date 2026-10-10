@@ -14,8 +14,25 @@ token-stream-stress, tuple-stress, and diesel-2.2.10.
 Some failures occurred during Cargo's compiler target-information query, not
 while compiling workload source. The collector wrapper propagates the child
 compiler's exit status. These failures do not justify dropping the affected
-workloads or using the incomplete profiles. The x64 profile job is still
-running at this update.
+workloads or using the incomplete profiles.
+
+The x64 frontend-profile job subsequently **succeeded**: all nine upstream
+training workloads completed, the merged profile hash verified, and the
+native-tool audit passed. Coverage included 10,104 active `rustc_middle`
+functions and 1,633 active `rustc_mir_transform` functions.
+
+| x64 frontend-profile stage | Wall time (minutes) |
+|---|---:|
+| Bootstrap/compiler construction | 74.02 |
+| Collector binaries | 2.64 |
+| Training | 23.07 |
+| Profile merge | 1.45 |
+
+These are compiler-construction/training times, not IronRDP compilation
+times. GitHub skipped LLVM-profile and final-compiler jobs because the
+original workflow gates both architectures on the complete initial matrix.
+The x64 frontend profile is valid, but LLVM PGO and the final Rust-ThinLTO
+compiler have not yet been qualified.
 
 ## Independent local reproduction
 
@@ -92,3 +109,56 @@ compiler. Only after all training workloads and strict profile-integrity
 checks succeed should final PGO compilers and IronRDP benchmarks run.
 The original Rust review branch and pinned experimental Rust source have not
 been changed by these local diagnostics.
+
+### Instrumented-compiler capture attempt
+
+[Diagnostic run 37975403778](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37975403778)
+reproduced training failure, but the new diagnostic archiver then exhausted
+memory while recursively enumerating the stage2 sysroot. It had not applied
+the source-junction exclusions used by the existing successful baseline
+packager. The uploaded ZIP is empty and is **not** a usable compiler artifact.
+
+The diagnostic branch now reuses the existing sysroot-copy exclusions,
+preserves the compiler before training, and renames the archive from a partial
+file only after successful completion. A regression test constructs an actual
+Windows directory junction back into the source tree and confirms that the
+archive contains the compiler and helper binaries without traversing that
+junction. Only the single Arm64 diagnostic job is being repeated; the valid
+x64 profile and both baseline artifacts remain unchanged.
+
+### Captured compiler: online-merge crash reproduced
+
+[Run 37993684565](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37993684565)
+successfully preserved the instrumented compiler before reproducing the
+training failure. Its diagnostic ZIP was downloaded and verified against
+SHA-256 `524dd89ccaed9317ac09509536082eabc37fc28db90ba14ae4275fdee4f103ee`.
+
+Locally, the captured compiler completed 16 concurrent `-vV` invocations with
+unique raw-profile paths; its captured collector wrapper also completed 12.
+When forced to reuse an online-merge file (`LLVM_PROFILE_FILE=default_%m.profraw`),
+the first invocation succeeded and the next five all exited with
+`0xc0000005`. Microsoft CDB located the exception in
+`lprofMergeValueProfData`, called by `__llvm_profile_merge_from_buffer`,
+`openFileForMerging`, and `__llvm_profile_write_file` during process exit.
+Windows process-ID reuse makes an equivalent collision possible with the
+training pattern `%m_%p`; actual PID reuse in the hosted failure was not logged.
+
+The profile writer emits `PaddingBytesAfterBitmapBytes`, but the online-merge
+reader omitted it when locating the names and subsequent value-profile data.
+This causes the value merger to interpret bytes at the wrong offset. A second
+candidate source fix adds that header field to `SrcNameStart`.
+
+With **both** source fixes rebuilt into a separate diagnostic runtime, the
+small rlib and dylib programs each completed 40 concurrent executions sharing
+their online-merge files, and llvm-profdata merged both successfully. The rlib
+profile reports exactly 40 main calls and 4,000 loop iterations, matching
+40 executions of a 100-iteration loop. An attempted counter-sentinel alignment
+change did not fix the crash and was reverted.
+
+The preserved compiler itself has not yet been rebuilt with the fixes.
+The isolated diagnostic branch now applies the exact two-file runtime patch
+before compiler construction, records the modified source hashes, preserves
+the compiler, and requires eight repeated online-merge version queries plus
+an offline merge before running all original training workloads. This is a
+feasibility check, not permission to mix patched and unpatched toolchains
+in the final benchmark. The original review branch is unchanged.
