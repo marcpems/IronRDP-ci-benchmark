@@ -98,6 +98,12 @@ for the replacement study, not proof of release correctness under every
 concurrency pattern. All five VMs are repeated; successful VMs from the
 incomplete attempt are not substituted into the replacement dataset.
 
+[Run 38056115559](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38056115559)
+successfully built all three final Arm64 compilers. The Arm64 pilot uses those
+artifacts, identical profiles across optimized variants, and the same schema-2
+protocol as the replacement x64 study. It remains separate from the full
+five-VM measurements.
+
 The initial x64 compatibility probes completed:
 
 | Input objects | Microsoft link.exe | Result |
