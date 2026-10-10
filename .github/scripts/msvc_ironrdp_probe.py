@@ -25,6 +25,9 @@ def validate_metadata(metadata, protocol, host, run_id):
             raise RuntimeError("Build tools differ between compiler variants")
         if item["llvm_sha"] != baseline["llvm_sha"] or item["perf_sha"] != baseline["perf_sha"]:
             raise RuntimeError("Source submodules differ between variants")
+        if (not item.get("profiling_runtime_sources")
+                or item["profiling_runtime_sources"] != baseline.get("profiling_runtime_sources")):
+            raise RuntimeError("Profiling runtime sources are missing or differ between variants")
     for variant in ("pgo", "pgo-rust-thin"):
         if set(metadata[variant]["profiles"]) != {"rustc-pgo.profdata", "llvm-pgo.profdata"}:
             raise RuntimeError("Missing PGO profiles")

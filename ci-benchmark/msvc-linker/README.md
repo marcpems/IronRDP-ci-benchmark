@@ -66,6 +66,14 @@ revisions are not a matched performance comparison.
 See [the runtime diagnostic report](RUNTIME-DIAGNOSTICS.md).
 No optimized compiler comparison or IronRDP performance results are available.
 
+[Run 38021536352](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38021536352)
+successfully built and packaged all three x64 compiler variants, including
+Rust-side ThinLTO with Microsoft linking tools. The x64 pilot now runs
+independently while Arm64 remains under investigation. It is a one-VM,
+one-round feasibility check, not the five-VM performance study. Runtime source
+hashes must match across all final compiler variants in addition to the
+existing source, native-tool, profile and archive checks.
+
 The initial x64 compatibility probes completed:
 
 | Input objects | Microsoft link.exe | Result |

@@ -18,6 +18,8 @@ def compiler_metadata(host):
         variant: {
             "phase": variant, "rust_sha": "rust", "host": host, "run_id": "build",
             "tools": tools, "llvm_sha": "llvm", "perf_sha": "perf",
+            "profiling_runtime_sources": {"InstrProfilingMerge.c": "merge",
+                                          "InstrProfilingPlatformWindows.c": "platform"},
             "profiles": {} if variant == "baseline" else
                 {"rustc-pgo.profdata": "rustc-profile", "llvm-pgo.profdata": "llvm-profile"},
             "training": training, "profile_parent_sha256": "parent",
@@ -60,6 +62,16 @@ class AnalysisTests(unittest.TestCase):
         metadata["pgo-rust-thin"]["profiles"]["llvm-pgo.profdata"] = "different"
         with self.assertRaises(RuntimeError):
             validate_metadata(metadata, {"rust_sha": "rust"}, HOSTS[0], "build")
+
+    def test_runtime_source_provenance_is_required_and_identical(self):
+        for missing in (False, True):
+            metadata = compiler_metadata(HOSTS[0])
+            if missing:
+                del metadata["pgo"]["profiling_runtime_sources"]
+            else:
+                metadata["pgo"]["profiling_runtime_sources"]["InstrProfilingMerge.c"] = "different"
+            with self.assertRaisesRegex(RuntimeError, "Profiling runtime sources"):
+                validate_metadata(metadata, {"rust_sha": "rust"}, HOSTS[0], "build")
 
     def test_complete_matrix_and_missing_block_rejection(self):
         protocol = {"rust_sha": "rust", "source_sha": "ironrdp", "cores": 4,

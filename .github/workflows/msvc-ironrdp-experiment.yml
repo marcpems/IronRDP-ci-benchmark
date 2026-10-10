@@ -1,7 +1,7 @@
 name: Measure same-tools Windows compilers on IronRDP
 on:
   push:
-    branches: [experiment/windows-msvc-pilot, experiment/windows-msvc-full]
+    branches: [experiment/windows-msvc-pilot, experiment/windows-msvc-full, experiment/windows-msvc-x64-pilot, experiment/windows-msvc-x64-full]
   workflow_dispatch:
     inputs:
       build_run:
@@ -12,11 +12,16 @@ on:
         description: One VM and one round per architecture before the full study
         type: boolean
         default: true
+      architecture:
+        description: Architecture scope
+        type: choice
+        options: [both, x64, arm64]
+        default: both
 permissions:
   contents: read
   actions: read
 env:
-  COMPILER_BUILD_RUN: ${{ inputs.build_run || '37965170591' }}
+  COMPILER_BUILD_RUN: ${{ inputs.build_run || '38021536352' }}
 jobs:
   measure:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
@@ -26,8 +31,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x64, arm64]
-        vm: ${{ fromJSON((inputs.pilot || github.ref_name == 'experiment/windows-msvc-pilot') && '[1]' || '[1,2,3,4,5]') }}
+        arch: ${{ fromJSON((inputs.architecture == 'x64' || startsWith(github.ref_name, 'experiment/windows-msvc-x64-')) && '["x64"]' || inputs.architecture == 'arm64' && '["arm64"]' || '["x64","arm64"]') }}
+        vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot')) && '[1]' || '[1,2,3,4,5]') }}
         include:
           - arch: x64
             runner: windows-2025
@@ -91,7 +96,7 @@ jobs:
         shell: pwsh
         run: |
           $extra = @()
-          if ('${{ inputs.pilot }}' -eq 'true' -or '${{ github.ref_name }}' -eq 'experiment/windows-msvc-pilot') { $extra += '--pilot' }
+          if ('${{ inputs.pilot }}' -eq 'true' -or '${{ endsWith(github.ref_name, '-pilot') }}' -eq 'true') { $extra += '--pilot' }
           .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_ironrdp_probe.py --source workload --compilers compilers --output results --clang tools\clang\bin --build-run "$env:COMPILER_BUILD_RUN" --protocol ci-benchmark\msvc-linker\protocol.json @extra
       - uses: actions/upload-artifact@v6
         if: always()
