@@ -26,22 +26,15 @@ jobs:
   measure:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     name: ${{ matrix.arch }} / VM ${{ matrix.vm }}
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ matrix.arch == 'x64' && 'windows-2025' || 'windows-11-arm' }}
     timeout-minutes: 350
     strategy:
       fail-fast: false
       matrix:
         arch: ${{ fromJSON((inputs.architecture == 'x64' || startsWith(github.ref_name, 'experiment/windows-msvc-x64-')) && '["x64"]' || inputs.architecture == 'arm64' && '["arm64"]' || '["x64","arm64"]') }}
         vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot')) && '[1]' || '[1,2,3,4,5]') }}
-        include:
-          - arch: x64
-            runner: windows-2025
-            host: x86_64-pc-windows-msvc
-          - arch: arm64
-            runner: windows-11-arm
-            host: aarch64-pc-windows-msvc
     env:
-      BENCHMARK_HOST: ${{ matrix.host }}
+      BENCHMARK_HOST: ${{ matrix.arch == 'x64' && 'x86_64-pc-windows-msvc' || 'aarch64-pc-windows-msvc' }}
       BENCHMARK_PLATFORM: windows-${{ matrix.arch }}
       BENCHMARK_REPLICATE: ${{ matrix.vm }}
       PYTHONDONTWRITEBYTECODE: "1"

@@ -74,6 +74,17 @@ one-round feasibility check, not the five-VM performance study. Runtime source
 hashes must match across all final compiler variants in addition to the
 existing source, native-tool, profile and archive checks.
 
+The x64 pilot in
+[run 38025384632](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38025384632)
+completed all seven compilation commands and four original native test commands
+for each compiler. Native totals were 1,063.93 seconds for baseline, 851.68 for
+PGO, and 876.03 for PGO plus Rust ThinLTO. These are **one-VM, one-round pilot
+observations**, not performance conclusions or evidence that ThinLTO helps.
+The workflow was unsuccessful overall because an unconditional matrix include
+accidentally appended an Arm64 job to the x64-only scope. Runner/host selection
+now derives from each selected architecture without adding matrix cells.
+The separate five-VM x64 study excludes these pilot measurements.
+
 The initial x64 compatibility probes completed:
 
 | Input objects | Microsoft link.exe | Result |
