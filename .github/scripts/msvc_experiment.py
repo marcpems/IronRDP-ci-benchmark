@@ -420,6 +420,20 @@ def audit_runtime_link(log, runtime_path):
         raise RuntimeError("Linker log does not prove the expected profiling runtime was loaded")
 
 
+def audit_runtime_modules(text, runtime_path):
+    expected = str(runtime_path).replace("\\", "/").lower()
+    modules = re.findall(r"Mod \d+ \| `([^`]+)`:\s*\nObj: `([^`]+)`:", text)
+    found = set()
+    for member, library in modules:
+        name = member.replace("\\", "/").rsplit("/", 1)[-1].lower()
+        if name in ("instrprofilingmerge.c.obj", "instrprofilingplatformwindows.c.obj"):
+            if library.replace("\\", "/").lower() != expected:
+                raise RuntimeError(f"PDB identifies an unexpected profiling runtime: {library}")
+            found.add(name)
+    if found != {"instrprofilingmerge.c.obj", "instrprofilingplatformwindows.c.obj"}:
+        raise RuntimeError("PDB lacks the required profiling runtime modules")
+
+
 def audit_build(source, host, phase, output, identity):
     cache_path = source / "build" / host / "llvm/build/CMakeCache.txt"
     shutil.copy2(cache_path, output / "CMakeCache.txt")
@@ -439,7 +453,17 @@ def audit_build(source, host, phase, output, identity):
     log = (output / "build.stdout").read_text(errors="replace") + (output / "build.stderr").read_text(errors="replace")
     if phase == "llvm-profile":
         runtime = json.loads((output / "clang-profiling-runtime.json").read_text())
-        audit_runtime_link(log, runtime["path"])
+        pdbs = list((source / "build" / host / "stage2/bin").glob("rustc_driver-*.pdb"))
+        if len(pdbs) != 1:
+            raise RuntimeError("Expected exactly one compiler driver PDB")
+        reader = Path(identity["files"]["clang-cl.exe"]["path"]).parent / "llvm-pdbutil.exe"
+        modules = subprocess.check_output([reader, "dump", "--modules", pdbs[0]], env=os.environ, text=True)
+        (output / "runtime-pdb-modules.txt").write_text(modules, encoding="utf-8")
+        audit_runtime_modules(modules, runtime["path"])
+        save(output / "runtime-pdb-audit.json", {
+            "pdb_sha256": digest(pdbs[0]), "reader_sha256": digest(reader),
+            "runtime": runtime, "required_modules_verified": True,
+        })
     # Building the shipped rust-lld tool is not the same as using it to link rustc.
     if re.search(r"-C\s*linker=[^\r\n]*lld-link", log, re.I):
         raise RuntimeError("Unexpected lld-link selection for a Rust compilation")
@@ -509,6 +533,45 @@ def preserve_training_compiler(source, output, host, stage_name="stage2", includ
     })
 
 
+def restore_completed_build(capture, source, output, host, env, metadata):
+    from arm_ab_probe import extract_compiler
+
+    prior = json.loads((capture / "started.json").read_text())
+    for key in ("phase", "host", "rust_sha", "llvm_sha", "perf_sha",
+                "profiling_runtime_sources", "bootstrap_linker_source_sha256"):
+        if prior[key] != metadata[key]:
+            raise RuntimeError(f"Captured compiler provenance differs: {key}")
+    if not equivalent_tools(prior["tools"], metadata["tools"]):
+        raise RuntimeError("Captured compiler used different native tools")
+    completed = json.loads((capture / "build.json").read_text())
+    package_info = json.loads((capture / "instrumented-diagnostic.json").read_text())
+    archive = capture / "instrumented-diagnostic.zip"
+    if (completed["exit_code"] != 0 or package_info["stage"] != "stage2"
+            or digest(archive) != package_info["archive_sha256"]):
+        raise RuntimeError("Only a verified completed stage-2 compiler can be resumed")
+    if digest(capture / "rustc-pgo.profdata") != digest(output / "rustc-pgo.profdata"):
+        raise RuntimeError("Captured build used a different frontend profile")
+    extracted = output / "restored"
+    extract_compiler(archive, extracted)
+    execute([sys.executable, "x.py", "build", "--help"], source, env, output, "stage0-bootstrap", timeout=1800)
+    build = source / "build" / host
+    if digest(build / "stage0/bin/cargo.exe") != digest(extracted / "training-tools/cargo.exe"):
+        raise RuntimeError("Restored training Cargo differs from the captured pinned stage0")
+    (extracted / "sysroot").rename(build / "stage2")
+    for name in ("build.json", "build.stdout", "build.stderr", "clang-profiling-runtime.json",
+                 "clang-runtime-rebuild.json", "instrumented-diagnostic.json", "instrumented-diagnostic.zip"):
+        shutil.copy2(capture / name, output / name)
+    for name, destination in (("CMakeCache.txt", build / "llvm/build/CMakeCache.txt"),
+                              ("lld-CMakeCache.txt", build / "lld/build/CMakeCache.txt")):
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(capture / name, destination)
+    metadata["compiler_build_run"] = prior["run_id"]
+    metadata["compiler_build_attempt"] = prior["attempt"]
+    metadata["resumed_archive_sha256"] = package_info["archive_sha256"]
+    metadata["clang_runtime_rebuild"] = json.loads((capture / "clang-runtime-rebuild.json").read_text())
+    metadata["clang_profiling_runtime"] = json.loads((capture / "clang-profiling-runtime.json").read_text())
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
@@ -519,9 +582,12 @@ def main():
     parser.add_argument("--profiles", type=Path)
     parser.add_argument("--preserve-training-compiler", action="store_true")
     parser.add_argument("--clang-runtime-source", type=Path)
+    parser.add_argument("--resume-build", type=Path)
     args = parser.parse_args()
     if args.clang_runtime_source is not None and args.phase != "llvm-profile":
         parser.error("--clang-runtime-source is only valid for LLVM instrumentation")
+    if args.resume_build is not None and (args.phase != "llvm-profile" or args.clang_runtime_source is not None):
+        parser.error("--resume-build requires LLVM profiling without a runtime rebuild")
     machine = platform.machine().lower()
     expected = ("arm64", "aarch64") if args.host.startswith("aarch64") else ("amd64", "x86_64")
     if os.name != "nt" or machine not in expected or os.cpu_count() != 4:
@@ -557,7 +623,7 @@ def main():
         metadata["training"] = parent["training"]
         for name in parent["profiles"]:
             shutil.copy2(args.profiles / name, output / name)
-    if args.phase == "llvm-profile":
+    if args.phase == "llvm-profile" and args.resume_build is None:
         if args.clang_runtime_source is not None:
             metadata["clang_runtime_rebuild"] = rebuild_clang_runtime(
                 args.clang_runtime_source.resolve(), output, clang, env, identity, args.host)
@@ -572,14 +638,17 @@ def main():
                "--target", targets, "library/std"]
     if args.phase == "baseline":
         command.append("rustdoc")
-    try:
-        execute(command, source, env, output, "build")
-    except RuntimeError:
-        if args.preserve_training_compiler and (source / "build" / args.host / "stage1/bin/rustc.exe").is_file():
-            preserve_training_compiler(source, output, args.host, stage_name="stage1",
-                                       include_training_tools=False)
-        raise
-    if args.preserve_training_compiler and args.phase.endswith("-profile"):
+    if args.resume_build is not None:
+        restore_completed_build(args.resume_build.resolve(), source, output, args.host, env, metadata)
+    else:
+        try:
+            execute(command, source, env, output, "build")
+        except RuntimeError:
+            if args.preserve_training_compiler and (source / "build" / args.host / "stage1/bin/rustc.exe").is_file():
+                preserve_training_compiler(source, output, args.host, stage_name="stage1",
+                                           include_training_tools=False)
+            raise
+    if args.preserve_training_compiler and args.phase.endswith("-profile") and args.resume_build is None:
         preserve_training_compiler(source, output, args.host, include_training_tools=False)
     audit_build(source, args.host, args.phase, output, identity)
     metrics = source / "build/metrics.json"

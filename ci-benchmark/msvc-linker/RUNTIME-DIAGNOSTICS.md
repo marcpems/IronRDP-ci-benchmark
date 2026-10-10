@@ -313,3 +313,24 @@ The diagnostic compiler is also archived immediately after bootstrap, before
 audits, so an audit failure cannot discard another usable investigation
 artifact. Backend training is still pending, and successful bootstrap alone
 is not accepted as successful profile generation.
+
+### PDB confirms the repaired runtime; resume instead of rebuilding
+
+[Run 38031778830](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38031778830)
+completed bootstrap in 4,672.34 seconds and preserved stage 2. Its compiler
+commands contain the verbosity flags, but the saved Cargo output still lacks
+the raw linker object-selection lines. The text-based audit therefore failed.
+
+The captured driver's PDB supplies direct object provenance instead:
+`InstrProfilingMerge.c.obj` and `InstrProfilingPlatformWindows.c.obj` both name
+the rebuilt `harness/tools/clang/lib/clang/22/lib/windows/clang_rt.profile-aarch64.lib`.
+The new audit uses `llvm-pdbutil dump --modules`, requires both objects from
+that exact library, and records the PDB and reader hashes. It passed against
+the actual downloaded PDB, not just a synthetic fixture.
+
+The preserved stage-2 compiler also passed eight local shared-profile version
+queries and a merge of the resulting raw profile with Clang 22 llvm-profdata.
+The next job restores this verified compiler, checks original source/tool and
+frontend-profile identities, installs only pinned stage0/bootstrap for the
+collector, and resumes backend training. It records the original compiler-build
+run separately from the training run. No full LLVM or Rust rebuild is requested.

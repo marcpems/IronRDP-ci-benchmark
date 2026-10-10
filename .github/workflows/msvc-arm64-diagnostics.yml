@@ -32,17 +32,6 @@ jobs:
         with:
           architecture: ${{ matrix.arch }}
           rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
-      - uses: actions/checkout@v6
-        with:
-          repository: llvm/llvm-project
-          ref: ca7933e47d3a3451d81e72ac174dcb5aa28b59d1
-          path: clang-runtime-source
-          persist-credentials: false
-          sparse-checkout: |
-            compiler-rt
-            cmake
-            llvm/cmake
-            llvm/include/llvm/Config
       - name: Apply locally validated profiling-runtime padding fixes
         shell: pwsh
         run: |
@@ -51,10 +40,6 @@ jobs:
           if ($LASTEXITCODE) { throw 'Runtime patch does not match pinned LLVM source' }
           git -C ..\rust-source\src\llvm-project apply $patch
           if ($LASTEXITCODE) { throw 'Runtime patch application failed' }
-          git -C ..\clang-runtime-source apply --check $patch
-          if ($LASTEXITCODE) { throw 'Runtime patch does not match Clang 22 source' }
-          git -C ..\clang-runtime-source apply $patch
-          if ($LASTEXITCODE) { throw 'Clang runtime patch application failed' }
           $bootstrapPatch = (Resolve-Path .github\scripts\msvc-bootstrap-runtime-path.patch).Path
           git -C ..\rust-source apply --check $bootstrapPatch
           if ($LASTEXITCODE) { throw 'Bootstrap patch does not match pinned Rust source' }
@@ -66,6 +51,12 @@ jobs:
           run-id: ${{ matrix.frontend-run }}
           github-token: ${{ github.token }}
           path: harness/profiles
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-arm64-llvm-diagnostics
+          run-id: 38031778830
+          github-token: ${{ github.token }}
+          path: harness/captured
       - name: Capture unhandled compiler exceptions
         shell: pwsh
         run: |
@@ -76,10 +67,10 @@ jobs:
           New-ItemProperty -Path $key -Name DumpFolder -PropertyType ExpandString -Value $folder -Force | Out-Null
           New-ItemProperty -Path $key -Name DumpType -PropertyType DWord -Value 1 -Force | Out-Null
           New-ItemProperty -Path $key -Name DumpCount -PropertyType DWord -Value 4 -Force | Out-Null
-      - name: Validate Clang runtime and train instrumented LLVM
+      - name: Audit preserved compiler and resume LLVM training
         shell: pwsh
         run: |
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase llvm-profile --profiles profiles --preserve-training-compiler --clang-runtime-source ..\clang-runtime-source
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase llvm-profile --profiles profiles --preserve-training-compiler --resume-build captured\evidence
       - uses: actions/upload-artifact@v6
         if: always()
         with:

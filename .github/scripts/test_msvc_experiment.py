@@ -9,11 +9,63 @@ import unittest
 import zipfile
 from unittest.mock import patch
 
-from msvc_experiment import PHASES, audit_cmake_tools, audit_runtime_link, clang_profile_preflight, cmake_toolchain, configuration, equivalent_tools, preserve_training_compiler, train, verify_profiles
+from msvc_experiment import PHASES, audit_cmake_tools, audit_runtime_link, audit_runtime_modules, clang_profile_preflight, cmake_toolchain, configuration, equivalent_tools, preserve_training_compiler, restore_completed_build, train, verify_profiles
 from build_arm_compilers import digest
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_pdb_runtime_audit_requires_both_modules_from_expected_library(self):
+        library = r"C:\Pinned Clang\lib\clang_rt.profile-aarch64.lib"
+        text = "\n".join(
+            f"Mod {i} | `lib\\profile\\{name}.c.obj`: \nObj: `{library}`: \n"
+            for i, name in enumerate(("InstrProfilingMerge", "InstrProfilingPlatformWindows")))
+        audit_runtime_modules(text, library)
+        for invalid in (text.replace("Pinned Clang", "Other Clang"),
+                        text.replace("InstrProfilingMerge", "Missing"), ""):
+            with self.assertRaises(RuntimeError):
+                audit_runtime_modules(invalid, library)
+
+    def test_resume_requires_completed_matching_stage2(self):
+        for corrupt in (False, True):
+            with self.subTest(corrupt=corrupt), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                capture, source, output = root / "capture", root / "source", root / "output"
+                capture.mkdir()
+                source.mkdir()
+                output.mkdir()
+                metadata = {key: "same" for key in ("phase", "host", "rust_sha", "llvm_sha", "perf_sha",
+                            "profiling_runtime_sources", "bootstrap_linker_source_sha256")}
+                metadata.update(tools={"msvc": "m", "sdk": "s", "files": {}}, run_id="old", attempt="1")
+                (capture / "started.json").write_text(json.dumps(metadata))
+                (capture / "build.json").write_text(json.dumps({"exit_code": 1 if corrupt else 0}))
+                archive = capture / "instrumented-diagnostic.zip"
+                with zipfile.ZipFile(archive, "w") as package:
+                    package.writestr("sysroot/bin/rustc.exe", b"rustc")
+                    package.writestr("training-tools/cargo.exe", b"cargo")
+                (capture / "instrumented-diagnostic.json").write_text(json.dumps({
+                    "stage": "stage2", "archive_sha256": digest(archive)}))
+                for directory in (capture, output):
+                    (directory / "rustc-pgo.profdata").write_bytes(b"profile")
+                for name in ("build.stdout", "build.stderr", "CMakeCache.txt", "lld-CMakeCache.txt"):
+                    (capture / name).write_text("fixture")
+                for name in ("clang-profiling-runtime.json", "clang-runtime-rebuild.json"):
+                    (capture / name).write_text("{}")
+
+                def stage0(command, *args, **kwargs):
+                    self.assertEqual(command[-2:], ["build", "--help"])
+                    cargo = source / "build/host/stage0/bin/cargo.exe"
+                    cargo.parent.mkdir(parents=True)
+                    cargo.write_bytes(b"cargo")
+
+                with patch("msvc_experiment.execute", side_effect=stage0):
+                    if corrupt:
+                        with self.assertRaisesRegex(RuntimeError, "verified completed"):
+                            restore_completed_build(capture, source, output, "host", {}, metadata)
+                    else:
+                        restore_completed_build(capture, source, output, "host", {}, metadata)
+                        self.assertTrue((source / "build/host/stage2/bin/rustc.exe").exists())
+                        self.assertEqual(metadata["compiler_build_run"], "old")
+
     def test_runtime_audit_requires_loaded_library_not_search_path(self):
         expected = r"C:\Pinned Clang\lib\clang_rt.profile-aarch64.lib"
         members = ("Loaded clang_rt.profile-aarch64.lib(InstrProfilingMerge.c.obj)\n"
