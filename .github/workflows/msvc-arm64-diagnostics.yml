@@ -1,25 +1,41 @@
-name: Diagnose Microsoft-linked Arm64 PGO runtime
+name: Diagnose Microsoft-linked LLVM PGO runtime
 on:
   push:
     branches: [experiment/windows-msvc-diagnostics]
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 defaults:
   run:
     working-directory: harness
 jobs:
-  reproduce:
+  llvm-profile:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    runs-on: windows-11-arm
+    name: ${{ matrix.arch }} / LLVM PGO feasibility
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: arm64
+            runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+            frontend-run: 38001265175
+            frontend-artifact: msvc-arm64-instrumented-diagnostics
+          - arch: x64
+            runner: windows-2025
+            host: x86_64-pc-windows-msvc
+            frontend-run: 37965170591
+            frontend-artifact: msvc-x64-rustc-profile
     steps:
       - uses: actions/checkout@v6
         with:
           path: harness
       - uses: ./harness/.github/actions/prepare-msvc-experiment
         with:
-          architecture: arm64
+          architecture: ${{ matrix.arch }}
           rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
       - name: Apply locally validated profiling-runtime padding fixes
         shell: pwsh
@@ -29,14 +45,20 @@ jobs:
           if ($LASTEXITCODE) { throw 'Runtime patch does not match pinned LLVM source' }
           git -C ..\rust-source\src\llvm-project apply $patch
           if ($LASTEXITCODE) { throw 'Runtime patch application failed' }
-      - name: Reproduce full training and retain the failing compiler
+      - uses: actions/download-artifact@v6
+        with:
+          name: ${{ matrix.frontend-artifact }}
+          run-id: ${{ matrix.frontend-run }}
+          github-token: ${{ github.token }}
+          path: harness/profiles
+      - name: Validate Clang runtime and train instrumented LLVM
         shell: pwsh
         run: |
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture arm64 -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host aarch64-pc-windows-msvc --phase rustc-profile --preserve-training-compiler
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host ${{ matrix.host }} --phase llvm-profile --profiles profiles --preserve-training-compiler
       - uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: msvc-arm64-instrumented-diagnostics
+          name: msvc-${{ matrix.arch }}-llvm-diagnostics
           path: |
             harness/evidence/*.json
             harness/evidence/*.toml

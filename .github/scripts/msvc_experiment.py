@@ -214,6 +214,43 @@ def preflight(output, clang, env, identity):
     save(output / "preflight.json", rows)
 
 
+def clang_profile_preflight(output, clang, env, identity, host):
+    fixture = output / "clang-profile-fixture"
+    fixture.mkdir()
+    source, obj, exe = (fixture / f"probe.{suffix}" for suffix in ("c", "obj", "exe"))
+    source.write_text(
+        "__declspec(noinline) int bump(int x) { return x + 1; }\n"
+        "int main(void) {\n"
+        "  int (*volatile call)(int) = bump;\n"
+        "  int sum = 0;\n"
+        "  for (int i = 0; i < 100; ++i) sum += call(i);\n"
+        "  return sum != 5050;\n"
+        "}\n")
+    resource = Path(subprocess.check_output(
+        [clang / "clang-cl.exe", "--print-resource-dir"], env=env, text=True).strip())
+    suffix = "aarch64" if host.startswith("aarch64") else "x86_64"
+    runtime = resource / "lib/windows" / f"clang_rt.profile-{suffix}.lib"
+    provenance = {"path": str(runtime), "sha256": digest(runtime)}
+    save(output / "clang-profiling-runtime.json", provenance)
+    execute([clang / "clang-cl.exe", "/nologo", "/O2", "/MD", "/c",
+             "-fprofile-generate", source, f"/Fo{obj}"],
+            fixture, env, output, "clang-profile-compile", timeout=120)
+    execute([identity["files"]["link.exe"]["path"], "/nologo", obj, runtime,
+             f"/libpath:{runtime.parent}", f"/out:{exe}"],
+            fixture, env, output, "clang-profile-link", timeout=120)
+    raw = fixture / "raw"
+    raw.mkdir()
+    child = {**env, "LLVM_PROFILE_FILE": str(raw / "shared_%m.profraw")}
+    for iteration in range(8):
+        execute([exe], fixture, child, output, f"clang-profile-run-{iteration}", timeout=120)
+    if not list(raw.glob("*.profraw")):
+        raise RuntimeError("Clang profiling-runtime probe emitted no raw profiles")
+    execute([clang / "llvm-profdata.exe", "merge", "-o",
+             output / "clang-profile-smoke.profdata", raw],
+            fixture, env, output, "clang-profile-merge", timeout=120)
+    return provenance
+
+
 def train(source, output, host, env, backend, clang, preserve_compiler=False):
     build = source / "build" / host
     stage0 = build / "stage0/bin"
@@ -244,7 +281,8 @@ def train(source, output, host, env, backend, clang, preserve_compiler=False):
         for iteration in range(8):
             execute([build / "stage2/bin/rustc.exe", "-vV"], source, runtime_env,
                     output, f"runtime-smoke-{iteration}", timeout=120)
-        execute([build / "llvm/build/bin/llvm-profdata.exe", "merge", "-o",
+        smoke_profdata = clang / "llvm-profdata.exe" if backend else build / "llvm/build/bin/llvm-profdata.exe"
+        execute([smoke_profdata, "merge", "-o",
                  output / "runtime-smoke.profdata", runtime_raw],
                 source, env, output, "runtime-smoke-merge", timeout=600)
         for profile in runtime_raw.glob("*.profraw"):
@@ -442,9 +480,13 @@ def main():
             parser.error("This phase requires verified profiles")
         parent = verify_profiles(args.profiles, args.phase, identity, source_sha, args.host)
         metadata["profile_parent_sha256"] = digest(args.profiles / "metadata.json")
+        metadata["profile_parent_runtime_sources"] = parent.get("profiling_runtime_sources")
         metadata["training"] = parent["training"]
         for name in parent["profiles"]:
             shutil.copy2(args.profiles / name, output / name)
+    if args.phase == "llvm-profile":
+        metadata["clang_profiling_runtime"] = clang_profile_preflight(
+            output, clang, env, identity, args.host)
     config = configuration(args.host, clang, Path(identity["files"]["link.exe"]["path"]),
                            Path(identity["files"]["lib.exe"]["path"]), args.phase, output)
     (source / "bootstrap.toml").write_text(config, encoding="utf-8")

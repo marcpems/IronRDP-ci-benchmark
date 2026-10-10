@@ -1,4 +1,4 @@
-# Microsoft-linker experiment: profiling-runtime blocker
+# Microsoft-linker experiment: profiling-runtime investigation
 
 This is an interim feasibility result, **not an IronRDP performance result**.
 
@@ -93,20 +93,20 @@ const char *__llvm_profile_begin_names(void) {
 
 This experiment does not qualify the candidate fix for production. In
 particular, the `/OPT:NOREF` probe still failed after the names fix, with a
-zero-counter diagnostic. The original instrumented-rustc access violation
-has not yet been reproduced under a debugger or demonstrated fixed.
-The names bug is confirmed; its relationship to that crash remains unproven.
+zero-counter diagnostic. At this stage the original instrumented-rustc access
+violation had not yet been reproduced under a debugger. The later captured
+compiler investigation below identifies a separate online-merge offset bug.
 
 [Rust issue #150123](https://github.com/rust-lang/rust/issues/150123)
 reports a similar Arm64 malformed-profile symptom for coverage. That is
 supporting context, not proof that the two failures have the same cause.
 
-## Next required evidence
+## Follow-up investigation
 
-Preserve an instrumented compiler and capture its failing invocation/stack;
-verify the names-boundary fix and any separate record-layout fix against that
-compiler. Only after all training workloads and strict profile-integrity
-checks succeed should final PGO compilers and IronRDP benchmarks run.
+The next investigation preserved an instrumented compiler, captured its
+failing invocation/stack, and checked both fixes against that compiler.
+Final PGO compilers and IronRDP benchmarks remain gated on successful training
+and strict profile-integrity checks.
 The original Rust review branch and pinned experimental Rust source have not
 been changed by these local diagnostics.
 
@@ -155,10 +155,55 @@ profile reports exactly 40 main calls and 4,000 loop iterations, matching
 40 executions of a 100-iteration loop. An attempted counter-sentinel alignment
 change did not fix the crash and was reverted.
 
-The preserved compiler itself has not yet been rebuilt with the fixes.
-The isolated diagnostic branch now applies the exact two-file runtime patch
+The isolated diagnostic branch applies the exact two-file runtime patch
 before compiler construction, records the modified source hashes, preserves
 the compiler, and requires eight repeated online-merge version queries plus
 an offline merge before running all original training workloads. This is a
 feasibility check, not permission to mix patched and unpatched toolchains
 in the final benchmark. The original review branch is unchanged.
+
+### Real Arm64 compiler and frontend training now pass
+
+[Run 38001265175](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38001265175)
+completed successfully on the standard native Arm64 runner. The real
+instrumented compiler was rebuilt from source with both fixes, passed all
+eight repeated online-merge version queries and the offline smoke merge, and
+completed all nine original frontend training workloads. Native tool audits
+still require clang-cl, Microsoft link.exe and lib.exe.
+
+The downloaded frontend profile was checked against its recorded SHA-256:
+`98c6505634d4a8584bbeb0d9dfa1d9cbfe58f44aa4fb5ebd2e9c92486fcc7b80`.
+Coverage includes 26,438 active `rustc_middle` functions out of 84,942 and
+3,631 active `rustc_mir_transform` functions out of 9,285.
+
+| Component | Wall seconds |
+|---|---:|
+| Compiler/bootstrap build command | 3,000.05 |
+| Collector helper construction | 157.85 |
+| Frontend workload training | 1,636.57 |
+| Training-profile merge | 170.23 |
+| Separate runtime smoke merge | 1.27 |
+
+These are compiler-construction and training timings, **not offline IronRDP
+measurements** and not the complete job duration.
+
+The exact modified runtime sources are recorded in the artifact metadata:
+
+| File | SHA-256 |
+|---|---|
+| `InstrProfilingMerge.c` | `b4eb470286b8006e5eac7c7301efa6fea4f7890d3a25280a058324b4a860250c` |
+| `InstrProfilingPlatformWindows.c` | `4b964e3ed045710e1de050e78c8ce8f4c68cb2b0c2ba094c226171eb1fcd5726` |
+
+The next diagnostic phase reuses this Arm64 profile and the earlier successful
+x64 profile in independent LLVM/backend jobs, preserving their separate
+parent metadata hashes and runtime provenance. The x64 profile predates the
+runtime patch; it is not silently treated as a same-source matched sample.
+Clang 22 supplies a separate profiling runtime for LLVM instrumentation. A
+small instrumented C program, linked explicitly with Microsoft link.exe,
+must pass eight repeated online merges and an offline merge with the matching
+Clang llvm-profdata before the full backend build starts. This guards against
+assuming that repairing Rust's in-tree runtime also repaired Clang's runtime.
+
+LLVM/backend training, final optimized compiler construction and the matched
+IronRDP comparison remain outstanding. The runtime fixes have only been
+qualified for these tested configurations, not all profiling modes.

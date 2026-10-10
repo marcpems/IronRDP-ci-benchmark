@@ -53,11 +53,13 @@ are not compiler-performance measurements.
 
 Audited Arm64 and x64 baseline compiler packages are now available from
 [run 37965170591](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37965170591).
-Arm64 PGO training is blocked by compiler access violations; a separate local
-probe also confirmed malformed profile data caused by name-section padding.
-x64 frontend PGO training completed successfully with verified profiles, but
-the cross-architecture job dependency prevented downstream LLVM-profile and
-final compiler jobs from starting.
+Both architectures now have successful frontend PGO training. Arm64 required
+two profiling-runtime repairs; [run 38001265175](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38001265175)
+passed eight repeated online-merge checks and all nine frontend workloads.
+LLVM/backend training is the next feasibility gate. It uses Clang 22's
+separate runtime, so a small Microsoft-linked instrumented C probe now checks
+that runtime before another expensive compiler build. Diagnostic profiles from
+different runtime revisions are not a matched performance comparison.
 See [the runtime diagnostic report](RUNTIME-DIAGNOSTICS.md).
 No optimized compiler comparison or IronRDP performance results are available.
 

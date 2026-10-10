@@ -9,11 +9,46 @@ import unittest
 import zipfile
 from unittest.mock import patch
 
-from msvc_experiment import PHASES, audit_cmake_tools, cmake_toolchain, configuration, equivalent_tools, preserve_training_compiler, train, verify_profiles
+from msvc_experiment import PHASES, audit_cmake_tools, clang_profile_preflight, cmake_toolchain, configuration, equivalent_tools, preserve_training_compiler, train, verify_profiles
 from build_arm_compilers import digest
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_clang_runtime_preflight_uses_matching_runtime_and_microsoft_linker(self):
+        for host, suffix in (("aarch64-pc-windows-msvc", "aarch64"),
+                             ("x86_64-pc-windows-msvc", "x86_64")):
+            for fail_merge in (False, True):
+                with self.subTest(host=host, fail_merge=fail_merge), tempfile.TemporaryDirectory() as tmp:
+                    output = Path(tmp)
+                    resource = output / "resource"
+                    runtime = resource / "lib/windows" / f"clang_rt.profile-{suffix}.lib"
+                    runtime.parent.mkdir(parents=True)
+                    runtime.write_bytes(b"runtime")
+                    calls = []
+
+                    def execute(command, cwd, env, directory, name, **kwargs):
+                        calls.append((name, command))
+                        if name == "clang-profile-run-0":
+                            (cwd / "raw/shared_123.profraw").touch()
+                        if name == "clang-profile-merge" and fail_merge:
+                            raise RuntimeError("malformed profile")
+
+                    with patch("msvc_experiment.subprocess.check_output", return_value=str(resource)), \
+                         patch("msvc_experiment.execute", side_effect=execute):
+                        arguments = (output, output / "clang", {},
+                                     {"files": {"link.exe": {"path": "native-link.exe"}}}, host)
+                        if fail_merge:
+                            with self.assertRaisesRegex(RuntimeError, "malformed profile"):
+                                clang_profile_preflight(*arguments)
+                        else:
+                            provenance = clang_profile_preflight(*arguments)
+                            self.assertEqual(provenance["sha256"], digest(runtime))
+                    link = dict(calls)["clang-profile-link"]
+                    self.assertEqual(link[0], "native-link.exe")
+                    self.assertIn(runtime, link)
+                    self.assertEqual(sum(name.startswith("clang-profile-run-") for name, _ in calls), 8)
+                    self.assertEqual(calls[-1][1][0], output / "clang/llvm-profdata.exe")
+
     def test_failed_training_archive_is_explicitly_diagnostic(self):
         with tempfile.TemporaryDirectory() as tmp:
             source, output = Path(tmp) / "source", Path(tmp) / "output"
