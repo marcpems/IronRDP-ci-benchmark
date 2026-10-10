@@ -14,6 +14,24 @@ from build_arm_compilers import digest
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_stage1_capture_does_not_require_unbuilt_training_tools(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            source, output = Path(tmp) / "source", Path(tmp) / "output"
+            output.mkdir()
+            for path in (source / "build/host/stage1/bin/rustc.exe",
+                         source / "build/host/stage0/bin/cargo.exe",
+                         *(source / name for name in ("COPYRIGHT", "LICENSE-MIT", "LICENSE-APACHE"))):
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(b"fixture")
+            preserve_training_compiler(source, output, "host", stage_name="stage1",
+                                       include_training_tools=False)
+            metadata = json.loads((output / "instrumented-diagnostic.json").read_text())
+            self.assertEqual(metadata["stage"], "stage1")
+            self.assertTrue(metadata["diagnostic_only"])
+            with zipfile.ZipFile(output / "instrumented-diagnostic.zip") as archive:
+                self.assertIn("sysroot/bin/rustc.exe", archive.namelist())
+                self.assertNotIn("training-tools/collector.exe", archive.namelist())
+
     def test_clang_runtime_preflight_uses_matching_runtime_and_microsoft_linker(self):
         for host, suffix in (("aarch64-pc-windows-msvc", "aarch64"),
                              ("x86_64-pc-windows-msvc", "x86_64")):

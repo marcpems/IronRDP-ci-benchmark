@@ -243,3 +243,23 @@ The harness now checks these exact counts, records original/rebuilt library
 hashes, source revision and modified source hashes, and audits its CMake tools.
 Only the Arm64 backend job is being repeated; the successful x64 evidence is
 retained. Hosted backend training with this rebuilt runtime is still pending.
+
+### Rebuilt Clang runtime passes hosted probes; bootstrap still crashes
+
+[Run 38018027911](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38018027911)
+rebuilt the Arm64 Clang runtime with the audited Microsoft tools, then passed
+all eight shared-profile executions, offline merging and exact counter/target
+checks. Runtime CMake configuration took 61.71 seconds; its build took 1.94.
+
+The subsequent compiler bootstrap failed after approximately 49 minutes:
+stage-1 rustc exited with `0xc0000005` while compiling `yoke` for stage 2.
+Backend workload training never started. This is a new failure location, not
+evidence that all profiling-runtime defects are resolved; no root cause is
+claimed without capturing the failing compiler.
+
+The next Arm64 attempt preserves the available stage-1 sysroot on bootstrap
+failure, without requiring collector binaries that have not yet been built.
+It remains explicitly diagnostic and cannot be accepted as a final compiler.
+Independent x64 jobs now construct a fresh baseline and both final optimized
+variants from the same in-tree runtime source patch. Both optimized variants
+consume the same verified frontend/backend profiles from run 38009549235.

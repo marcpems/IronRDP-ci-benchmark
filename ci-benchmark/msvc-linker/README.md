@@ -58,11 +58,11 @@ two profiling-runtime repairs; [run 38001265175](https://github.com/marcpems/Iro
 passed eight repeated online-merge checks and all nine frontend workloads.
 x64 LLVM/backend training also succeeded in
 [run 38009549235](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38009549235).
-Arm64 stopped at the small Clang 22 runtime probe before compiler construction.
-A full source rebuild of that separate runtime, retaining clang-cl and Microsoft
-tools, passes locally with exact execution and indirect-call counts; the
-Arm64 backend job is being repeated with it. Diagnostic profiles from different
-runtime revisions are not a matched performance comparison.
+Arm64's rebuilt Clang runtime now passes hosted checks, but compiler bootstrap
+then crashes while stage 1 compiles `yoke`. A diagnostic retry will preserve
+that compiler. Independently, x64 is progressing to a fresh control and both
+final optimized compiler builds. Diagnostic profiles from different runtime
+revisions are not a matched performance comparison.
 See [the runtime diagnostic report](RUNTIME-DIAGNOSTICS.md).
 No optimized compiler comparison or IronRDP performance results are available.
 

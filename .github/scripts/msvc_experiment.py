@@ -461,8 +461,8 @@ def package(source, output, host, env, metadata):
         metadata["archive_sha256"] = digest(archive)
 
 
-def preserve_training_compiler(source, output, host):
-    stage = source / "build" / host / "stage2"
+def preserve_training_compiler(source, output, host, stage_name="stage2", include_training_tools=True):
+    stage = source / "build" / host / stage_name
     if not (stage / "bin/rustc.exe").is_file():
         raise RuntimeError("Cannot preserve a missing instrumented compiler")
     archive = output / "instrumented-diagnostic.zip"
@@ -474,15 +474,16 @@ def preserve_training_compiler(source, output, host):
             for path in sorted(sysroot.rglob("*")):
                 if path.is_file():
                     bundle.write(path, Path("sysroot") / path.relative_to(sysroot))
-            for name in ("collector.exe", "rustc-fake.exe"):
-                bundle.write(output / "training/target/debug" / name, Path("training-tools") / name)
+            if include_training_tools:
+                for name in ("collector.exe", "rustc-fake.exe"):
+                    bundle.write(output / "training/target/debug" / name, Path("training-tools") / name)
             bundle.write(source / "build" / host / "stage0/bin/cargo.exe", "training-tools/cargo.exe")
             for name in ("COPYRIGHT", "LICENSE-MIT", "LICENSE-APACHE"):
                 bundle.write(source / name, name)
     partial.replace(archive)
     save(output / "instrumented-diagnostic.json", {
-        "diagnostic_only": True, "archive_sha256": digest(archive),
-        "warning": "Instrumented compiler preserved before training; not a benchmark candidate.",
+        "diagnostic_only": True, "archive_sha256": digest(archive), "stage": stage_name,
+        "warning": "Diagnostic compiler capture; no successful build or training is implied.",
     })
 
 
@@ -548,7 +549,13 @@ def main():
                "--target", targets, "library/std"]
     if args.phase == "baseline":
         command.append("rustdoc")
-    execute(command, source, env, output, "build")
+    try:
+        execute(command, source, env, output, "build")
+    except RuntimeError:
+        if args.preserve_training_compiler and (source / "build" / args.host / "stage1/bin/rustc.exe").is_file():
+            preserve_training_compiler(source, output, args.host, stage_name="stage1",
+                                       include_training_tools=False)
+        raise
     audit_build(source, args.host, args.phase, output, identity)
     metrics = source / "build/metrics.json"
     if metrics.is_file():
