@@ -263,3 +263,37 @@ It remains explicitly diagnostic and cannot be accepted as a final compiler.
 Independent x64 jobs now construct a fresh baseline and both final optimized
 variants from the same in-tree runtime source patch. Both optimized variants
 consume the same verified frontend/backend profiles from run 38009549235.
+
+### Captured stage 1 reveals a runtime search-path bug
+
+Run 38021536352 successfully produced all three final x64 compiler packages.
+Their archive hashes were verified after download, and their recorded in-tree
+runtime sources match. An independent x64 IronRDP pilot is now running.
+
+Arm64 failed again, this time while compiling `cfg-if`. Its captured stage-1
+archive is SHA-256
+`6aa054505dd93bfceced99d1ca6432cde398007591dc09b7ecef1af36801d3e2`.
+A Windows minidump resolves the crash to `lprofMergeValueProfData` during
+process-exit online merging. Locally, three unique-profile version queries
+succeeded; the first shared-profile query succeeded and the next two crashed.
+
+Crucially, disassembly of the captured compiler's merge routine reads
+`NumBitmapBytes` at header offset `0x38` but never adds the padding field at
+`0x40`: **the compiler contains the unpatched runtime**, despite the successful
+standalone check of the rebuilt library.
+
+The bootstrap log records a malformed native library search path:
+`C:aIronRDP-ci-benchmarkIronRDP-ci-benchmarkharnesstoolsclanglibclang22libwindows`.
+Bootstrap emits an unquoted Windows path in `LLVM_LINKER_FLAGS`; the receiving
+build script parses it with POSIX shlex, consuming its backslashes. This
+allows runtime resolution to fall back to another library instead of the
+explicitly rebuilt one. The precise fallback library was not logged.
+
+The diagnostic bootstrap patch normalizes separators and quotes the complete
+`-L` argument. The runtime-selection audit now uses full Microsoft linker
+verbosity and requires the merge and Windows-platform objects to be loaded
+from the expected library, not merely mentioned in a search path. This audit
+was checked against an actual local link log. The prior x64 standalone runtime
+hash likewise does not prove which library its instrumented compiler loaded;
+its successful profiles and final compiler comparisons remain useful, but
+that provenance limitation must not be concealed.

@@ -9,11 +9,21 @@ import unittest
 import zipfile
 from unittest.mock import patch
 
-from msvc_experiment import PHASES, audit_cmake_tools, clang_profile_preflight, cmake_toolchain, configuration, equivalent_tools, preserve_training_compiler, train, verify_profiles
+from msvc_experiment import PHASES, audit_cmake_tools, audit_runtime_link, clang_profile_preflight, cmake_toolchain, configuration, equivalent_tools, preserve_training_compiler, train, verify_profiles
 from build_arm_compilers import digest
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_runtime_audit_requires_loaded_library_not_search_path(self):
+        expected = r"C:\Pinned Clang\lib\clang_rt.profile-aarch64.lib"
+        members = ("Loaded clang_rt.profile-aarch64.lib(InstrProfilingMerge.c.obj)\n"
+                   "Loaded clang_rt.profile-aarch64.lib(InstrProfilingPlatformWindows.c.obj)")
+        audit_runtime_link(f"Searching {expected}:\n{members}", expected)
+        for log in (f"/LIBPATH:{expected}", f"Searching {expected}:",
+                    f"Searching C:\\Other\\clang_rt.profile-aarch64.lib:\n{members}"):
+            with self.assertRaisesRegex(RuntimeError, "profiling runtime"):
+                audit_runtime_link(log, expected)
+
     def test_stage1_capture_does_not_require_unbuilt_training_tools(self):
         with tempfile.TemporaryDirectory() as tmp:
             source, output = Path(tmp) / "source", Path(tmp) / "output"

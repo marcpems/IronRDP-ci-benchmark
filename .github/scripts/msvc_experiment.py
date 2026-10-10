@@ -67,6 +67,7 @@ lld = true
 llvm-tools = true
 llvm-bitcode-linker = false
 lto = "{'thin' if phase == 'pgo-rust-thin' else 'thin-local'}"
+rustflags = {json.dumps(["-Clink-arg=/VERBOSE", "-Wlinker-messages"] if phase == "llvm-profile" else [])}
 [target.{host}]
 linker = "{link.name}"
 ar = "{librarian.as_posix()}"
@@ -401,6 +402,23 @@ def cmake_preflight(output, clang, env, identity):
     execute([build / "probe.exe"], source, env, output, "cmake-run", timeout=120)
 
 
+def audit_runtime_link(log, runtime_path):
+    runtime_path = str(runtime_path).replace("\\", "/").lower()
+    searching, loaded = None, set()
+    for line in log.replace("\\", "/").lower().splitlines():
+        search = re.search(r"searching (.*\.lib):\s*$", line)
+        if search:
+            searching = search[1]
+        member = re.search(r"loaded .*clang_rt\.profile-[^(\s]+\.lib\(([^)]+)\)", line)
+        if member:
+            if searching != runtime_path:
+                raise RuntimeError(f"Unexpected profiling runtime selected: {searching}")
+            loaded.add(member[1])
+    if not all(any(re.fullmatch(name + r"(?:\.c)?\.obj", member) for member in loaded)
+               for name in ("instrprofilingmerge", "instrprofilingplatformwindows")):
+        raise RuntimeError("Linker log does not prove the expected profiling runtime was loaded")
+
+
 def audit_build(source, host, phase, output, identity):
     cache_path = source / "build" / host / "llvm/build/CMakeCache.txt"
     shutil.copy2(cache_path, output / "CMakeCache.txt")
@@ -418,6 +436,9 @@ def audit_build(source, host, phase, output, identity):
         if digest(Path(cache["LLVM_PROFDATA_FILE"])) != digest(output / "llvm-pgo.profdata"):
             raise RuntimeError("LLVM did not use the verified profile")
     log = (output / "build.stdout").read_text(errors="replace") + (output / "build.stderr").read_text(errors="replace")
+    if phase == "llvm-profile":
+        runtime = json.loads((output / "clang-profiling-runtime.json").read_text())
+        audit_runtime_link(log, runtime["path"])
     # Building the shipped rust-lld tool is not the same as using it to link rustc.
     if re.search(r"-C\s*linker=[^\r\n]*lld-link", log, re.I):
         raise RuntimeError("Unexpected lld-link selection for a Rust compilation")
@@ -520,6 +541,7 @@ def main():
             name: digest(source / "src/llvm-project/compiler-rt/lib/profile" / name)
             for name in ("InstrProfilingMerge.c", "InstrProfilingPlatformWindows.c")
         },
+        "bootstrap_linker_source_sha256": digest(source / "src/bootstrap/src/core/build_steps/compile.rs"),
     }
     save(output / "started.json", metadata)
     cmake_preflight(output, clang, env, identity)

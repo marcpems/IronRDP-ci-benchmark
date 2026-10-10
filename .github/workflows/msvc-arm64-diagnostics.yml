@@ -55,6 +55,11 @@ jobs:
           if ($LASTEXITCODE) { throw 'Runtime patch does not match Clang 22 source' }
           git -C ..\clang-runtime-source apply $patch
           if ($LASTEXITCODE) { throw 'Clang runtime patch application failed' }
+          $bootstrapPatch = (Resolve-Path .github\scripts\msvc-bootstrap-runtime-path.patch).Path
+          git -C ..\rust-source apply --check $bootstrapPatch
+          if ($LASTEXITCODE) { throw 'Bootstrap patch does not match pinned Rust source' }
+          git -C ..\rust-source apply $bootstrapPatch
+          if ($LASTEXITCODE) { throw 'Bootstrap runtime path patch failed' }
       - uses: actions/download-artifact@v6
         with:
           name: ${{ matrix.frontend-artifact }}
@@ -89,56 +94,5 @@ jobs:
             harness/evidence/*.profdata
             harness/evidence/instrumented-diagnostic.zip
             harness/crash-dumps/*.dmp
-          if-no-files-found: error
-          retention-days: 30
-  x64-compilers:
-    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    name: x64 / ${{ matrix.phase }} compiler
-    runs-on: windows-2025
-    timeout-minutes: 350
-    strategy:
-      fail-fast: false
-      matrix:
-        phase: [baseline, pgo, pgo-rust-thin]
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          path: harness
-      - uses: ./harness/.github/actions/prepare-msvc-experiment
-        with:
-          architecture: x64
-          rust-revision: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7
-      - name: Apply identical in-tree runtime fixes to all variants
-        shell: pwsh
-        run: |
-          $patch = (Resolve-Path .github\scripts\msvc-profile-runtime.patch).Path
-          git -C ..\rust-source\src\llvm-project apply --check $patch
-          if ($LASTEXITCODE) { throw 'Runtime patch does not match pinned LLVM source' }
-          git -C ..\rust-source\src\llvm-project apply $patch
-          if ($LASTEXITCODE) { throw 'Runtime patch application failed' }
-      - uses: actions/download-artifact@v6
-        if: matrix.phase != 'baseline'
-        with:
-          name: msvc-x64-llvm-diagnostics
-          run-id: 38009549235
-          github-token: ${{ github.token }}
-          path: harness/profiles
-      - name: Build final compiler with verified profiles
-        shell: pwsh
-        run: |
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\msvc_experiment.py --source ..\rust-source --output evidence --clang tools\clang\bin --host x86_64-pc-windows-msvc --phase ${{ matrix.phase }} --profiles profiles
-      - uses: actions/upload-artifact@v6
-        if: always()
-        with:
-          name: msvc-x64-${{ matrix.phase }}
-          path: |
-            harness/evidence/*.json
-            harness/evidence/*.toml
-            harness/evidence/*.cmake
-            harness/evidence/*.txt
-            harness/evidence/*.stdout
-            harness/evidence/*.stderr
-            harness/evidence/*.profdata
-            harness/evidence/*.zip
           if-no-files-found: error
           retention-days: 30
