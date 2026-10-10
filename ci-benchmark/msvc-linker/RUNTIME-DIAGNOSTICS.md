@@ -334,3 +334,19 @@ The next job restores this verified compiler, checks original source/tool and
 frontend-profile identities, installs only pinned stage0/bootstrap for the
 collector, and resumes backend training. It records the original compiler-build
 run separately from the training run. No full LLVM or Rust rebuild is requested.
+
+### Arm64 backend training succeeds
+
+[Run 38037822491](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38037822491)
+successfully restored the completed compiler, passed the PDB runtime audit,
+repeated online-merge checks, original backend workloads and profile coverage
+checks. The final Arm64 baseline, PGO and PGO-plus-Rust-ThinLTO builds can now
+proceed independently with the same source patches and paired profiles.
+
+The separate x64 five-VM study is not accepted as complete: VM 1 failed
+`advanced_filesystem_operations_are_handle_bound` with `STATUS_DELETE_PENDING`
+instead of `STATUS_SUCCESS` under the ThinLTO compiler. Four other VMs passed.
+The failed VM will not be discarded or silently replaced. The test creates
+fixture paths from process ID plus wall-clock time and runs alongside other
+tests; a fixture collision is a hypothesis requiring investigation, not yet
+a demonstrated compiler or test defect.
