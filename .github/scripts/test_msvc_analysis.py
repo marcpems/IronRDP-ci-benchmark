@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from analyze_msvc_experiment import HOSTS, analyze, build_summary, contrast
+from analyze_msvc_experiment import HOSTS, analyze, build_summary, contrast, markdown
 from msvc_experiment import VARIANTS
 from msvc_ironrdp_probe import validate_metadata
 from native_ci_probe import COMMANDS, NATIVE_COMMANDS, paired_order
@@ -65,6 +65,7 @@ class AnalysisTests(unittest.TestCase):
             summary, text = build_summary(root, result)
             self.assertEqual(len(summary["stages"]), 10)
             self.assertIn("not a pure offline", text)
+            self.assertIn("Profile merge (min)", text)
             parent_path = root / f"{HOSTS[0]}-llvm-profile/metadata.json"
             original_parent = parent_path.read_text()
             broken_parent = json.loads(original_parent)
@@ -137,6 +138,11 @@ class AnalysisTests(unittest.TestCase):
                     (directory / "index.json").write_text(json.dumps(index))
             result = analyze(root, protocol)
             self.assertEqual(result["architectures"][HOSTS[0]]["native-total/wall_seconds"]["means"]["baseline"], 50)
+            report = markdown(result)
+            self.assertIn("CPU 95% interval", report)
+            self.assertIn("Baseline CPU (s)", report)
+            self.assertIn("Common-package and WASM", report)
+            self.assertIn("| baseline->pgo | 20.00% | 20.00% to 20.00% | 20.00% |", report)
             with self.assertRaisesRegex(ValueError, "Unexpected or duplicate VM"):
                 analyze(root, protocol, (HOSTS[0],))
             selected = directory / "index.json"

@@ -1,6 +1,11 @@
 # Microsoft-linker experiment: profiling-runtime investigation
 
-This is an interim feasibility result, **not an IronRDP performance result**.
+These are historical diagnostic notes, **not the current experiment status**.
+Later work repaired both Arm64 runtime sources and the bootstrap runtime search
+path, verified the backend compiler's embedded runtime through its PDB, and
+successfully built all six final compilers. See the
+[complete later diagnostic history](https://github.com/marcpems/IronRDP-ci-benchmark/blob/25567914accb73100822794c971b3a6661ae6fa8/ci-benchmark/msvc-linker/RUNTIME-DIAGNOSTICS.md)
+and the [current results and qualification limits](README.md).
 
 ## Hosted build outcome
 

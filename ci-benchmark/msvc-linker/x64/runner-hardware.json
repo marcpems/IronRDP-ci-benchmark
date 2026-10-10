@@ -1,0 +1,67 @@
+{
+  "benchmark_run": "38056790312",
+  "attempt": "1",
+  "host": "x86_64-pc-windows-msvc",
+  "vms": [
+    {
+      "vm": 1,
+      "hardware": {
+        "Name": "AMD EPYC 7763 64-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20260925.250.1",
+      "artifact": "msvc-ironrdp-x64-1",
+      "index_sha256": "78c33321f1a9b0113182294353d99244e36a91b1db9d81f71c95843b699b99b6",
+      "baseline_warmup_sha256": "e2d8de4b98f1530a288aef711b270ee41e28b863675aaa10c174c589ba582e5c"
+    },
+    {
+      "vm": 2,
+      "hardware": {
+        "Name": "AMD EPYC 9V45 96-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20260925.250.1",
+      "artifact": "msvc-ironrdp-x64-2",
+      "index_sha256": "26cf88f6d18203db2ae93bdb1d6e195a8d35699b4a2116a665b146a9dbe26817",
+      "baseline_warmup_sha256": "87a741c2a54015b249ea7eb43159e4fe224b9f4fafc62606c07a1aa78bd2e0db"
+    },
+    {
+      "vm": 3,
+      "hardware": {
+        "Name": "AMD EPYC 9V74 80-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20260925.250.1",
+      "artifact": "msvc-ironrdp-x64-3",
+      "index_sha256": "0cba33bc64c31108023d2f871ada63c944c381038641bd9cea2248194bcbbd2d",
+      "baseline_warmup_sha256": "566b8a428ba9270b5f1254b54707c9dd43df810e053c7d7c986d88aabb62217e"
+    },
+    {
+      "vm": 4,
+      "hardware": {
+        "Name": "AMD EPYC 9V45 96-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20260925.250.1",
+      "artifact": "msvc-ironrdp-x64-4",
+      "index_sha256": "5eff23af4acb2ddb3191d237bfd182dad5d5c9c1f48e2dd0c2f9bbab7f9414ef",
+      "baseline_warmup_sha256": "c1d4b6ebfa263d9ae4ec72adfb3f0bfc3aff3b396c6a3abb644a691fafb61e89"
+    },
+    {
+      "vm": 5,
+      "hardware": {
+        "Name": "Intel(R) Xeon(R) 6973P-C",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "image": "20260925.250.1",
+      "artifact": "msvc-ironrdp-x64-5",
+      "index_sha256": "37b73b3f18dde43930c51749b682ce145a6b0f739e430ca5d6be40e5e1fa585c",
+      "baseline_warmup_sha256": "00f2cbdd178a7c209db4f957506884e6221da1c4681bca8fecb2a5d40de7b520"
+    }
+  ]
+}

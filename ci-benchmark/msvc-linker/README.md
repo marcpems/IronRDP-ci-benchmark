@@ -51,47 +51,71 @@ are not compiler-performance measurements.
 
 ## Results
 
-Audited Arm64 and x64 baseline compiler packages are now available from
-[run 37965170591](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37965170591).
-Both architectures now have successful frontend PGO training. Arm64 required
-two profiling-runtime repairs; [run 38001265175](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38001265175)
-passed eight repeated online-merge checks and all nine frontend workloads.
-x64 LLVM/backend training also succeeded in
-[run 38009549235](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38009549235).
-Arm64's rebuilt Clang runtime now passes hosted checks, but compiler bootstrap
-then crashes while stage 1 compiles `yoke`. A diagnostic retry will preserve
-that compiler. Independently, x64 is progressing to a fresh control and both
-final optimized compiler builds. Diagnostic profiles from different runtime
-revisions are not a matched performance comparison.
-See [the runtime diagnostic report](RUNTIME-DIAGNOSTICS.md).
-No optimized compiler comparison or IronRDP performance results are available.
+**x64: fresh rustc and LLVM PGO reduced native offline Cargo wall time by
+18.98% (paired 95% bootstrap interval 15.78% to 21.55%) while retaining
+clang-cl, link.exe and lib.exe. Adding Rust-side ThinLTO did not demonstrate
+an additional benefit.**
 
-[Run 38021536352](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38021536352)
-successfully built and packaged all three x64 compiler variants, including
-Rust-side ThinLTO with Microsoft linking tools. The x64 pilot now runs
-independently while Arm64 remains under investigation. It is a one-VM,
-one-round feasibility check, not the five-VM performance study. Runtime source
-hashes must match across all final compiler variants in addition to the
-existing source, native-tool, profile and archive checks.
+All five VMs in replacement
+[run 38056790312](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38056790312)
+passed. The complete dataset contains 420 compilation commands: 105 excluded
+warmup commands and 315 measured commands, plus 60 original correctness
+commands outside timing. The native primary endpoint uses the first five
+compile commands; common-package and WASM builds are secondary controls.
 
-The x64 pilot in
-[run 38025384632](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38025384632)
-completed all seven compilation commands and four original native test commands
-for each compiler. Native totals were 1,063.93 seconds for baseline, 851.68 for
-PGO, and 876.03 for PGO plus Rust ThinLTO. These are **one-VM, one-round pilot
-observations**, not performance conclusions or evidence that ThinLTO helps.
-The workflow was unsuccessful overall because an unconditional matrix include
-accidentally appended an Arm64 job to the x64-only scope. Runner/host selection
-now derives from each selected architecture without adding matrix cells.
-The separate five-VM x64 study excludes these pilot measurements.
+| x64 variant | Native wall (s) | Native CPU (s) | Wall reduction vs baseline |
+|---|---:|---:|---:|
+| Baseline | 786.91 | 2914.24 | Reference |
+| PGO | 637.54 | 2346.16 | 18.98% |
+| PGO + Rust-side ThinLTO | 640.89 | 2355.11 | 18.56% |
 
-The analyzer still requires both architectures by default. For the independent
-x64 study, pass `--architecture x64`; the report explicitly names its scope and
-still requires all five VMs and all paired rounds. Data from another
-architecture, incomplete rounds, pilot blocks and mixed benchmark attempts are
-rejected. The construction appendix can follow training artifacts across runs,
-but only through verified parent-metadata hashes and unchanged profile bytes.
-Final construction metadata must match the exact compilers in the benchmark.
+PGO saved **149.37 seconds** per native compilation replay and **19.49% CPU**
+(95% interval 17.25% to 21.78%). ThinLTO's incremental wall-time reduction
+was **-0.53%**, with an interval from **-3.67% to +2.40%**: the point estimate
+is slightly slower, but these data do not establish either an incremental
+improvement or a regression.
+
+The [detailed x64 report](x64/RESULTS.md) includes every Cargo command's wall
+and CPU time, uncertainty intervals, and compiler construction/training costs.
+[Machine-readable results](x64/results.json) retain the five paired VM means,
+compiler metadata, profile hashes, and construction provenance.
+
+### Runner variability
+
+These were standard hosted `windows-2025` machines, not a homogeneous dedicated
+CPU pool. All reported four logical CPUs and two physical cores, with the same
+image and native-tool identities. Their reported CPU models differed:
+
+| VM | Reported CPU | Baseline native (s) | PGO (s) | PGO + Rust ThinLTO (s) |
+|---|---|---:|---:|---:|
+| 1 | AMD EPYC 7763 | 1086.72 | 840.09 | 822.01 |
+| 2 | AMD EPYC 9V45 | 653.43 | 530.12 | 549.59 |
+| 3 | AMD EPYC 9V74 | 811.06 | 658.33 | 682.91 |
+| 4 | AMD EPYC 9V45 | 627.75 | 507.58 | 525.47 |
+| 5 | Intel Xeon 6973P-C | 755.57 | 651.58 | 624.48 |
+
+Each cell is the mean of three measured rounds. Every VM ran every compiler;
+PGO improved its paired mean on all five. Hardware heterogeneity is an observed
+source of non-comparability between independent machines, not a proven
+explanation for every timing difference. Do not compare unmatched pilot and
+full-study absolute times as an optimization effect. Uncertainty resamples
+whole paired VMs; five VMs still provide limited coverage of the hosted pool.
+The [runner hardware record](x64/runner-hardware.json) preserves the reported
+hardware and image identity from each VM's benchmark metadata.
+
+### Arm64 status
+
+All three final Arm64 compilers succeeded in
+[run 38056115559](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38056115559).
+The [Arm64 pilot](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38060313028)
+passed all 21 compilation and 12 serial correctness commands. Its native wall
+totals were 724.62 seconds baseline, 569.67 with PGO, and 561.44 with PGO plus
+Rust-side ThinLTO. These are **one-VM, one-round feasibility observations**,
+not final Arm64 estimates and not a matched architecture comparison.
+The [full five-VM Arm64 study](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38063669491)
+is running separately; its results are not yet included.
+
+### Qualification and excluded data
 
 The first full x64 study (38029169738) is excluded in its entirety: one VM
 failed an original filesystem test with `STATUS_DELETE_PENDING`. A separate
@@ -105,6 +129,50 @@ compilation stays unchanged and four-way parallel. This is a uniform control
 for the replacement study, not proof of release correctness under every
 concurrency pattern. All five VMs are repeated; successful VMs from the
 incomplete attempt are not substituted into the replacement dataset.
+
+The original x64 pilot
+[38025384632](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38025384632)
+is also excluded. Its x64 job succeeded, but the overall workflow failed
+because a matrix include appended an unintended Arm64 job; that matrix bug
+was corrected before the full study.
+
+There is a remaining x64 runtime-provenance limitation: its backend training
+predates the bootstrap runtime search-path repair and PDB provenance audit.
+The recorded standalone Clang profiling-library hash does **not** prove which
+library was embedded in that training compiler. Successful training, matching
+final runtime sources, and identical final PGO profiles are verified; the
+unrecorded embedded-library identity is not.
+
+The measured Rust source is `5b615ab3eb2cd5a26afc6025b5863180ffdc20d7` plus
+recorded source patches. The later
+[consolidated experimental commit](https://github.com/marcpems/rust-arm64-compiler-ab/commit/07bb50a774b11375032aacc16fd9a70f090f8642)
+preserves the Arm64 bootstrap fix, exact runtime patch and manual reproduction
+instructions; it is not the commit identified by the benchmark binaries.
+The original LLVM-ThinLTO review branch is unchanged. Full distribution
+automation and release qualification remain incomplete.
+
+The analyzer requires both architectures by default. Analyze these independently
+scheduled datasets with `--architecture x64` or `--architecture arm64`; each
+scope still requires all five VMs, all paired rounds, and one complete workflow
+attempt. Pilot data, mismatched artifacts and incomplete matrices are rejected.
+Construction inputs follow recorded parent-metadata hashes and unchanged
+profile bytes, and must match the exact benchmark compiler metadata.
+
+### Prioritized next work
+
+1. Prioritize PGO with Microsoft linking tools. It is the demonstrated x64
+   improvement; requalify the x64 backend runtime provenance before proposing
+   a production rollout.
+2. Complete the paired Arm64 study before choosing a common optimization policy
+   or claiming an architecture-specific ThinLTO effect.
+3. Keep Rust-side ThinLTO optional. The x64 final bootstrap took 59.12 minutes
+   versus 43.06 for PGO alone (one construction run each), without demonstrated
+   workload benefit. Its extra construction cost is not an IronRDP CI speedup.
+4. Resolve the original parallel filesystem-test failure, then qualify full
+   tools, distribution packaging and release CI. Serial correctness checks in
+   this experiment do not replace that work.
+
+## Compatibility and earlier setup diagnostics
 
 The initial x64 compatibility probes completed:
 

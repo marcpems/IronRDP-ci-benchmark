@@ -149,18 +149,32 @@ def markdown(result):
             lines.append(f"| {host} | {variant} | {wall:.2f} | {cpu:.2f} |")
     lines += ["", "Positive reductions mean faster compilation; negative values mean slower.",
               "Intervals resample paired whole VMs, not individual Cargo commands.", "",
-              "| Architecture | Contrast | Wall reduction | 95% interval |",
-              "|---|---|---:|---:|"]
+              "| Architecture | Contrast | Wall reduction | Wall 95% interval | CPU reduction | CPU 95% interval |",
+              "|---|---|---:|---:|---:|---:|"]
     for host, metrics in result["architectures"].items():
         for name, value in metrics["native-total/wall_seconds"]["contrasts"].items():
             lo, hi = value["ci95_percent"]
-            lines.append(f"| {host} | {name} | {value['reduction_percent']:.2f}% | {lo:.2f}% to {hi:.2f}% |")
-    lines += ["", "## Native test-compilation breakdown", "",
+            cpu = metrics["native-total/cpu_seconds"]["contrasts"][name]
+            cpu_lo, cpu_hi = cpu["ci95_percent"]
+            lines.append(f"| {host} | {name} | {value['reduction_percent']:.2f}% | {lo:.2f}% to {hi:.2f}% | "
+                         f"{cpu['reduction_percent']:.2f}% | {cpu_lo:.2f}% to {cpu_hi:.2f}% |")
+    lines += ["", "## Offline Cargo command breakdown", "",
+              "The first five commands form the native total. Common-package and WASM",
+              "compilation are separate secondary controls, not part of that total.", "",
               "| Architecture | Command | Baseline (s) | PGO (s) | PGO + Rust ThinLTO (s) |",
               "|---|---|---:|---:|---:|"]
     for host, metrics in result["architectures"].items():
         for name, _ in COMMANDS:
             means = metrics[f"{name}/wall_seconds"]["means"]
+            cells = " | ".join(f"{means[variant]:.2f}" for variant in VARIANTS)
+            lines.append(f"| {host} | {name} | {cells} |")
+    lines += ["", "Process-tree CPU seconds include user and kernel time across descendants;",
+              "they are not wall seconds or an additive breakdown of wall time.", "",
+              "| Architecture | Command | Baseline CPU (s) | PGO CPU (s) | PGO + Rust ThinLTO CPU (s) |",
+              "|---|---|---:|---:|---:|"]
+    for host, metrics in result["architectures"].items():
+        for name, _ in COMMANDS:
+            means = metrics[f"{name}/cpu_seconds"]["means"]
             cells = " | ".join(f"{means[variant]:.2f}" for variant in VARIANTS)
             lines.append(f"| {host} | {name} | {cells} |")
     lines += ["", "These are offline Cargo compilation measurements, not end-to-end CI times.",
@@ -226,15 +240,17 @@ def build_summary(root, result):
                 if any(item["profiles"].get(name) != checksum for name, checksum in parent["profiles"].items()):
                     raise ValueError("Construction phases did not retain identical input profiles")
     lines = ["", "## Toolchain construction", "",
-             "| Architecture | Phase | Bootstrap wall (min) | Collector build (min) | Training wall (min) | Bootstrap CPU (min) |",
-             "|---|---|---:|---:|---:|---:|"]
+             "| Architecture | Phase | Bootstrap wall (min) | Collector build (min) | Training wall (min) | Profile merge (min) | Bootstrap CPU (min) |",
+             "|---|---|---:|---:|---:|---:|---:|"]
     for host in hosts:
         for phase in phases:
             timing = records[host, phase]
             training = timing.get("training", {}).get("wall_seconds", 0) / 60
             tools = timing.get("training-tools", {}).get("wall_seconds", 0) / 60
+            merge = timing.get("merge", {}).get("wall_seconds", 0) / 60
             lines.append(f"| {host} | {phase} | {timing['build']['wall_seconds']/60:.2f} | "
-                         f"{tools:.2f} | {training:.2f} | {timing['build']['cpu_seconds']/60:.2f} |")
+                         f"{tools:.2f} | {training:.2f} | {merge:.2f} | "
+                         f"{timing['build']['cpu_seconds']/60:.2f} |")
     lines += ["", "Bootstrap-command time includes stage0 acquisition, bootstrap compilation, LLVM",
               "and Rust compilation. It is not a pure offline compiler CPU measurement.",
               "Collector construction, training and profile merging are separately recorded. Source/tool setup and",

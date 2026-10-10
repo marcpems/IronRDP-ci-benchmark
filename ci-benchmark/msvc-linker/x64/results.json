@@ -1,0 +1,1597 @@
+{
+  "protocol": {
+    "schema": 2,
+    "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+    "rust_sha": "5b615ab3eb2cd5a26afc6025b5863180ffdc20d7",
+    "rust_version": "1.101.0-nightly",
+    "variants": [
+      "baseline",
+      "pgo",
+      "pgo-rust-thin"
+    ],
+    "cores": 4,
+    "independent_vms_per_arch": 5,
+    "warmup_rounds": 1,
+    "measured_rounds": 3,
+    "primary_endpoint": "Sum of the original five native offline Cargo compilation commands, wall seconds",
+    "contrasts": [
+      "baseline to pgo: effect of fresh rustc and LLVM PGO",
+      "pgo to pgo-rust-thin: incremental Rust-side ThinLTO with identical profiles",
+      "baseline to pgo-rust-thin: combined optimization without changing tools"
+    ],
+    "secondary_endpoints": [
+      "process-tree CPU seconds",
+      "native test-compilation command times",
+      "common package compilation",
+      "WASM compilation",
+      "toolchain construction stage wall and CPU time"
+    ],
+    "held_constant": [
+      "source commit",
+      "native clang-cl/link.exe/lib.exe binary hashes",
+      "CMake/Ninja hashes",
+      "MSVC and SDK versions",
+      "Cargo binary",
+      "native and WASM standard libraries",
+      "workload commit and lockfile",
+      "Cargo profiles",
+      "four-CPU affinity"
+    ],
+    "compiler_configuration": "LLVM ThinLTO off and static LLVM in every variant; Rust thin-local except treatment thin. Compiler CGUs: x64=1, Arm64=16, fixed within architecture.",
+    "training": "Fresh per-architecture upstream RUSTC_PGO_CRATES and BACKEND_PGO_CRATES, compiler-only collector with common uninstrumented stage0 Cargo. Same verified profiles supplied to both PGO final builds. No training on IronRDP.",
+    "tool_policy": "Keep clang-cl for C/C++ and link.exe/lib.exe for native linking/archiving. The existing shipped rust-lld used for WASM is not replaced. cl.exe /GL + link.exe /LTCG is only a compatibility microprobe, not an admissible C++ compiler substitution.",
+    "order": "Counterbalanced rotation by VM and round, reversing alternate rounds",
+    "correctness": "All four original native Cargo test commands per compiler/VM after round zero, outside measurements; test harness execution is serial for every compiler. No tests skipped or retried.",
+    "correctness_test_threads": 1,
+    "amendment": "Before the replacement full study: serialize correctness test harnesses after an incomplete x64 study and separate 600-run diagnostics. Parallel diagnostics showed a different filesystem-notification failure under PGO-only; all 300 serial runs passed. The original DELETE_PENDING cause remains unproven. Timed compilation remains four-way parallel and unchanged; discard the entire incomplete study, not only its failed VM.",
+    "aggregation": "Sum native commands within each block; mean measured rounds within VM; equal-weight VM means per architecture",
+    "uncertainty": "10000 seeded paired whole-VM bootstrap draws, 95% percentile intervals",
+    "exclusions": "Fixed warmup excluded; no slow-sample trimming; reject incomplete/failed matrices and mixed benchmark attempts",
+    "scope": "Compiler-only optimization study; not whole CI wall time or complete release qualification. No causal attribution of prior Rust 1.94.1 results to this newer source."
+  },
+  "benchmark_run": [
+    "38056790312",
+    "1"
+  ],
+  "build_run": "38021536352",
+  "included_hosts": [
+    "x86_64-pc-windows-msvc"
+  ],
+  "architectures": {
+    "x86_64-pc-windows-msvc": {
+      "native-total/wall_seconds": {
+        "vm_means": {
+          "baseline": [
+            1086.7171680333336,
+            653.4340544333335,
+            811.0607781999985,
+            627.7531031333341,
+            755.5749823333337
+          ],
+          "pgo": [
+            840.0911593000004,
+            530.1240655666662,
+            658.3258717333329,
+            507.5794930000008,
+            651.5846000333331
+          ],
+          "pgo-rust-thin": [
+            822.0129113333332,
+            549.5925234666671,
+            682.9118647666663,
+            525.4677163666662,
+            624.479735033332
+          ]
+        },
+        "means": {
+          "baseline": 786.9080172266666,
+          "pgo": 637.5410379266667,
+          "pgo-rust-thin": 640.8929501933329
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 18.981504321994368,
+            "ci95_percent": [
+              15.783930235135745,
+              21.553394411876493
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": -0.5257563148510336,
+            "ci95_percent": [
+              -3.674740281520128,
+              2.403763297237671
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 18.555544464769945,
+            "ci95_percent": [
+              15.92092294662626,
+              22.039283921808806
+            ]
+          }
+        }
+      },
+      "xtask-bootstrap/wall_seconds": {
+        "vm_means": {
+          "baseline": [
+            5.076706733333746,
+            3.2577715333333495,
+            3.977532766666627,
+            3.0043123333334734,
+            3.7546092999999323
+          ],
+          "pgo": [
+            4.094931700000113,
+            2.6447011333328496,
+            3.174803933333351,
+            2.550588966666813,
+            3.2723726333338163
+          ],
+          "pgo-rust-thin": [
+            4.012506299999586,
+            2.792950266666594,
+            3.455707433333828,
+            2.5613831333331896,
+            3.2531873999993572
+          ]
+        },
+        "means": {
+          "baseline": 3.8141865333334257,
+          "pgo": 3.1474796733333887,
+          "pgo-rust-thin": 3.215146906666511
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 17.47966058223601,
+            "ci95_percent": [
+              14.813111151467485,
+              19.57328978619688
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": -2.149886269526191,
+            "ci95_percent": [
+              -6.293270137806339,
+              1.1132479019649644
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 15.7055671355271,
+            "ci95_percent": [
+              13.41367517566332,
+              18.813700166470472
+            ]
+          }
+        }
+      },
+      "workspace-tests/wall_seconds": {
+        "vm_means": {
+          "baseline": [
+            836.9153808999994,
+            508.31704179999997,
+            623.5374767333324,
+            482.6147379333335,
+            579.4419136999999
+          ],
+          "pgo": [
+            643.8515003999995,
+            413.37552036666693,
+            508.020635733333,
+            396.277953466667,
+            495.58061369999996
+          ],
+          "pgo-rust-thin": [
+            637.3417455000002,
+            428.21399806666676,
+            531.8472439333332,
+            406.27779373333334,
+            483.105080833333
+          ]
+        },
+        "means": {
+          "baseline": 606.165310213333,
+          "pgo": 491.42124473333325,
+          "pgo-rust-thin": 497.3571724133333
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 18.929500508634657,
+            "ci95_percent": [
+              16.098022445891925,
+              21.63033613979627
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": -1.2079102691665566,
+            "ci95_percent": [
+              -3.900280103119691,
+              1.0470654973521398
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 17.95024162001384,
+            "ci95_percent": [
+              15.267473518927034,
+              21.565686818180186
+            ]
+          }
+        }
+      },
+      "native-tls-tests/wall_seconds": {
+        "vm_means": {
+          "baseline": [
+            20.929418533333774,
+            12.06757860000001,
+            16.224758066666556,
+            11.954617833333335,
+            14.835446300000209
+          ],
+          "pgo": [
+            15.84125016666682,
+            10.053134333333523,
+            12.948448533333552,
+            9.602246833333387,
+            14.939953099999912
+          ],
+          "pgo-rust-thin": [
+            15.445694766667051,
+            10.013953733333741,
+            13.601491066667222,
+            10.719069266666642,
+            12.284051199999643
+          ]
+        },
+        "means": {
+          "baseline": 15.202363866666778,
+          "pgo": 12.677006593333438,
+          "pgo-rust-thin": 12.41285200666686
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 16.611609191058264,
+            "ci95_percent": [
+              7.312523716604902,
+              22.614005464605803
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": 2.083729977749571,
+            "ci95_percent": [
+              -6.346803510868448,
+              10.686371724707966
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 18.34919808830715,
+            "ci95_percent": [
+              13.242120491795696,
+              23.19710779307025
+            ]
+          }
+        }
+      },
+      "gateway-native-tls-tests/wall_seconds": {
+        "vm_means": {
+          "baseline": [
+            114.0939740999999,
+            65.96538983333342,
+            84.4590503666662,
+            65.95921789999981,
+            79.6438966333335
+          ],
+          "pgo": [
+            90.56816533333374,
+            52.69262773333352,
+            67.30726796666629,
+            50.145865700000286,
+            72.71460996666656
+          ],
+          "pgo-rust-thin": [
+            83.6546493333329,
+            54.91885933333318,
+            67.1404442333325,
+            55.13087389999979,
+            63.32625159999983
+          ]
+        },
+        "means": {
+          "baseline": 82.02430576666657,
+          "pgo": 66.68570734000008,
+          "pgo-rust-thin": 64.83421567999964
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 18.70006491770866,
+            "ci95_percent": [
+              13.74407170267975,
+              22.22775698746974
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": 2.7764445094066725,
+            "ci95_percent": [
+              -5.222153151421893,
+              9.090187953415152
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 20.95731250145212,
+            "ci95_percent": [
+              17.470514733915067,
+              24.325535631877838
+            ]
+          }
+        }
+      },
+      "gateway-smartcard-tests/wall_seconds": {
+        "vm_means": {
+          "baseline": [
+            109.70168776666681,
+            63.82627266666668,
+            82.86196026666676,
+            64.22021713333395,
+            77.89911640000021
+          ],
+          "pgo": [
+            85.73531170000024,
+            51.358081999999435,
+            66.87471556666667,
+            49.00283803333332,
+            65.07705063333287
+          ],
+          "pgo-rust-thin": [
+            81.55831543333352,
+            53.65276206666689,
+            66.86697809999957,
+            50.77859633333325,
+            62.51116400000016
+          ]
+        },
+        "means": {
+          "baseline": 79.70185084666689,
+          "pgo": 63.609599586666505,
+          "pgo-rust-thin": 63.073563186666675
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 20.190561560432517,
+            "ci95_percent": [
+              18.172384028310695,
+              22.222315205088183
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": 0.8426973341806532,
+            "ci95_percent": [
+              -3.039328831202126,
+              3.6617432195071853
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 20.8631135705873,
+            "ci95_percent": [
+              17.790897439690912,
+              23.758556134095908
+            ]
+          }
+        }
+      },
+      "common/wall_seconds": {
+        "vm_means": {
+          "baseline": [
+            114.7220085333335,
+            65.26445483333343,
+            86.42137980000037,
+            64.64091889999979,
+            79.26134510000036
+          ],
+          "pgo": [
+            87.71076676666598,
+            54.21846176666653,
+            70.66559723333314,
+            51.734936599999855,
+            67.55180216666668
+          ],
+          "pgo-rust-thin": [
+            85.12770910000047,
+            55.03704723333309,
+            71.0754318666662,
+            52.03293670000024,
+            64.91523413333319
+          ]
+        },
+        "means": {
+          "baseline": 82.06202143333348,
+          "pgo": 66.37631290666644,
+          "pgo-rust-thin": 65.63767180666663
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 19.11445544807836,
+            "ci95_percent": [
+              16.228895620307515,
+              22.14554618023914
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": 1.1128082709843112,
+            "ci95_percent": [
+              -0.9353375712203293,
+              2.8074891670847646
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 20.014556477882838,
+            "ci95_percent": [
+              16.96704671213267,
+              23.54461548554986
+            ]
+          }
+        }
+      },
+      "wasm/wall_seconds": {
+        "vm_means": {
+          "baseline": [
+            211.80339750000044,
+            116.40025010000015,
+            157.6494265333331,
+            115.54065416666708,
+            142.6490342333327
+          ],
+          "pgo": [
+            157.734708766667,
+            97.12078866666616,
+            127.44701603333336,
+            93.71105030000005,
+            118.31098770000001
+          ],
+          "pgo-rust-thin": [
+            154.68721100000008,
+            97.66061403333272,
+            126.60185243333338,
+            93.70415280000013,
+            114.25489603333365
+          ]
+        },
+        "means": {
+          "baseline": 148.8085525066667,
+          "pgo": 118.86491029333332,
+          "pgo-rust-thin": 117.38174525999999
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 20.122258908466893,
+            "ci95_percent": [
+              17.219443677142532,
+              23.44092631668122
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": 1.2477736530261074,
+            "ci95_percent": [
+              -0.0433485558148039,
+              2.4308315222572707
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 21.118952316439454,
+            "ci95_percent": [
+              17.804985255155493,
+              24.67890904070965
+            ]
+          }
+        }
+      },
+      "native-total/cpu_seconds": {
+        "vm_means": {
+          "baseline": [
+            4029.8020833333335,
+            2380.2552083333335,
+            3030.625,
+            2308.5729166666665,
+            2821.96875
+          ],
+          "pgo": [
+            3097.7291666666665,
+            1981.0677083333333,
+            2449.1041666666665,
+            1849.875,
+            2353.0104166666665
+          ],
+          "pgo-rust-thin": [
+            3055.6197916666665,
+            2054.96875,
+            2468.3177083333335,
+            1874.3489583333333,
+            2322.3072916666665
+          ]
+        },
+        "means": {
+          "baseline": 2914.2447916666665,
+          "pgo": 2346.1572916666664,
+          "pgo-rust-thin": 2355.1125
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 19.493472258214418,
+            "ci95_percent": [
+              17.251953259774844,
+              21.778836109903054
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": -0.3816968438195456,
+            "ci95_percent": [
+              -2.135928831562195,
+              0.9777563298646208
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 19.18618138275532,
+            "ci95_percent": [
+              15.804458229503703,
+              22.297604023729633
+            ]
+          }
+        }
+      },
+      "xtask-bootstrap/cpu_seconds": {
+        "vm_means": {
+          "baseline": [
+            15.291666666666666,
+            9.359375,
+            11.411458333333334,
+            8.765625,
+            11.046875
+          ],
+          "pgo": [
+            11.802083333333334,
+            7.552083333333333,
+            9.234375,
+            7.286458333333333,
+            9.520833333333334
+          ],
+          "pgo-rust-thin": [
+            11.885416666666666,
+            7.911458333333333,
+            9.213541666666666,
+            7.234375,
+            9.380208333333334
+          ]
+        },
+        "means": {
+          "baseline": 11.175,
+          "pgo": 9.079166666666667,
+          "pgo-rust-thin": 9.125
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 18.754660700969428,
+            "ci95_percent": [
+              15.797931103746098,
+              21.492513020833314
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": -0.5048187241853963,
+            "ci95_percent": [
+              -2.565806966232387,
+              0.9480977269964774
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 18.344519015659966,
+            "ci95_percent": [
+              15.74768896139206,
+              20.803376055017196
+            ]
+          }
+        }
+      },
+      "workspace-tests/cpu_seconds": {
+        "vm_means": {
+          "baseline": [
+            3130.8958333333335,
+            1854.1822916666667,
+            2361.796875,
+            1788.09375,
+            2191.9895833333335
+          ],
+          "pgo": [
+            2423.078125,
+            1559.609375,
+            1914.3489583333333,
+            1454.671875,
+            1837.7760416666667
+          ],
+          "pgo-rust-thin": [
+            2395.9947916666665,
+            1616.484375,
+            1931.0,
+            1466.3385416666667,
+            1816.8125
+          ]
+        },
+        "means": {
+          "baseline": 2265.391666666667,
+          "pgo": 1837.896875,
+          "pgo-rust-thin": 1845.3260416666667
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 18.87067909522637,
+            "ci95_percent": [
+              16.54526243142499,
+              21.1082133668543
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": -0.4042210837681859,
+            "ci95_percent": [
+              -1.9877768428173903,
+              0.8462697047453283
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 18.542737275011323,
+            "ci95_percent": [
+              15.090401697136603,
+              21.698086752776558
+            ]
+          }
+        }
+      },
+      "native-tls-tests/cpu_seconds": {
+        "vm_means": {
+          "baseline": [
+            64.25520833333333,
+            35.317708333333336,
+            46.916666666666664,
+            34.744791666666664,
+            43.489583333333336
+          ],
+          "pgo": [
+            45.869791666666664,
+            29.213541666666668,
+            36.682291666666664,
+            27.203125,
+            36.588541666666664
+          ],
+          "pgo-rust-thin": [
+            44.776041666666664,
+            29.244791666666668,
+            36.947916666666664,
+            28.276041666666668,
+            35.244791666666664
+          ]
+        },
+        "means": {
+          "baseline": 44.94479166666667,
+          "pgo": 35.11145833333333,
+          "pgo-rust-thin": 34.89791666666667
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 21.878693767817005,
+            "ci95_percent": [
+              17.442395689491786,
+              26.177595465984982
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": 0.6081822766784262,
+            "ci95_percent": [
+              -1.725224776881995,
+              2.49510369436321
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 22.35381370663082,
+            "ci95_percent": [
+              18.15113178646395,
+              27.083333333333325
+            ]
+          }
+        }
+      },
+      "gateway-native-tls-tests/cpu_seconds": {
+        "vm_means": {
+          "baseline": [
+            422.9635416666667,
+            247.95833333333334,
+            310.5729166666667,
+            243.91145833333334,
+            293.2135416666667
+          ],
+          "pgo": [
+            316.4114583333333,
+            197.375,
+            249.20833333333334,
+            184.54166666666666,
+            238.72916666666666
+          ],
+          "pgo-rust-thin": [
+            309.8385416666667,
+            204.96875,
+            248.375,
+            192.296875,
+            235.19791666666666
+          ]
+        },
+        "means": {
+          "baseline": 303.72395833333337,
+          "pgo": 237.25312499999998,
+          "pgo-rust-thin": 238.13541666666666
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 21.885278230300965,
+            "ci95_percent": [
+              19.39369216566118,
+              24.178103843418263
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": -0.371877785241681,
+            "ci95_percent": [
+              -2.9480113519516404,
+              1.5477622575874705
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 21.594786933036115,
+            "ci95_percent": [
+              18.69907936698959,
+              24.647258227683356
+            ]
+          }
+        }
+      },
+      "gateway-smartcard-tests/cpu_seconds": {
+        "vm_means": {
+          "baseline": [
+            396.3958333333333,
+            233.4375,
+            299.9270833333333,
+            233.05729166666666,
+            282.2291666666667
+          ],
+          "pgo": [
+            300.5677083333333,
+            187.31770833333334,
+            239.63020833333334,
+            176.171875,
+            230.39583333333334
+          ],
+          "pgo-rust-thin": [
+            293.125,
+            196.359375,
+            242.78125,
+            180.203125,
+            225.671875
+          ]
+        },
+        "means": {
+          "baseline": 289.009375,
+          "pgo": 226.81666666666666,
+          "pgo-rust-thin": 227.628125
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 21.519270208218444,
+            "ci95_percent": [
+              19.245154576255274,
+              23.55669563396503
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": -0.3577595708722292,
+            "ci95_percent": [
+              -3.030890839435507,
+              1.7424023814224587
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 21.238497886097974,
+            "ci95_percent": [
+              17.970411359842664,
+              24.376922309220728
+            ]
+          }
+        }
+      },
+      "common/cpu_seconds": {
+        "vm_means": {
+          "baseline": [
+            413.671875,
+            235.09375,
+            311.3125,
+            231.09895833333334,
+            284.0052083333333
+          ],
+          "pgo": [
+            311.6145833333333,
+            196.109375,
+            252.18229166666666,
+            184.00520833333334,
+            235.86458333333334
+          ],
+          "pgo-rust-thin": [
+            306.1822916666667,
+            197.72395833333334,
+            253.69270833333334,
+            185.09895833333334,
+            231.5
+          ]
+        },
+        "means": {
+          "baseline": 295.0364583333333,
+          "pgo": 235.95520833333333,
+          "pgo-rust-thin": 234.83958333333334
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 20.025067523434604,
+            "ci95_percent": [
+              17.293694472532472,
+              22.976106216288773
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": 0.472812195111183,
+            "ci95_percent": [
+              -0.6842162123231077,
+              1.446483765744544
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 20.403198757215733,
+            "ci95_percent": [
+              17.290248249894603,
+              23.77205720840554
+            ]
+          }
+        }
+      },
+      "wasm/cpu_seconds": {
+        "vm_means": {
+          "baseline": [
+            792.5989583333334,
+            438.6041666666667,
+            593.6614583333334,
+            424.8385416666667,
+            536.3072916666666
+          ],
+          "pgo": [
+            589.375,
+            364.9322916666667,
+            477.5989583333333,
+            342.8125,
+            440.328125
+          ],
+          "pgo-rust-thin": [
+            578.921875,
+            367.7083333333333,
+            472.921875,
+            342.3697916666667,
+            428.25
+          ]
+        },
+        "means": {
+          "baseline": 557.2020833333333,
+          "pgo": 443.009375,
+          "pgo-rust-thin": 438.034375
+        },
+        "contrasts": {
+          "baseline->pgo": {
+            "reduction_percent": 20.493948559955445,
+            "ci95_percent": [
+              17.74266068628202,
+              23.61349020918565
+            ]
+          },
+          "pgo->pgo-rust-thin": {
+            "reduction_percent": 1.1230010651580358,
+            "ci95_percent": [
+              0.0005502471985607826,
+              2.091727171649216
+            ]
+          },
+          "baseline->pgo-rust-thin": {
+            "reduction_percent": 21.38680236449224,
+            "ci95_percent": [
+              18.050852871654012,
+              24.841844043358364
+            ]
+          }
+        }
+      }
+    }
+  },
+  "compiler_metadata": {
+    "x86_64-pc-windows-msvc": {
+      "baseline": {
+        "phase": "baseline",
+        "host": "x86_64-pc-windows-msvc",
+        "rust_sha": "5b615ab3eb2cd5a26afc6025b5863180ffdc20d7",
+        "tools": {
+          "files": {
+            "cl.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe",
+              "sha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57"
+            },
+            "link.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe",
+              "sha256": "a8c42e25c91ca2453e1110540ac08f0fc12d7539454a11b9af8baeecb469837d"
+            },
+            "lib.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\lib.exe",
+              "sha256": "d8dae02a50c7571c6c0ea5cd7a853830aaca8fad13f8f4be147828d51dd4adec"
+            },
+            "cmake.exe": {
+              "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+              "sha256": "ab8247ca4554871e5d75c0ee118ee8663727bd6fdf37ad76b17e9cc8d5f286a8"
+            },
+            "ninja.exe": {
+              "path": "C:\\ProgramData\\Chocolatey\\bin\\ninja.exe",
+              "sha256": "888273ee8ba2b002a271e0a10abb5480414a52742825355472ef2765496336f6"
+            },
+            "clang-cl.exe": {
+              "path": "D:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\harness\\tools\\clang\\bin\\clang-cl.exe",
+              "sha256": "986af49c2d1eefeac324f724ff54597753d1053927fa5d58a37a457f578e1cf8"
+            },
+            "llvm-profdata.exe": {
+              "path": "D:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\harness\\tools\\clang\\bin\\llvm-profdata.exe",
+              "sha256": "7d10da23d1388ec214e2769cab2553d50192c85cb8cce8b61f720ac43c6a48a1"
+            }
+          },
+          "msvc": "14.51.36231",
+          "sdk": "10.0.26100.0\\",
+          "image": "20260925.250.1"
+        },
+        "run_id": "38021536352",
+        "attempt": "1",
+        "profiles": {},
+        "scope": "compiler-only, not release packaging or full tool PGO",
+        "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+        "perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
+        "profiling_runtime_sources": {
+          "InstrProfilingMerge.c": "b4eb470286b8006e5eac7c7301efa6fea4f7890d3a25280a058324b4a860250c",
+          "InstrProfilingPlatformWindows.c": "4b964e3ed045710e1de050e78c8ce8f4c68cb2b0c2ba094c226171eb1fcd5726"
+        },
+        "rustc_version": "rustc 1.101.0-nightly (5b615ab3e 2026-10-09)\nbinary: rustc\ncommit-hash: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7\ncommit-date: 2026-10-09\nhost: x86_64-pc-windows-msvc\nrelease: 1.101.0-nightly\nLLVM version: 23.1.3\n",
+        "files": {
+          "bin/cargo.exe": "d5187fe03aa2ea74d28ac13a3564dc2b77f023f8b5a7c7f0d9629a2992037f28",
+          "bin/rustc.exe": "810d9c4a99d703bf9fa052f374c4bb3b8416da141e359b10051d0909e2dcdf0b",
+          "bin/rustc.pdb": "0dabc95c709374aecea2db6cd7d1db86ab61ee17a319468c041607d4163d792f",
+          "bin/rustc_driver-2b5e832dd1aa5bc4.dll": "c3833a83067a910d164217bc1c3d51858ffbc946e38c000df473ed63bfb1779b",
+          "bin/rustc_driver-2b5e832dd1aa5bc4.pdb": "3cf6115cc7595a435726af4d6eb7bd5fb7066b3bf9b55e9f77507808c5f0aa87",
+          "bin/rustc_main-01a9522dd5ae46cf.pdb": "0dabc95c709374aecea2db6cd7d1db86ab61ee17a319468c041607d4163d792f",
+          "bin/rustdoc.exe": "8b411c666181240cb56875f38d8952182b80fd6382ab747737149742ec691635",
+          "bin/rustdoc.pdb": "3d91856e5e34c3f9a8c8cecf7673c47c9d5f47968ee9fd948645c9d782ee1839",
+          "COPYRIGHT": "172020dbfd5b53a226dfde77616190a48dcff519b0bc0e6deb91a8450782c4af",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libaddr2line-3cd74e189a6f4d87.rlib": "206ea3377c2c0c08bbc4a1bb0ae892b9ebb72e1c4802b4106418187a9308c3c6",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libaddr2line-3cd74e189a6f4d87.rmeta": "38a36ed9f9e0496988e70151ce4739a78ec244e648bf5d666e2ec0f90a8f0645",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libadler2-507326c23559c613.rlib": "e4a4074134c7b839df29b1f731215ad203be2c6994379a31d1f1665c504924bd",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libadler2-507326c23559c613.rmeta": "543a4ff82e8925dd9139455be6496e38fd6fc8d7c721f1168cb5b0fb768dfe1d",
+          "lib/rustlib/wasm32-unknown-unknown/lib/liballoc-60e4a9233ca579ff.rlib": "5b1bbbee1ba70cfd4c18e09d341ae6a78bbe84d7f38ec9883ea07a1c6934bc89",
+          "lib/rustlib/wasm32-unknown-unknown/lib/liballoc-60e4a9233ca579ff.rmeta": "9c61008913f6f728bbe16fc19994ac409f17c4046d99215a2f6a4a9cc25cd05c",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libcfg_if-71fa32e126895436.rlib": "cb4fcb9759db94ed97817558fd1644a5523ecc9c0f5ab372a3588efecc13649b",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libcfg_if-71fa32e126895436.rmeta": "fd0806875f69630469a96912e2d23a7218c3de26467156ed362dd6dc1f909854",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libcompiler_builtins-a04ccf7e8ccc832e.rlib": "ed923bc274219a0978d8be238b0be9a6d0827fb6ce0e766be5794677bec0f359",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libcompiler_builtins-a04ccf7e8ccc832e.rmeta": "874ac2094c6883621268b5b4c035067a787e80b23c6ed71c8adb82554268300e",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libcore-9805c7b640f9867c.rlib": "b1112ecc2a57e60286b4ad9f29eaf65e64d099c2aaf361ac67e6db3201668552",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libcore-9805c7b640f9867c.rmeta": "86d1d1b3432b4e1bc70c26f0b5348f5fd107b5ff5bc8c7ade385eba6c2d48e84",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libdlmalloc-4faba52ddb16ad03.rlib": "01a72ed6b635e5749ef315aac181626fc5432af3fa7bbc3a423b37945a84a3c1",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libdlmalloc-4faba52ddb16ad03.rmeta": "7eb4ad8f850427ca61c3f23254052ce2fb0ea0855d2408e4094bd57943cc3d49",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libgetopts-6b90c74fafbd5eef.rlib": "8b44bf59cb1287c84979602a4c707da9229fba7a7701af9190fea21a0b6a8473",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libgetopts-6b90c74fafbd5eef.rmeta": "62ab9e137b03b47cf6c05bfa43d4d62e6ff1a0683174d2faedeab50f1e69eb50",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libgimli-49ea8f93243efbbe.rlib": "bfd64b87424c65f73a6615c60164fe8845ec07810dbe8c27ec1823c98a950173",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libgimli-49ea8f93243efbbe.rmeta": "c3635b584401c81e6ea8626a71afc94a57545c5cc042a4df07cea36103aa8e23",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libhashbrown-636e6b6cd9a432b1.rlib": "6c9b8bfe3ff8c1e62193ca982e95dafc4febb3060fc3bec84e75c19f8029e913",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libhashbrown-636e6b6cd9a432b1.rmeta": "9f0eedac739b436cfec7c89b9818b88336c90b7f164e9d0db8b33542358afb13",
+          "lib/rustlib/wasm32-unknown-unknown/lib/liblibc-ef1cb137b03a6aa1.rlib": "1a303875a3c177a0078673d3b5253a22ac421f79247a36e6cbf8050aa05d692b",
+          "lib/rustlib/wasm32-unknown-unknown/lib/liblibc-ef1cb137b03a6aa1.rmeta": "3ff8a6a0c00f5b81af3317b56121cb8920f81c45fd2aa5f4dbf1a1ef790ec8fa",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libmemchr-67193b4c30cfc76a.rlib": "80cf1a20d34df48af48e3bbc51b71b0c01fc4f4cd9cac905ecc377699e4adcdd",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libmemchr-67193b4c30cfc76a.rmeta": "8fb213b3bf96bb3de3b5d1a244a5fee17e2cdedd6898337f22f19a51e815d9b3",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libminiz_oxide-94523b6346da92e7.rlib": "712cec2a0862c4af1fe60a8b814a118fbbba1b25cc658cb3cabde1827b595a3c",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libminiz_oxide-94523b6346da92e7.rmeta": "261c8c059e453f38dc44ff9ac738d92d9b6830e544c6ad51e79c84b108e69ce0",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libobject-500782c8ff70f6a4.rlib": "1b046a67858d95725b56954b009085a0de1fa59ae1b8cdbba9f11881ccaeef51",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libobject-500782c8ff70f6a4.rmeta": "8d9ba99ffc58e5bae50491c4a4b1eb9305654bbcacc60b183306763c970b2b7c",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libpanic_abort-3e63557bce47cbfe.rlib": "dcb07e005fe913e3dbcf7923d38e9a3e01dc5717dfde774f9ba0b7e942bddc6e",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libpanic_abort-3e63557bce47cbfe.rmeta": "882d2d7edb4360ba2f9dca85f0e39f1c8d0ba3b20d4201d82260fa58f6bed934",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libpanic_unwind-d7cb1cc552bb50e3.rlib": "072d72efe8f4f68ddcf23b028c3a59ecb657c7d61437a15325b88ef515de8f8c",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libpanic_unwind-d7cb1cc552bb50e3.rmeta": "d50e3987922d4f2af6cde1cb3c549e9beb2d660c77bac8c36c2f0647b19b7c4c",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libproc_macro-32d7aec2f3e2ad79.rlib": "e2d129d06bc898554924a31632418c58dae43a31ca680736b60f7d667db1dafa",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libproc_macro-32d7aec2f3e2ad79.rmeta": "a8e888c17ee66f0914f2bc16650a50056a13e58ab356cc43e4a399c5486fa7a6",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_demangle-f1c70bad4413622b.rlib": "ddcab0f81318082923368d2d29a2ed492e4305940c0c4d21e8a72d2bb90901cf",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_demangle-f1c70bad4413622b.rmeta": "f68114e753b1102bf2353389ca9dc8b58e5f13d2f3156808c8637799a74834a5",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_literal_escaper-8e3ed1ec1c82807f.rlib": "a7c0e129b86e3c3d9a9d53b35db8c1bec3b7afa2bda74148c5fb3053b165778f",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_literal_escaper-8e3ed1ec1c82807f.rmeta": "f2039260bc2131b8ba7cb1996391c3142a322c5189b00aa2c1851eab99fc2741",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_std_workspace_alloc-3accd415de66d5a0.rlib": "270c13ba889d7f9932d956ca3db38b85ab4ce7961e663a4d59c61851fbb9df37",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_std_workspace_alloc-3accd415de66d5a0.rmeta": "b54e6049032d1db19b12bf94701df74a249a7c5bcb9dd04da18982519da6da7a",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_std_workspace_core-8da230c471794c40.rlib": "0a3bdc6844cf2ef09462cd4393087c3f611a43d74c1ccf7afefd2677dc31ef18",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_std_workspace_core-8da230c471794c40.rmeta": "cc13f9561b217386de84af651637dc019f1cdd705cdfb13df81aa9a1fb57d555",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_std_workspace_std-a32429384170ab50.rlib": "beb252dd361563abf60b4b098d8dcd63660d9e0c91bf139c68e1b17bfa71e8fe",
+          "lib/rustlib/wasm32-unknown-unknown/lib/librustc_std_workspace_std-a32429384170ab50.rmeta": "cd5f6c52b38407d3984e203dce6234d7cb99df3470984293ec502184dc9c30f8",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libstd-b0dbb180bd911310.rlib": "231063b2981cdd62fdb6361ccef6898c909e1dc711fe71711a50cf2185d4fab2",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libstd-b0dbb180bd911310.rmeta": "082df6ab4c890df1ef1c3d8da6dee8c407edcc0802c8c23c2f0595d29b031d54",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libstd_detect-b5641f862812d661.rlib": "bfc0503022bac72f47c369a8983a8e0c34f9fee337ba7e4091ea27eed02d4a11",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libstd_detect-b5641f862812d661.rmeta": "befea5922fc4be9661ee9c18b01b2ca63ffd264a132cafa63fe643a2472cbc35",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libsysroot-87f6ccd49fca623f.rlib": "3fc6dee9e05009731dd966754d107090693cfb6eece24d9153da8079630bd521",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libsysroot-87f6ccd49fca623f.rmeta": "2df9193c878a0b51b8a56604cdf9e3528ff88fbe76ee2c44d9ba1124ba0205b1",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libtest-76009df629a16c07.rlib": "3bab6e951a77ebeea4a523242b71e9c7a5f9020d975f72bebe290161d47c7ed6",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libtest-76009df629a16c07.rmeta": "6ed4924842d0793269f644c695c826e51cb4b1f4bf390171a0e84fdf59da5ae7",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libunwind-03627ac106ee8a3b.rlib": "ce7daab6225f86507f3dcfa8aba0e817071fdfe9326c68a7552a4530e9a55244",
+          "lib/rustlib/wasm32-unknown-unknown/lib/libunwind-03627ac106ee8a3b.rmeta": "32e390d5db6875bd067b2881c2f3f79ae308dd9549c3f566b18296f5123d8ba5",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld.lld.exe": "ef7bf5a956cb7dab8144c19aeb936b4afd4f183c23ee2ac43e8fd7bf94b19298",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld.lld.pdb": "d0243a6b8f73e9a44c64fc63e172c88e040ca1e5e8c0d5b63c895213e11fc052",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld64.lld.exe": "ef7bf5a956cb7dab8144c19aeb936b4afd4f183c23ee2ac43e8fd7bf94b19298",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld64.lld.pdb": "d0243a6b8f73e9a44c64fc63e172c88e040ca1e5e8c0d5b63c895213e11fc052",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/lld-link.exe": "ef7bf5a956cb7dab8144c19aeb936b4afd4f183c23ee2ac43e8fd7bf94b19298",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/lld-link.pdb": "d0243a6b8f73e9a44c64fc63e172c88e040ca1e5e8c0d5b63c895213e11fc052",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/wasm-ld.exe": "ef7bf5a956cb7dab8144c19aeb936b4afd4f183c23ee2ac43e8fd7bf94b19298",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/wasm-ld.pdb": "d0243a6b8f73e9a44c64fc63e172c88e040ca1e5e8c0d5b63c895213e11fc052",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llc.exe": "9c2d7521238b3597a77f018c5d1d0cb1471b64af215683138323d74c9b1eafa0",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llubi.exe": "ec388c764fbf1b363641cb11f7860d85a3a8decacda3a63f20c61ccabff3a580",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-ar.exe": "8c6b9793c72cc727ac7bcd0b3dc3a15c0e2c5247fe11388b925c3bdd3e8cc752",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-as.exe": "f576ec126fe3ddba809879e9433d58f1682ea0b8c477bad902143f9fc50eb1c1",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-cov.exe": "d16876cb78a27b7c82df0562559401044e97e1eb18a4f9adfc57281802c06f3d",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-dis.exe": "1ef55957485db71d630290d8b7fc5fdb97ddce3207a9f83462bbafebd0f32312",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-link.exe": "86019c9090137b2fea153c2447a3d137f2cd5975b83ed6db0064edfa03d349a0",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-nm.exe": "7ba97dbf67ecaf3f11dbb4f69f77ff4f5a8e2dfb2618e0c407bf3d30cac1a02e",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-objcopy.exe": "1a49caa0421b87ce72eb4ca9c0873b200a6e1c09154a1ab9535025ea18cfcbc9",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-objdump.exe": "a5dab67af756da6a329ced191427f6c7f42612355285bcfedbec1cf55ebb3b08",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-profdata.exe": "2d23d66421bb3d322d709b8ca41212679b26465075b6b65fcc3e431909c8a1f0",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-readobj.exe": "1aa3ef38337ee38b0c951f6aef8cb53b797fd7c56f1e4ca9aee64831c49b5c52",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-size.exe": "0a5228ba55564ee0c9a01482f3dd9d905135d6c39413bb58b6b620e95d843c74",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-strip.exe": "1a49caa0421b87ce72eb4ca9c0873b200a6e1c09154a1ab9535025ea18cfcbc9",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/opt.exe": "7e422ba6eb09d8541b3fe3ca27d2df7abf4c9ecfda95599fbee3c84057700f0f",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/rust-lld.exe": "e0fa8a7304868dedd6f9fedc397f18dc26fd22fcf6dc8b94152ca90f7dd576a3",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/rust-objcopy.exe": "1a49caa0421b87ce72eb4ca9c0873b200a6e1c09154a1ab9535025ea18cfcbc9",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/liballoc-cfab945e8fe4d9e2.rlib": "a951629bfb4b56805e3f4f07aabfa8636b3679b62f689c31191cbe58b333d6a8",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/liballoc-cfab945e8fe4d9e2.rmeta": "7bc51cd8b896737136f7f82d65c99c411893c95cdc1d8b4942d4ff017d412f5c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcfg_if-cf46f9fc2970282b.rlib": "1211297c971994b2ca937e4e3267d55f380da2f5995f228f5c66824bdaf83f14",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcfg_if-cf46f9fc2970282b.rmeta": "68fb54d6f50977a73c4184de5a8079413dc584d84bc5bda8e55b921f7c89529d",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcompiler_builtins-65a88212fd8a8aec.rlib": "40a268fd284642c125f2e595150fb2ac54243d55f54848a65bf5a01f2c2c9bf4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcompiler_builtins-65a88212fd8a8aec.rmeta": "0e3c14a5b513f71c9b6b9fd57ca5ed635ccc49e2b4997ae04b7560b3379a96a9",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcore-3fc650ee022a398a.rlib": "14268b2b65ead78d77fa31f7657552cf33b58f6c8a2b82c138883359264aa6c3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcore-3fc650ee022a398a.rmeta": "6c23ffe673efd4d9f607f7ce2e2ceb7b7860f526b7d581d790a07b5598030251",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libgetopts-0960f7ce4e18b8ad.rlib": "568bbc49c88afd3277482cfc0def871480248202c3b29054956b3fda70e886f4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libgetopts-0960f7ce4e18b8ad.rmeta": "f1f326f0bf75ca5e9692609949a80a1fe47be3327d498de61954d78557522b2b",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libhashbrown-ec4f03d6d74b0e14.rlib": "2e53d55f29e99c3f3ad3f944c19117b906b1213346ebab15a1662cb4345d4bef",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libhashbrown-ec4f03d6d74b0e14.rmeta": "7733b42c90edff77bd7105ca1b7c1eef358d1b199eaa577b54ee99ddc92d6862",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_abort-d67bf0fd638744b6.rlib": "f7a8cae6b162eb9ed58bb2658a7e009b472b665e479ea54237b359f1e9da2cb7",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_abort-d67bf0fd638744b6.rmeta": "d8c98cc4c831de30b9fa199aa245fa956783dfac9f199d2391c9e4b61388d1f1",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_unwind-67237c48860b3bfc.rlib": "ffde968acea1a570ec76b0860211c22df6ddf4293f12645158c4ae7038735c7f",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_unwind-67237c48860b3bfc.rmeta": "9c8a6432fbaf212dcb68e3649270691143c897de5eaf910f4595bc3357e25bc4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libproc_macro-58cb9be0e4f5c299.rlib": "6d98acec63fff871cb130a40866767480fbe8185d421422427d5188302fdc59a",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libproc_macro-58cb9be0e4f5c299.rmeta": "261a87139c1c304e7ffb241b253b68482b9141310a4fa609fb1f1f31600db36e",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libprofiler_builtins-6b35920f0948c8f2.rlib": "05e66e7180560e0e2d2479f2a00eabb4f29dd6abf43f4ef211f7a608849d91fa",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libprofiler_builtins-6b35920f0948c8f2.rmeta": "7b32a1cd4d20ab8331aa5a7ccdc038e849f6f951819d1ec53289ceefc8f568e3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_demangle-599175bfef587c80.rlib": "d891a776e3aa0b14ff654f5130528c05a5f8e2c21df37c7cfc63a2fb7dc31270",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_demangle-599175bfef587c80.rmeta": "fa82446d30c30a73cc03bae88a7a69767b1cb6c16de9452d3fb5afc5c1971e75",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_literal_escaper-f7e542672f6b1766.rlib": "92fbf558b0a983c08af267820013c15dd6ba657daa78a667717f2b825ae1cd0c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_literal_escaper-f7e542672f6b1766.rmeta": "6b60b8bac2c09233b8796769cb674ecd6c20976a552bdbc06cc29722cf6e6d20",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_alloc-40bda2ca19ec0bbb.rlib": "235a69edb38cb480ffd8299502599cf23fed40b64c072337144c860b845b4b81",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_alloc-40bda2ca19ec0bbb.rmeta": "b6d7a609c324304ff2aa3c4a3994693761531196c05095e11c868b911edd4c59",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_core-2701facb9761efb8.rlib": "a2679b865f56dedb001d8553e2a5b87a4dee0153d56dc7be9d910b8a3564b439",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_core-2701facb9761efb8.rmeta": "27af15a57d638e5601669645bdae0c915641319798c9e76e9b2a874cde751ec1",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_std-fa5650f10fef4e9f.rlib": "a9c58aa5dbf011e155b0ecbcd8f1ab1bde471d59535b8610130673bab185c584",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_std-fa5650f10fef4e9f.rmeta": "dedeba494b2016929c4cc6b6de58fa9f6e05e0305d7e438355919f4c9d077bda",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd-e2f0fb81520f5a3a.rlib": "82a200d652617f15adc45e5cdad89e6b2cb0dcc305246f2423a8bb35ad49566f",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd-e2f0fb81520f5a3a.rmeta": "b89edea75eea825462c835434ff08f7d3bf6f65fd3622250c56a57c10bf8c5b2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd_detect-5ecc1c2789ba9f87.rlib": "c9b0b9ef2b932430b91aadfc9603f344bf7981bf32b01ee967746626dee7fbf2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd_detect-5ecc1c2789ba9f87.rmeta": "8e7b00b516cdf6df9b21dd90424bdf51eb6c975bf5aaf4145da7bbff62393fbf",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libsysroot-c7cbe8362902881d.rlib": "99143efe3f31abb4d21d53f699486d24770538d32ed1e5f04cbbf68a0de7e056",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libsysroot-c7cbe8362902881d.rmeta": "94bfab5ad4105acaa5013857ae6773fe2fe95ab498487acec2305929a11acb41",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libtest-914bc604bb2ae23f.rlib": "3d876e928f3f4965658a0ebe9662efc74846001339d09fcdf7f74387d567db45",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libtest-914bc604bb2ae23f.rmeta": "3f839e355803c221658e619378f7d352c01862177b2ec667545a3a25fb650cb2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libunwind-ac063fa78506cd86.rlib": "b605287d82fda4073bb94247cd659c1789d62e4b7c9bc94384ec91346ecdfbc3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libunwind-ac063fa78506cd86.rmeta": "b1258850d33a835f1c4b2535972cf985b42e1a08950e6b965dc2141fde06eb87",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libwindows_link-905cd66260c575b5.rlib": "a56d0af7da610e8a403156b6182e0d94e293822d56ce020a871e288448504b9c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libwindows_link-905cd66260c575b5.rmeta": "b8ca29ad78bc7688b4c429de90745983ddc5a27d8bfa803810563b623b954885",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.dll": "785bd1888e76e3ce87f29aecb8cf18551e871b11a1745dbcddef0843fd960da0",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.dll.lib": "9848dfda2d13fa9f4b358f01b0741d1457f96f242be39a6ef41460673d0402bc",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.pdb": "e79a8f895ebf86f8e66d19e0d192b44e5b85cf7b131a85ca4ecbd95b54b7b7a6",
+          "LICENSE-APACHE": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "LICENSE-MIT": "b71bd43a069ca0641a9ecfe585ca7b3c53b5cc1608f8b68321168698e28b5ea1"
+        },
+        "archive_sha256": "7a0b5c72de7893781c9e6760b4d0e9eb32e1a52c9b7d5cca3b037db88552e65a"
+      },
+      "pgo": {
+        "phase": "pgo",
+        "host": "x86_64-pc-windows-msvc",
+        "rust_sha": "5b615ab3eb2cd5a26afc6025b5863180ffdc20d7",
+        "tools": {
+          "files": {
+            "cl.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe",
+              "sha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57"
+            },
+            "link.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe",
+              "sha256": "a8c42e25c91ca2453e1110540ac08f0fc12d7539454a11b9af8baeecb469837d"
+            },
+            "lib.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\lib.exe",
+              "sha256": "d8dae02a50c7571c6c0ea5cd7a853830aaca8fad13f8f4be147828d51dd4adec"
+            },
+            "cmake.exe": {
+              "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+              "sha256": "ab8247ca4554871e5d75c0ee118ee8663727bd6fdf37ad76b17e9cc8d5f286a8"
+            },
+            "ninja.exe": {
+              "path": "C:\\ProgramData\\Chocolatey\\bin\\ninja.exe",
+              "sha256": "888273ee8ba2b002a271e0a10abb5480414a52742825355472ef2765496336f6"
+            },
+            "clang-cl.exe": {
+              "path": "D:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\harness\\tools\\clang\\bin\\clang-cl.exe",
+              "sha256": "986af49c2d1eefeac324f724ff54597753d1053927fa5d58a37a457f578e1cf8"
+            },
+            "llvm-profdata.exe": {
+              "path": "D:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\harness\\tools\\clang\\bin\\llvm-profdata.exe",
+              "sha256": "7d10da23d1388ec214e2769cab2553d50192c85cb8cce8b61f720ac43c6a48a1"
+            }
+          },
+          "msvc": "14.51.36231",
+          "sdk": "10.0.26100.0\\",
+          "image": "20260925.250.1"
+        },
+        "run_id": "38021536352",
+        "attempt": "1",
+        "profiles": {
+          "llvm-pgo.profdata": "e5a40cad19e9a43fc34c7a1ddfbb5e3ea12f340231814649ae99f74d8bfd0b8d",
+          "rustc-pgo.profdata": "16d695b1ae2a2ef826bff603e502aa3b2fcef88cdf6cc43eb22aa4add4251863"
+        },
+        "scope": "compiler-only, not release packaging or full tool PGO",
+        "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+        "perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
+        "profiling_runtime_sources": {
+          "InstrProfilingMerge.c": "b4eb470286b8006e5eac7c7301efa6fea4f7890d3a25280a058324b4a860250c",
+          "InstrProfilingPlatformWindows.c": "4b964e3ed045710e1de050e78c8ce8f4c68cb2b0c2ba094c226171eb1fcd5726"
+        },
+        "profile_parent_sha256": "baf9e99e1dfd98682bf8e4a3ecd50dd8c5ebaa7e02655156da66adc56c64b366",
+        "profile_parent_runtime_sources": {
+          "InstrProfilingMerge.c": "b4eb470286b8006e5eac7c7301efa6fea4f7890d3a25280a058324b4a860250c",
+          "InstrProfilingPlatformWindows.c": "4b964e3ed045710e1de050e78c8ce8f4c68cb2b0c2ba094c226171eb1fcd5726"
+        },
+        "training": {
+          "rustc-profile": {
+            "crates": [
+              "externs",
+              "ctfe-stress-5",
+              "cargo-0.87.1",
+              "token-stream-stress",
+              "match-stress",
+              "tuple-stress",
+              "diesel-2.2.10",
+              "bitmaps-3.2.1",
+              "serde-1.0.219-new-solver"
+            ],
+            "cargo": "pinned stage0 (uninstrumented, compiler-only experiment)",
+            "token_stream_lockfile_sha256": "af3d36ba060cad6b5a1c8ce2a8f311d8885d6347cbd64ff8b518e3d932f61196",
+            "coverage": {
+              "rustc_middle": {
+                "functions": 32115,
+                "active_functions": 10104
+              },
+              "rustc_mir_transform": {
+                "functions": 3685,
+                "active_functions": 1633
+              }
+            }
+          },
+          "llvm-profile": {
+            "crates": [
+              "syn-2.0.101",
+              "cargo-0.87.1",
+              "serde-1.0.219",
+              "ripgrep-14.1.1",
+              "regex-automata-0.4.8",
+              "clap_derive-4.5.32",
+              "hyper-1.6.0"
+            ],
+            "cargo": "pinned stage0 (uninstrumented, compiler-only experiment)",
+            "token_stream_lockfile_sha256": "af3d36ba060cad6b5a1c8ce2a8f311d8885d6347cbd64ff8b518e3d932f61196",
+            "coverage": {
+              "X86TargetLowering": {
+                "functions": 273,
+                "active_functions": 178
+              },
+              "InstCombine": {
+                "functions": 979,
+                "active_functions": 645
+              }
+            }
+          }
+        },
+        "rustc_version": "rustc 1.101.0-nightly (5b615ab3e 2026-10-09)\nbinary: rustc\ncommit-hash: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7\ncommit-date: 2026-10-09\nhost: x86_64-pc-windows-msvc\nrelease: 1.101.0-nightly\nLLVM version: 23.1.3\n",
+        "files": {
+          "bin/rustc.exe": "b976acab2969b83de5e320737e9d04f3f62797ae986138d9214a131bc1d4f4f9",
+          "bin/rustc.pdb": "b7c53818c0833c27eccf425ace3269e10ac4a7e139268c442115af7d2a5572b6",
+          "bin/rustc_driver-8e262f0bf52865a9.dll": "aa3c799b3f593c25246303dd76729301619407498f66de39e7c4c755b494d1df",
+          "bin/rustc_driver-8e262f0bf52865a9.pdb": "2062310854ce70f694f9831851ec0fd1ff579d31ec5c870bef60d5c37eac0e27",
+          "bin/rustc_main-8c96267e074d0c9b.pdb": "b7c53818c0833c27eccf425ace3269e10ac4a7e139268c442115af7d2a5572b6",
+          "COPYRIGHT": "172020dbfd5b53a226dfde77616190a48dcff519b0bc0e6deb91a8450782c4af",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld.lld.exe": "56b38eb6a42d369669cd36a3e7734170b05d05a9011acc60c052d7d50dfd076a",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld.lld.pdb": "10a8d749dcfc19f1c9be81256942886987c263615a49c547fa2d343627a13874",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld64.lld.exe": "56b38eb6a42d369669cd36a3e7734170b05d05a9011acc60c052d7d50dfd076a",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld64.lld.pdb": "10a8d749dcfc19f1c9be81256942886987c263615a49c547fa2d343627a13874",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/lld-link.exe": "56b38eb6a42d369669cd36a3e7734170b05d05a9011acc60c052d7d50dfd076a",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/lld-link.pdb": "10a8d749dcfc19f1c9be81256942886987c263615a49c547fa2d343627a13874",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/wasm-ld.exe": "56b38eb6a42d369669cd36a3e7734170b05d05a9011acc60c052d7d50dfd076a",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/wasm-ld.pdb": "10a8d749dcfc19f1c9be81256942886987c263615a49c547fa2d343627a13874",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llc.exe": "1adfb801528e4da8724895b4db998c8314f09a013e4f2dd735494a86ba740283",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llubi.exe": "412674685be903b68479a10fb9fe9c9d11b1136ee3e3fb727f58f403bbb2d552",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-ar.exe": "2c470d3abcc24a8e0214f8dbc7c2281c956e53e51949379791f835eba480d4a7",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-as.exe": "45823a611338982207a59528eb1e122d4d779d61f2ac70c849d3b22923e63888",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-cov.exe": "bbd5d2d49b1cf52e46716f94160612786d9d9ad6b7fac79b015ba7e65a532dea",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-dis.exe": "bc6c652750bb6832fd5e710e18b73ec5ff12522f6a23ad8670ef2ea70bc729c2",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-link.exe": "cd10345df50d69b68883712b11f1e8b7dd1ef49ee22ca1da7d78f7ac565df406",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-nm.exe": "e6c36c7226a7029da1494a0c9ee4c2862b090baa29aaff7f60979673b18f7654",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-objcopy.exe": "b0963157685afbaf305488efd500812e8cd71e8baf615c690cde4942f9bdab21",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-objdump.exe": "2b6905355bedd1a0cd3e18a89b4ca3c68c21b5416c3163a6f81b6331806ba9aa",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-profdata.exe": "0394bf2ab29346b0c1a042f0a1e014ea475e6a06619daae6dfeb4629ba507284",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-readobj.exe": "5e075de12638b2fe4981147fe98f6a125b339d6d2f85566ffdcb9ab980683a8b",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-size.exe": "777f61721d9c51bd19444c3ccd8474144772d07758e1cb362621c617e37e0eb1",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-strip.exe": "b0963157685afbaf305488efd500812e8cd71e8baf615c690cde4942f9bdab21",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/opt.exe": "6282113bf682d65d979015f05552e079070af76e741cab658ef8c65d1add7723",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/rust-lld.exe": "00939a7c298084353c2d4fa1c85dc1f144e6892f59f6ad4df82d6c95a47af4e2",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/rust-objcopy.exe": "b0963157685afbaf305488efd500812e8cd71e8baf615c690cde4942f9bdab21",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/liballoc-cfab945e8fe4d9e2.rlib": "a951629bfb4b56805e3f4f07aabfa8636b3679b62f689c31191cbe58b333d6a8",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/liballoc-cfab945e8fe4d9e2.rmeta": "7bc51cd8b896737136f7f82d65c99c411893c95cdc1d8b4942d4ff017d412f5c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcfg_if-cf46f9fc2970282b.rlib": "1211297c971994b2ca937e4e3267d55f380da2f5995f228f5c66824bdaf83f14",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcfg_if-cf46f9fc2970282b.rmeta": "68fb54d6f50977a73c4184de5a8079413dc584d84bc5bda8e55b921f7c89529d",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcompiler_builtins-65a88212fd8a8aec.rlib": "40a268fd284642c125f2e595150fb2ac54243d55f54848a65bf5a01f2c2c9bf4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcompiler_builtins-65a88212fd8a8aec.rmeta": "0e3c14a5b513f71c9b6b9fd57ca5ed635ccc49e2b4997ae04b7560b3379a96a9",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcore-3fc650ee022a398a.rlib": "14268b2b65ead78d77fa31f7657552cf33b58f6c8a2b82c138883359264aa6c3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcore-3fc650ee022a398a.rmeta": "6c23ffe673efd4d9f607f7ce2e2ceb7b7860f526b7d581d790a07b5598030251",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libgetopts-0960f7ce4e18b8ad.rlib": "568bbc49c88afd3277482cfc0def871480248202c3b29054956b3fda70e886f4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libgetopts-0960f7ce4e18b8ad.rmeta": "f1f326f0bf75ca5e9692609949a80a1fe47be3327d498de61954d78557522b2b",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libhashbrown-ec4f03d6d74b0e14.rlib": "2e53d55f29e99c3f3ad3f944c19117b906b1213346ebab15a1662cb4345d4bef",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libhashbrown-ec4f03d6d74b0e14.rmeta": "7733b42c90edff77bd7105ca1b7c1eef358d1b199eaa577b54ee99ddc92d6862",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_abort-d67bf0fd638744b6.rlib": "f7a8cae6b162eb9ed58bb2658a7e009b472b665e479ea54237b359f1e9da2cb7",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_abort-d67bf0fd638744b6.rmeta": "d8c98cc4c831de30b9fa199aa245fa956783dfac9f199d2391c9e4b61388d1f1",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_unwind-67237c48860b3bfc.rlib": "ffde968acea1a570ec76b0860211c22df6ddf4293f12645158c4ae7038735c7f",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_unwind-67237c48860b3bfc.rmeta": "9c8a6432fbaf212dcb68e3649270691143c897de5eaf910f4595bc3357e25bc4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libproc_macro-58cb9be0e4f5c299.rlib": "6d98acec63fff871cb130a40866767480fbe8185d421422427d5188302fdc59a",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libproc_macro-58cb9be0e4f5c299.rmeta": "261a87139c1c304e7ffb241b253b68482b9141310a4fa609fb1f1f31600db36e",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libprofiler_builtins-6b35920f0948c8f2.rlib": "05e66e7180560e0e2d2479f2a00eabb4f29dd6abf43f4ef211f7a608849d91fa",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libprofiler_builtins-6b35920f0948c8f2.rmeta": "7b32a1cd4d20ab8331aa5a7ccdc038e849f6f951819d1ec53289ceefc8f568e3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_demangle-599175bfef587c80.rlib": "d891a776e3aa0b14ff654f5130528c05a5f8e2c21df37c7cfc63a2fb7dc31270",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_demangle-599175bfef587c80.rmeta": "fa82446d30c30a73cc03bae88a7a69767b1cb6c16de9452d3fb5afc5c1971e75",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_literal_escaper-f7e542672f6b1766.rlib": "92fbf558b0a983c08af267820013c15dd6ba657daa78a667717f2b825ae1cd0c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_literal_escaper-f7e542672f6b1766.rmeta": "6b60b8bac2c09233b8796769cb674ecd6c20976a552bdbc06cc29722cf6e6d20",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_alloc-40bda2ca19ec0bbb.rlib": "235a69edb38cb480ffd8299502599cf23fed40b64c072337144c860b845b4b81",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_alloc-40bda2ca19ec0bbb.rmeta": "b6d7a609c324304ff2aa3c4a3994693761531196c05095e11c868b911edd4c59",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_core-2701facb9761efb8.rlib": "a2679b865f56dedb001d8553e2a5b87a4dee0153d56dc7be9d910b8a3564b439",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_core-2701facb9761efb8.rmeta": "27af15a57d638e5601669645bdae0c915641319798c9e76e9b2a874cde751ec1",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_std-fa5650f10fef4e9f.rlib": "a9c58aa5dbf011e155b0ecbcd8f1ab1bde471d59535b8610130673bab185c584",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_std-fa5650f10fef4e9f.rmeta": "dedeba494b2016929c4cc6b6de58fa9f6e05e0305d7e438355919f4c9d077bda",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd-e2f0fb81520f5a3a.rlib": "82a200d652617f15adc45e5cdad89e6b2cb0dcc305246f2423a8bb35ad49566f",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd-e2f0fb81520f5a3a.rmeta": "b89edea75eea825462c835434ff08f7d3bf6f65fd3622250c56a57c10bf8c5b2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd_detect-5ecc1c2789ba9f87.rlib": "c9b0b9ef2b932430b91aadfc9603f344bf7981bf32b01ee967746626dee7fbf2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd_detect-5ecc1c2789ba9f87.rmeta": "8e7b00b516cdf6df9b21dd90424bdf51eb6c975bf5aaf4145da7bbff62393fbf",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libsysroot-c7cbe8362902881d.rlib": "99143efe3f31abb4d21d53f699486d24770538d32ed1e5f04cbbf68a0de7e056",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libsysroot-c7cbe8362902881d.rmeta": "94bfab5ad4105acaa5013857ae6773fe2fe95ab498487acec2305929a11acb41",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libtest-914bc604bb2ae23f.rlib": "3d876e928f3f4965658a0ebe9662efc74846001339d09fcdf7f74387d567db45",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libtest-914bc604bb2ae23f.rmeta": "3f839e355803c221658e619378f7d352c01862177b2ec667545a3a25fb650cb2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libunwind-ac063fa78506cd86.rlib": "b605287d82fda4073bb94247cd659c1789d62e4b7c9bc94384ec91346ecdfbc3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libunwind-ac063fa78506cd86.rmeta": "b1258850d33a835f1c4b2535972cf985b42e1a08950e6b965dc2141fde06eb87",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libwindows_link-905cd66260c575b5.rlib": "a56d0af7da610e8a403156b6182e0d94e293822d56ce020a871e288448504b9c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libwindows_link-905cd66260c575b5.rmeta": "b8ca29ad78bc7688b4c429de90745983ddc5a27d8bfa803810563b623b954885",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.dll": "9cbce93ab195f3a41a9ff6b7b0018f5bfec5f6e06af832d0cbb99cb91f415c0d",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.dll.lib": "9848dfda2d13fa9f4b358f01b0741d1457f96f242be39a6ef41460673d0402bc",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.pdb": "9d8442f2d9b1e9de0c4a80dad79a374f957eb780df5da58453cb661058022d66",
+          "LICENSE-APACHE": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "LICENSE-MIT": "b71bd43a069ca0641a9ecfe585ca7b3c53b5cc1608f8b68321168698e28b5ea1"
+        },
+        "archive_sha256": "0d46ca59b0569819c6a2afeed1c7771a567a6e3683e1dfc879fb1d5a5737f2c5"
+      },
+      "pgo-rust-thin": {
+        "phase": "pgo-rust-thin",
+        "host": "x86_64-pc-windows-msvc",
+        "rust_sha": "5b615ab3eb2cd5a26afc6025b5863180ffdc20d7",
+        "tools": {
+          "files": {
+            "cl.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe",
+              "sha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57"
+            },
+            "link.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe",
+              "sha256": "a8c42e25c91ca2453e1110540ac08f0fc12d7539454a11b9af8baeecb469837d"
+            },
+            "lib.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\lib.exe",
+              "sha256": "d8dae02a50c7571c6c0ea5cd7a853830aaca8fad13f8f4be147828d51dd4adec"
+            },
+            "cmake.exe": {
+              "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+              "sha256": "ab8247ca4554871e5d75c0ee118ee8663727bd6fdf37ad76b17e9cc8d5f286a8"
+            },
+            "ninja.exe": {
+              "path": "C:\\ProgramData\\Chocolatey\\bin\\ninja.exe",
+              "sha256": "888273ee8ba2b002a271e0a10abb5480414a52742825355472ef2765496336f6"
+            },
+            "clang-cl.exe": {
+              "path": "D:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\harness\\tools\\clang\\bin\\clang-cl.exe",
+              "sha256": "986af49c2d1eefeac324f724ff54597753d1053927fa5d58a37a457f578e1cf8"
+            },
+            "llvm-profdata.exe": {
+              "path": "D:\\a\\IronRDP-ci-benchmark\\IronRDP-ci-benchmark\\harness\\tools\\clang\\bin\\llvm-profdata.exe",
+              "sha256": "7d10da23d1388ec214e2769cab2553d50192c85cb8cce8b61f720ac43c6a48a1"
+            }
+          },
+          "msvc": "14.51.36231",
+          "sdk": "10.0.26100.0\\",
+          "image": "20260925.250.1"
+        },
+        "run_id": "38021536352",
+        "attempt": "1",
+        "profiles": {
+          "llvm-pgo.profdata": "e5a40cad19e9a43fc34c7a1ddfbb5e3ea12f340231814649ae99f74d8bfd0b8d",
+          "rustc-pgo.profdata": "16d695b1ae2a2ef826bff603e502aa3b2fcef88cdf6cc43eb22aa4add4251863"
+        },
+        "scope": "compiler-only, not release packaging or full tool PGO",
+        "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+        "perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
+        "profiling_runtime_sources": {
+          "InstrProfilingMerge.c": "b4eb470286b8006e5eac7c7301efa6fea4f7890d3a25280a058324b4a860250c",
+          "InstrProfilingPlatformWindows.c": "4b964e3ed045710e1de050e78c8ce8f4c68cb2b0c2ba094c226171eb1fcd5726"
+        },
+        "profile_parent_sha256": "baf9e99e1dfd98682bf8e4a3ecd50dd8c5ebaa7e02655156da66adc56c64b366",
+        "profile_parent_runtime_sources": {
+          "InstrProfilingMerge.c": "b4eb470286b8006e5eac7c7301efa6fea4f7890d3a25280a058324b4a860250c",
+          "InstrProfilingPlatformWindows.c": "4b964e3ed045710e1de050e78c8ce8f4c68cb2b0c2ba094c226171eb1fcd5726"
+        },
+        "training": {
+          "rustc-profile": {
+            "crates": [
+              "externs",
+              "ctfe-stress-5",
+              "cargo-0.87.1",
+              "token-stream-stress",
+              "match-stress",
+              "tuple-stress",
+              "diesel-2.2.10",
+              "bitmaps-3.2.1",
+              "serde-1.0.219-new-solver"
+            ],
+            "cargo": "pinned stage0 (uninstrumented, compiler-only experiment)",
+            "token_stream_lockfile_sha256": "af3d36ba060cad6b5a1c8ce2a8f311d8885d6347cbd64ff8b518e3d932f61196",
+            "coverage": {
+              "rustc_middle": {
+                "functions": 32115,
+                "active_functions": 10104
+              },
+              "rustc_mir_transform": {
+                "functions": 3685,
+                "active_functions": 1633
+              }
+            }
+          },
+          "llvm-profile": {
+            "crates": [
+              "syn-2.0.101",
+              "cargo-0.87.1",
+              "serde-1.0.219",
+              "ripgrep-14.1.1",
+              "regex-automata-0.4.8",
+              "clap_derive-4.5.32",
+              "hyper-1.6.0"
+            ],
+            "cargo": "pinned stage0 (uninstrumented, compiler-only experiment)",
+            "token_stream_lockfile_sha256": "af3d36ba060cad6b5a1c8ce2a8f311d8885d6347cbd64ff8b518e3d932f61196",
+            "coverage": {
+              "X86TargetLowering": {
+                "functions": 273,
+                "active_functions": 178
+              },
+              "InstCombine": {
+                "functions": 979,
+                "active_functions": 645
+              }
+            }
+          }
+        },
+        "rustc_version": "rustc 1.101.0-nightly (5b615ab3e 2026-10-09)\nbinary: rustc\ncommit-hash: 5b615ab3eb2cd5a26afc6025b5863180ffdc20d7\ncommit-date: 2026-10-09\nhost: x86_64-pc-windows-msvc\nrelease: 1.101.0-nightly\nLLVM version: 23.1.3\n",
+        "files": {
+          "bin/rustc.exe": "bde92d9538d66690a061c8496b18368623367be05a907a72b4468d3201e953de",
+          "bin/rustc.pdb": "7238bb7ada33ce28ad9d60a3c97bdce4466d53592b2c70d602d06ced5aaa4c9c",
+          "bin/rustc_driver-2e369414645472af.dll": "fea428dfc9f25769839e3d7a179edeabf4e14de2c6e47019a76c723ecdeed9b4",
+          "bin/rustc_driver-2e369414645472af.pdb": "a320fe6134598be12ae1b76406725703f93227a134ceaa9693e36093b21c9efc",
+          "bin/rustc_main-cd0af45e04d9b98f.pdb": "7238bb7ada33ce28ad9d60a3c97bdce4466d53592b2c70d602d06ced5aaa4c9c",
+          "COPYRIGHT": "172020dbfd5b53a226dfde77616190a48dcff519b0bc0e6deb91a8450782c4af",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld.lld.exe": "30d79d6b0452d2e5fcbd067b0f37f6b9cd7f15ff95919a35382ad65f9495f514",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld.lld.pdb": "93aa547f8ae84d596f745f20c1c021ca0c9c31c6565f0e9570cd9beb5cc94727",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld64.lld.exe": "30d79d6b0452d2e5fcbd067b0f37f6b9cd7f15ff95919a35382ad65f9495f514",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/ld64.lld.pdb": "93aa547f8ae84d596f745f20c1c021ca0c9c31c6565f0e9570cd9beb5cc94727",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/lld-link.exe": "30d79d6b0452d2e5fcbd067b0f37f6b9cd7f15ff95919a35382ad65f9495f514",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/lld-link.pdb": "93aa547f8ae84d596f745f20c1c021ca0c9c31c6565f0e9570cd9beb5cc94727",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/wasm-ld.exe": "30d79d6b0452d2e5fcbd067b0f37f6b9cd7f15ff95919a35382ad65f9495f514",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/gcc-ld/wasm-ld.pdb": "93aa547f8ae84d596f745f20c1c021ca0c9c31c6565f0e9570cd9beb5cc94727",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llc.exe": "1adfb801528e4da8724895b4db998c8314f09a013e4f2dd735494a86ba740283",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llubi.exe": "412674685be903b68479a10fb9fe9c9d11b1136ee3e3fb727f58f403bbb2d552",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-ar.exe": "2c470d3abcc24a8e0214f8dbc7c2281c956e53e51949379791f835eba480d4a7",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-as.exe": "45823a611338982207a59528eb1e122d4d779d61f2ac70c849d3b22923e63888",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-cov.exe": "bbd5d2d49b1cf52e46716f94160612786d9d9ad6b7fac79b015ba7e65a532dea",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-dis.exe": "bc6c652750bb6832fd5e710e18b73ec5ff12522f6a23ad8670ef2ea70bc729c2",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-link.exe": "cd10345df50d69b68883712b11f1e8b7dd1ef49ee22ca1da7d78f7ac565df406",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-nm.exe": "e6c36c7226a7029da1494a0c9ee4c2862b090baa29aaff7f60979673b18f7654",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-objcopy.exe": "b0963157685afbaf305488efd500812e8cd71e8baf615c690cde4942f9bdab21",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-objdump.exe": "2b6905355bedd1a0cd3e18a89b4ca3c68c21b5416c3163a6f81b6331806ba9aa",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-profdata.exe": "0394bf2ab29346b0c1a042f0a1e014ea475e6a06619daae6dfeb4629ba507284",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-readobj.exe": "5e075de12638b2fe4981147fe98f6a125b339d6d2f85566ffdcb9ab980683a8b",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-size.exe": "777f61721d9c51bd19444c3ccd8474144772d07758e1cb362621c617e37e0eb1",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/llvm-strip.exe": "b0963157685afbaf305488efd500812e8cd71e8baf615c690cde4942f9bdab21",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/opt.exe": "6282113bf682d65d979015f05552e079070af76e741cab658ef8c65d1add7723",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/rust-lld.exe": "00939a7c298084353c2d4fa1c85dc1f144e6892f59f6ad4df82d6c95a47af4e2",
+          "lib/rustlib/x86_64-pc-windows-msvc/bin/rust-objcopy.exe": "b0963157685afbaf305488efd500812e8cd71e8baf615c690cde4942f9bdab21",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/liballoc-cfab945e8fe4d9e2.rlib": "a951629bfb4b56805e3f4f07aabfa8636b3679b62f689c31191cbe58b333d6a8",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/liballoc-cfab945e8fe4d9e2.rmeta": "7bc51cd8b896737136f7f82d65c99c411893c95cdc1d8b4942d4ff017d412f5c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcfg_if-cf46f9fc2970282b.rlib": "1211297c971994b2ca937e4e3267d55f380da2f5995f228f5c66824bdaf83f14",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcfg_if-cf46f9fc2970282b.rmeta": "68fb54d6f50977a73c4184de5a8079413dc584d84bc5bda8e55b921f7c89529d",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcompiler_builtins-65a88212fd8a8aec.rlib": "40a268fd284642c125f2e595150fb2ac54243d55f54848a65bf5a01f2c2c9bf4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcompiler_builtins-65a88212fd8a8aec.rmeta": "0e3c14a5b513f71c9b6b9fd57ca5ed635ccc49e2b4997ae04b7560b3379a96a9",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcore-3fc650ee022a398a.rlib": "14268b2b65ead78d77fa31f7657552cf33b58f6c8a2b82c138883359264aa6c3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libcore-3fc650ee022a398a.rmeta": "6c23ffe673efd4d9f607f7ce2e2ceb7b7860f526b7d581d790a07b5598030251",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libgetopts-0960f7ce4e18b8ad.rlib": "568bbc49c88afd3277482cfc0def871480248202c3b29054956b3fda70e886f4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libgetopts-0960f7ce4e18b8ad.rmeta": "f1f326f0bf75ca5e9692609949a80a1fe47be3327d498de61954d78557522b2b",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libhashbrown-ec4f03d6d74b0e14.rlib": "2e53d55f29e99c3f3ad3f944c19117b906b1213346ebab15a1662cb4345d4bef",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libhashbrown-ec4f03d6d74b0e14.rmeta": "7733b42c90edff77bd7105ca1b7c1eef358d1b199eaa577b54ee99ddc92d6862",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_abort-d67bf0fd638744b6.rlib": "f7a8cae6b162eb9ed58bb2658a7e009b472b665e479ea54237b359f1e9da2cb7",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_abort-d67bf0fd638744b6.rmeta": "d8c98cc4c831de30b9fa199aa245fa956783dfac9f199d2391c9e4b61388d1f1",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_unwind-67237c48860b3bfc.rlib": "ffde968acea1a570ec76b0860211c22df6ddf4293f12645158c4ae7038735c7f",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libpanic_unwind-67237c48860b3bfc.rmeta": "9c8a6432fbaf212dcb68e3649270691143c897de5eaf910f4595bc3357e25bc4",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libproc_macro-58cb9be0e4f5c299.rlib": "6d98acec63fff871cb130a40866767480fbe8185d421422427d5188302fdc59a",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libproc_macro-58cb9be0e4f5c299.rmeta": "261a87139c1c304e7ffb241b253b68482b9141310a4fa609fb1f1f31600db36e",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libprofiler_builtins-6b35920f0948c8f2.rlib": "05e66e7180560e0e2d2479f2a00eabb4f29dd6abf43f4ef211f7a608849d91fa",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libprofiler_builtins-6b35920f0948c8f2.rmeta": "7b32a1cd4d20ab8331aa5a7ccdc038e849f6f951819d1ec53289ceefc8f568e3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_demangle-599175bfef587c80.rlib": "d891a776e3aa0b14ff654f5130528c05a5f8e2c21df37c7cfc63a2fb7dc31270",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_demangle-599175bfef587c80.rmeta": "fa82446d30c30a73cc03bae88a7a69767b1cb6c16de9452d3fb5afc5c1971e75",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_literal_escaper-f7e542672f6b1766.rlib": "92fbf558b0a983c08af267820013c15dd6ba657daa78a667717f2b825ae1cd0c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_literal_escaper-f7e542672f6b1766.rmeta": "6b60b8bac2c09233b8796769cb674ecd6c20976a552bdbc06cc29722cf6e6d20",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_alloc-40bda2ca19ec0bbb.rlib": "235a69edb38cb480ffd8299502599cf23fed40b64c072337144c860b845b4b81",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_alloc-40bda2ca19ec0bbb.rmeta": "b6d7a609c324304ff2aa3c4a3994693761531196c05095e11c868b911edd4c59",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_core-2701facb9761efb8.rlib": "a2679b865f56dedb001d8553e2a5b87a4dee0153d56dc7be9d910b8a3564b439",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_core-2701facb9761efb8.rmeta": "27af15a57d638e5601669645bdae0c915641319798c9e76e9b2a874cde751ec1",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_std-fa5650f10fef4e9f.rlib": "a9c58aa5dbf011e155b0ecbcd8f1ab1bde471d59535b8610130673bab185c584",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/librustc_std_workspace_std-fa5650f10fef4e9f.rmeta": "dedeba494b2016929c4cc6b6de58fa9f6e05e0305d7e438355919f4c9d077bda",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd-e2f0fb81520f5a3a.rlib": "82a200d652617f15adc45e5cdad89e6b2cb0dcc305246f2423a8bb35ad49566f",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd-e2f0fb81520f5a3a.rmeta": "b89edea75eea825462c835434ff08f7d3bf6f65fd3622250c56a57c10bf8c5b2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd_detect-5ecc1c2789ba9f87.rlib": "c9b0b9ef2b932430b91aadfc9603f344bf7981bf32b01ee967746626dee7fbf2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libstd_detect-5ecc1c2789ba9f87.rmeta": "8e7b00b516cdf6df9b21dd90424bdf51eb6c975bf5aaf4145da7bbff62393fbf",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libsysroot-c7cbe8362902881d.rlib": "99143efe3f31abb4d21d53f699486d24770538d32ed1e5f04cbbf68a0de7e056",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libsysroot-c7cbe8362902881d.rmeta": "94bfab5ad4105acaa5013857ae6773fe2fe95ab498487acec2305929a11acb41",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libtest-914bc604bb2ae23f.rlib": "3d876e928f3f4965658a0ebe9662efc74846001339d09fcdf7f74387d567db45",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libtest-914bc604bb2ae23f.rmeta": "3f839e355803c221658e619378f7d352c01862177b2ec667545a3a25fb650cb2",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libunwind-ac063fa78506cd86.rlib": "b605287d82fda4073bb94247cd659c1789d62e4b7c9bc94384ec91346ecdfbc3",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libunwind-ac063fa78506cd86.rmeta": "b1258850d33a835f1c4b2535972cf985b42e1a08950e6b965dc2141fde06eb87",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libwindows_link-905cd66260c575b5.rlib": "a56d0af7da610e8a403156b6182e0d94e293822d56ce020a871e288448504b9c",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/libwindows_link-905cd66260c575b5.rmeta": "b8ca29ad78bc7688b4c429de90745983ddc5a27d8bfa803810563b623b954885",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.dll": "43fa0518fbfb18766c3974a271ead15c04c2cb73eadc0269a237fde17b3ac8e5",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.dll.lib": "9848dfda2d13fa9f4b358f01b0741d1457f96f242be39a6ef41460673d0402bc",
+          "lib/rustlib/x86_64-pc-windows-msvc/lib/std-e2f0fb81520f5a3a.pdb": "e56767135c5e67681b00d57dfbcefec286132e3732b9c833cfa5e709db404af9",
+          "LICENSE-APACHE": "62c7a1e35f56406896d7aa7ca52d0cc0d272ac022b5d2796e7d6905db8a3636a",
+          "LICENSE-MIT": "b71bd43a069ca0641a9ecfe585ca7b3c53b5cc1608f8b68321168698e28b5ea1"
+        },
+        "archive_sha256": "feb72a255504e59df92c56d6d94c67e869dcbc3068e327c0faaad498e5a39771"
+      }
+    }
+  },
+  "construction": {
+    "stages": {
+      "x86_64-pc-windows-msvc/baseline": {
+        "build": {
+          "wall_seconds": 2760.8411014,
+          "cpu_seconds": 9408.8125
+        },
+        "smoke-compile": {
+          "wall_seconds": 0.9908583000001272,
+          "cpu_seconds": 0.40625
+        },
+        "smoke-run": {
+          "wall_seconds": 0.008295499999803724,
+          "cpu_seconds": 0.0
+        }
+      },
+      "x86_64-pc-windows-msvc/llvm-profile": {
+        "build": {
+          "wall_seconds": 5712.3133722,
+          "cpu_seconds": 18916.5
+        },
+        "training-tools": {
+          "wall_seconds": 175.0167490999993,
+          "cpu_seconds": 495.609375
+        },
+        "training": {
+          "wall_seconds": 1060.7543193000001,
+          "cpu_seconds": 3506.90625
+        },
+        "merge": {
+          "wall_seconds": 194.39987709999969,
+          "cpu_seconds": 428.140625
+        },
+        "training-lockfile": {
+          "wall_seconds": 0.032926700000643905,
+          "cpu_seconds": 0.03125
+        }
+      },
+      "x86_64-pc-windows-msvc/pgo": {
+        "build": {
+          "wall_seconds": 2583.5901579,
+          "cpu_seconds": 9066.296875
+        },
+        "smoke-compile": {
+          "wall_seconds": 1.0553693000001658,
+          "cpu_seconds": 0.4375
+        },
+        "smoke-run": {
+          "wall_seconds": 0.010784600000079081,
+          "cpu_seconds": 0.015625
+        }
+      },
+      "x86_64-pc-windows-msvc/pgo-rust-thin": {
+        "build": {
+          "wall_seconds": 3547.389791,
+          "cpu_seconds": 12392.9375
+        },
+        "smoke-compile": {
+          "wall_seconds": 0.5248211999996784,
+          "cpu_seconds": 0.59375
+        },
+        "smoke-run": {
+          "wall_seconds": 0.009343299999727606,
+          "cpu_seconds": 0.015625
+        }
+      },
+      "x86_64-pc-windows-msvc/rustc-profile": {
+        "build": {
+          "wall_seconds": 4441.043555,
+          "cpu_seconds": 15638.890625
+        },
+        "training-tools": {
+          "wall_seconds": 158.32013389999975,
+          "cpu_seconds": 475.96875
+        },
+        "training": {
+          "wall_seconds": 1383.9375201999992,
+          "cpu_seconds": 4280.65625
+        },
+        "merge": {
+          "wall_seconds": 87.21997170000031,
+          "cpu_seconds": 229.03125
+        },
+        "training-lockfile": {
+          "wall_seconds": 0.028961699999854318,
+          "cpu_seconds": 0.015625
+        }
+      }
+    },
+    "provenance": {
+      "x86_64-pc-windows-msvc/baseline": {
+        "run_id": "38021536352",
+        "metadata_sha256": "effbcc2de3bc8ca5b5c2ad49eaf57a0d82dbb93890f4ab2c6fb8de991c0f286b"
+      },
+      "x86_64-pc-windows-msvc/llvm-profile": {
+        "run_id": "38009549235",
+        "metadata_sha256": "baf9e99e1dfd98682bf8e4a3ecd50dd8c5ebaa7e02655156da66adc56c64b366"
+      },
+      "x86_64-pc-windows-msvc/pgo": {
+        "run_id": "38021536352",
+        "metadata_sha256": "e5c7c5ac9df5b0fa10bac32c6959c7d90808fdf9e8dfe26c496937c5257d4835"
+      },
+      "x86_64-pc-windows-msvc/pgo-rust-thin": {
+        "run_id": "38021536352",
+        "metadata_sha256": "6502326a0517a03f36fd653c32761542a9cdfff800ad53238962af8081793af7"
+      },
+      "x86_64-pc-windows-msvc/rustc-profile": {
+        "run_id": "37965170591",
+        "metadata_sha256": "5c596443ee7317b6f06364a846cbdf6d54e2ea62b843e79a9060963602a88933"
+      }
+    }
+  }
+}
