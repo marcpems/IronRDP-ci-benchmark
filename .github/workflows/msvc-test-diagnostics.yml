@@ -1,0 +1,63 @@
+name: Diagnose original Windows backend test failure
+on:
+  push:
+    branches: [experiment/windows-msvc-test-diagnostics]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  repeat:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: windows-2025
+    timeout-minutes: 90
+    env:
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_INCREMENTAL: "0"
+      CARGO_BUILD_JOBS: "4"
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - uses: ./.github/actions/install-build-deps
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-x64-baseline
+          path: compilers/baseline
+          run-id: 38021536352
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-x64-pgo
+          path: compilers/pgo
+          run-id: 38021536352
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v6
+        with:
+          name: msvc-x64-pgo-rust-thin
+          path: compilers/pgo-rust-thin
+          run-id: 38021536352
+          github-token: ${{ github.token }}
+      - name: Repeat unchanged tests with parallel and serial execution
+        shell: pwsh
+        run: |
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\msvc_test_diagnostics.py --source workload --compilers compilers --output diagnostic-results
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: msvc-windows-backend-test-diagnostics
+          path: |
+            diagnostic-results/*.json
+            diagnostic-results/*.stdout
+            diagnostic-results/*.stderr
+          if-no-files-found: error
+          retention-days: 30
