@@ -56,7 +56,7 @@ def telemetry_executables():
     return [str(Path(p).resolve()) for p in found if p]
 
 
-def run_block(source, output, compiler, protocol, identity, verify_tests):
+def run_block(source, output, compiler, protocol, identity, verify_tests, correctness_env=None):
     output.mkdir()
     env = build_environment(os.environ, compiler)
     version = subprocess.check_output([str(compiler), "-vV"], text=True, env=env)
@@ -113,10 +113,12 @@ def run_block(source, output, compiler, protocol, identity, verify_tests):
             for name, args in NATIVE_COMMANDS[1:]:
                 command = ["cargo", *(a for a in args if a != "--no-run"), "--frozen"]
                 result = measure(
-                    command, source, {**env, "CARGO_TARGET_DIR": str(targets["native"])},
+                    command, source, {**env, **(correctness_env or {}),
+                                      "CARGO_TARGET_DIR": str(targets["native"])},
                     protocol["cores"], output / f"{name}-correctness", session=session, timeout=1200,
                 )
                 check = {"name": name, "command": command, "exit_code": result["exit_code"],
+                         "environment_overrides": correctness_env or {},
                          "seconds_outside_measurement": result["wall_seconds"],
                          "cpu_seconds_outside_measurement": result["cpu_seconds"]}
                 checks.append(check)

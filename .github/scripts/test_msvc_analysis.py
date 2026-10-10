@@ -103,7 +103,8 @@ class AnalysisTests(unittest.TestCase):
 
     def test_complete_matrix_and_missing_block_rejection(self):
         protocol = {"rust_sha": "rust", "source_sha": "ironrdp", "cores": 4,
-                    "independent_vms_per_arch": 5, "warmup_rounds": 1, "measured_rounds": 3}
+                    "independent_vms_per_arch": 5, "warmup_rounds": 1, "measured_rounds": 3,
+                    "correctness_test_threads": 1}
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             for host in HOSTS:
@@ -128,7 +129,8 @@ class AnalysisTests(unittest.TestCase):
                             block = {
                                 "metadata": {"variant": variant, "round": r, "source_sha": "ironrdp"},
                                 "measurements": rows,
-                                "correctness": [{"name": command, "exit_code": 0}
+                                "correctness": [{"name": command, "exit_code": 0,
+                                                 "environment_overrides": {"RUST_TEST_THREADS": "1"}}
                                                 for command, _ in NATIVE_COMMANDS[1:]] if r == 0 else [],
                             }
                             (directory / name).write_text(json.dumps(block))

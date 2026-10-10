@@ -85,6 +85,12 @@ def analyze(root, protocol, hosts=HOSTS):
                 if ([row["name"] for row in checks] != [name for name, _ in NATIVE_COMMANDS[1:]]
                         or any(row["exit_code"] for row in checks)):
                     raise ValueError("Missing or failed original native correctness checks")
+                if "correctness_test_threads" in protocol and any(
+                    row.get("environment_overrides") != {
+                        "RUST_TEST_THREADS": str(protocol["correctness_test_threads"])}
+                    for row in checks
+                ):
+                    raise ValueError("Correctness concurrency differs from the protocol")
             if not warmup:
                 for metric in ("wall_seconds", "cpu_seconds"):
                     values[variant].setdefault(f"native-total/{metric}", []).append(
@@ -131,6 +137,8 @@ def markdown(result):
         "", "Native clang-cl, link.exe and lib.exe were held constant. Both PGO variants used",
         "byte-identical profiles. Each architecture has five independent VMs and three",
         "measured rounds per compiler, following one excluded warmup.", "",
+        "Correctness commands run outside timing. Protocol amendment: "
+        + result["protocol"].get("amendment", "none") + "", "",
         "| Architecture | Variant | Native wall (s) | Native CPU (s) |",
         "|---|---|---:|---:|",
     ]
