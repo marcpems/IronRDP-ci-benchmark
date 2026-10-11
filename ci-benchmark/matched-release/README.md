@@ -6,7 +6,7 @@ builds and downstream measurements of their resulting compilers. The
 replacement runs, with every pilot excluded from final estimates.
 
 Three configurations per native architecture share Rust commit
-`29d50151dcdd6e5b885920bc535047b380006900`, LLVM, clang-cl, SDK selection, full
+`ab0afc7ee6827da442070b034830b5d69a9b537c`, LLVM, clang-cl, SDK selection, full
 distribution scope and four-logical-CPU standard GitHub runner class:
 
 | Configuration | PGO | Native linking | LLVM / Rust cross-crate ThinLTO |
@@ -150,3 +150,33 @@ override. Hosted feasibility remains unproven: the dedicated
 to test the revised recipe while the independent Arm64 stack failure is
 diagnosed. It does not replace the required qualified six-cell pilot or supply
 measured samples. All final comparison cells must share the same source revision.
+That two-cell feasibility run is
+[38158053450](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38158053450),
+pinned to Rust `29d50151dcdd6e5b885920bc535047b380006900`, before the MIR repair below.
+
+## Default-stack MIR diagnosis and repair
+
+[Diagnostic 38155374593](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38155374593)
+reproduced the Arm64 overflow with both the original and phase-traced invocations.
+The retained compiler archive has SHA-256
+`b55e9c49be303b870ce74a50733d82313ed5f93fee767b1bce18c90839067756`.
+After verifying source, parent profile hashes, native tools and archive identity,
+the same compiler also failed locally at the unchanged default stack limit.
+
+Phase tracing passes parsing and type checking. Native ARM64 unwinding locates
+the failure in MIR construction, with `expr_into_dest` retaining two 1,744-byte
+frames per nested `else if`: a scope wrapper and the expression itself. The
+existing regression contains 5,205 arms. Reduced-stack tests of older compilers
+were debugger controls only; they failed earlier in parsing and are not evidence
+about this full-profile failure.
+
+The common Rust source now handles scope wrappers separately from the large,
+non-inlined expression dispatcher. Scope cleanup, coverage instrumentation and
+block-context behavior are preserved, and no stack limit or test expectation is
+relaxed. Native bootstrap type-checking and pinned formatting checks pass.
+The `experiment/matched-release-repair-stack-diagnostic` branch explicitly
+rebuilds this repaired source with the original profiles to check the failure
+quickly. Its provenance marks the source/profile difference; it remains
+unqualified and cannot supply a release or downstream timing. Success there
+still requires new fresh-profile production and full qualification before any
+measurement matrix is accepted.

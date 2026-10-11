@@ -2,14 +2,35 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 from build_arm_compilers import digest
 from matched_release import LLVM, PERF, RUST
+import matched_release_stack as diagnostic
 from matched_release_stack import HOST, PARENT_RUN, PARENT_RUST, compiler_archive, verified_profiles
 
 
 class StackDiagnosticTests(unittest.TestCase):
+    def test_repaired_source_requires_explicit_diagnostic_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for repair in (False, True):
+                command = ["diagnostic"]
+                for name in ("source", "runtime-source", "output", "profiles"):
+                    command.extend(["--" + name, str(Path(tmp) / name)])
+                command.extend(["--host", HOST, "--variant", "msvc-pgo"])
+                if repair:
+                    command.append("--test-source-repair")
+                with patch.object(diagnostic.sys, "argv", command), \
+                        patch.object(diagnostic, "verified_profiles", return_value=({}, {})), \
+                        patch.object(diagnostic, "prepare",
+                                     side_effect=RuntimeError("stop after preparation")) as prepare:
+                    with self.assertRaisesRegex(RuntimeError, "stop after preparation"):
+                        diagnostic.main()
+                    self.assertFalse(prepare.call_args.kwargs["full_distribution"])
+                    self.assertEqual(prepare.call_args.kwargs["rust_revision"],
+                                     RUST if repair else PARENT_RUST)
+
     def test_profiles_require_exact_parent_and_hashes(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

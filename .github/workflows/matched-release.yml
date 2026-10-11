@@ -1,7 +1,7 @@
 name: Matched full Rust release cost
 on:
   push:
-    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot]
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic]
   workflow_dispatch:
     inputs:
       pilot:
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: marcpems/rust-arm64-compiler-ab
-          ref: ${{ endsWith(github.ref_name, '-stack-diagnostic') && 'a2bb36e3594a73a806ad9d2bf2694fcd977c3261' || '29d50151dcdd6e5b885920bc535047b380006900' }}
+          ref: ${{ github.ref_name == 'experiment/matched-release-stack-diagnostic' && 'a2bb36e3594a73a806ad9d2bf2694fcd977c3261' || 'ab0afc7ee6827da442070b034830b5d69a9b537c' }}
           path: rust-source
           persist-credentials: false
       - uses: actions/checkout@v6
@@ -103,6 +103,9 @@ jobs:
           if ('${{ endsWith(github.ref_name, '-stack-diagnostic') }}' -eq 'true') {
             $script = 'harness\.github\scripts\matched_release_stack.py'
             $extra = @('--profiles', "$env:MATCHED_ROOT\p")
+            if ('${{ github.ref_name }}' -eq 'experiment/matched-release-repair-stack-diagnostic') {
+              $extra += '--test-source-repair'
+            }
           }
           harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script $script --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e" --host $hostTriple --variant ${{ matrix.variant }} @extra
       - name: Preserve diagnostics even on failure

@@ -9,7 +9,7 @@ import sys
 import zipfile
 
 from build_arm_compilers import digest, save
-from matched_release import LLVM, PERF, prepare, run
+from matched_release import LLVM, PERF, RUST, prepare, run
 from matched_release_probe import one_file
 from msvc_experiment import equivalent_tools
 
@@ -50,16 +50,21 @@ def main():
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--host", choices=(HOST,), required=True)
     parser.add_argument("--variant", choices=("msvc-pgo",), required=True)
+    parser.add_argument("--test-source-repair", action="store_true",
+                        help="test the current repaired source with the original diagnostic profiles")
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     parent, profiles = verified_profiles(args.profiles.resolve())
     env, _, tools, _, provenance = prepare(
         source, args.runtime_source.resolve(), output, args.host, args.variant,
-        full_distribution=False, rust_revision=PARENT_RUST)
+        full_distribution=False, rust_revision=RUST if args.test_source_repair else PARENT_RUST)
     if not equivalent_tools(parent["tools"], tools):
         raise RuntimeError("native tools changed since the failing compiler build")
     provenance["diagnostic_parent_run"] = PARENT_RUN
+    provenance["diagnostic_parent_rust"] = PARENT_RUST
+    provenance["diagnostic_source_mode"] = "repair" if args.test_source_repair else "parent"
+    provenance["profiles_match_compiler_source"] = not args.test_source_repair
     provenance["reused_profiles"] = {name: digest(path) for name, path in profiles.items()}
     save(output / "provenance.json", provenance)
     destination = source / "opt-artifacts"

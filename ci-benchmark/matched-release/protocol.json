@@ -1,7 +1,7 @@
 {
-  "schema": 3,
-  "rust_sha": "29d50151dcdd6e5b885920bc535047b380006900",
-  "amendment": "After excluded failed pilots 38122240736 and 38133940060: short same-volume physical paths, common MSVC-target compiler-private DLL-data import correction, upstream qualification extraction layout, and LLVM ThinLTO disabled only on discarded intermediate LLVM training builds. Final LLVM/Rust LTO, native tools, full distribution scope and timing boundaries unchanged.",
+  "schema": 4,
+  "rust_sha": "ab0afc7ee6827da442070b034830b5d69a9b537c",
+  "amendment": "After excluded failed pilots 38122240736 and 38133940060: short same-volume physical paths, common MSVC-target compiler-private DLL-data import correction, upstream qualification extraction layout, LLVM ThinLTO disabled only on discarded intermediate LLVM training builds, and small MIR scope wrappers separated from the large expression dispatch frame. Final LLVM/Rust LTO, native tools, full distribution scope, default stack limit and timing boundaries unchanged.",
   "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
   "perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
   "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",

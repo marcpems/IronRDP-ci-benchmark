@@ -17,7 +17,7 @@ from msvc_experiment import (
     rebuild_clang_runtime, tool_identity,
 )
 
-RUST = "29d50151dcdd6e5b885920bc535047b380006900"
+RUST = "ab0afc7ee6827da442070b034830b5d69a9b537c"
 LLVM = "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019"
 PERF = "208d929efe770996eb02cd3d2712623ea48b7646"
 VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
