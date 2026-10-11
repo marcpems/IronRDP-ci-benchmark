@@ -1,0 +1,139 @@
+"""Measure the actual full-release compilers with common Cargo and native std."""
+
+import argparse
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tarfile
+
+from build_arm_compilers import digest, save
+from compiler_probe import validate_meter
+from matched_release import RUST, VARIANTS
+from msvc_experiment import equivalent_tools, tool_identity
+from native_ci_probe import paired_order, run_block
+
+
+def one_file(root, name):
+    files = list(root.rglob(name))
+    if len(files) != 1:
+        raise RuntimeError(f"expected exactly one {name} under {root}, found {files}")
+    return files[0]
+
+
+def install(root, destination, arch, host, vm, run_id, pilot, protocol):
+    destination.mkdir(exist_ok=False)
+    compilers, metadata = {}, {}
+    evidence = {}
+    for variant in VARIANTS:
+        directory = root / f"release-{arch}-{variant}-{vm}-evidence"
+        path = one_file(directory, "result.json")
+        item = json.loads(path.read_text())
+        if (not item["complete"] or item["rust_sha"] != RUST or item["host"] != host
+                or item["variant"] != variant or item["run_id"] != run_id
+                or item["vm"] != vm or item["pilot"] != pilot or item["attempt"] != "1"):
+            raise RuntimeError("release identity, qualification, or attempt mismatch")
+        if item["llvm_sha"] != protocol["llvm_sha"] or item["perf_sha"] != protocol["perf_sha"]:
+            raise RuntimeError("release submodule mismatch")
+        manifest = json.loads(one_file(directory, "dist-manifest.json").read_text())
+        checksums = {row["name"]: row["sha256"] for row in manifest}
+        metadata[variant] = item
+        evidence[variant] = {"result_sha256": digest(path), "archives": {}}
+        dist = root / f"release-{arch}-{variant}-{vm}-dist"
+        folder = destination / variant
+        folder.mkdir()
+        components = [f"rustc-nightly-{host}"]
+        if variant == "baseline":
+            components.extend([f"rust-std-nightly-{host}", f"cargo-nightly-{host}"])
+        for component in components:
+            archive = one_file(dist, component + ".tar.xz")
+            checksum = digest(archive)
+            if checksum != checksums[archive.name]:
+                raise RuntimeError(f"distribution archive checksum mismatch: {archive}")
+            evidence[variant]["archives"][archive.name] = checksum
+            with tarfile.open(archive, "r:xz") as bundle:
+                bundle.extractall(folder, filter="data")
+        compilers[variant] = folder / f"rustc-nightly-{host}/rustc/bin/rustc.exe"
+        if not compilers[variant].is_file():
+            raise RuntimeError("distribution is missing its compiler executable")
+        if not equivalent_tools(metadata["baseline"]["tools"], item["tools"]):
+            raise RuntimeError("release builders used different native tool binaries")
+    library = destination / "baseline" / f"rust-std-nightly-{host}/rust-std-{host}/lib/rustlib" / host / "lib"
+    standard = {p.name: digest(p) for p in library.iterdir() if p.is_file()}
+    if not standard:
+        raise RuntimeError("empty native standard library")
+    for compiler in compilers.values():
+        target = compiler.parent.parent / "lib/rustlib" / host / "lib"
+        if target.exists():
+            shutil.rmtree(target)
+        shutil.copytree(library, target)
+        if {p.name: digest(p) for p in target.iterdir() if p.is_file()} != standard:
+            raise RuntimeError("native standard libraries are not identical")
+    cargo = destination / "baseline" / f"cargo-nightly-{host}/cargo/bin/cargo.exe"
+    if not cargo.is_file():
+        raise RuntimeError("baseline distribution is missing Cargo")
+    return compilers, cargo, metadata, evidence, standard
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--source", type=Path, required=True)
+    parser.add_argument("--artifacts", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--clang", type=Path, required=True)
+    parser.add_argument("--protocol", type=Path, required=True)
+    parser.add_argument("--release-run", required=True)
+    parser.add_argument("--pilot", action="store_true")
+    args = parser.parse_args()
+    source, output = args.source.resolve(), args.output.resolve()
+    protocol = json.loads(args.protocol.read_text())
+    host, vm = os.environ["BENCHMARK_HOST"], int(os.environ["BENCHMARK_REPLICATE"])
+    arch = "arm64" if host.startswith("aarch64") else "x64"
+    if os.cpu_count() != protocol["cores"] or vm not in range(1, protocol["release_repetitions_per_cell"] + 1):
+        raise RuntimeError("unexpected native runner capacity or replicate")
+    actual = subprocess.check_output(["git", "-C", source, "rev-parse", "HEAD"], text=True).strip()
+    if actual != protocol["source_sha"]:
+        raise RuntimeError("IronRDP source revision mismatch")
+    subprocess.run(["git", "-C", source, "diff", "--exit-code"], check=True)
+    output.mkdir(exist_ok=False)
+    compilers, cargo, metadata, evidence, standard = install(
+        args.artifacts.resolve(), output / "compilers", arch, host, vm,
+        args.release_run, args.pilot, protocol)
+    tools = tool_identity(args.clang.resolve())
+    if not equivalent_tools(tools, metadata["baseline"]["tools"]):
+        raise RuntimeError("benchmark native tools differ from release construction")
+    os.environ["PATH"] = os.pathsep.join([str(cargo.parent), str(compilers["baseline"].parent),
+                                       str(args.clang.resolve()), os.environ["PATH"]])
+    os.environ["RUSTDOC"] = str(compilers["baseline"].parent / "rustdoc.exe")
+    for key in ("GH_TOKEN", "GITHUB_TOKEN"):
+        os.environ.pop(key, None)
+    subprocess.run([cargo, "fetch", "--locked", "--target", host], cwd=source,
+                   env={**os.environ, "RUSTC": str(compilers["baseline"])}, check=True)
+    validate_meter(output / "meter-validation")
+    index = {
+        "protocol": protocol, "host": host, "vm": vm, "pilot": args.pilot,
+        "release_run": args.release_run, "benchmark_run": os.environ["GITHUB_RUN_ID"],
+        "benchmark_attempt": os.environ["GITHUB_RUN_ATTEMPT"], "tools": tools,
+        "compiler_metadata": metadata, "artifact_evidence": evidence, "stdlib": standard,
+        "cargo_sha256": digest(cargo), "runs": [], "complete": False,
+    }
+    save(output / "index.json", index)
+    warmups = 0 if args.pilot else protocol["warmup_rounds"]
+    rounds = 1 if args.pilot else warmups + protocol["measured_rounds"]
+    for round_index in range(rounds):
+        for position, variant in enumerate(paired_order(list(VARIANTS), vm, round_index)):
+            name = f"round-{round_index}-{variant}"
+            run_block(source, output / name, compilers[variant], protocol,
+                      {"variant": variant, "round": round_index}, round_index == 0,
+                      correctness_env={"RUST_TEST_THREADS": "1"}, native_only=True)
+            index["runs"].append({"variant": variant, "round": round_index, "position": position,
+                                  "warmup": round_index < warmups, "path": f"{name}/results.json"})
+            save(output / "index.json", index)
+    subprocess.run(["git", "-C", source, "diff", "--exit-code"], check=True)
+    index["complete"] = True
+    save(output / "index.json", index)
+
+
+if __name__ == "__main__":
+    main()

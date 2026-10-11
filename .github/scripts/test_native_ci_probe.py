@@ -18,7 +18,8 @@ from process_metrics import measure, measurement_session
 
 class NativeCiTests(unittest.TestCase):
     def test_correctness_overrides_do_not_change_measured_environment(self):
-        for override in (None, {"RUST_TEST_THREADS": "1"}):
+        for override, native_only in ((None, False), ({"RUST_TEST_THREADS": "1"}, False),
+                                      ({"RUST_TEST_THREADS": "1"}, True)):
             with self.subTest(override=override), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 source = root / "source"
@@ -48,9 +49,11 @@ class NativeCiTests(unittest.TestCase):
                      patch("native_ci_probe.measurement_session", return_value=nullcontext()), \
                      patch("native_ci_probe.measure", side_effect=fake_measure):
                     run_block(source, root / "output", Path("rustc"), protocol, {}, True,
-                              correctness_env=override)
-                self.assertEqual(len(calls), 11)
+                              correctness_env=override, native_only=native_only)
+                self.assertEqual(len(calls), 9 if native_only else 11)
                 result = json.loads((root / "output/results.json").read_text())
+                self.assertEqual([row["name"] for row in result["measurements"]],
+                                 [name for name, _ in (NATIVE_COMMANDS if native_only else COMMANDS)])
                 self.assertTrue(all(row["environment_overrides"] == (override or {})
                                     for row in result["correctness"]))
 

@@ -1,0 +1,81 @@
+name: Benchmark matched release distributions on IronRDP
+on:
+  push:
+    branches: [experiment/matched-release-benchmark-pilot, experiment/matched-release-benchmark-full]
+  workflow_dispatch:
+    inputs:
+      release_run:
+        description: Complete successful matched full-release workflow run
+        type: string
+        required: true
+      pilot:
+        description: Excluded feasibility sample
+        type: boolean
+        default: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  benchmark:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ matrix.arch }} / replicate ${{ matrix.vm }}
+    runs-on: ${{ matrix.arch == 'x64' && 'windows-2025' || 'windows-11-arm' }}
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot')) && '[1]' || '[1,2,3]') }}
+    env:
+      RELEASE_RUN: ${{ inputs.release_run || '38122240736' }}
+      BENCHMARK_HOST: ${{ matrix.arch == 'x64' && 'x86_64-pc-windows-msvc' || 'aarch64-pc-windows-msvc' }}
+      BENCHMARK_PLATFORM: windows-${{ matrix.arch }}
+      BENCHMARK_REPLICATE: ${{ matrix.vm }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: ${{ matrix.arch }}
+      - uses: ./.github/actions/install-build-deps
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: release-${{ matrix.arch }}-*-${{ matrix.vm }}-*
+          path: distributions
+          run-id: ${{ env.RELEASE_RUN }}
+          github-token: ${{ github.token }}
+      - name: Prepare matching native tools
+        shell: pwsh
+        run: |
+          $suffix = if ('${{ matrix.arch }}' -eq 'arm64') { 'woa64' } else { 'win64' }
+          New-Item -ItemType Directory -Force tools | Out-Null
+          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o tools\clang.exe
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          7z x -y -bd -bso0 -otools\clang tools\clang.exe
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+          New-Item -Path $key -Force | Out-Null
+          New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+      - name: Replay actual distribution compilers offline
+        shell: pwsh
+        run: |
+          $extra = @()
+          if ('${{ inputs.pilot }}' -eq 'true' -or '${{ endsWith(github.ref_name, '-pilot') }}' -eq 'true') { $extra += '--pilot' }
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\matched_release_probe.py --source workload --artifacts distributions --output results --clang tools\clang\bin --protocol ci-benchmark\matched-release\protocol.json --release-run "$env:RELEASE_RUN" @extra
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: matched-ironrdp-${{ matrix.arch }}-${{ matrix.vm }}
+          path: |
+            results/index.json
+            results/round-*
+            results/meter-validation
+          retention-days: 30

@@ -56,7 +56,8 @@ def telemetry_executables():
     return [str(Path(p).resolve()) for p in found if p]
 
 
-def run_block(source, output, compiler, protocol, identity, verify_tests, correctness_env=None):
+def run_block(source, output, compiler, protocol, identity, verify_tests, correctness_env=None,
+              native_only=False):
     output.mkdir()
     env = build_environment(os.environ, compiler)
     version = subprocess.check_output([str(compiler), "-vV"], text=True, env=env)
@@ -89,7 +90,7 @@ def run_block(source, output, compiler, protocol, identity, verify_tests, correc
         targets = {name: Path(tmp) / name for name in ("native", "common", "wasm")}
         metadata["cold_target_directories"] = {k: str(p) for k, p in targets.items()}
         save(output / "environment.json", metadata)
-        for name, args in COMMANDS:
+        for name, args in (NATIVE_COMMANDS if native_only else COMMANDS):
             target = targets[name if name in targets else "native"]
             child_env = {**env, "CARGO_TARGET_DIR": str(target)}
             command = ["cargo", *args, "--frozen", "--timings", "--message-format=json"]
