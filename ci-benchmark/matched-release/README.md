@@ -102,3 +102,22 @@ test selection is changed. That pilot observation is not a qualified release-job
 duration and remains excluded. Subsequent failed jobs preserve any distribution
 files under explicitly **unqualified** artifact names, never as accepted inputs
 to the downstream benchmark.
+
+The MSVC-PGO pilot also completed production on both architectures: 13,700.72
+seconds on x64 and 16,499.84 seconds on Arm64. Both hit the same E0152 harness
+issue. Arm64 additionally failed `expr/if/expr-stack-overflow.rs` with
+`0xc00000fd` (compiler stack overflow). This is a real qualification failure,
+not just output normalization, and must not be waived or hidden by increasing
+the qualification process's stack limit.
+
+The retained earlier compiler-only Arm64 baseline and PGO compilers both pass
+that exact source test locally; they used different profiles and are not proof
+that the failed full-release compiler is sound. The failed pilot did not retain
+its distribution archive, which is why subsequent failures now retain
+unqualified binaries. A separate `experiment/matched-release-stack-diagnostic`
+branch runs only Arm64/MSVC-PGO, rebuilding a compiler with the failed job's
+hash-verified Rust/LLVM profiles, unchanged compiler source and matching native
+tools. It preserves the compiler and PDBs, then runs the nested-expression test
+with the default stack limit and a separate phase-tracing invocation. This
+profile-reuse diagnostic is **not** a fresh release build or a timing sample,
+does not produce `result.json`, and cannot feed the matched analysis.

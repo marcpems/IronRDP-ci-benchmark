@@ -1,7 +1,7 @@
 name: Matched full Rust release cost
 on:
   push:
-    branches: [experiment/matched-release-pilot, experiment/matched-release-full]
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic]
   workflow_dispatch:
     inputs:
       pilot:
@@ -10,6 +10,7 @@ on:
         default: true
 permissions:
   contents: read
+  actions: read
 jobs:
   distribution:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
@@ -19,11 +20,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x64, arm64]
-        variant: [baseline, msvc-pgo, llvm-pgo-thin]
-        vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot')) && '[1]' || '[1,2,3]') }}
+        arch: ${{ fromJSON(endsWith(github.ref_name, '-stack-diagnostic') && '["arm64"]' || '["x64","arm64"]') }}
+        variant: ${{ fromJSON(endsWith(github.ref_name, '-stack-diagnostic') && '["msvc-pgo"]' || '["baseline","msvc-pgo","llvm-pgo-thin"]') }}
+        vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot') || endsWith(github.ref_name, '-stack-diagnostic')) && '[1]' || '[1,2,3]') }}
     env:
-      RELEASE_PILOT: ${{ inputs.pilot || endsWith(github.ref_name, '-pilot') }}
+      RELEASE_PILOT: ${{ inputs.pilot || endsWith(github.ref_name, '-pilot') || endsWith(github.ref_name, '-stack-diagnostic') }}
       RELEASE_REPLICATE: ${{ matrix.vm }}
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
@@ -85,11 +86,25 @@ jobs:
           $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
           New-Item -Path $key -Force | Out-Null
           New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
-      - name: Produce complete cold distribution with fresh profiles
+      - name: Download recorded profiles for isolated stack diagnosis
+        if: endsWith(github.ref_name, '-stack-diagnostic')
+        uses: actions/download-artifact@v6
+        with:
+          name: release-arm64-msvc-pgo-1-evidence
+          path: ${{ env.MATCHED_ROOT }}/p
+          run-id: 38133940060
+          github-token: ${{ github.token }}
+      - name: Build and qualify the selected experiment
         shell: pwsh
         run: |
           $hostTriple = if ('${{ matrix.arch }}' -eq 'arm64') { 'aarch64-pc-windows-msvc' } else { 'x86_64-pc-windows-msvc' }
-          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script harness\.github\scripts\matched_release.py --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e" --host $hostTriple --variant ${{ matrix.variant }}
+          $script = 'harness\.github\scripts\matched_release.py'
+          $extra = @()
+          if ('${{ endsWith(github.ref_name, '-stack-diagnostic') }}' -eq 'true') {
+            $script = 'harness\.github\scripts\matched_release_stack.py'
+            $extra = @('--profiles', "$env:MATCHED_ROOT\p")
+          }
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script $script --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e" --host $hostTriple --variant ${{ matrix.variant }} @extra
       - name: Preserve diagnostics even on failure
         uses: actions/upload-artifact@v6
         if: always()
@@ -108,15 +123,23 @@ jobs:
           retention-days: 30
       - name: Retain actual full distribution
         uses: actions/upload-artifact@v6
-        if: success()
+        if: success() && !endsWith(github.ref_name, '-stack-diagnostic')
         with:
           name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-dist
           path: ${{ env.MATCHED_ROOT }}/r/build/dist
           compression-level: 0
           retention-days: 7
+      - name: Preserve diagnostic compiler including symbols
+        uses: actions/upload-artifact@v6
+        if: always() && endsWith(github.ref_name, '-stack-diagnostic')
+        with:
+          name: stack-diagnostic-arm64-compiler
+          path: ${{ env.MATCHED_ROOT }}/e/diagnostic-compiler.zip
+          compression-level: 0
+          retention-days: 7
       - name: Preserve unqualified distribution files for diagnosis
         uses: actions/upload-artifact@v6
-        if: failure()
+        if: failure() && !endsWith(github.ref_name, '-stack-diagnostic')
         with:
           name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-unqualified-dist
           path: ${{ env.MATCHED_ROOT }}/r/build/dist

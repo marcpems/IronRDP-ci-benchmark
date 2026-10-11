@@ -191,7 +191,7 @@ def main():
         raise
 
 
-def build(source, runtime_source, output, host, variant):
+def prepare(source, runtime_source, output, host, variant, full_distribution=True):
     expected_machine = ("arm64", "aarch64") if host.startswith("aarch64") else ("amd64", "x86_64")
     if os.name != "nt" or platform.machine().lower() not in expected_machine or os.cpu_count() != 4:
         raise RuntimeError("expected a native standard four-logical-CPU Windows runner")
@@ -220,7 +220,9 @@ def build(source, runtime_source, output, host, variant):
         "attempt": os.environ["GITHUB_RUN_ATTEMPT"], "vm": int(os.environ["RELEASE_REPLICATE"]),
         "pilot": os.environ["RELEASE_PILOT"] == "true",
         "job_started_unix": float(os.environ["RELEASE_JOB_STARTED"]),
-        "full_distribution": True, "cache": "cold; no shared compiler or profile cache",
+        "full_distribution": full_distribution,
+        "cache": ("cold; no shared compiler or profile cache" if full_distribution else
+                  "cold compiler rebuild; recorded profiles reused for diagnosis only"),
         "baseline": "controlled no-PGO full distribution, not the shipped x64 PGO recipe",
         "profiling_runtime_patch_sha256": digest(patch),
         "bootstrap_cargo_sha256": digest(source / "src/bootstrap/src/core/builder/cargo.rs"),
@@ -247,6 +249,12 @@ def build(source, runtime_source, output, host, variant):
     (output / "bootstrap.toml").write_text(config, encoding="utf-8")
     provenance["preparation_wall_seconds"] = time.time() - preparation
     save(output / "provenance.json", provenance)
+    return env, clang, identity, librarian, provenance
+
+
+def build(source, runtime_source, output, host, variant):
+    env, clang, identity, librarian, provenance = prepare(
+        source, runtime_source, output, host, variant)
     start = time.time()
     dist = [sys.executable, "x.py", "dist", "bootstrap", "--include-default-paths"]
     if variant == "baseline":
