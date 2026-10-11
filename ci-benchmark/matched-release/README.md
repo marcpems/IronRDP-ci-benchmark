@@ -91,3 +91,14 @@ D: volume to the system C: volume. No production timing from that attempt is
 accepted. The short root is now selected on the **workspace volume**, with an
 atomic directory rename instead of a cross-volume PowerShell move. The same
 rule applies to downstream benchmarks.
+
+Pilot 38133940060 reached complete Arm64 baseline distribution assembly
+(22 files, including the required components) in 6911.61 production seconds.
+Qualification then passed 22,097 UI cases and failed one, E0152, solely because
+its expected diagnostic normalizes paths under Rust's build root. The harness
+had extracted the compiler outside that root. Extraction now uses upstream
+opt-dist's `build/unpacked-dist` layout; neither the expected diagnostic nor the
+test selection is changed. That pilot observation is not a qualified release-job
+duration and remains excluded. Subsequent failed jobs preserve any distribution
+files under explicitly **unqualified** artifact names, never as accepted inputs
+to the downstream benchmark.

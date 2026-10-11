@@ -125,7 +125,7 @@ def profile_validation(source, clang, host, env, output):
 
 def qualify_distribution(source, output, host, env):
     dist = source / "build/dist"
-    unpacked = output / "extracted"
+    unpacked = source / "build/unpacked-dist"
     unpacked.mkdir()
     for name in (f"rustc-nightly-{host}", f"rust-std-nightly-{host}",
                  f"cargo-nightly-{host}", "rust-src-nightly"):

@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import tempfile
 import tomllib
 import unittest
 from unittest.mock import patch
@@ -8,6 +9,49 @@ import matched_release as release
 
 
 class MatchedReleaseTests(unittest.TestCase):
+    def test_qualification_uses_upstream_build_root_and_restores_config(self):
+        host = "aarch64-pc-windows-msvc"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source, output = root / "rust", root / "evidence"
+            source.mkdir()
+            output.mkdir()
+            original = b'profile = "dist"\n'
+            (source / "bootstrap.toml").write_bytes(original)
+            llvm = source / "build" / host / "llvm/bin/llvm-config.exe"
+            llvm.parent.mkdir(parents=True)
+            llvm.write_bytes(b"fixture")
+            unpacked = source / "build/unpacked-dist"
+
+            def extract(command, check):
+                self.assertTrue(check)
+                self.assertEqual(command[:2], ["tar", "-xJf"])
+                self.assertEqual(command[-1], unpacked)
+                name = command[2].name.removesuffix(".tar.xz")
+                relative = {
+                    f"rustc-nightly-{host}": "rustc/bin/rustc.exe",
+                    f"rust-std-nightly-{host}": f"rust-std-{host}/lib/rustlib/{host}/lib/std.rmeta",
+                    f"cargo-nightly-{host}": "cargo/bin/cargo.exe",
+                    "rust-src-nightly": "rust-src/lib/rustlib/src/rust/library/lib.rs",
+                }[name]
+                file = unpacked / name / relative
+                file.parent.mkdir(parents=True, exist_ok=True)
+                file.write_bytes(b"fixture")
+
+            def fail_test(*args):
+                config = tomllib.loads((source / "bootstrap.toml").read_text())
+                compiler = Path(config["build"]["rustc"])
+                self.assertTrue(compiler.is_relative_to(source / "build"))
+                self.assertTrue(compiler.is_file())
+                raise RuntimeError("test failure")
+
+            with patch.object(release.subprocess, "run", side_effect=extract), \
+                    patch.object(release, "run", side_effect=fail_test):
+                with self.assertRaisesRegex(RuntimeError, "test failure"):
+                    release.qualify_distribution(source, output, host, {})
+            self.assertEqual((source / "bootstrap.toml").read_bytes(), original)
+            self.assertFalse((output / "extracted").exists())
+
     def test_long_physical_roots_fail_before_expensive_builds(self):
         release.check_build_paths(Path("C:/mr/r"), Path("C:/mr/l"), Path("C:/mr/e"))
         with self.assertRaisesRegex(RuntimeError, "short physical build roots"):

@@ -114,3 +114,11 @@ jobs:
           path: ${{ env.MATCHED_ROOT }}/r/build/dist
           compression-level: 0
           retention-days: 7
+      - name: Preserve unqualified distribution files for diagnosis
+        uses: actions/upload-artifact@v6
+        if: failure()
+        with:
+          name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-unqualified-dist
+          path: ${{ env.MATCHED_ROOT }}/r/build/dist
+          compression-level: 0
+          retention-days: 7
