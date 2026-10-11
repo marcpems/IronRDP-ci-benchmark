@@ -1,0 +1,110 @@
+name: Matched full Rust release cost
+on:
+  push:
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full]
+  workflow_dispatch:
+    inputs:
+      pilot:
+        description: One feasibility job per cell, excluded from final estimates
+        type: boolean
+        default: true
+permissions:
+  contents: read
+jobs:
+  distribution:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ matrix.arch }} / ${{ matrix.variant }} / ${{ matrix.vm }}
+    runs-on: ${{ matrix.arch == 'x64' && 'windows-2025' || 'windows-11-arm' }}
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        variant: [baseline, msvc-pgo, llvm-pgo-thin]
+        vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot')) && '[1]' || '[1,2,3]') }}
+    env:
+      RELEASE_PILOT: ${{ inputs.pilot || endsWith(github.ref_name, '-pilot') }}
+      RELEASE_REPLICATE: ${{ matrix.vm }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - name: Start job clock
+        shell: pwsh
+        run: |
+          "RELEASE_JOB_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=false" >> $env:GITHUB_ENV
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: marcpems/rust-arm64-compiler-ab
+          ref: 07bb50a774b11375032aacc16fd9a70f090f8642
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: llvm/llvm-project
+          ref: ca7933e47d3a3451d81e72ac174dcb5aa28b59d1
+          path: clang-runtime-source
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: ${{ matrix.arch }}
+      - name: Prepare exact native sources and tools
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force harness\release-evidence | Out-Null
+          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors | ConvertTo-Json > harness\release-evidence\cpu.json
+          @{ImageOS=$env:ImageOS; ImageVersion=$env:ImageVersion; RunnerArch=$env:RUNNER_ARCH} | ConvertTo-Json > harness\release-evidence\runner.json
+          git -C rust-source submodule update --init --recursive --depth 1 --jobs 8
+          if ($LASTEXITCODE) { throw 'Submodule checkout failed' }
+          $suffix = if ('${{ matrix.arch }}' -eq 'arm64') { 'woa64' } else { 'win64' }
+          New-Item -ItemType Directory -Force rust-source\citools\clang-rust,rust-source\wix\bin | Out-Null
+          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o rust-source\citools\clang.exe
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          7z x -y -bd -bso0 -orust-source\citools\clang-rust rust-source\citools\clang.exe
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip -o rust-source\wix\wix.zip
+          if ($LASTEXITCODE) { throw 'WIX download failed' }
+          7z x -y -bd -bso0 -orust-source\wix\bin rust-source\wix\wix.zip
+          if ($LASTEXITCODE) { throw 'WIX extraction failed' }
+          $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+          New-Item -Path $key -Force | Out-Null
+          New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+      - name: Produce complete cold distribution with fresh profiles
+        shell: pwsh
+        run: |
+          $hostTriple = if ('${{ matrix.arch }}' -eq 'arm64') { 'aarch64-pc-windows-msvc' } else { 'x86_64-pc-windows-msvc' }
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script harness\.github\scripts\matched_release.py --source rust-source --runtime-source clang-runtime-source --output harness\release-evidence --host $hostTriple --variant ${{ matrix.variant }}
+      - name: Preserve diagnostics even on failure
+        uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-evidence
+          path: |
+            harness/release-evidence/*.json
+            harness/release-evidence/*.stdout
+            harness/release-evidence/*.stderr
+            harness/release-evidence/*.txt
+            harness/release-evidence/*.toml
+            harness/release-evidence/*.cmake
+            rust-source/build/metrics.json
+            rust-source/opt-artifacts/*.profdata
+          compression-level: 1
+          retention-days: 30
+      - name: Retain actual full distribution
+        uses: actions/upload-artifact@v6
+        if: success()
+        with:
+          name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-dist
+          path: rust-source/build/dist
+          compression-level: 0
+          retention-days: 7

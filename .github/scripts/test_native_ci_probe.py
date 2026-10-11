@@ -7,15 +7,53 @@ import sys
 import unittest
 from unittest.mock import patch
 import zipfile
+from contextlib import nullcontext
 
 from arm_ab_probe import extract_compiler
 from install_optimized_rust import check_hash, install
-from native_ci_probe import COMMANDS, PROFILE_ENV, build_environment, paired_order, telemetry_executables
+from native_ci_probe import COMMANDS, PROFILE_ENV, build_environment, paired_order, run_block, telemetry_executables
 from offline_benchmark import NATIVE_COMMANDS, COMMON_COMMAND, WASM_COMMAND
 from process_metrics import measure, measurement_session
 
 
 class NativeCiTests(unittest.TestCase):
+    def test_correctness_overrides_do_not_change_measured_environment(self):
+        for override in (None, {"RUST_TEST_THREADS": "1"}):
+            with self.subTest(override=override), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                source = root / "source"
+                source.mkdir()
+                (source / "Cargo.lock").write_text("fixture")
+                protocol = {"rust_sha": "source", "rust_version": "version",
+                            "source_sha": "workload", "cores": 4}
+                calls = []
+
+                def fake_measure(command, cwd, env, cores, log, **kwargs):
+                    calls.append(log.name)
+                    if log.name.endswith("-correctness"):
+                        self.assertEqual(env.get("RUST_TEST_THREADS"), (override or {}).get("RUST_TEST_THREADS"))
+                    else:
+                        self.assertNotIn("RUST_TEST_THREADS", env)
+                        log.with_suffix(".stdout").write_text(
+                            json.dumps({"reason": "compiler-artifact", "fresh": False}) + "\n")
+                        timing = Path(env["CARGO_TARGET_DIR"]) / "cargo-timings/cargo-timing.html"
+                        timing.parent.mkdir(parents=True, exist_ok=True)
+                        timing.write_text("fixture")
+                    return {"exit_code": 0, "wall_seconds": 1, "cpu_seconds": 1}
+
+                with patch.dict(os.environ, {"RUNNER_TEMP": tmp, "BENCHMARK_HOST": "host"}, clear=True), \
+                     patch("native_ci_probe.subprocess.check_output",
+                           return_value="host: host\nrelease: version\nsource\n"), \
+                     patch("native_ci_probe.telemetry_executables", return_value=[]), \
+                     patch("native_ci_probe.measurement_session", return_value=nullcontext()), \
+                     patch("native_ci_probe.measure", side_effect=fake_measure):
+                    run_block(source, root / "output", Path("rustc"), protocol, {}, True,
+                              correctness_env=override)
+                self.assertEqual(len(calls), 11)
+                result = json.loads((root / "output/results.json").read_text())
+                self.assertTrue(all(row["environment_overrides"] == (override or {})
+                                    for row in result["correctness"]))
+
     @unittest.skipUnless(os.name == "nt", "Windows tool discovery")
     def test_x64_telemetry_lookup_is_exact_native_architecture(self):
         with patch("native_ci_probe.os.name", "nt"), \
