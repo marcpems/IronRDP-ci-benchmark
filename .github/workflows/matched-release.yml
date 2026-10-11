@@ -1,7 +1,7 @@
 name: Matched full Rust release cost
 on:
   push:
-    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic]
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot]
   workflow_dispatch:
     inputs:
       pilot:
@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         arch: ${{ fromJSON(endsWith(github.ref_name, '-stack-diagnostic') && '["arm64"]' || '["x64","arm64"]') }}
-        variant: ${{ fromJSON(endsWith(github.ref_name, '-stack-diagnostic') && '["msvc-pgo"]' || endsWith(github.ref_name, '-llvm-pilot') && '["llvm-pgo-thin"]' || '["baseline","msvc-pgo","llvm-pgo-thin"]') }}
+        variant: ${{ fromJSON(endsWith(github.ref_name, '-stack-diagnostic') && '["msvc-pgo"]' || endsWith(github.ref_name, '-llvm-pilot') && '["llvm-pgo-thin"]' || endsWith(github.ref_name, '-msvc-pilot') && '["baseline","msvc-pgo"]' || '["baseline","msvc-pgo","llvm-pgo-thin"]') }}
         vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot') || endsWith(github.ref_name, '-stack-diagnostic')) && '[1]' || '[1,2,3]') }}
     env:
       RELEASE_PILOT: ${{ inputs.pilot || endsWith(github.ref_name, '-pilot') || endsWith(github.ref_name, '-stack-diagnostic') }}

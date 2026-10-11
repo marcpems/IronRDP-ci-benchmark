@@ -180,3 +180,20 @@ quickly. Its provenance marks the source/profile difference; it remains
 unqualified and cannot supply a release or downstream timing. Success there
 still requires new fresh-profile production and full qualification before any
 measurement matrix is accepted.
+
+The repaired compiler in
+[diagnostic 38167588581](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38167588581)
+passes both default-stack probes on the native hosted runner and also passes
+locally, without a stack override. Its archive SHA-256 is
+`b44fa872890b176b192be585996af00fc5e66a0acaaf7deff0c2dcefd8f698e5`.
+Seven existing scope/drop and coverage fixture configurations emit byte-identical
+MIR before and after the repair. The four executable configurations also pass
+their runtime assertions, covering match-arm scopes and temporary destruction
+under both abort and unwind panic strategies. The other three cover tail
+expressions and branch coverage instrumentation.
+
+With that diagnostic gate passed, `experiment/matched-release-msvc-pilot` runs
+the four baseline/MSVC-retained full-release pilot cells on this common source
+while LLVM feasibility is investigated separately. These jobs use fresh profiles
+where applicable and the complete qualification suite. They remain excluded
+pilots, not substitutes for the three-repetition measurement matrix.
