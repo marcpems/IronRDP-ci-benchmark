@@ -34,6 +34,16 @@ jobs:
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
     steps:
+      - name: Prepare short physical benchmark paths
+        shell: pwsh
+        run: |
+          $root = "$env:SystemDrive\mb"
+          if (Test-Path $root) { throw "Expected an unused short benchmark root: $root" }
+          New-Item -ItemType Directory "$root\t","$root\c" | Out-Null
+          "BENCHMARK_ROOT=$root" >> $env:GITHUB_ENV
+          "CARGO_HOME=$root\c" >> $env:GITHUB_ENV
+          "TEMP=$root\t" >> $env:GITHUB_ENV
+          "TMP=$root\t" >> $env:GITHUB_ENV
       - uses: actions/checkout@v6
       - uses: actions/checkout@v6
         with:
@@ -49,17 +59,19 @@ jobs:
       - uses: actions/download-artifact@v6
         with:
           pattern: release-${{ matrix.arch }}-*-${{ matrix.vm }}-*
-          path: distributions
+          path: ${{ env.BENCHMARK_ROOT }}/a
           run-id: ${{ env.RELEASE_RUN }}
           github-token: ${{ github.token }}
       - name: Prepare matching native tools
         shell: pwsh
         run: |
+          Move-Item workload "$env:BENCHMARK_ROOT\s"
           $suffix = if ('${{ matrix.arch }}' -eq 'arm64') { 'woa64' } else { 'win64' }
-          New-Item -ItemType Directory -Force tools | Out-Null
-          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o tools\clang.exe
+          $tools = "$env:BENCHMARK_ROOT\tools"
+          New-Item -ItemType Directory -Force $tools | Out-Null
+          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o "$tools\clang.exe"
           if ($LASTEXITCODE) { throw 'Clang download failed' }
-          7z x -y -bd -bso0 -otools\clang tools\clang.exe
+          7z x -y -bd -bso0 "-o$tools\clang" "$tools\clang.exe"
           if ($LASTEXITCODE) { throw 'Clang extraction failed' }
           $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
           New-Item -Path $key -Force | Out-Null
@@ -67,15 +79,16 @@ jobs:
       - name: Replay actual distribution compilers offline
         shell: pwsh
         run: |
+          $env:RUNNER_TEMP = "$env:BENCHMARK_ROOT\t"
           $extra = @()
           if ('${{ inputs.pilot }}' -eq 'true' -or '${{ endsWith(github.ref_name, '-pilot') }}' -eq 'true') { $extra += '--pilot' }
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\matched_release_probe.py --source workload --artifacts distributions --output results --clang tools\clang\bin --protocol ci-benchmark\matched-release\protocol.json --release-run "$env:RELEASE_RUN" @extra
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script .github\scripts\matched_release_probe.py --source "$env:BENCHMARK_ROOT\s" --artifacts "$env:BENCHMARK_ROOT\a" --output "$env:BENCHMARK_ROOT\e" --clang "$env:BENCHMARK_ROOT\tools\clang\bin" --protocol ci-benchmark\matched-release\protocol.json --release-run "$env:RELEASE_RUN" @extra
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: matched-ironrdp-${{ matrix.arch }}-${{ matrix.vm }}
           path: |
-            results/index.json
-            results/round-*
-            results/meter-validation
+            ${{ env.BENCHMARK_ROOT }}/e/index.json
+            ${{ env.BENCHMARK_ROOT }}/e/round-*
+            ${{ env.BENCHMARK_ROOT }}/e/meter-validation
           retention-days: 30

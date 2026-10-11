@@ -10,7 +10,7 @@ import tarfile
 
 from build_arm_compilers import digest, save
 from compiler_probe import validate_meter
-from matched_release import RUST, VARIANTS
+from matched_release import RUST, VARIANTS, check_build_paths
 from msvc_experiment import equivalent_tools, tool_identity
 from native_ci_probe import paired_order, run_block
 
@@ -87,6 +87,7 @@ def main():
     parser.add_argument("--pilot", action="store_true")
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
+    check_build_paths(source, output)
     protocol = json.loads(args.protocol.read_text())
     host, vm = os.environ["BENCHMARK_HOST"], int(os.environ["BENCHMARK_REPLICATE"])
     arch = "arm64" if host.startswith("aarch64") else "x64"

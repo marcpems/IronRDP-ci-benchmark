@@ -81,3 +81,6 @@ The source amendment applies to all cells; its conditional flags do not change
 the no-cross-crate-LTO baseline/MSVC-PGO recipes. Full tools, docs, installer,
 fresh profiles, correctness requirements and timing boundaries remain unchanged.
 Local diagnostic successes are not substitutes for the replacement hosted pilot.
+Downstream replays likewise use short physical workload, compiler, Cargo-home
+and temporary roots uniformly across variants, before any benchmark pilot or
+measured replay. No existing downstream timing is rescaled to account for paths.
