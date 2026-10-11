@@ -9,6 +9,19 @@ import matched_release as release
 
 
 class MatchedReleaseTests(unittest.TestCase):
+    def test_preparation_checks_declared_source_before_building(self):
+        roots = tuple(Path(f"C:/mr/{name}") for name in ("r", "l", "e"))
+        for revision in (release.RUST, "diagnostic-parent"):
+            with patch.object(release.os, "name", "nt"), \
+                    patch.object(release.os, "cpu_count", return_value=4), \
+                    patch.object(release.platform, "machine", return_value="ARM64"), \
+                    patch.object(release.subprocess, "check_output",
+                                 side_effect=[revision, "wrong-llvm-revision"]) as checkout:
+                kwargs = {} if revision == release.RUST else {"rust_revision": revision}
+                with self.assertRaisesRegex(RuntimeError, "llvm-project"):
+                    release.prepare(*roots, "aarch64-pc-windows-msvc", "msvc-pgo", **kwargs)
+                self.assertEqual(checkout.call_count, 2)
+
     def test_qualification_uses_upstream_build_root_and_restores_config(self):
         host = "aarch64-pc-windows-msvc"
         with tempfile.TemporaryDirectory() as tmp:

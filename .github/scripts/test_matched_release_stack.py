@@ -6,7 +6,7 @@ import zipfile
 
 from build_arm_compilers import digest
 from matched_release import LLVM, PERF, RUST
-from matched_release_stack import HOST, PARENT_RUN, compiler_archive, verified_profiles
+from matched_release_stack import HOST, PARENT_RUN, PARENT_RUST, compiler_archive, verified_profiles
 
 
 class StackDiagnosticTests(unittest.TestCase):
@@ -14,7 +14,7 @@ class StackDiagnosticTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             parent = {"run_id": PARENT_RUN, "host": HOST, "variant": "msvc-pgo",
-                      "rust_sha": RUST, "llvm_sha": LLVM, "perf_sha": PERF, "attempt": "1"}
+                      "rust_sha": PARENT_RUST, "llvm_sha": LLVM, "perf_sha": PERF, "attempt": "1"}
             metadata = root / "provenance.json"
             metadata.write_text(json.dumps(parent))
             hashes = {}
@@ -27,6 +27,10 @@ class StackDiagnosticTests(unittest.TestCase):
             self.assertEqual(actual, parent)
             self.assertEqual(set(paths), set(hashes))
             metadata.write_text(json.dumps({**parent, "run_id": "other"}))
+            with self.assertRaisesRegex(RuntimeError, "unexpected diagnostic profile parent"):
+                verified_profiles(root)
+            self.assertNotEqual(RUST, PARENT_RUST)
+            metadata.write_text(json.dumps({**parent, "rust_sha": RUST}))
             with self.assertRaisesRegex(RuntimeError, "unexpected diagnostic profile parent"):
                 verified_profiles(root)
             metadata.write_text(json.dumps(parent))

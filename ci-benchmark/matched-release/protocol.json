@@ -1,7 +1,7 @@
 {
-  "schema": 2,
-  "rust_sha": "a2bb36e3594a73a806ad9d2bf2694fcd977c3261",
-  "amendment": "After excluded failed pilot 38122240736: short physical source/runtime/evidence paths for all cells; common Rust source adds MSVC-target compiler-private LTO DLL-data import correction. Scope, optimizations and timing boundaries unchanged.",
+  "schema": 3,
+  "rust_sha": "29d50151dcdd6e5b885920bc535047b380006900",
+  "amendment": "After excluded failed pilots 38122240736 and 38133940060: short same-volume physical paths, common MSVC-target compiler-private DLL-data import correction, upstream qualification extraction layout, and LLVM ThinLTO disabled only on discarded intermediate LLVM training builds. Final LLVM/Rust LTO, native tools, full distribution scope and timing boundaries unchanged.",
   "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
   "perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
   "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
@@ -18,6 +18,7 @@
   "release_pairing": "independent clean build VM per variant and replicate; compare within architecture, report CPU model mix; do not claim same-VM pairing",
   "native_linker": "baseline and msvc-pgo keep clang-cl/link.exe/lib.exe; llvm-pgo-thin keeps clang-cl but uses lld-link/llvm-lib and both LLVM and Rust ThinLTO",
   "profiles": "fresh within each production job; no borrowed profiles; these contrasts measure complete recipes, not an isolated LTO treatment with identical profiles",
+  "intermediate_llvm": "LLVM ThinLTO disabled during initial frontend preparation, frontend PGO optimization with static LLVM, and static backend instrumentation; static linkage and Rust LTO preserved; final distribution uses configured LLVM ThinLTO",
   "ironrdp": "evaluate the actual resulting release compilers; paired compiler order on each benchmark VM; baseline Cargo and native std shared to isolate compiler effects; five original native commands offline",
   "ironrdp_vms_per_release_replicate": 1,
   "warmup_rounds": 1,

@@ -2,10 +2,11 @@
 
 This new study replaces cross-version comparisons with actual full distribution
 builds and downstream measurements of their resulting compilers. The
-[protocol](protocol.json) is fixed before pilot outcomes.
+[protocol](protocol.json) is preregistered; amendments below are declared before
+replacement runs, with every pilot excluded from final estimates.
 
 Three configurations per native architecture share Rust commit
-`a2bb36e3594a73a806ad9d2bf2694fcd977c3261`, LLVM, clang-cl, SDK selection, full
+`29d50151dcdd6e5b885920bc535047b380006900`, LLVM, clang-cl, SDK selection, full
 distribution scope and four-logical-CPU standard GitHub runner class:
 
 | Configuration | PGO | Native linking | LLVM / Rust cross-crate ThinLTO |
@@ -121,3 +122,31 @@ tools. It preserves the compiler and PDBs, then runs the nested-expression test
 with the default stack limit and a separate phase-tracing invocation. This
 profile-reuse diagnostic is **not** a fresh release build or a timing sample,
 does not produce `result.json`, and cannot feed the matched analysis.
+Its source remains pinned to `a2bb36e3594a73a806ad9d2bf2694fcd977c3261`
+independently of later release-recipe amendments.
+
+## LLVM feasibility amendment
+
+Both LLVM cells in pilot 38133940060 reached the global 350-minute safety
+boundary without a distribution. On x64 the initial frontend training-tools
+build was still incomplete. Arm64 completed the frontend stage in 14,414.18
+seconds and was still constructing the backend-instrumented compiler. Neither
+observation is a completed release duration, and neither establishes an
+IronRDP benefit. Their censored durations cannot be substituted into a
+percentage-cost comparison.
+
+The revised opt-dist recipe disables LLVM ThinLTO on intermediate LLVM builds
+that are discarded before distribution: initial frontend preparation, its
+static-LLVM reuse during frontend PGO optimization, and backend instrumentation.
+It retains static LLVM, the selected linkers/librarians, and the configured Rust
+LTO throughout. The final distribution still enables LLVM ThinLTO for the LLVM
+option. Baseline/MSVC-PGO already have LLVM ThinLTO disabled, so this does not
+introduce a different native-tool choice there.
+
+The unit regression covers static/shared LLVM, both Windows architectures and
+full/fast training modes, including the absence of a final-distribution LTO
+override. Hosted feasibility remains unproven: the dedicated
+`experiment/matched-release-llvm-pilot` branch runs only the two LLVM pilot cells
+to test the revised recipe while the independent Arm64 stack failure is
+diagnosed. It does not replace the required qualified six-cell pilot or supply
+measured samples. All final comparison cells must share the same source revision.

@@ -9,18 +9,19 @@ import sys
 import zipfile
 
 from build_arm_compilers import digest, save
-from matched_release import LLVM, PERF, RUST, prepare, run
+from matched_release import LLVM, PERF, prepare, run
 from matched_release_probe import one_file
 from msvc_experiment import equivalent_tools
 
 PARENT_RUN = "38133940060"
+PARENT_RUST = "a2bb36e3594a73a806ad9d2bf2694fcd977c3261"
 HOST = "aarch64-pc-windows-msvc"
 
 
 def verified_profiles(root):
     parent = json.loads(one_file(root, "provenance.json").read_text())
     expected = {"run_id": PARENT_RUN, "host": HOST, "variant": "msvc-pgo",
-                "rust_sha": RUST, "llvm_sha": LLVM, "perf_sha": PERF, "attempt": "1"}
+                "rust_sha": PARENT_RUST, "llvm_sha": LLVM, "perf_sha": PERF, "attempt": "1"}
     if any(parent.get(key) != value for key, value in expected.items()):
         raise RuntimeError("unexpected diagnostic profile parent")
     hashes = json.loads(one_file(root, "profiles.json").read_text())
@@ -55,7 +56,7 @@ def main():
     parent, profiles = verified_profiles(args.profiles.resolve())
     env, _, tools, _, provenance = prepare(
         source, args.runtime_source.resolve(), output, args.host, args.variant,
-        full_distribution=False)
+        full_distribution=False, rust_revision=PARENT_RUST)
     if not equivalent_tools(parent["tools"], tools):
         raise RuntimeError("native tools changed since the failing compiler build")
     provenance["diagnostic_parent_run"] = PARENT_RUN

@@ -17,7 +17,7 @@ from msvc_experiment import (
     rebuild_clang_runtime, tool_identity,
 )
 
-RUST = "a2bb36e3594a73a806ad9d2bf2694fcd977c3261"
+RUST = "29d50151dcdd6e5b885920bc535047b380006900"
 LLVM = "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019"
 PERF = "208d929efe770996eb02cd3d2712623ea48b7646"
 VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
@@ -191,12 +191,13 @@ def main():
         raise
 
 
-def prepare(source, runtime_source, output, host, variant, full_distribution=True):
+def prepare(source, runtime_source, output, host, variant, full_distribution=True,
+            rust_revision=RUST):
     expected_machine = ("arm64", "aarch64") if host.startswith("aarch64") else ("amd64", "x86_64")
     if os.name != "nt" or platform.machine().lower() not in expected_machine or os.cpu_count() != 4:
         raise RuntimeError("expected a native standard four-logical-CPU Windows runner")
     check_build_paths(source, runtime_source, output)
-    for path, revision in ((source, RUST), (source / "src/llvm-project", LLVM),
+    for path, revision in ((source, rust_revision), (source / "src/llvm-project", LLVM),
                            (source / "src/tools/rustc-perf", PERF)):
         if subprocess.check_output(["git", "-C", path, "rev-parse", "HEAD"], text=True).strip() != revision:
             raise RuntimeError(f"source revision mismatch: {path}")
@@ -215,7 +216,7 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
     })
     env["CMAKE_TOOLCHAIN_FILE"] = str(cmake_toolchain(output, identity))
     provenance = {
-        "rust_sha": RUST, "llvm_sha": LLVM, "perf_sha": PERF, "host": host,
+        "rust_sha": rust_revision, "llvm_sha": LLVM, "perf_sha": PERF, "host": host,
         "variant": variant, "tools": identity, "run_id": os.environ["GITHUB_RUN_ID"],
         "attempt": os.environ["GITHUB_RUN_ATTEMPT"], "vm": int(os.environ["RELEASE_REPLICATE"]),
         "pilot": os.environ["RELEASE_PILOT"] == "true",
