@@ -37,7 +37,7 @@ jobs:
       - name: Prepare short physical benchmark paths
         shell: pwsh
         run: |
-          $root = "$env:SystemDrive\mb"
+          $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) 'mb'
           if (Test-Path $root) { throw "Expected an unused short benchmark root: $root" }
           New-Item -ItemType Directory "$root\t","$root\c" | Out-Null
           "BENCHMARK_ROOT=$root" >> $env:GITHUB_ENV
@@ -65,7 +65,7 @@ jobs:
       - name: Prepare matching native tools
         shell: pwsh
         run: |
-          Move-Item workload "$env:BENCHMARK_ROOT\s"
+          [System.IO.Directory]::Move((Resolve-Path workload).Path, "$env:BENCHMARK_ROOT\s")
           $suffix = if ('${{ matrix.arch }}' -eq 'arm64') { 'woa64' } else { 'win64' }
           $tools = "$env:BENCHMARK_ROOT\tools"
           New-Item -ItemType Directory -Force $tools | Out-Null

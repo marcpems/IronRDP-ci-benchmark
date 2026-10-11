@@ -37,7 +37,7 @@ jobs:
           "GIT_CONFIG_VALUE_0=true" >> $env:GITHUB_ENV
           "GIT_CONFIG_KEY_1=core.autocrlf" >> $env:GITHUB_ENV
           "GIT_CONFIG_VALUE_1=false" >> $env:GITHUB_ENV
-          $root = "$env:SystemDrive\mr"
+          $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) 'mr'
           if (Test-Path $root) { throw "Expected an unused short build root: $root" }
           New-Item -ItemType Directory "$root\e" | Out-Null
           "MATCHED_ROOT=$root" >> $env:GITHUB_ENV
@@ -66,8 +66,8 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $source = "$env:MATCHED_ROOT\r"
-          Move-Item rust-source $source
-          Move-Item clang-runtime-source "$env:MATCHED_ROOT\l"
+          [System.IO.Directory]::Move((Resolve-Path rust-source).Path, $source)
+          [System.IO.Directory]::Move((Resolve-Path clang-runtime-source).Path, "$env:MATCHED_ROOT\l")
           Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors | ConvertTo-Json > "$env:MATCHED_ROOT\e\cpu.json"
           @{ImageOS=$env:ImageOS; ImageVersion=$env:ImageVersion; RunnerArch=$env:RUNNER_ARCH} | ConvertTo-Json > "$env:MATCHED_ROOT\e\runner.json"
           git -C $source submodule update --init --recursive --depth 1 --jobs 8

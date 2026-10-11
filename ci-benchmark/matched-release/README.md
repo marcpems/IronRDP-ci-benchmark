@@ -84,3 +84,10 @@ Local diagnostic successes are not substitutes for the replacement hosted pilot.
 Downstream replays likewise use short physical workload, compiler, Cargo-home
 and temporary roots uniformly across variants, before any benchmark pilot or
 measured replay. No existing downstream timing is rescaled to account for paths.
+
+[Replacement attempt 38133710688](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38133710688)
+was stopped after x64 setup could not move the checkout from the workspace's
+D: volume to the system C: volume. No production timing from that attempt is
+accepted. The short root is now selected on the **workspace volume**, with an
+atomic directory rename instead of a cross-volume PowerShell move. The same
+rule applies to downstream benchmarks.

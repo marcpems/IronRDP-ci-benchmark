@@ -13,6 +13,14 @@ class MatchedReleaseTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError, "short physical build roots"):
             release.check_build_paths(Path("C:/a/IronRDP-ci-benchmark/rust-source"))
 
+    def test_workflows_relocate_on_workspace_volume(self):
+        workflows = Path(__file__).parents[1] / "workflows"
+        for name in ("matched-release.yml", "matched-release-ironrdp.yml"):
+            text = (workflows / name).read_text()
+            self.assertIn("GetPathRoot($env:GITHUB_WORKSPACE)", text)
+            self.assertIn("[System.IO.Directory]::Move", text)
+            self.assertNotIn("$env:SystemDrive", text)
+
     def test_full_scope_and_only_declared_configuration_differences(self):
         for host in ("x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc"):
             configs = {}
