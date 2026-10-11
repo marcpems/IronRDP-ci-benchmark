@@ -1,6 +1,7 @@
 {
-  "schema": 1,
-  "rust_sha": "07bb50a774b11375032aacc16fd9a70f090f8642",
+  "schema": 2,
+  "rust_sha": "a2bb36e3594a73a806ad9d2bf2694fcd977c3261",
+  "amendment": "After excluded failed pilot 38122240736: short physical source/runtime/evidence paths for all cells; common Rust source adds MSVC-target compiler-private LTO DLL-data import correction. Scope, optimizations and timing boundaries unchanged.",
   "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
   "perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
   "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",

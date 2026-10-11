@@ -5,7 +5,7 @@ builds and downstream measurements of their resulting compilers. The
 [protocol](protocol.json) is fixed before pilot outcomes.
 
 Three configurations per native architecture share Rust commit
-`07bb50a774b11375032aacc16fd9a70f090f8642`, LLVM, clang-cl, SDK selection, full
+`a2bb36e3594a73a806ad9d2bf2694fcd977c3261`, LLVM, clang-cl, SDK selection, full
 distribution scope and four-logical-CPU standard GitHub runner class:
 
 | Configuration | PGO | Native linking | LLVM / Rust cross-crate ThinLTO |
@@ -50,3 +50,34 @@ The requested final deliverable is a one-page Word comparison of full release
 cost increases and IronRDP compilation savings, expressed against their stated
 baselines. No document claiming completed measurements is produced before the
 required datasets and qualification checks are available.
+
+## Pilot repair, declared before replacement runs
+
+[Pilot 38122240736](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38122240736)
+failed all six cells. None supplies a completed release duration. The original
+protocol used Rust `07bb50a774b11375032aacc16fd9a70f090f8642`.
+
+The replacement uses short physical checkout, runtime and evidence roots on
+every runner (`C:\mr` or `D:\mr`), not drive aliases that path canonicalization
+can expand. Local native Arm64 reproductions confirmed that an existing
+270-character archive path fails with Microsoft link.exe while the same archive
+at 100 characters links, and that MSVC's relative header include fails with a
+211-character source path but succeeds at 130 characters. The AWS-LC header
+exists in the published dependency archive; this is not a missing dependency.
+Cargo home, temporary files and qualification extraction also use the short root.
+
+The Arm64 LLVM pilot independently failed on Rustdoc's DLL-data references.
+Cargo passes `-Clinker-plugin-lto` when compiling ThinLTO dependencies; that mode
+assumes static linking and omits Windows DLL-import annotations. Compiler-private
+tools instead import data from `rustc_driver`. The new common Rust source
+overrides that dependency mode with
+`-Clinker-plugin-lto=no -Cembed-bitcode=yes` for MSVC-target compiler-private tools
+and codegen backends at cross-crate-LTO stages. It does **not** disable Rust's
+in-process ThinLTO. A three-crate atomic-static DLL reproducer fails before the
+override, then links and runs after it. The exact added Rust regression fixtures
+also link and run locally with both link.exe and lld-link and both Thin/FatLTO.
+
+The source amendment applies to all cells; its conditional flags do not change
+the no-cross-crate-LTO baseline/MSVC-PGO recipes. Full tools, docs, installer,
+fresh profiles, correctness requirements and timing boundaries remain unchanged.
+Local diagnostic successes are not substitutes for the replacement hosted pilot.

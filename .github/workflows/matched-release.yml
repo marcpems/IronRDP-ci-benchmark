@@ -37,6 +37,10 @@ jobs:
           "GIT_CONFIG_VALUE_0=true" >> $env:GITHUB_ENV
           "GIT_CONFIG_KEY_1=core.autocrlf" >> $env:GITHUB_ENV
           "GIT_CONFIG_VALUE_1=false" >> $env:GITHUB_ENV
+          $root = "$env:SystemDrive\mr"
+          if (Test-Path $root) { throw "Expected an unused short build root: $root" }
+          New-Item -ItemType Directory "$root\e" | Out-Null
+          "MATCHED_ROOT=$root" >> $env:GITHUB_ENV
       - uses: actions/checkout@v6
         with:
           path: harness
@@ -44,7 +48,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: marcpems/rust-arm64-compiler-ab
-          ref: 07bb50a774b11375032aacc16fd9a70f090f8642
+          ref: a2bb36e3594a73a806ad9d2bf2694fcd977c3261
           path: rust-source
           persist-credentials: false
       - uses: actions/checkout@v6
@@ -61,20 +65,22 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          New-Item -ItemType Directory -Force harness\release-evidence | Out-Null
-          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors | ConvertTo-Json > harness\release-evidence\cpu.json
-          @{ImageOS=$env:ImageOS; ImageVersion=$env:ImageVersion; RunnerArch=$env:RUNNER_ARCH} | ConvertTo-Json > harness\release-evidence\runner.json
-          git -C rust-source submodule update --init --recursive --depth 1 --jobs 8
+          $source = "$env:MATCHED_ROOT\r"
+          Move-Item rust-source $source
+          Move-Item clang-runtime-source "$env:MATCHED_ROOT\l"
+          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors | ConvertTo-Json > "$env:MATCHED_ROOT\e\cpu.json"
+          @{ImageOS=$env:ImageOS; ImageVersion=$env:ImageVersion; RunnerArch=$env:RUNNER_ARCH} | ConvertTo-Json > "$env:MATCHED_ROOT\e\runner.json"
+          git -C $source submodule update --init --recursive --depth 1 --jobs 8
           if ($LASTEXITCODE) { throw 'Submodule checkout failed' }
           $suffix = if ('${{ matrix.arch }}' -eq 'arm64') { 'woa64' } else { 'win64' }
-          New-Item -ItemType Directory -Force rust-source\citools\clang-rust,rust-source\wix\bin | Out-Null
-          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o rust-source\citools\clang.exe
+          New-Item -ItemType Directory -Force "$source\citools\clang-rust","$source\wix\bin" | Out-Null
+          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o "$source\citools\clang.exe"
           if ($LASTEXITCODE) { throw 'Clang download failed' }
-          7z x -y -bd -bso0 -orust-source\citools\clang-rust rust-source\citools\clang.exe
+          7z x -y -bd -bso0 "-o$source\citools\clang-rust" "$source\citools\clang.exe"
           if ($LASTEXITCODE) { throw 'Clang extraction failed' }
-          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip -o rust-source\wix\wix.zip
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip -o "$source\wix\wix.zip"
           if ($LASTEXITCODE) { throw 'WIX download failed' }
-          7z x -y -bd -bso0 -orust-source\wix\bin rust-source\wix\wix.zip
+          7z x -y -bd -bso0 "-o$source\wix\bin" "$source\wix\wix.zip"
           if ($LASTEXITCODE) { throw 'WIX extraction failed' }
           $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
           New-Item -Path $key -Force | Out-Null
@@ -83,21 +89,21 @@ jobs:
         shell: pwsh
         run: |
           $hostTriple = if ('${{ matrix.arch }}' -eq 'arm64') { 'aarch64-pc-windows-msvc' } else { 'x86_64-pc-windows-msvc' }
-          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script harness\.github\scripts\matched_release.py --source rust-source --runtime-source clang-runtime-source --output harness\release-evidence --host $hostTriple --variant ${{ matrix.variant }}
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script harness\.github\scripts\matched_release.py --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e" --host $hostTriple --variant ${{ matrix.variant }}
       - name: Preserve diagnostics even on failure
         uses: actions/upload-artifact@v6
         if: always()
         with:
           name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-evidence
           path: |
-            harness/release-evidence/*.json
-            harness/release-evidence/*.stdout
-            harness/release-evidence/*.stderr
-            harness/release-evidence/*.txt
-            harness/release-evidence/*.toml
-            harness/release-evidence/*.cmake
-            rust-source/build/metrics.json
-            rust-source/opt-artifacts/*.profdata
+            ${{ env.MATCHED_ROOT }}/e/*.json
+            ${{ env.MATCHED_ROOT }}/e/*.stdout
+            ${{ env.MATCHED_ROOT }}/e/*.stderr
+            ${{ env.MATCHED_ROOT }}/e/*.txt
+            ${{ env.MATCHED_ROOT }}/e/*.toml
+            ${{ env.MATCHED_ROOT }}/e/*.cmake
+            ${{ env.MATCHED_ROOT }}/r/build/metrics.json
+            ${{ env.MATCHED_ROOT }}/r/opt-artifacts/*.profdata
           compression-level: 1
           retention-days: 30
       - name: Retain actual full distribution
@@ -105,6 +111,6 @@ jobs:
         if: success()
         with:
           name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-dist
-          path: rust-source/build/dist
+          path: ${{ env.MATCHED_ROOT }}/r/build/dist
           compression-level: 0
           retention-days: 7

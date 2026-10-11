@@ -8,6 +8,11 @@ import matched_release as release
 
 
 class MatchedReleaseTests(unittest.TestCase):
+    def test_long_physical_roots_fail_before_expensive_builds(self):
+        release.check_build_paths(Path("C:/mr/r"), Path("C:/mr/l"), Path("C:/mr/e"))
+        with self.assertRaisesRegex(RuntimeError, "short physical build roots"):
+            release.check_build_paths(Path("C:/a/IronRDP-ci-benchmark/rust-source"))
+
     def test_full_scope_and_only_declared_configuration_differences(self):
         for host in ("x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc"):
             configs = {}

@@ -17,10 +17,16 @@ from msvc_experiment import (
     rebuild_clang_runtime, tool_identity,
 )
 
-RUST = "07bb50a774b11375032aacc16fd9a70f090f8642"
+RUST = "a2bb36e3594a73a806ad9d2bf2694fcd977c3261"
 LLVM = "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019"
 PERF = "208d929efe770996eb02cd3d2712623ea48b7646"
 VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
+
+
+def check_build_paths(*paths):
+    for path in paths:
+        if len(str(path.resolve())) > 24:
+            raise RuntimeError(f"native Windows tools require short physical build roots: {path}")
 
 
 def configuration(host, clang, librarian, variant):
@@ -189,6 +195,7 @@ def build(source, runtime_source, output, host, variant):
     expected_machine = ("arm64", "aarch64") if host.startswith("aarch64") else ("amd64", "x86_64")
     if os.name != "nt" or platform.machine().lower() not in expected_machine or os.cpu_count() != 4:
         raise RuntimeError("expected a native standard four-logical-CPU Windows runner")
+    check_build_paths(source, runtime_source, output)
     for path, revision in ((source, RUST), (source / "src/llvm-project", LLVM),
                            (source / "src/tools/rustc-perf", PERF)):
         if subprocess.check_output(["git", "-C", path, "rev-parse", "HEAD"], text=True).strip() != revision:
@@ -216,6 +223,9 @@ def build(source, runtime_source, output, host, variant):
         "full_distribution": True, "cache": "cold; no shared compiler or profile cache",
         "baseline": "controlled no-PGO full distribution, not the shipped x64 PGO recipe",
         "profiling_runtime_patch_sha256": digest(patch),
+        "bootstrap_cargo_sha256": digest(source / "src/bootstrap/src/core/builder/cargo.rs"),
+        "paths": {"source": str(source), "runtime": str(runtime_source), "output": str(output),
+                  "cargo_home": env["CARGO_HOME"], "temp": env["TEMP"]},
     }
     save(output / "provenance.json", provenance)
     preparation = time.time()
