@@ -54,8 +54,15 @@ jobs:
             $name = "m$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))${variantCode}${{ matrix.vm }}"
           }
           $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) $name
+          $drive = [System.IO.DriveInfo]::new([System.IO.Path]::GetPathRoot($root))
+          $storage = @{Drive=$drive.Name; AvailableBytes=$drive.AvailableFreeSpace; TotalBytes=$drive.TotalSize}
+          $storage | ConvertTo-Json
+          if ($env:RELEASE_MACHINE_CLASS -eq 'self-hosted-arm64-highcore' -and $drive.AvailableFreeSpace -lt 200GB) {
+            throw 'High-core release requires at least 200 GiB free before each variant; this is a safety floor, not a guaranteed maximum.'
+          }
           if (Test-Path $root) { throw "Expected an unused short build root: $root" }
           New-Item -ItemType Directory "$root\e" | Out-Null
+          $storage | ConvertTo-Json > "$root\e\storage-start.json"
           "MATCHED_ROOT=$root" >> $env:GITHUB_ENV
       - uses: actions/checkout@v6
         with:

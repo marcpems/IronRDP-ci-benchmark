@@ -350,6 +350,14 @@ was launched from harness `308cc96caf359fd76fc3c4c0eec945bbf0a901cb`,
 using the common Rust source `7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238`.
 These remain excluded feasibility pilots until full release qualification.
 
+The first GB300 pilot exhausts D: during the LLVM portion of baseline
+production, before any distribution is completed. The other two variants
+then fail while downloading Actions. The user cleared space and authorized
+a restart. Subsequent high-core jobs record starting capacity and require
+at least 200 GiB free before each variant as a conservative safety floor,
+not an upper bound on storage use. Retries use new run-specific directories,
+never the failed partial build as a cold measurement.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the
