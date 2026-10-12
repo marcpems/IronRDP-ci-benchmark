@@ -1,7 +1,7 @@
 name: Matched full Rust release cost
 on:
   push:
-    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot]
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic]
   workflow_dispatch:
     inputs:
       pilot:
@@ -49,7 +49,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           repository: marcpems/rust-arm64-compiler-ab
-          ref: ${{ github.ref_name == 'experiment/matched-release-stack-diagnostic' && 'a2bb36e3594a73a806ad9d2bf2694fcd977c3261' || 'ab0afc7ee6827da442070b034830b5d69a9b537c' }}
+          ref: ${{ github.ref_name == 'experiment/matched-release-stack-diagnostic' && 'ab0afc7ee6827da442070b034830b5d69a9b537c' || '7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238' }}
           path: rust-source
           persist-credentials: false
       - uses: actions/checkout@v6
@@ -92,7 +92,7 @@ jobs:
         with:
           name: release-arm64-msvc-pgo-1-evidence
           path: ${{ env.MATCHED_ROOT }}/p
-          run-id: 38133940060
+          run-id: 38172717639
           github-token: ${{ github.token }}
       - name: Build and qualify the selected experiment
         shell: pwsh
@@ -103,7 +103,7 @@ jobs:
           if ('${{ endsWith(github.ref_name, '-stack-diagnostic') }}' -eq 'true') {
             $script = 'harness\.github\scripts\matched_release_stack.py'
             $extra = @('--profiles', "$env:MATCHED_ROOT\p")
-            if ('${{ github.ref_name }}' -eq 'experiment/matched-release-repair-stack-diagnostic') {
+            if ('${{ endsWith(github.ref_name, '-repair-stack-diagnostic') }}' -eq 'true') {
               $extra += '--test-source-repair'
             }
           }

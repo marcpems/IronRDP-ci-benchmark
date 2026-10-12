@@ -13,8 +13,8 @@ from matched_release import LLVM, PERF, RUST, prepare, run
 from matched_release_probe import one_file
 from msvc_experiment import equivalent_tools
 
-PARENT_RUN = "38133940060"
-PARENT_RUST = "a2bb36e3594a73a806ad9d2bf2694fcd977c3261"
+PARENT_RUN = "38172717639"
+PARENT_RUST = "ab0afc7ee6827da442070b034830b5d69a9b537c"
 HOST = "aarch64-pc-windows-msvc"
 
 

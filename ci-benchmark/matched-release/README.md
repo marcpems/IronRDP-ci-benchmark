@@ -6,7 +6,7 @@ builds and downstream measurements of their resulting compilers. The
 replacement runs, with every pilot excluded from final estimates.
 
 Three configurations per native architecture share Rust commit
-`ab0afc7ee6827da442070b034830b5d69a9b537c`, LLVM, clang-cl, SDK selection, full
+`7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238`, LLVM, clang-cl, SDK selection, full
 distribution scope and four-logical-CPU standard GitHub runner class:
 
 | Configuration | PGO | Native linking | LLVM / Rust cross-crate ThinLTO |
@@ -197,3 +197,33 @@ the four baseline/MSVC-retained full-release pilot cells on this common source
 while LLVM feasibility is investigated separately. These jobs use fresh profiles
 where applicable and the complete qualification suite. They remain excluded
 pilots, not substitutes for the three-repetition measurement matrix.
+
+## Fresh-profile qualification outcome
+
+Run 38172717639 passes complete baseline qualification on both architectures.
+The x64 baseline takes 9,308.65 seconds for production and 11,065 seconds for
+the complete job; Arm64 takes 6,947.20 and 9,389 seconds respectively. These
+remain single excluded pilot observations, not population estimates.
+
+Arm64 MSVC-PGO completes production in 16,118.67 seconds, but its fresh profiles
+expose another overflow in the same nested-expression regression. The other
+22,097 UI cases pass. The actual unqualified compiler archive
+(`rustc-nightly-aarch64-pc-windows-msvc.tar.xz`, SHA-256
+`7d26046aca16a6d3fa17800758fede8e99b41f4060fd814d0bf52c5915140bae`)
+reproduces locally. Native unwinding shows a 2,880-byte general expression frame
+plus a 400-byte scope wrapper per nested arm. The scope-only repair is therefore
+insufficient, despite passing its original-profile diagnostic.
+
+The follow-up source also separates `if` lowering from the large dispatcher.
+The new diagnostic consumes the fresh failing profiles from run 38172717639,
+whose parent source is `ab0afc7ee6827da442070b034830b5d69a9b537c`. Original
+diagnostic runs remain pinned to their historical workflow commits; no old
+success is reclassified as fresh-profile qualification.
+
+The x64 MSVC-PGO pilot times out during final distribution assembly. Both LLVM
+pilots in run 38158053450 also time out, despite reaching final production:
+x64 is still linking LLVM tools and Arm64 is building Rustdoc. All three hit
+the 350-minute safety boundary; they are unfinished observations, not completed
+costs. GitHub's six-hour hosted-job limit cannot be extended by setting a larger
+workflow timeout. A multi-job recipe and explicit elapsed-pipeline/total-runner
+accounting are required before replacement production measurements.
