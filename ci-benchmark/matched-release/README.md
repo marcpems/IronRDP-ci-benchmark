@@ -230,7 +230,7 @@ accounting are required before replacement production measurements.
 
 ## Separate self-hosted Arm64 experiment
 
-At the user's request, `MARCPE-D4-Arm64` is being validated through an actual
+At the user's request, `MARCPE-D4-Arm64` was validated through an actual
 Actions job before scheduling releases. This is not the local CLI computer
 (`MARCPE-C2-1`); no local SDK installation paths are assumed. The preflight
 checks native MSVC/SDK linking, builds the Rust MIR compiler component, and
@@ -238,7 +238,15 @@ compiles the pinned IronRDP core library and runs its native TLS integration
 tests. A Cargo success with no compiled artifacts or no executed tests is
 rejected; `ironrdp-core` itself disables unit-test targets.
 
-After that gate passes, `experiment/matched-release-selfhost-arm64-pilot`
+[Preflight 38224862582](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38224862582)
+passes all these checks, including the native TLS integration test. Bootstrap
+explicitly selects `aarch64-pc-windows-msvc`; autodetection previously selected
+an existing GNU toolchain. The recorded runner CPU is NVIDIA RTX Spark N1X,
+with 20 cores and 20 logical processors. Neither earlier validation attempt
+alone established the complete gate: one selected the wrong Rust host and
+the other used a no-op Cargo test target.
+
+With that gate passed, `experiment/matched-release-selfhost-arm64-pilot`
 selects only native self-hosted Arm64 jobs, serializing the baseline,
 Microsoft-retained PGO and LLVM-option full releases on that machine. Every
 cell has a new physical source, Cargo-home, runtime and temporary directory;
@@ -247,6 +255,11 @@ and four build jobs remain in effect. Actual CPU identity/count, runner name
 and native-tool hashes are retained. The self-hosted deadline is 530 minutes,
 leaving ten minutes for evidence upload before a 540-minute workflow timeout.
 Hosted jobs remain at their original 350/360-minute limits.
+
+[Pilot 38225557840](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38225557840)
+was launched from harness `16468b3a87f03946b19d0f81f0064b3082a99fc0`, with
+Rust `7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238`. Its first job was confirmed
+executing on the intended runner. Launch is not successful release qualification.
 
 Self-hosted evidence explicitly records `runner_class=self-hosted-arm64`.
 The hosted-study analyzer rejects it: these times must be reported as a separate
