@@ -382,6 +382,30 @@ required by its validation and release workflows. The
 only Microsoft-PGO and LLVM/ThinLTO with corrected routing and fresh roots,
 preserving rather than rebuilding the qualified baseline.
 
+## GB300 baseline utilization evidence
+
+Run 38282254692 completes and qualifies its 64-CPU baseline. The production
+interval is 8,309.48 seconds. Windows Job Object accounting reports
+21,365.30 CPU-seconds, averaging 2.57 active CPUs over production despite
+the verified 64-CPU affinity. This confirms the user's low-utilization
+observation; configured worker count is not achieved average parallelism.
+
+The production invocation in `build/metrics.json` lasts 8,244.14 seconds.
+Summing its exclusive (child-excluded) step durations avoids double counting:
+distribution assembly/packaging is 6,132.72 seconds (102.21 minutes, about
+74% of production), tool construction 780.27 seconds, compiler/standard-library
+steps 467.39 seconds, LLVM/LLD 254.05 seconds, documentation generation
+465.53 seconds and vendoring 136.96 seconds. Remaining time includes bootstrap
+startup and small orchestration steps. These categories are wall time, not
+raw CPU time or purely offline compilation.
+
+Within packaging, the combined distribution/MSI step takes 3,032.78 seconds
+and the two documentation packaging steps take 2,564.49 seconds combined.
+The completed logs therefore locate the dominant elapsed-time cost in
+packaging/assembly rather than failure to select 64 compile workers.
+They do not yet separate compression CPU from file I/O or other packaging
+costs; changing the required distribution scope would invalidate this comparison.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the
