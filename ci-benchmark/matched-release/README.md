@@ -311,8 +311,12 @@ but subsequent Arm64 variants need the corrected workflow before retrying.
 
 The user separately authorized `GB300-Arm64` with label `HighCoreCount` and
 accepted a fixed 64-CPU configuration. The native preflight exercises an
-actual 64-CPU Windows Job Object before releases are scheduled, rejecting
-insufficient processor-group affinity rather than silently using fewer CPUs.
+actual 64-CPU Windows Job Object before releases are scheduled. The initial
+preflight exposed that one legacy processor-group mask cannot cover the
+requested CPUs. The high-core path uses `JobObjectGroupInformationEx` with
+explicit masks across groups, reads back the kernel configuration, and runs a
+probe on every selected CPU while requiring excluded CPUs to reject affinity
+requests. The four-CPU measurement path keeps its original single-group policy.
 The release branch `experiment/matched-release-selfhost-arm64-highcore-pilot`
 selects only Arm64 and that label, with an additional exact runner-name gate.
 Its concurrency group is independent of the four-CPU runs.

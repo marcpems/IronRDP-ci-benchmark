@@ -145,7 +145,8 @@ def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, time
         kernel.GetCurrentProcess(), c.byref(own_mask), c.byref(system_mask),
     ))
     allowed = [i for i in range(c.sizeof(size) * 8) if own_mask.value & (1 << i)]
-    if cores > len(allowed):
+    multi_group = cores == 64
+    if not multi_group and cores > len(allowed):
         raise RuntimeError("requested CPU affinity exceeds available CPUs")
     if session is not None and not session["active"]:
         raise RuntimeError("Measurement session is already closed")
@@ -206,12 +207,18 @@ def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, time
 
     info = ProcessInfo()
     completed = False
+    group_affinity = session.get("group_affinity") if session is not None else None
     try:
         if new_job:
             limits = Limits()
-            limits.basic.flags = 0x2000 | 0x10  # Kill on close and job-wide affinity.
-            limits.basic.affinity = sum(1 << i for i in allowed[:cores])
+            limits.basic.flags = 0x2000 | (0 if multi_group else 0x10)
+            limits.basic.affinity = 0 if multi_group else sum(1 << i for i in allowed[:cores])
             check(kernel.SetInformationJobObject(job, 9, c.byref(limits), c.sizeof(limits)))
+            if multi_group:
+                from windows_job_affinity import configure_job_groups
+                group_affinity = configure_job_groups(job, cores)
+                if session is not None:
+                    session["group_affinity"] = group_affinity
         startup = Startup()
         startup.cb, startup.flags = c.sizeof(startup), 0x100
         with open(os.devnull, "rb") as stdin:
@@ -235,6 +242,9 @@ def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, time
             ))
             # Assignment before resuming prevents any child escaping CPU accounting.
             check(kernel.AssignProcessToJobObject(job, info.process))
+            if multi_group:
+                from windows_job_affinity import verify_job_groups
+                verify_job_groups(job, group_affinity)
             if kernel.ResumeThread(info.thread) == 0xFFFFFFFF:
                 raise c.WinError(c.get_last_error())
             wait_status = kernel.WaitForSingleObject(
@@ -270,7 +280,9 @@ def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, time
             "user_seconds": (accounting.user - before.user) / 10_000_000,
             "kernel_seconds": (accounting.kernel - before.kernel) / 10_000_000,
             "exit_code": code.value, "processes": accounting.processes - before.processes,
-            "affinity": allowed[:cores],
+            "affinity": ([row["group"] * 64 + cpu for row in group_affinity for cpu in row["cpus"]]
+                         if multi_group else allowed[:cores]),
+            "affinity_groups": group_affinity,
             "accounting": "Windows Job Object CPU delta over measured command interval",
             "background_processes_at_completion": active,
             "peak_job_memory_bytes": peak.peak_job_memory,

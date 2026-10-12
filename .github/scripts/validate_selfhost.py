@@ -65,6 +65,9 @@ def main():
     run([root / "native.exe"], root, "native-executable")
     execute([root / "native.exe"], root, env, evidence, "measured-native-executable",
             cores=jobs)
+    if highcore:
+        execute([sys.executable, Path(__file__).with_name("windows_job_affinity.py"), str(jobs)],
+                root, env, evidence, "processor-group-probe", cores=jobs)
     source = root / "r"
     (source / "bootstrap.toml").write_text(
         'profile = "compiler"\nchange-id = "ignore"\n'
