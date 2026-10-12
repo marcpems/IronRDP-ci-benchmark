@@ -9,6 +9,30 @@ import matched_release as release
 
 
 class MatchedReleaseTests(unittest.TestCase):
+    def test_x64_selfhost_requires_matching_identity_architecture_and_capacity(self):
+        with patch.object(release.os, "name", "nt"), \
+                patch.object(release.os, "cpu_count", return_value=8), \
+                patch.object(release.platform, "machine", return_value="AMD64"), \
+                patch.dict(release.os.environ, {
+                    "RELEASE_MACHINE_CLASS": "self-hosted-x64",
+                    "RUNNER_ENVIRONMENT": "self-hosted", "RUNNER_NAME": "MARCPE-TEST01-X64",
+                }):
+            host = "x86_64-pc-windows-msvc"
+            release.validate_runner(host)
+            for override in ({"RUNNER_NAME": "MARCPE-D4-Arm64"},
+                             {"RUNNER_ENVIRONMENT": "github-hosted"},
+                             {"RELEASE_MACHINE_CLASS": "self-hosted-arm64"},
+                             {"RELEASE_MACHINE_CLASS": "github-hosted"}):
+                with self.subTest(override=override), patch.dict(release.os.environ, override):
+                    with self.assertRaises(RuntimeError):
+                        release.validate_runner(host)
+            with patch.object(release.os, "cpu_count", return_value=2):
+                with self.assertRaises(RuntimeError):
+                    release.validate_runner(host)
+            with patch.object(release.platform, "machine", return_value="ARM64"):
+                with self.assertRaisesRegex(RuntimeError, "native Windows"):
+                    release.validate_runner(host)
+
     def test_selfhost_runner_is_explicit_and_cannot_impersonate_hosted(self):
         with patch.object(release.os, "name", "nt"), \
                 patch.object(release.os, "cpu_count", return_value=12), \
@@ -27,8 +51,13 @@ class MatchedReleaseTests(unittest.TestCase):
                     release.validate_runner("aarch64-pc-windows-msvc")
 
     def test_selfhost_deadline_reserves_upload_time(self):
+        for architecture in ("arm64", "x64"):
+            with self.subTest(architecture=architecture):
+                self.check_selfhost_deadline(architecture)
+
+    def check_selfhost_deadline(self, architecture):
         with patch.dict(release.os.environ, {
-            "RELEASE_JOB_STARTED": "100", "RELEASE_MACHINE_CLASS": "self-hosted-arm64",
+            "RELEASE_JOB_STARTED": "100", "RELEASE_MACHINE_CLASS": f"self-hosted-{architecture}",
         }), patch.object(release.time, "time", return_value=100 + 400 * 60), \
                 patch.object(release, "execute") as execute, patch.object(release, "save"):
             release.run(["build"], Path("."), {}, Path("."), "full-dist")

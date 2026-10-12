@@ -17,11 +17,14 @@ from build_arm_compilers import save
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, required=True)
-    root = parser.parse_args().root.resolve()
+    parser.add_argument("--architecture", choices=("x64", "arm64"), required=True)
+    args = parser.parse_args()
+    root = args.root.resolve()
     evidence = root / "e"
-    host = "aarch64-pc-windows-msvc"
-    if platform.machine().lower() not in ("arm64", "aarch64") or os.name != "nt":
-        raise RuntimeError("validation must use native Windows Arm64 Python")
+    host = "aarch64-pc-windows-msvc" if args.architecture == "arm64" else "x86_64-pc-windows-msvc"
+    expected_machine = ("arm64", "aarch64") if args.architecture == "arm64" else ("amd64", "x86_64")
+    if platform.machine().lower() not in expected_machine or os.name != "nt":
+        raise RuntimeError(f"validation must use native Windows {args.architecture} Python")
     tools = {}
     for name in ("cl.exe", "link.exe", "lib.exe", "cmake.exe", "ninja.exe", "git.exe"):
         path = shutil.which(name)

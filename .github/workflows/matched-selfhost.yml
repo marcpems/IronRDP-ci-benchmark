@@ -1,28 +1,36 @@
-name: Validate self-hosted Arm64 release runner
+name: Validate self-hosted Windows release runner
 on:
   push:
-    branches: [experiment/matched-arm64-selfhost-validate]
+    branches: [experiment/matched-arm64-selfhost-validate, experiment/matched-x64-selfhost-validate]
   workflow_dispatch:
+    inputs:
+      architecture:
+        description: Native runner architecture
+        type: choice
+        options: [arm64, x64]
+        default: arm64
 permissions:
   contents: read
 concurrency:
-  group: matched-arm64-selfhost
+  group: matched-${{ inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64') }}-selfhost
   cancel-in-progress: false
 jobs:
   validate:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    runs-on: [self-hosted, Windows, ARM64]
+    runs-on: ${{ fromJSON((inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64')) == 'x64' && '["self-hosted","Windows","X64"]' || '["self-hosted","Windows","ARM64"]') }}
     timeout-minutes: 60
     env:
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
+      VALIDATION_ARCH: ${{ inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64') }}
     steps:
       - name: Inspect runner and reserve isolated short paths
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          if ($env:RUNNER_NAME -ne 'MARCPE-D4-Arm64') { throw 'Unexpected self-hosted runner' }
-          if ($env:RUNNER_ARCH -ne 'ARM64') { throw 'Expected native ARM64 runner' }
+          $expectedName = if ($env:VALIDATION_ARCH -eq 'x64') { 'MARCPE-TEST01-X64' } else { 'MARCPE-D4-Arm64' }
+          if ($env:RUNNER_NAME -ne $expectedName) { throw 'Unexpected self-hosted runner' }
+          if ($env:RUNNER_ARCH -ne $env:VALIDATION_ARCH) { throw 'Unexpected runner architecture' }
           $root = Join-Path ([IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) "v$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))"
           if (Test-Path $root) { throw "Refusing to reuse $root" }
           New-Item -ItemType Directory "$root\e","$root\t","$root\c" | Out-Null
@@ -58,17 +66,17 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-          architecture: arm64
+          architecture: ${{ env.VALIDATION_ARCH }}
       - name: Build native compiler component and IronRDP
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
           [IO.Directory]::Move((Resolve-Path rust-source).Path, "$env:SELFHOST_ROOT\r")
           [IO.Directory]::Move((Resolve-Path workload).Path, "$env:SELFHOST_ROOT\s")
-          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture arm64 -Script harness\.github\scripts\validate_selfhost_arm64.py --root "$env:SELFHOST_ROOT"
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture $env:VALIDATION_ARCH -Script harness\.github\scripts\validate_selfhost.py --root "$env:SELFHOST_ROOT" --architecture $env:VALIDATION_ARCH
       - uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: selfhost-arm64-validation
+          name: selfhost-${{ env.VALIDATION_ARCH }}-validation
           path: ${{ env.SELFHOST_ROOT }}/e
           retention-days: 30

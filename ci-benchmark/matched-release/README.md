@@ -266,3 +266,19 @@ The hosted-study analyzer rejects it: these times must be reported as a separate
 machine-specific comparison, never combined with hosted x64 or Arm64 samples.
 Neither preflight nor a diagnostic reused-profile success qualifies a full
 release; fresh training and the complete distribution checks remain required.
+
+## Separate self-hosted x64 experiment
+
+The subsequently registered `MARCPE-TEST01-X64` runner uses the same preflight,
+now shared in `matched-selfhost.yml` and `validate_selfhost.py`. The
+`experiment/matched-x64-selfhost-validate` branch selects native x64 Python,
+MSVC and an explicitly pinned `x86_64-pc-windows-msvc` bootstrap host.
+The same real compilation and executed-test gates apply.
+
+After validation, `experiment/matched-release-selfhost-x64-pilot` selects
+only the three x64 full-release variants, with the same fresh directories,
+four-CPU affinity and 530/540-minute safety/job limits as the Arm64 experiment.
+Its concurrency group is separate from Arm64, so the machines can work
+independently while serializing jobs on each machine. Evidence identifies
+`runner_class=self-hosted-x64`, and the hosted analyzer rejects it.
+Existing Arm64 runs remain pinned to their original workflow revisions.

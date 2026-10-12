@@ -1,7 +1,7 @@
 name: Matched full Rust release cost
 on:
   push:
-    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic, experiment/matched-release-selfhost-arm64-pilot]
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic, experiment/matched-release-selfhost-arm64-pilot, experiment/matched-release-selfhost-x64-pilot]
   workflow_dispatch:
     inputs:
       pilot:
@@ -15,25 +15,25 @@ jobs:
   distribution:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     name: ${{ matrix.arch }} / ${{ matrix.variant }} / ${{ matrix.vm }}
-    runs-on: ${{ fromJSON(contains(github.ref_name, '-selfhost-arm64-') && '["self-hosted","Windows","ARM64"]' || matrix.arch == 'x64' && '["windows-2025"]' || '["windows-11-arm"]') }}
-    timeout-minutes: ${{ contains(github.ref_name, '-selfhost-arm64-') && 540 || 360 }}
+    runs-on: ${{ fromJSON(contains(github.ref_name, '-selfhost-x64-') && '["self-hosted","Windows","X64"]' || contains(github.ref_name, '-selfhost-arm64-') && '["self-hosted","Windows","ARM64"]' || matrix.arch == 'x64' && '["windows-2025"]' || '["windows-11-arm"]') }}
+    timeout-minutes: ${{ contains(github.ref_name, '-selfhost-') && 540 || 360 }}
     defaults:
       run:
-        shell: ${{ contains(github.ref_name, '-selfhost-arm64-') && 'powershell' || 'pwsh' }}
+        shell: ${{ contains(github.ref_name, '-selfhost-') && 'powershell' || 'pwsh' }}
     concurrency:
-      group: ${{ contains(github.ref_name, '-selfhost-arm64-') && 'matched-arm64-selfhost' || format('matched-{0}-{1}-{2}-{3}', github.run_id, matrix.arch, matrix.variant, matrix.vm) }}
+      group: ${{ contains(github.ref_name, '-selfhost-') && format('matched-{0}-selfhost', matrix.arch) || format('matched-{0}-{1}-{2}-{3}', github.run_id, matrix.arch, matrix.variant, matrix.vm) }}
       cancel-in-progress: false
     strategy:
       fail-fast: false
-      max-parallel: ${{ contains(github.ref_name, '-selfhost-arm64-') && 1 || 18 }}
+      max-parallel: ${{ contains(github.ref_name, '-selfhost-') && 1 || 18 }}
       matrix:
-        arch: ${{ fromJSON((endsWith(github.ref_name, '-stack-diagnostic') || contains(github.ref_name, '-selfhost-arm64-')) && '["arm64"]' || '["x64","arm64"]') }}
+        arch: ${{ fromJSON(contains(github.ref_name, '-selfhost-x64-') && '["x64"]' || (endsWith(github.ref_name, '-stack-diagnostic') || contains(github.ref_name, '-selfhost-arm64-')) && '["arm64"]' || '["x64","arm64"]') }}
         variant: ${{ fromJSON(endsWith(github.ref_name, '-stack-diagnostic') && '["msvc-pgo"]' || endsWith(github.ref_name, '-llvm-pilot') && '["llvm-pgo-thin"]' || endsWith(github.ref_name, '-msvc-pilot') && '["baseline","msvc-pgo"]' || '["baseline","msvc-pgo","llvm-pgo-thin"]') }}
         vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot') || endsWith(github.ref_name, '-stack-diagnostic')) && '[1]' || '[1,2,3]') }}
     env:
       RELEASE_PILOT: ${{ inputs.pilot || endsWith(github.ref_name, '-pilot') || endsWith(github.ref_name, '-stack-diagnostic') }}
       RELEASE_REPLICATE: ${{ matrix.vm }}
-      RELEASE_MACHINE_CLASS: ${{ contains(github.ref_name, '-selfhost-arm64-') && 'self-hosted-arm64' || 'github-hosted' }}
+      RELEASE_MACHINE_CLASS: ${{ contains(github.ref_name, '-selfhost-') && format('self-hosted-{0}', matrix.arch) || 'github-hosted' }}
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
     steps:
@@ -47,8 +47,9 @@ jobs:
           "GIT_CONFIG_KEY_1=core.autocrlf" >> $env:GITHUB_ENV
           "GIT_CONFIG_VALUE_1=false" >> $env:GITHUB_ENV
           $name = 'mr'
-          if ($env:RELEASE_MACHINE_CLASS -eq 'self-hosted-arm64') {
-            if ($env:RUNNER_NAME -ne 'MARCPE-D4-Arm64') { throw 'Unexpected release runner' }
+          if ($env:RELEASE_MACHINE_CLASS -ne 'github-hosted') {
+            $expectedName = if ('${{ matrix.arch }}' -eq 'x64') { 'MARCPE-TEST01-X64' } else { 'MARCPE-D4-Arm64' }
+            if ($env:RUNNER_NAME -ne $expectedName) { throw 'Unexpected release runner' }
             $variantCode = @{baseline='b'; 'msvc-pgo'='m'; 'llvm-pgo-thin'='l'}['${{ matrix.variant }}']
             $name = "m$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))$variantCode${{ matrix.vm }}"
           }

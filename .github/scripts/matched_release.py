@@ -25,7 +25,7 @@ VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
 
 def runner_class():
     value = os.environ.get("RELEASE_MACHINE_CLASS", "github-hosted")
-    if value not in ("github-hosted", "self-hosted-arm64"):
+    if value not in ("github-hosted", "self-hosted-arm64", "self-hosted-x64"):
         raise RuntimeError(f"unsupported release runner class: {value}")
     return value
 
@@ -34,11 +34,15 @@ def validate_runner(host):
     expected_machine = ("arm64", "aarch64") if host.startswith("aarch64") else ("amd64", "x86_64")
     if os.name != "nt" or platform.machine().lower() not in expected_machine:
         raise RuntimeError("expected a native Windows runner")
-    if runner_class() == "self-hosted-arm64":
-        if (host != "aarch64-pc-windows-msvc" or (os.cpu_count() or 0) < 4
+    if runner_class() != "github-hosted":
+        expected_host, expected_runner = {
+            "self-hosted-arm64": ("aarch64-pc-windows-msvc", "MARCPE-D4-Arm64"),
+            "self-hosted-x64": ("x86_64-pc-windows-msvc", "MARCPE-TEST01-X64"),
+        }[runner_class()]
+        if (host != expected_host or (os.cpu_count() or 0) < 4
                 or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"
-                or os.environ.get("RUNNER_NAME") != "MARCPE-D4-Arm64"):
-            raise RuntimeError("unexpected self-hosted Arm64 release runner")
+                or os.environ.get("RUNNER_NAME") != expected_runner):
+            raise RuntimeError("unexpected self-hosted release runner")
     elif os.cpu_count() != 4 or os.environ.get("RUNNER_ENVIRONMENT") == "self-hosted":
         raise RuntimeError("expected a standard four-logical-CPU GitHub-hosted runner")
 
@@ -99,7 +103,7 @@ compression-profile = "balanced"
 
 
 def run(command, source, env, output, name):
-    limit_minutes = 530 if runner_class() == "self-hosted-arm64" else 350
+    limit_minutes = 530 if runner_class() != "github-hosted" else 350
     remaining = float(os.environ["RELEASE_JOB_STARTED"]) + limit_minutes * 60 - time.time()
     if remaining <= 0:
         raise TimeoutError(f"full release job reached the {limit_minutes}-minute safety boundary")
