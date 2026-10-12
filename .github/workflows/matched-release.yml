@@ -57,8 +57,8 @@ jobs:
           $drive = [System.IO.DriveInfo]::new([System.IO.Path]::GetPathRoot($root))
           $storage = @{Drive=$drive.Name; AvailableBytes=$drive.AvailableFreeSpace; TotalBytes=$drive.TotalSize}
           $storage | ConvertTo-Json
-          if ($env:RELEASE_MACHINE_CLASS -eq 'self-hosted-arm64-highcore' -and $drive.AvailableFreeSpace -lt 200GB) {
-            throw 'High-core release requires at least 200 GiB free before each variant; this is a safety floor, not a guaranteed maximum.'
+          if ($env:RELEASE_MACHINE_CLASS -eq 'self-hosted-arm64-highcore' -and $drive.AvailableFreeSpace -lt 180GB) {
+            throw 'High-core release requires at least 180 GiB (193.3 decimal GB) free before each variant; this is a safety floor, not a guaranteed maximum.'
           }
           if (Test-Path $root) { throw "Expected an unused short build root: $root" }
           New-Item -ItemType Directory "$root\e" | Out-Null

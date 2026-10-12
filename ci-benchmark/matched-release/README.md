@@ -354,9 +354,15 @@ The first GB300 pilot exhausts D: during the LLVM portion of baseline
 production, before any distribution is completed. The other two variants
 then fail while downloading Actions. The user cleared space and authorized
 a restart. Subsequent high-core jobs record starting capacity and require
-at least 200 GiB free before each variant as a conservative safety floor,
+at least 180 GiB (193.3 decimal GB) free before each variant as a safety floor,
 not an upper bound on storage use. Retries use new run-specific directories,
 never the failed partial build as a cold measurement.
+
+The initial 200 GiB floor rejected a later reading of 206.2 decimal GB
+(192.1 GiB). At the user's explicit request, it was lowered to 180 GiB to
+proceed with the available space. This accepts greater disk-exhaustion risk;
+each subsequent variant still checks remaining space, and retained build
+directories are not silently removed.
 
 ## Standard self-hosted Arm64 baseline qualification
 
