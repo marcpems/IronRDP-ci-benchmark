@@ -1,0 +1,23 @@
+{
+  "system": {
+    "cpu_threads_count": 4,
+    "cpu_model": "",
+    "memory_total_bytes": 17169387520
+  },
+  "invocations": [
+    {
+      "command": "dist bootstrap --include-default-paths",
+      "wall_seconds": 6869.4850605,
+      "exclusive_seconds": {
+        "assembly_and_compression": 1666.4527837,
+        "compiler_std_backends": 1439.3549725999999,
+        "other": 202.82968820000002,
+        "llvm_and_lld": 1509.4920519,
+        "tools": 1643.1176663,
+        "documentation": 404.71604479999996
+      },
+      "unattributed_seconds": 3.5218530000011015
+    }
+  ],
+  "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+}

@@ -141,10 +141,10 @@ def environment(output, clang):
     return env
 
 
-def execute(command, cwd, env, output, name, timeout=19500, expected_success=True):
+def execute(command, cwd, env, output, name, timeout=19500, expected_success=True, cores=4):
     print(f"START {name}", flush=True)
     with measurement_session(telemetry_executables()) as session:
-        result = measure(list(map(str, command)), cwd, env, 4, output / name,
+        result = measure(list(map(str, command)), cwd, env, cores, output / name,
                          session=session, timeout=timeout)
     save(output / f"{name}.json", result)
     if (result["exit_code"] == 0) != expected_success:

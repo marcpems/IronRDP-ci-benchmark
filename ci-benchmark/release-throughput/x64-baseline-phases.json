@@ -1,0 +1,23 @@
+{
+  "system": {
+    "cpu_threads_count": 4,
+    "cpu_model": "AMD EPYC 7763 64-Core Processor                ",
+    "memory_total_bytes": 17174360064
+  },
+  "invocations": [
+    {
+      "command": "dist bootstrap --include-default-paths",
+      "wall_seconds": 9229.1260309,
+      "exclusive_seconds": {
+        "assembly_and_compression": 1414.1188056,
+        "compiler_std_backends": 2461.9751459000004,
+        "other": 79.8821087,
+        "llvm_and_lld": 2400.7556749000005,
+        "tools": 2710.3558924999998,
+        "documentation": 161.49940229999999
+      },
+      "unattributed_seconds": 0.5390009999991889
+    }
+  ],
+  "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+}

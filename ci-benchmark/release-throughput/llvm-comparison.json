@@ -1,0 +1,195 @@
+{
+  "complete": true,
+  "provenance": {
+    "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+    "machine": "MARCPE-C2-1",
+    "host": "aarch64-pc-windows-msvc",
+    "logical_cpus": 12,
+    "requested_cores": 12,
+    "tools": {
+      "link.exe": {
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostarm64\\arm64\\link.exe",
+        "sha256": "775dc503c87eb6d49487266d587fda009388e4db4b7425656def8bae6853e43b"
+      },
+      "lib.exe": {
+        "path": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostarm64\\arm64\\lib.exe",
+        "sha256": "43c9c7fd9d88c56d72369f81f92760e8a9e6a113b977f19c413ced9e22ac312e"
+      },
+      "cmake.exe": {
+        "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+        "sha256": "a32ae68e4b8b030a9df26a27c4094fca8eb0f3083cd0c3a9db348c9c4cdab54b"
+      },
+      "ninja.exe": {
+        "path": "C:\\Strawberry\\c\\bin\\ninja.exe",
+        "sha256": "442adbdc1906da39acd56d1a3b5b9aaffb01eda5eb55a6882a3651b8f9ff09b0"
+      },
+      "clang-cl.exe": {
+        "path": "D:\\copilot\\llvm22-msvc-profile-runtime\\local-tools\\clang\\bin\\clang-cl.exe",
+        "sha256": "67077c134b6f4a749a26518f855f52c05ce5fd3836418489381b818493cfcfd4"
+      }
+    },
+    "scope": "LLVMCore/Support and llvm-as/llvm-dis dependency graph, not the full LLVM or Rust release",
+    "cache": "new CMake/object directory every build; source/OS caches not flushed; AB/BA order",
+    "excludes": "configure, tool/source setup and verification"
+  },
+  "median_seconds": {
+    "4": 207.5411284499569,
+    "12": 81.11047364998376
+  },
+  "wall_saving_percent": 60.918361456465995,
+  "speedup": 2.5587463506323447,
+  "samples": [
+    {
+      "wall_seconds": 207.58324149996042,
+      "root_process_wall_seconds": 207.58318529999815,
+      "user_seconds": 459.71875,
+      "kernel_seconds": 58.25,
+      "exit_code": 0,
+      "processes": 1050,
+      "affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "accounting": "Windows Job Object CPU delta over measured command interval",
+      "background_processes_at_completion": [],
+      "peak_job_memory_bytes": 1063456768,
+      "peak_process_memory_bytes": 517619712,
+      "cpu_seconds": 517.96875,
+      "effective_cores": 2.4952339420911236,
+      "command": [
+        "cmake",
+        "--build",
+        "D:\\copilot\\rt-llvm-1\\r0-j4",
+        "--parallel",
+        "4",
+        "--target",
+        "llvm-as",
+        "llvm-dis"
+      ],
+      "round": 0,
+      "jobs": 4,
+      "fresh_objects": 845,
+      "ir_roundtrip_passed": true
+    },
+    {
+      "wall_seconds": 86.85814819997177,
+      "root_process_wall_seconds": 86.8580947999144,
+      "user_seconds": 432.03125,
+      "kernel_seconds": 62.0,
+      "exit_code": 0,
+      "processes": 1050,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "accounting": "Windows Job Object CPU delta over measured command interval",
+      "background_processes_at_completion": [],
+      "peak_job_memory_bytes": 1805373440,
+      "peak_process_memory_bytes": 517533696,
+      "cpu_seconds": 494.03125,
+      "effective_cores": 5.6877939518420515,
+      "command": [
+        "cmake",
+        "--build",
+        "D:\\copilot\\rt-llvm-1\\r0-j12",
+        "--parallel",
+        "12",
+        "--target",
+        "llvm-as",
+        "llvm-dis"
+      ],
+      "round": 0,
+      "jobs": 12,
+      "fresh_objects": 845,
+      "ir_roundtrip_passed": true
+    },
+    {
+      "wall_seconds": 75.36279909999575,
+      "root_process_wall_seconds": 75.36274380004033,
+      "user_seconds": 406.359375,
+      "kernel_seconds": 52.40625,
+      "exit_code": 0,
+      "processes": 1050,
+      "affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "accounting": "Windows Job Object CPU delta over measured command interval",
+      "background_processes_at_completion": [],
+      "peak_job_memory_bytes": 1935495168,
+      "peak_process_memory_bytes": 517767168,
+      "cpu_seconds": 458.765625,
+      "effective_cores": 6.087428153926223,
+      "command": [
+        "cmake",
+        "--build",
+        "D:\\copilot\\rt-llvm-1\\r1-j12",
+        "--parallel",
+        "12",
+        "--target",
+        "llvm-as",
+        "llvm-dis"
+      ],
+      "round": 1,
+      "jobs": 12,
+      "fresh_objects": 845,
+      "ir_roundtrip_passed": true
+    },
+    {
+      "wall_seconds": 207.49901539995335,
+      "root_process_wall_seconds": 207.49895639996976,
+      "user_seconds": 460.921875,
+      "kernel_seconds": 60.140625,
+      "exit_code": 0,
+      "processes": 1050,
+      "affinity": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "accounting": "Windows Job Object CPU delta over measured command interval",
+      "background_processes_at_completion": [],
+      "peak_job_memory_bytes": 1053003776,
+      "peak_process_memory_bytes": 517599232,
+      "cpu_seconds": 521.0625,
+      "effective_cores": 2.511156493902656,
+      "command": [
+        "cmake",
+        "--build",
+        "D:\\copilot\\rt-llvm-1\\r1-j4",
+        "--parallel",
+        "4",
+        "--target",
+        "llvm-as",
+        "llvm-dis"
+      ],
+      "round": 1,
+      "jobs": 4,
+      "fresh_objects": 845,
+      "ir_roundtrip_passed": true
+    }
+  ]
+}

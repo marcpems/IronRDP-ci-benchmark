@@ -306,3 +306,11 @@ PowerShell variable restores separate variant/replica roots; a regression
 executes the rendered naming expression for all nine combinations. Existing
 roots are not reused or deleted. The running Arm64 baseline is preserved,
 but subsequent Arm64 variants need the corrected workflow before retrying.
+
+## Separate release-throughput investigation
+
+The [local throughput report](../release-throughput/README.md) explains the
+four-CPU utilization ceiling, breaks down completed hosted baseline jobs, and
+records paired local LLVM-parallelism and installer-compression experiments.
+Neither custom timing runner was used for those new experiments. Their
+component speedups do not replace full-release or downstream compiler timings.

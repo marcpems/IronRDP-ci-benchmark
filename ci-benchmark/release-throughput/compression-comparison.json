@@ -1,0 +1,35 @@
+{
+  "complete": true,
+  "provenance": {
+    "rust_sha": "7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238",
+    "installer_sha256": "918772872bd9ef401a12028cb06961ccb5fd7c753dfec9af8ffe740d420cd42e",
+    "machine": "MARCPE-C2-1",
+    "cpu_allowance": 4,
+    "logical_cpus": 12,
+    "scope": "paired packaging-only replay; not a cold full-release timing",
+    "cache_policy": "OS cache not flushed; balanced/fast then fast/balanced order",
+    "excludes": "source verification, archive decompression/hash verification, cleanup, uploads",
+    "packages": {
+      "rustc-nightly-aarch64-pc-windows-msvc": {
+        "original_archive_sha256": "7d26046aca16a6d3fa17800758fede8e99b41f4060fd814d0bf52c5915140bae",
+        "tar_stream_sha256": "756c02099c73d4e292869ef295187d42cbeb99dbf2e051dc4682d5dec592dea2"
+      }
+    }
+  },
+  "packages": {
+    "rustc-nightly-aarch64-pc-windows-msvc": {
+      "balanced": {
+        "median_seconds": 56.12977680005133,
+        "archive_bytes": 88331380
+      },
+      "fast": {
+        "median_seconds": 13.709818699979223,
+        "archive_bytes": 107370076
+      },
+      "seconds_saved": 42.41995810007211,
+      "compression_saving_percent": 75.57478493310758,
+      "archive_growth_percent": 21.553717376542746
+    }
+  },
+  "scope": "packaging-only; do not extrapolate savings to entire dist assembly or MSI"
+}

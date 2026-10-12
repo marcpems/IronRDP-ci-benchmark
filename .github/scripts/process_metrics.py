@@ -262,6 +262,8 @@ def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, time
             if time.perf_counter() >= deadline:
                 raise RuntimeError(f"measured command left running descendants: {active}")
             time.sleep(0.01)
+        peak = Limits()
+        check(kernel.QueryInformationJobObject(job, 9, c.byref(peak), c.sizeof(peak), None))
         completed = True
         return {
             "wall_seconds": time.perf_counter() - start, "root_process_wall_seconds": elapsed,
@@ -271,6 +273,8 @@ def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, time
             "affinity": allowed[:cores],
             "accounting": "Windows Job Object CPU delta over measured command interval",
             "background_processes_at_completion": active,
+            "peak_job_memory_bytes": peak.peak_job_memory,
+            "peak_process_memory_bytes": peak.peak_process_memory,
         }
     finally:
         if info.process and not completed:

@@ -28,6 +28,8 @@ class WindowsMeasurementTests(unittest.TestCase):
             result = measure(command, tmp, dict(os.environ), 1, Path(tmp) / "approved",
                              session=session, timeout=10)
             self.assertEqual(result["exit_code"], 0)
+            self.assertGreater(result["peak_job_memory_bytes"], 0)
+            self.assertGreater(result["peak_process_memory_bytes"], 0)
             self.assertTrue(result["background_processes_at_completion"])
             self.assertTrue(any(
                 os.path.normcase(row["image"]) != os.path.normcase(str(Path(row["image"]).resolve()))
