@@ -1,0 +1,142 @@
+name: Upstream-equivalent Windows release throughput
+on:
+  push:
+    branches: [experiment/upstream-release-throughput-pilot]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  release:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ matrix.arch }} / ${{ matrix.setting }}
+    runs-on: ${{ matrix.arch == 'x64' && 'windows-2025' || 'windows-11-arm' }}
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        setting: [baseline, jobs6, link1]
+    defaults:
+      run:
+        shell: bash
+    env:
+      UPSTREAM_RUST_SHA: 76c90957b7e422c4b9c45192b0197214d7de5a54
+      THROUGHPUT_SETTING: ${{ matrix.setting }}
+      CI_JOB_NAME: ${{ matrix.arch == 'x64' && 'dist-x86_64-msvc' || 'dist-aarch64-msvc' }}
+      CI_JOB_DOC_URL: ""
+      CARGO_UNSTABLE_BUILD_DIR_NEW_LAYOUT: "true"
+      CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+      DIST_REQUIRE_ALL_TOOLS: "1"
+      DIST_TRY_BUILD: "0"
+      DEPLOY: "1"
+      DEPLOY_ALT: ""
+      CODEGEN_BACKENDS: ${{ matrix.arch == 'x64' && 'llvm,cranelift' || 'llvm' }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - name: Reserve short hosted build paths
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_ENVIRONMENT -ne 'github-hosted') { throw 'Only standard GitHub-hosted runners are permitted' }
+          "THROUGHPUT_JOB_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
+          $root = Join-Path ([IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) 'ur'
+          if (Test-Path $root) { throw 'Expected fresh upstream experiment directory' }
+          New-Item -ItemType Directory "$root\e","$root\cache" | Out-Null
+          "UPSTREAM_ROOT=$root\r" >> $env:GITHUB_ENV
+          "UPSTREAM_EVIDENCE=$root\e" >> $env:GITHUB_ENV
+          "SCCACHE_DIR=$root\cache" >> $env:GITHUB_ENV
+          "SCCACHE_CACHE_SIZE=10G" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors | ConvertTo-Json > "$root\e\cpu.json"
+          Get-CimInstance Win32_OperatingSystem | Select-Object TotalVisibleMemorySize,FreePhysicalMemory | ConvertTo-Json > "$root\e\memory.json"
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: rust-lang/rust
+          ref: 76c90957b7e422c4b9c45192b0197214d7de5a54
+          fetch-depth: 2
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: ${{ matrix.arch }}
+      - name: Initialize upstream release recipe
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          [IO.Directory]::Move((Resolve-Path rust-source).Path, $env:UPSTREAM_ROOT)
+          $hostTriple = if ('${{ matrix.arch }}' -eq 'x64') { 'x86_64-pc-windows-msvc' } else { 'aarch64-pc-windows-msvc' }
+          $targets = if ('${{ matrix.arch }}' -eq 'x64') { $hostTriple } else { "$hostTriple,arm64ec-pc-windows-msvc" }
+          $config = "--build=$hostTriple --host=$hostTriple --target=$targets --enable-full-tools --enable-profiler"
+          if ('${{ matrix.arch }}' -eq 'x64') { $config += ' --set rust.codegen-units=1' }
+          if ('${{ matrix.setting }}' -eq 'jobs6') { $config += ' --set build.jobs=6' }
+          if ('${{ matrix.setting }}' -eq 'link1') { $config += ' --set llvm.link-jobs=1' }
+          "RUST_CONFIGURE_ARGS=$config" >> $env:GITHUB_ENV
+          $script = 'python x.py dist bootstrap --include-default-paths'
+          if ('${{ matrix.arch }}' -eq 'x64') {
+            $script = 'python x.py build --set rust.debug=true opt-dist && PGO_HOST=x86_64-pc-windows-msvc ./build/x86_64-pc-windows-msvc/stage1-tools-bin/opt-dist windows-ci -- python x.py dist bootstrap --include-default-paths'
+          }
+          "SCRIPT=$script" >> $env:GITHUB_ENV
+          $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+          New-Item -Path $key -Force | Out-Null
+          New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+      - name: Install upstream sccache
+        run: |
+          cd "$(cygpath -u "$UPSTREAM_ROOT")"
+          src/ci/scripts/install-sccache.sh
+      - name: Install upstream Clang
+        run: |
+          cd "$(cygpath -u "$UPSTREAM_ROOT")"
+          src/ci/scripts/install-clang.sh
+      - name: Install upstream WIX
+        run: |
+          cd "$(cygpath -u "$UPSTREAM_ROOT")"
+          src/ci/scripts/install-wix.sh
+      - name: Check out upstream submodules
+        run: |
+          cd "$(cygpath -u "$UPSTREAM_ROOT")"
+          src/ci/scripts/disable-git-crlf-conversion.sh
+          src/ci/scripts/checkout-submodules.sh
+      - name: Install upstream Ninja and verify line endings
+        run: |
+          cd "$(cygpath -u "$UPSTREAM_ROOT")"
+          src/ci/scripts/install-ninja.sh
+          src/ci/scripts/verify-line-endings.sh
+      - name: Build upstream CI helper
+        run: |
+          cd "$(cygpath -u "$UPSTREAM_ROOT")/src/ci/citool"
+          CARGO_INCREMENTAL=0 CARGO_TARGET_DIR=../../../build/citool cargo build --locked
+      - name: Measure complete upstream release recipe
+        shell: pwsh
+        run: |
+          $hostTriple = if ('${{ matrix.arch }}' -eq 'x64') { 'x86_64-pc-windows-msvc' } else { 'aarch64-pc-windows-msvc' }
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script harness\.github\scripts\upstream_release_probe.py --source "$env:UPSTREAM_ROOT" --output "$env:UPSTREAM_EVIDENCE" --host $hostTriple --setting '${{ matrix.setting }}'
+      - name: Preserve release evidence
+        uses: actions/upload-artifact@v6
+        if: always() && env.UPSTREAM_EVIDENCE != ''
+        with:
+          name: upstream-${{ matrix.arch }}-${{ matrix.setting }}-evidence
+          path: |
+            ${{ env.UPSTREAM_EVIDENCE }}/*
+            ${{ env.UPSTREAM_ROOT }}/bootstrap.toml
+            ${{ env.UPSTREAM_ROOT }}/build/metrics.json
+            ${{ env.UPSTREAM_ROOT }}/opt-artifacts/*.profdata
+          compression-level: 1
+          retention-days: 30
+      - name: Retain actual qualified release artifacts
+        uses: actions/upload-artifact@v6
+        if: success()
+        with:
+          name: upstream-${{ matrix.arch }}-${{ matrix.setting }}-dist
+          path: ${{ env.UPSTREAM_ROOT }}/build/dist
+          compression-level: 0
+          retention-days: 7
