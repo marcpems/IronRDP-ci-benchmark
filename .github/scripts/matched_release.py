@@ -25,9 +25,13 @@ VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
 
 def runner_class():
     value = os.environ.get("RELEASE_MACHINE_CLASS", "github-hosted")
-    if value not in ("github-hosted", "self-hosted-arm64", "self-hosted-x64"):
+    if value not in ("github-hosted", "self-hosted-arm64", "self-hosted-x64", "self-hosted-arm64-highcore"):
         raise RuntimeError(f"unsupported release runner class: {value}")
     return value
+
+
+def build_cores():
+    return 64 if runner_class() == "self-hosted-arm64-highcore" else 4
 
 
 def validate_runner(host):
@@ -38,8 +42,9 @@ def validate_runner(host):
         expected_host, expected_runner = {
             "self-hosted-arm64": ("aarch64-pc-windows-msvc", "MARCPE-D4-Arm64"),
             "self-hosted-x64": ("x86_64-pc-windows-msvc", "MARCPE-TEST01-X64"),
+            "self-hosted-arm64-highcore": ("aarch64-pc-windows-msvc", "GB300-Arm64"),
         }[runner_class()]
-        if (host != expected_host or (os.cpu_count() or 0) < 4
+        if (host != expected_host or (os.cpu_count() or 0) < build_cores()
                 or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"
                 or os.environ.get("RUNNER_NAME") != expected_runner):
             raise RuntimeError("unexpected self-hosted release runner")
@@ -63,7 +68,7 @@ build = "{host}"
 host = ["{host}"]
 target = {json.dumps(targets)}
 submodules = false
-jobs = 4
+jobs = {build_cores()}
 extended = true
 docs = true
 locked-deps = true
@@ -77,7 +82,7 @@ verbose = 2
 download-ci-llvm = false
 clang-cl = "{(clang / 'clang-cl.exe').as_posix()}"
 ninja = true
-link-jobs = 1
+link-jobs = {2 if build_cores() == 64 else 1}
 thin-lto = {str(llvm).lower()}
 link-shared = false
 [rust]
@@ -182,7 +187,7 @@ rustc = "{(compiler / 'bin/rustc.exe').as_posix()}"
 cargo = "{cargo.as_posix()}"
 local-rebuild = true
 compiletest-allow-stage0 = true
-jobs = 4
+jobs = {build_cores()}
 [target.{host}]
 llvm-config = "{llvm_config.as_posix()}"
 ''', encoding="utf-8")
@@ -236,7 +241,10 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
     env.update({
         "WIX": str(source / "wix"), "PGO_HOST": host,
         "DIST_REQUIRE_ALL_TOOLS": "1", "DIST_TRY_BUILD": "0",
+        "MATCHED_BUILD_CORES": str(build_cores()),
     })
+    if build_cores() == 64:
+        env.update({"CARGO_BUILD_JOBS": "64", "CMAKE_BUILD_PARALLEL_LEVEL": "64"})
     env["CMAKE_TOOLCHAIN_FILE"] = str(cmake_toolchain(output, identity))
     provenance = {
         "rust_sha": rust_revision, "llvm_sha": LLVM, "perf_sha": PERF, "host": host,
@@ -246,7 +254,9 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
         "job_started_unix": float(os.environ["RELEASE_JOB_STARTED"]),
         "full_distribution": full_distribution,
         "runner_class": runner_class(), "runner_name": os.environ.get("RUNNER_NAME"),
-        "logical_cpus": os.cpu_count(), "build_affinity_count": 4,
+        "logical_cpus": os.cpu_count(), "build_affinity_count": build_cores(),
+        "build_jobs": build_cores(), "llvm_link_jobs": 2 if build_cores() == 64 else 1,
+        "training_cargo_jobs": 4,
         "cache": ("cold; no shared compiler or profile cache" if full_distribution else
                   "cold compiler rebuild; recorded profiles reused for diagnosis only"),
         "baseline": "controlled no-PGO full distribution, not the shipped x64 PGO recipe",

@@ -9,6 +9,31 @@ import matched_release as release
 
 
 class MatchedReleaseTests(unittest.TestCase):
+    def test_highcore_is_a_separate_native_arm64_resource_class(self):
+        with patch.dict(release.os.environ, {
+            "RELEASE_MACHINE_CLASS": "self-hosted-arm64-highcore",
+            "RUNNER_ENVIRONMENT": "self-hosted", "RUNNER_NAME": "GB300-Arm64",
+        }), patch.object(release.os, "name", "nt"), \
+                patch.object(release.os, "cpu_count", return_value=72), \
+                patch.object(release.platform, "machine", return_value="ARM64"):
+            release.validate_runner("aarch64-pc-windows-msvc")
+            self.assertEqual(release.build_cores(), 64)
+            for variant in release.VARIANTS:
+                config = tomllib.loads(release.configuration(
+                    "aarch64-pc-windows-msvc", Path("C:/clang/bin"), Path("C:/VS/lib.exe"), variant))
+                self.assertEqual(config["build"]["jobs"], 64)
+                self.assertEqual(config["llvm"]["link-jobs"], 2)
+                self.assertIn("arm64ec-pc-windows-msvc", config["build"]["target"])
+                self.assertTrue(config["build"]["docs"])
+            with patch.dict(release.os.environ, {"RUNNER_NAME": "MARCPE-D4-Arm64"}):
+                with self.assertRaisesRegex(RuntimeError, "unexpected self-hosted"):
+                    release.validate_runner("aarch64-pc-windows-msvc")
+            with patch.object(release.os, "cpu_count", return_value=32):
+                with self.assertRaisesRegex(RuntimeError, "unexpected self-hosted"):
+                    release.validate_runner("aarch64-pc-windows-msvc")
+            with self.assertRaisesRegex(RuntimeError, "native Windows"):
+                release.validate_runner("x86_64-pc-windows-msvc")
+
     def test_x64_selfhost_requires_matching_identity_architecture_and_capacity(self):
         with patch.object(release.os, "name", "nt"), \
                 patch.object(release.os, "cpu_count", return_value=8), \
@@ -51,7 +76,7 @@ class MatchedReleaseTests(unittest.TestCase):
                     release.validate_runner("aarch64-pc-windows-msvc")
 
     def test_selfhost_deadline_reserves_upload_time(self):
-        for architecture in ("arm64", "x64"):
+        for architecture in ("arm64", "x64", "arm64-highcore"):
             with self.subTest(architecture=architecture):
                 self.check_selfhost_deadline(architecture)
 

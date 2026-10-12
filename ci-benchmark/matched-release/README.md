@@ -307,6 +307,31 @@ executes the rendered naming expression for all nine combinations. Existing
 roots are not reused or deleted. The running Arm64 baseline is preserved,
 but subsequent Arm64 variants need the corrected workflow before retrying.
 
+## GB300 high-parallel Arm64 track
+
+The user separately authorized `GB300-Arm64` with label `HighCoreCount` and
+accepted a fixed 64-CPU configuration. The native preflight exercises an
+actual 64-CPU Windows Job Object before releases are scheduled, rejecting
+insufficient processor-group affinity rather than silently using fewer CPUs.
+The release branch `experiment/matched-release-selfhost-arm64-highcore-pilot`
+selects only Arm64 and that label, with an additional exact runner-name gate.
+Its concurrency group is independent of the four-CPU runs.
+
+All three variants use 64 build workers and inherited 64-CPU process-tree
+affinity, including runtime preparation, compiler construction and distribution
+qualification. Cargo and standalone CMake build parallelism are explicitly 64;
+LLVM permits two simultaneous link jobs. Variants run sequentially with fresh
+directories so they do not contend with each other. The full distribution,
+Arm64EC, compiler codegen settings, training workload and qualification tests
+are unchanged. In particular, the pinned PGO collector retains its four Cargo
+jobs and single frontend thread: training does not promise 64-way scaling.
+
+Provenance identifies `self-hosted-arm64-highcore`, build/affinity/link limits
+and training concurrency. These observations cannot enter the hosted analyzer
+or be pooled with either four-CPU machine. Fresh qualified distributions and
+separate downstream high-core IronRDP replays are still required before a
+release-cost versus compilation-saving conclusion is possible.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the

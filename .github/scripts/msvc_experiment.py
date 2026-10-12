@@ -141,7 +141,11 @@ def environment(output, clang):
     return env
 
 
-def execute(command, cwd, env, output, name, timeout=19500, expected_success=True, cores=4):
+def execute(command, cwd, env, output, name, timeout=19500, expected_success=True, cores=None):
+    if cores is None:
+        cores = int(env.get("MATCHED_BUILD_CORES", "4"))
+    if cores < 1:
+        raise ValueError(f"measured build CPU count must be positive: {cores}")
     print(f"START {name}", flush=True)
     with measurement_session(telemetry_executables()) as session:
         result = measure(list(map(str, command)), cwd, env, cores, output / name,

@@ -9,11 +9,22 @@ import unittest
 import zipfile
 from unittest.mock import patch
 
-from msvc_experiment import PHASES, audit_cmake_tools, audit_runtime_link, audit_runtime_modules, clang_profile_preflight, cmake_toolchain, configuration, equivalent_tools, preserve_training_compiler, restore_completed_build, train, verify_profiles
+from msvc_experiment import PHASES, audit_cmake_tools, audit_runtime_link, audit_runtime_modules, clang_profile_preflight, cmake_toolchain, configuration, equivalent_tools, execute, preserve_training_compiler, restore_completed_build, train, verify_profiles
 from build_arm_compilers import digest
 
 
 class ConfigurationTests(unittest.TestCase):
+    def test_execute_propagates_resource_limit_without_changing_existing_default(self):
+        with patch("msvc_experiment.telemetry_executables", return_value=[]), \
+                patch("msvc_experiment.measure", return_value={
+                    "exit_code": 0, "wall_seconds": 1, "cpu_seconds": 1,
+                }) as measure, patch("msvc_experiment.save"):
+            for env, override, expected in (({}, None, 4), ({"MATCHED_BUILD_CORES": "64"}, None, 64),
+                                            ({"MATCHED_BUILD_CORES": "64"}, 8, 8)):
+                execute(["build"], Path("."), env, Path("."), "fixture", cores=override)
+                self.assertEqual(measure.call_args.args[3], expected)
+            with self.assertRaises(ValueError):
+                execute(["build"], Path("."), {"MATCHED_BUILD_CORES": "0"}, Path("."), "fixture")
     def test_pdb_runtime_audit_requires_both_modules_from_expected_library(self):
         library = r"C:\Pinned Clang\lib\clang_rt.profile-aarch64.lib"
         text = "\n".join(

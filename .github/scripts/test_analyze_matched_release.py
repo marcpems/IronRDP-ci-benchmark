@@ -79,7 +79,7 @@ class MatchedAnalysisTests(unittest.TestCase):
             args = fixture(Path(tmp))
             path = args[0] / "release-arm64-baseline-1-evidence/result.json"
             metadata = json.loads(path.read_text())
-            for runner_class in ("self-hosted-arm64", "self-hosted-x64"):
+            for runner_class in ("self-hosted-arm64", "self-hosted-x64", "self-hosted-arm64-highcore"):
                 with self.subTest(runner_class=runner_class):
                     metadata["runner_class"] = runner_class
                     path.write_text(json.dumps(metadata))
