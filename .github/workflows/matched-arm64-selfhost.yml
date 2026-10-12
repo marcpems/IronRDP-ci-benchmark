@@ -1,0 +1,74 @@
+name: Validate self-hosted Arm64 release runner
+on:
+  push:
+    branches: [experiment/matched-arm64-selfhost-validate]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: matched-arm64-selfhost
+  cancel-in-progress: false
+jobs:
+  validate:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64]
+    timeout-minutes: 60
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - name: Inspect runner and reserve isolated short paths
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-D4-Arm64') { throw 'Unexpected self-hosted runner' }
+          if ($env:RUNNER_ARCH -ne 'ARM64') { throw 'Expected native ARM64 runner' }
+          $root = Join-Path ([IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) "v$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))"
+          if (Test-Path $root) { throw "Refusing to reuse $root" }
+          New-Item -ItemType Directory "$root\e","$root\t","$root\c" | Out-Null
+          "SELFHOST_ROOT=$root" >> $env:GITHUB_ENV
+          "CARGO_HOME=$root\c" >> $env:GITHUB_ENV
+          "TEMP=$root\t" >> $env:GITHUB_ENV
+          "TMP=$root\t" >> $env:GITHUB_ENV
+          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors | ConvertTo-Json > "$root\e\cpu.json"
+          @{RunnerName=$env:RUNNER_NAME; RunnerArch=$env:RUNNER_ARCH; Machine=$env:COMPUTERNAME; Environment=$env:RUNNER_ENVIRONMENT} | ConvertTo-Json > "$root\e\runner.json"
+          foreach ($tool in @('git','tar','cmake','ninja','7z')) {
+            $command = Get-Command $tool -ErrorAction Stop
+            Write-Output "$tool = $($command.Source)"
+          }
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          if (!(Test-Path $vswhere)) { throw 'Visual Studio Installer/vswhere missing' }
+          & $vswhere -latest -products '*' -property installationPath
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: marcpems/rust-arm64-compiler-ab
+          ref: 7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Build native compiler component and IronRDP
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          [IO.Directory]::Move((Resolve-Path rust-source).Path, "$env:SELFHOST_ROOT\r")
+          [IO.Directory]::Move((Resolve-Path workload).Path, "$env:SELFHOST_ROOT\s")
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture arm64 -Script harness\.github\scripts\validate_selfhost_arm64.py --root "$env:SELFHOST_ROOT"
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: selfhost-arm64-validation
+          path: ${{ env.SELFHOST_ROOT }}/e
+          retention-days: 30
