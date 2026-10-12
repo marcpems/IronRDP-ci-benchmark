@@ -1,7 +1,6 @@
 """Exercise the actual runner environment before scheduling long Rust releases."""
 
 import argparse
-import json
 import os
 from pathlib import Path
 import platform
@@ -56,11 +55,16 @@ def main():
     source = root / "r"
     (source / "bootstrap.toml").write_text(
         'profile = "compiler"\nchange-id = "ignore"\n'
-        '[build]\njobs = 4\n[rust]\ndownload-rustc = false\n'
+        f'[build]\nbuild = "{host}"\nhost = ["{host}"]\ntarget = ["{host}"]\n'
+        'jobs = 4\n[rust]\ndownload-rustc = false\n'
         '[llvm]\ndownload-ci-llvm = false\n', encoding="utf-8")
     run([sys.executable, "x.py", "check", "--stage", "1", "compiler/rustc_mir_build"],
         source, "rust-compiler-check")
     compiler = source / "build" / host / "stage0/bin"
+    version = subprocess.check_output([compiler / "rustc.exe", "-vV"], text=True, env=env)
+    if f"host: {host}" not in version:
+        raise RuntimeError(f"bootstrap selected a non-native compiler: {version}")
+    (evidence / "bootstrap-rustc.txt").write_text(version, encoding="utf-8")
     env["PATH"] = str(compiler) + os.pathsep + env["PATH"]
     env["RUSTC"] = str(compiler / "rustc.exe")
     cargo = compiler / "cargo.exe"
