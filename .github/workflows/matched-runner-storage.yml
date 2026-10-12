@@ -1,0 +1,31 @@
+name: Inspect GB300 experiment storage
+on:
+  push:
+    branches: [experiment/matched-gb300-storage]
+permissions:
+  contents: read
+concurrency:
+  group: matched-highcore-arm64-selfhost
+  cancel-in-progress: false
+jobs:
+  inspect:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, HighCoreCount]
+    timeout-minutes: 20
+    steps:
+      - name: Inspect capacity and known experiment directories without changing files
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected runner' }
+          Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=3' |
+            Select-Object DeviceID,Size,FreeSpace | ConvertTo-Json
+          Get-CimInstance Win32_ComputerSystem |
+            Select-Object TotalPhysicalMemory | ConvertTo-Json
+          foreach ($path in @('D:\v47351434', 'D:\v47985162', 'D:\m48685449b1')) {
+            if (Test-Path -LiteralPath $path) {
+              $files = Get-ChildItem -LiteralPath $path -File -Recurse -Force |
+                Measure-Object -Property Length -Sum
+              @{Path=$path; Files=$files.Count; Bytes=$files.Sum} | ConvertTo-Json -Compress
+            }
+          }
