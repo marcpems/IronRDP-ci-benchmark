@@ -1,9 +1,11 @@
 """Exercise the actual runner environment before scheduling long Rust releases."""
 
 import argparse
+import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -68,14 +70,23 @@ def main():
     env["PATH"] = str(compiler) + os.pathsep + env["PATH"]
     env["RUSTC"] = str(compiler / "rustc.exe")
     cargo = compiler / "cargo.exe"
-    run([cargo, "test", "--locked", "-p", "ironrdp-core", "--no-run"], root / "s",
-        "ironrdp-test-build")
-    run([cargo, "test", "--frozen", "-p", "ironrdp-core", "--", "--test-threads=1"],
-        root / "s", "ironrdp-core-tests")
+    run([cargo, "build", "--locked", "-p", "ironrdp-core", "--message-format=json"],
+        root / "s", "ironrdp-core-build")
+    artifacts = [json.loads(line) for line in (evidence / "ironrdp-core-build.stdout").read_text().splitlines()]
+    if not any(row.get("reason") == "compiler-artifact" and not row["fresh"]
+               and row["target"]["name"] == "ironrdp_core" for row in artifacts):
+        raise RuntimeError("IronRDP validation did not compile any artifacts")
+    tests = ["test", "-p", "ironrdp-tls", "--test", "native_tls", "--features", "native-tls"]
+    run([cargo, *tests, "--locked", "--no-run"], root / "s", "ironrdp-test-build")
+    run([cargo, *tests, "--frozen", "--", "--test-threads=1"], root / "s", "ironrdp-native-tls-tests")
+    test_output = (evidence / "ironrdp-native-tls-tests.stdout").read_text()
+    passed = re.findall(r"test result: ok\. (\d+) passed;", test_output)
+    if not passed or sum(map(int, passed)) == 0:
+        raise RuntimeError("IronRDP validation did not execute passing native TLS tests")
     save(evidence / "validation.json", {
         "complete": True, "runner": os.environ["RUNNER_NAME"], "host": host,
         "release_qualified": False, "measurement_sample": False,
-        "scope": "native MSVC/SDK executable, MIR compiler component check, IronRDP core tests",
+        "scope": "native MSVC/SDK executable, MIR compiler component check, IronRDP core build and native TLS tests",
     })
 
 

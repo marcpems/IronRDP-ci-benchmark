@@ -234,7 +234,9 @@ At the user's request, `MARCPE-D4-Arm64` is being validated through an actual
 Actions job before scheduling releases. This is not the local CLI computer
 (`MARCPE-C2-1`); no local SDK installation paths are assumed. The preflight
 checks native MSVC/SDK linking, builds the Rust MIR compiler component, and
-compiles and runs the pinned IronRDP core tests.
+compiles the pinned IronRDP core library and runs its native TLS integration
+tests. A Cargo success with no compiled artifacts or no executed tests is
+rejected; `ironrdp-core` itself disables unit-test targets.
 
 After that gate passes, `experiment/matched-release-selfhost-arm64-pilot`
 selects only native self-hosted Arm64 jobs, serializing the baseline,
