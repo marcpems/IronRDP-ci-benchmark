@@ -1,7 +1,7 @@
 name: Validate self-hosted Windows release runner
 on:
   push:
-    branches: [experiment/matched-arm64-selfhost-validate, experiment/matched-x64-selfhost-validate]
+    branches: [experiment/matched-arm64-selfhost-validate, experiment/matched-x64-selfhost-validate, experiment/matched-highcore-arm64-selfhost-validate]
   workflow_dispatch:
     inputs:
       architecture:
@@ -12,23 +12,24 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: matched-${{ inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64') }}-selfhost
+  group: ${{ contains(github.ref_name, '-highcore-') && 'matched-highcore-arm64-selfhost' || format('matched-{0}-selfhost', inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64')) }}
   cancel-in-progress: false
 jobs:
   validate:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    runs-on: ${{ fromJSON((inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64')) == 'x64' && '["self-hosted","Windows","X64"]' || '["self-hosted","Windows","ARM64"]') }}
+    runs-on: ${{ fromJSON(contains(github.ref_name, '-highcore-') && '["self-hosted","Windows","ARM64","HighCoreCount"]' || (inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64')) == 'x64' && '["self-hosted","Windows","X64"]' || '["self-hosted","Windows","ARM64"]') }}
     timeout-minutes: 60
     env:
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
-      VALIDATION_ARCH: ${{ inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64') }}
+      VALIDATION_ARCH: ${{ contains(github.ref_name, '-highcore-') && 'arm64' || inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64') }}
+      VALIDATION_HIGHCORE: ${{ contains(github.ref_name, '-highcore-') }}
     steps:
       - name: Inspect runner and reserve isolated short paths
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          $expectedName = if ($env:VALIDATION_ARCH -eq 'x64') { 'MARCPE-TEST01-X64' } else { 'MARCPE-D4-Arm64' }
+          $expectedName = if ($env:VALIDATION_HIGHCORE -eq 'true') { 'GB300-Arm64' } elseif ($env:VALIDATION_ARCH -eq 'x64') { 'MARCPE-TEST01-X64' } else { 'MARCPE-D4-Arm64' }
           if ($env:RUNNER_NAME -ne $expectedName) { throw 'Unexpected self-hosted runner' }
           if ($env:RUNNER_ARCH -ne $env:VALIDATION_ARCH) { throw 'Unexpected runner architecture' }
           $root = Join-Path ([IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) "v$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))"

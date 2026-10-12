@@ -12,6 +12,7 @@ import sys
 import time
 
 from build_arm_compilers import save
+from msvc_experiment import execute
 
 
 def main():
@@ -25,6 +26,11 @@ def main():
     expected_machine = ("arm64", "aarch64") if args.architecture == "arm64" else ("amd64", "x86_64")
     if platform.machine().lower() not in expected_machine or os.name != "nt":
         raise RuntimeError(f"validation must use native Windows {args.architecture} Python")
+    highcore = os.environ.get("VALIDATION_HIGHCORE") == "true"
+    if highcore and (args.architecture != "arm64" or os.environ["RUNNER_NAME"] != "GB300-Arm64"
+                     or os.cpu_count() != 72):
+        raise RuntimeError("expected the registered native 72-CPU GB300 runner")
+    jobs = 64 if highcore else 4
     tools = {}
     for name in ("cl.exe", "link.exe", "lib.exe", "cmake.exe", "ninja.exe", "git.exe"):
         path = shutil.which(name)
@@ -36,7 +42,7 @@ def main():
         "sdk": os.environ.get("WindowsSDKVersion"), "logical_cpus": os.cpu_count(),
         "python": sys.version, "runner": os.environ["RUNNER_NAME"],
     })
-    env = dict(os.environ, CARGO_BUILD_JOBS="4", RUSTC_BOOTSTRAP="1")
+    env = dict(os.environ, CARGO_BUILD_JOBS=str(jobs), RUSTC_BOOTSTRAP="1")
 
     def run(command, cwd, name):
         start = time.time()
@@ -57,11 +63,13 @@ def main():
     fixture.write_text('#include <windows.h>\nint main() { return sizeof(void*) == 8 ? 0 : 1; }\n')
     run(["cl.exe", "/nologo", fixture, f"/Fe{root / 'native.exe'}"], root, "native-sdk-link")
     run([root / "native.exe"], root, "native-executable")
+    execute([root / "native.exe"], root, env, evidence, "measured-native-executable",
+            cores=jobs)
     source = root / "r"
     (source / "bootstrap.toml").write_text(
         'profile = "compiler"\nchange-id = "ignore"\n'
         f'[build]\nbuild = "{host}"\nhost = ["{host}"]\ntarget = ["{host}"]\n'
-        'jobs = 4\n[rust]\ndownload-rustc = false\n'
+        f'jobs = {jobs}\n[rust]\ndownload-rustc = false\n'
         '[llvm]\ndownload-ci-llvm = false\n', encoding="utf-8")
     run([sys.executable, "x.py", "check", "--stage", "1", "compiler/rustc_mir_build"],
         source, "rust-compiler-check")
@@ -88,6 +96,7 @@ def main():
         raise RuntimeError("IronRDP validation did not execute passing native TLS tests")
     save(evidence / "validation.json", {
         "complete": True, "runner": os.environ["RUNNER_NAME"], "host": host,
+        "build_jobs": jobs, "affinity_policy": f"fixed {jobs}-CPU release policy",
         "release_qualified": False, "measurement_sample": False,
         "scope": "native MSVC/SDK executable, MIR compiler component check, IronRDP core build and native TLS tests",
     })
