@@ -1,7 +1,7 @@
 name: Matched full Rust release cost
 on:
   push:
-    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic]
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic, experiment/matched-release-selfhost-arm64-pilot]
   workflow_dispatch:
     inputs:
       pilot:
@@ -15,30 +15,44 @@ jobs:
   distribution:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     name: ${{ matrix.arch }} / ${{ matrix.variant }} / ${{ matrix.vm }}
-    runs-on: ${{ matrix.arch == 'x64' && 'windows-2025' || 'windows-11-arm' }}
-    timeout-minutes: 360
+    runs-on: ${{ fromJSON(contains(github.ref_name, '-selfhost-arm64-') && '["self-hosted","Windows","ARM64"]' || matrix.arch == 'x64' && '["windows-2025"]' || '["windows-11-arm"]') }}
+    timeout-minutes: ${{ contains(github.ref_name, '-selfhost-arm64-') && 540 || 360 }}
+    defaults:
+      run:
+        shell: ${{ contains(github.ref_name, '-selfhost-arm64-') && 'powershell' || 'pwsh' }}
+    concurrency:
+      group: ${{ contains(github.ref_name, '-selfhost-arm64-') && 'matched-arm64-selfhost' || format('matched-{0}-{1}-{2}-{3}', github.run_id, matrix.arch, matrix.variant, matrix.vm) }}
+      cancel-in-progress: false
     strategy:
       fail-fast: false
+      max-parallel: ${{ contains(github.ref_name, '-selfhost-arm64-') && 1 || 18 }}
       matrix:
-        arch: ${{ fromJSON(endsWith(github.ref_name, '-stack-diagnostic') && '["arm64"]' || '["x64","arm64"]') }}
+        arch: ${{ fromJSON((endsWith(github.ref_name, '-stack-diagnostic') || contains(github.ref_name, '-selfhost-arm64-')) && '["arm64"]' || '["x64","arm64"]') }}
         variant: ${{ fromJSON(endsWith(github.ref_name, '-stack-diagnostic') && '["msvc-pgo"]' || endsWith(github.ref_name, '-llvm-pilot') && '["llvm-pgo-thin"]' || endsWith(github.ref_name, '-msvc-pilot') && '["baseline","msvc-pgo"]' || '["baseline","msvc-pgo","llvm-pgo-thin"]') }}
         vm: ${{ fromJSON((inputs.pilot || endsWith(github.ref_name, '-pilot') || endsWith(github.ref_name, '-stack-diagnostic')) && '[1]' || '[1,2,3]') }}
     env:
       RELEASE_PILOT: ${{ inputs.pilot || endsWith(github.ref_name, '-pilot') || endsWith(github.ref_name, '-stack-diagnostic') }}
       RELEASE_REPLICATE: ${{ matrix.vm }}
+      RELEASE_MACHINE_CLASS: ${{ contains(github.ref_name, '-selfhost-arm64-') && 'self-hosted-arm64' || 'github-hosted' }}
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
     steps:
       - name: Start job clock
-        shell: pwsh
         run: |
+          $ErrorActionPreference = 'Stop'
           "RELEASE_JOB_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
           "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
           "GIT_CONFIG_KEY_0=core.longpaths" >> $env:GITHUB_ENV
           "GIT_CONFIG_VALUE_0=true" >> $env:GITHUB_ENV
           "GIT_CONFIG_KEY_1=core.autocrlf" >> $env:GITHUB_ENV
           "GIT_CONFIG_VALUE_1=false" >> $env:GITHUB_ENV
-          $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) 'mr'
+          $name = 'mr'
+          if ($env:RELEASE_MACHINE_CLASS -eq 'self-hosted-arm64') {
+            if ($env:RUNNER_NAME -ne 'MARCPE-D4-Arm64') { throw 'Unexpected release runner' }
+            $variantCode = @{baseline='b'; 'msvc-pgo'='m'; 'llvm-pgo-thin'='l'}['${{ matrix.variant }}']
+            $name = "m$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))$variantCode${{ matrix.vm }}"
+          }
+          $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) $name
           if (Test-Path $root) { throw "Expected an unused short build root: $root" }
           New-Item -ItemType Directory "$root\e" | Out-Null
           "MATCHED_ROOT=$root" >> $env:GITHUB_ENV
@@ -63,7 +77,6 @@ jobs:
           python-version: "3.13"
           architecture: ${{ matrix.arch }}
       - name: Prepare exact native sources and tools
-        shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           $source = "$env:MATCHED_ROOT\r"
@@ -83,9 +96,11 @@ jobs:
           if ($LASTEXITCODE) { throw 'WIX download failed' }
           7z x -y -bd -bso0 "-o$source\wix\bin" "$source\wix\wix.zip"
           if ($LASTEXITCODE) { throw 'WIX extraction failed' }
-          $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
-          New-Item -Path $key -Force | Out-Null
-          New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+          if ($env:RELEASE_MACHINE_CLASS -eq 'github-hosted') {
+            $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+            New-Item -Path $key -Force | Out-Null
+            New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+          }
       - name: Download recorded profiles for isolated stack diagnosis
         if: endsWith(github.ref_name, '-stack-diagnostic')
         uses: actions/download-artifact@v6
@@ -95,7 +110,6 @@ jobs:
           run-id: 38172717639
           github-token: ${{ github.token }}
       - name: Build and qualify the selected experiment
-        shell: pwsh
         run: |
           $hostTriple = if ('${{ matrix.arch }}' -eq 'arm64') { 'aarch64-pc-windows-msvc' } else { 'x86_64-pc-windows-msvc' }
           $script = 'harness\.github\scripts\matched_release.py'

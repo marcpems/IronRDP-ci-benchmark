@@ -74,6 +74,16 @@ def fixture(root):
 
 
 class MatchedAnalysisTests(unittest.TestCase):
+    def test_rejects_selfhosted_release_in_hosted_comparison(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            args = fixture(Path(tmp))
+            path = args[0] / "release-arm64-baseline-1-evidence/result.json"
+            metadata = json.loads(path.read_text())
+            metadata["runner_class"] = "self-hosted-arm64"
+            path.write_text(json.dumps(metadata))
+            with self.assertRaisesRegex(ValueError, "self-hosted results"):
+                analyze(*args)
+
     def test_statistics_and_complete_document(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

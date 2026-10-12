@@ -227,3 +227,27 @@ the 350-minute safety boundary; they are unfinished observations, not completed
 costs. GitHub's six-hour hosted-job limit cannot be extended by setting a larger
 workflow timeout. A multi-job recipe and explicit elapsed-pipeline/total-runner
 accounting are required before replacement production measurements.
+
+## Separate self-hosted Arm64 experiment
+
+At the user's request, `MARCPE-D4-Arm64` is being validated through an actual
+Actions job before scheduling releases. This is not the local CLI computer
+(`MARCPE-C2-1`); no local SDK installation paths are assumed. The preflight
+checks native MSVC/SDK linking, builds the Rust MIR compiler component, and
+compiles and runs the pinned IronRDP core tests.
+
+After that gate passes, `experiment/matched-release-selfhost-arm64-pilot`
+selects only native self-hosted Arm64 jobs, serializing the baseline,
+Microsoft-retained PGO and LLVM-option full releases on that machine. Every
+cell has a new physical source, Cargo-home, runtime and temporary directory;
+compiler/profile caches are not shared. The existing four-CPU process affinity
+and four build jobs remain in effect. Actual CPU identity/count, runner name
+and native-tool hashes are retained. The self-hosted deadline is 530 minutes,
+leaving ten minutes for evidence upload before a 540-minute workflow timeout.
+Hosted jobs remain at their original 350/360-minute limits.
+
+Self-hosted evidence explicitly records `runner_class=self-hosted-arm64`.
+The hosted-study analyzer rejects it: these times must be reported as a separate
+machine-specific comparison, never combined with hosted x64 or Arm64 samples.
+Neither preflight nor a diagnostic reused-profile success qualifies a full
+release; fresh training and the complete distribution checks remain required.

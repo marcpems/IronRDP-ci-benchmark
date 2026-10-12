@@ -9,6 +9,34 @@ import matched_release as release
 
 
 class MatchedReleaseTests(unittest.TestCase):
+    def test_selfhost_runner_is_explicit_and_cannot_impersonate_hosted(self):
+        with patch.object(release.os, "name", "nt"), \
+                patch.object(release.os, "cpu_count", return_value=12), \
+                patch.object(release.platform, "machine", return_value="ARM64"), \
+                patch.dict(release.os.environ, {
+                    "RELEASE_MACHINE_CLASS": "self-hosted-arm64",
+                    "RUNNER_ENVIRONMENT": "self-hosted", "RUNNER_NAME": "MARCPE-D4-Arm64",
+                }):
+            release.validate_runner("aarch64-pc-windows-msvc")
+            with patch.dict(release.os.environ, {"RUNNER_NAME": "other"}):
+                with self.assertRaisesRegex(RuntimeError, "unexpected self-hosted"):
+                    release.validate_runner("aarch64-pc-windows-msvc")
+            with patch.dict(release.os.environ, {"RELEASE_MACHINE_CLASS": "github-hosted"}), \
+                    patch.object(release.os, "cpu_count", return_value=4):
+                with self.assertRaisesRegex(RuntimeError, "GitHub-hosted"):
+                    release.validate_runner("aarch64-pc-windows-msvc")
+
+    def test_selfhost_deadline_reserves_upload_time(self):
+        with patch.dict(release.os.environ, {
+            "RELEASE_JOB_STARTED": "100", "RELEASE_MACHINE_CLASS": "self-hosted-arm64",
+        }), patch.object(release.time, "time", return_value=100 + 400 * 60), \
+                patch.object(release, "execute") as execute, patch.object(release, "save"):
+            release.run(["build"], Path("."), {}, Path("."), "full-dist")
+            self.assertEqual(execute.call_args.kwargs["timeout"], 130 * 60)
+            with patch.object(release.time, "time", return_value=100 + 530 * 60):
+                with self.assertRaisesRegex(TimeoutError, "530-minute"):
+                    release.run(["build"], Path("."), {}, Path("."), "full-dist")
+
     def test_preparation_checks_declared_source_before_building(self):
         roots = tuple(Path(f"C:/mr/{name}") for name in ("r", "l", "e"))
         for revision in (release.RUST, "diagnostic-parent"):

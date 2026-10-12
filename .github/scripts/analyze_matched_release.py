@@ -48,6 +48,8 @@ def analyze(releases, benchmarks, jobs, protocol):
                 folder = releases / f"release-{arch}-{variant}-{vm}-evidence"
                 path = one_file(folder, "result.json")
                 item = json.loads(path.read_text())
+                if item.get("runner_class", "github-hosted") != "github-hosted":
+                    raise ValueError("self-hosted results cannot enter the hosted-runner comparison")
                 if (not item["complete"] or item["pilot"] or item["host"] != host
                         or item["variant"] != variant or item["vm"] != vm or item["attempt"] != "1"):
                     raise ValueError("invalid, pilot or mismatched release evidence")

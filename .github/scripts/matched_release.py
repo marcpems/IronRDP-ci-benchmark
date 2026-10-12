@@ -23,6 +23,26 @@ PERF = "208d929efe770996eb02cd3d2712623ea48b7646"
 VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
 
 
+def runner_class():
+    value = os.environ.get("RELEASE_MACHINE_CLASS", "github-hosted")
+    if value not in ("github-hosted", "self-hosted-arm64"):
+        raise RuntimeError(f"unsupported release runner class: {value}")
+    return value
+
+
+def validate_runner(host):
+    expected_machine = ("arm64", "aarch64") if host.startswith("aarch64") else ("amd64", "x86_64")
+    if os.name != "nt" or platform.machine().lower() not in expected_machine:
+        raise RuntimeError("expected a native Windows runner")
+    if runner_class() == "self-hosted-arm64":
+        if (host != "aarch64-pc-windows-msvc" or (os.cpu_count() or 0) < 4
+                or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"
+                or os.environ.get("RUNNER_NAME") != "MARCPE-D4-Arm64"):
+            raise RuntimeError("unexpected self-hosted Arm64 release runner")
+    elif os.cpu_count() != 4 or os.environ.get("RUNNER_ENVIRONMENT") == "self-hosted":
+        raise RuntimeError("expected a standard four-logical-CPU GitHub-hosted runner")
+
+
 def check_build_paths(*paths):
     for path in paths:
         if len(str(path.resolve())) > 24:
@@ -79,9 +99,10 @@ compression-profile = "balanced"
 
 
 def run(command, source, env, output, name):
-    remaining = float(os.environ["RELEASE_JOB_STARTED"]) + 350 * 60 - time.time()
+    limit_minutes = 530 if runner_class() == "self-hosted-arm64" else 350
+    remaining = float(os.environ["RELEASE_JOB_STARTED"]) + limit_minutes * 60 - time.time()
     if remaining <= 0:
-        raise TimeoutError("full release job reached the 350-minute safety boundary")
+        raise TimeoutError(f"full release job reached the {limit_minutes}-minute safety boundary")
     save(output / "active-stage.json", {"stage": name, "started_unix": time.time()})
     return execute(command, source, env, output, name, timeout=remaining)
 
@@ -193,9 +214,7 @@ def main():
 
 def prepare(source, runtime_source, output, host, variant, full_distribution=True,
             rust_revision=RUST):
-    expected_machine = ("arm64", "aarch64") if host.startswith("aarch64") else ("amd64", "x86_64")
-    if os.name != "nt" or platform.machine().lower() not in expected_machine or os.cpu_count() != 4:
-        raise RuntimeError("expected a native standard four-logical-CPU Windows runner")
+    validate_runner(host)
     check_build_paths(source, runtime_source, output)
     for path, revision in ((source, rust_revision), (source / "src/llvm-project", LLVM),
                            (source / "src/tools/rustc-perf", PERF)):
@@ -222,6 +241,8 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
         "pilot": os.environ["RELEASE_PILOT"] == "true",
         "job_started_unix": float(os.environ["RELEASE_JOB_STARTED"]),
         "full_distribution": full_distribution,
+        "runner_class": runner_class(), "runner_name": os.environ.get("RUNNER_NAME"),
+        "logical_cpus": os.cpu_count(), "build_affinity_count": 4,
         "cache": ("cold; no shared compiler or profile cache" if full_distribution else
                   "cold compiler rebuild; recorded profiles reused for diagnosis only"),
         "baseline": "controlled no-PGO full distribution, not the shipped x64 PGO recipe",
