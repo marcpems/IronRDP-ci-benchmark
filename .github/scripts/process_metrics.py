@@ -256,7 +256,8 @@ def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, time
                 break
             active = active_processes(accounting.active)
             if (session is not None and len(active) == accounting.active
-                    and all(os.path.normcase(p["image"]) in session["background_executables"] for p in active)):
+                    and all(os.path.normcase(str(Path(p["image"]).resolve()))
+                            in session["background_executables"] for p in active)):
                 break
             if time.perf_counter() >= deadline:
                 raise RuntimeError(f"measured command left running descendants: {active}")

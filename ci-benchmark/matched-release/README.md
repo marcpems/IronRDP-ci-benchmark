@@ -292,3 +292,17 @@ reports `x86_64-pc-windows-msvc`.
 was then launched from harness `a304bc7f5bfd07fa3bdc9a301da0b42ed8d1c9b6`
 with the same Rust source pin as the Arm64 pilot. These are separate-machine
 feasibility runs, not a controlled comparison of processor architectures.
+
+The first x64 pilot fails during runtime preparation, before Rust production:
+MSVC's approved `vctip.exe` descendant reports an 8.3 executable path, which
+did not match the long-path allowlist. Process accounting now canonicalizes
+both sides, still allowing only the exact approved executable and counting
+its CPU. Real Windows regression tests exercise a short-path child and reject
+an unapproved child; no telemetry policy is changed on the persistent machine.
+
+The later cells also expose a workflow interpolation error: a replica suffix
+turned `$variantCode` into the undefined variable `$variantCode1`. Bracing the
+PowerShell variable restores separate variant/replica roots; a regression
+executes the rendered naming expression for all nine combinations. Existing
+roots are not reused or deleted. The running Arm64 baseline is preserved,
+but subsequent Arm64 variants need the corrected workflow before retrying.

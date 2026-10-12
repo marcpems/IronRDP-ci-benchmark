@@ -51,7 +51,7 @@ jobs:
             $expectedName = if ('${{ matrix.arch }}' -eq 'x64') { 'MARCPE-TEST01-X64' } else { 'MARCPE-D4-Arm64' }
             if ($env:RUNNER_NAME -ne $expectedName) { throw 'Unexpected release runner' }
             $variantCode = @{baseline='b'; 'msvc-pgo'='m'; 'llvm-pgo-thin'='l'}['${{ matrix.variant }}']
-            $name = "m$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))$variantCode${{ matrix.vm }}"
+            $name = "m$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))${variantCode}${{ matrix.vm }}"
           }
           $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) $name
           if (Test-Path $root) { throw "Expected an unused short build root: $root" }
@@ -125,7 +125,7 @@ jobs:
           harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script $script --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e" --host $hostTriple --variant ${{ matrix.variant }} @extra
       - name: Preserve diagnostics even on failure
         uses: actions/upload-artifact@v6
-        if: always()
+        if: always() && env.MATCHED_ROOT != ''
         with:
           name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-evidence
           path: |
@@ -157,7 +157,7 @@ jobs:
           retention-days: 7
       - name: Preserve unqualified distribution files for diagnosis
         uses: actions/upload-artifact@v6
-        if: failure() && !endsWith(github.ref_name, '-stack-diagnostic')
+        if: failure() && env.MATCHED_ROOT != '' && !endsWith(github.ref_name, '-stack-diagnostic')
         with:
           name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-unqualified-dist
           path: ${{ env.MATCHED_ROOT }}/r/build/dist
