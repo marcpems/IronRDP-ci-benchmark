@@ -70,3 +70,10 @@ before claiming full-release timing results.
 Publication to the harness's main experiment branch does not launch this study.
 Only `experiment/upstream-release-throughput-pilot` or explicit dispatch starts
 the standard-hosted matrix.
+
+The first pilot is
+[38291808264](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38291808264),
+from harness `f5825c51364b439745070882778e026b4c382dde`. All six jobs were
+confirmed assigned to GitHub-hosted runners with the intended standard labels,
+and all reached the measured upstream release command. This is a launch record,
+not a successful qualification or a performance conclusion.
