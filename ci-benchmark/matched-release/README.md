@@ -282,3 +282,13 @@ Its concurrency group is separate from Arm64, so the machines can work
 independently while serializing jobs on each machine. Evidence identifies
 `runner_class=self-hosted-x64`, and the hosted analyzer rejects it.
 Existing Arm64 runs remain pinned to their original workflow revisions.
+
+[x64 preflight 38230661502](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38230661502)
+passes the native executable, compiler-component and IronRDP compile/test gates.
+The machine records an Intel Core i9-11900, eight cores and 16 logical
+processors, MSVC 14.44.35207 and Windows SDK 10.0.26100.0. The native bootstrap
+reports `x86_64-pc-windows-msvc`.
+[x64 pilot 38231778023](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38231778023)
+was then launched from harness `a304bc7f5bfd07fa3bdc9a301da0b42ed8d1c9b6`
+with the same Rust source pin as the Arm64 pilot. These are separate-machine
+feasibility runs, not a controlled comparison of processor architectures.
