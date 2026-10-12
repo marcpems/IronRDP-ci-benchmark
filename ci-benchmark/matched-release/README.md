@@ -336,6 +336,20 @@ or be pooled with either four-CPU machine. Fresh qualified distributions and
 separate downstream high-core IronRDP replays are still required before a
 release-cost versus compilation-saving conclusion is possible.
 
+[GB300 preflight 38247985162](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38247985162)
+passes native compiler/SDK execution, the Rust compiler-component check and
+IronRDP compilation/integration testing. Recorded CPU: Grace A02P, 72 cores
+and 72 logical processors; MSVC 14.51.36231 and SDK 10.0.26100.0.
+Windows exposes groups of 64 and eight processors. The affinity probe
+successfully executes on all 64 selected group-zero CPUs and rejects every
+one of the eight excluded group-one CPUs. The initial preflight's legacy
+mask failure is not a hardware-capacity failure.
+
+[GB300 pilot 38248685449](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38248685449)
+was launched from harness `308cc96caf359fd76fc3c4c0eec945bbf0a901cb`,
+using the common Rust source `7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238`.
+These remain excluded feasibility pilots until full release qualification.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the
