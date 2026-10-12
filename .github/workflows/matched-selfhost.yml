@@ -17,7 +17,7 @@ concurrency:
 jobs:
   validate:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    runs-on: ${{ fromJSON(contains(github.ref_name, '-highcore-') && '["self-hosted","Windows","ARM64","HighCoreCount"]' || (inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64')) == 'x64' && '["self-hosted","Windows","X64"]' || '["self-hosted","Windows","ARM64"]') }}
+    runs-on: ${{ fromJSON(contains(github.ref_name, '-highcore-') && '["self-hosted","Windows","ARM64","HighCoreCount"]' || (inputs.architecture || (contains(github.ref_name, '-x64-') && 'x64' || 'arm64')) == 'x64' && '["self-hosted","Windows","X64"]' || '["self-hosted","Windows","ARM64","MatchedStandardArm64"]') }}
     timeout-minutes: 60
     env:
       PYTHONDONTWRITEBYTECODE: "1"

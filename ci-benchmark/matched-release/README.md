@@ -358,6 +358,24 @@ at least 200 GiB free before each variant as a conservative safety floor,
 not an upper bound on storage use. Retries use new run-specific directories,
 never the failed partial build as a cold measurement.
 
+## Standard self-hosted Arm64 baseline qualification
+
+The baseline job in run 38225557840 passes full distribution qualification
+on `MARCPE-D4-Arm64`, using Rust `7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238`.
+Production takes 10,804.58 seconds; the complete job takes 16,677 seconds
+(08:45:42 to 13:23:39 UTC). This is one excluded pilot, not a repeated estimate.
+The production interval includes full distribution construction, not just
+offline compiler CPU work.
+
+The two subsequent optimized cells fail before building. The generic Arm64
+labels allow one to land on the newly registered GB300, where the exact-name
+gate correctly rejects it; the other hits the old directory interpolation
+bug. The standard runner now has the additional `MatchedStandardArm64` label,
+required by its validation and release workflows. The
+`experiment/matched-release-selfhost-arm64-optimized-pilot` branch retries
+only Microsoft-PGO and LLVM/ThinLTO with corrected routing and fresh roots,
+preserving rather than rebuilding the qualified baseline.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the
