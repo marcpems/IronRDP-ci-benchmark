@@ -140,3 +140,11 @@ jobs:
           path: ${{ env.UPSTREAM_ROOT }}/build/dist
           compression-level: 0
           retention-days: 7
+      - name: Preserve unqualified distribution for diagnosis
+        uses: actions/upload-artifact@v6
+        if: failure() && env.UPSTREAM_ROOT != ''
+        with:
+          name: upstream-${{ matrix.arch }}-${{ matrix.setting }}-unqualified-dist
+          path: ${{ env.UPSTREAM_ROOT }}/build/dist
+          compression-level: 0
+          retention-days: 7

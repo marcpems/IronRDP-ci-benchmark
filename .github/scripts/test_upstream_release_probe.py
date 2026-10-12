@@ -1,7 +1,11 @@
 import copy
+import os
+from pathlib import Path
+import subprocess
+import tempfile
 import unittest
 
-from upstream_release_probe import validate_config
+from upstream_release_probe import BUILD_SCRIPT, validate_config
 
 
 def fixture(host):
@@ -22,6 +26,26 @@ def fixture(host):
 
 
 class UpstreamReleaseTests(unittest.TestCase):
+    @unittest.skipUnless(os.name == "nt", "Windows Git Bash wrapper")
+    def test_cache_shutdown_runs_and_preserves_build_errors(self):
+        for build_status, stop_status, expected in ((0, 0, 0), (7, 0, 7), (0, 9, 9), (7, 9, 7)):
+            with self.subTest(build=build_status, stop=stop_status), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                script = root / "src/ci/scripts/run-build-from-ci.sh"
+                script.parent.mkdir(parents=True)
+                script.write_text(f"#!/bin/sh\nexit {build_status}\n")
+                tools = root / "tools"
+                tools.mkdir()
+                (tools / "sccache").write_text(
+                    f'#!/bin/sh\n[ "$1" = "--stop-server" ] || exit 88\n'
+                    f'echo stopped > "{root.as_posix()}/stopped.txt"\nexit {stop_status}\n')
+                result = subprocess.run(
+                    [r"C:\Program Files\Git\bin\bash.exe", "--noprofile", "--norc", "-c", BUILD_SCRIPT],
+                    cwd=root, env={**os.environ, "NATIVE_MSVC_BIN": str(tools)},
+                    capture_output=True, text=True, timeout=30)
+                self.assertEqual(result.returncode, expected, result.stderr)
+                self.assertTrue((root / "stopped.txt").is_file())
+
     def test_only_scheduling_settings_differ(self):
         for host in ("x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc"):
             for setting in ("baseline", "jobs6", "link1"):

@@ -18,6 +18,13 @@ from release_phase_summary import summarize
 
 RUST = "76c90957b7e422c4b9c45192b0197214d7de5a54"
 SETTINGS = ("baseline", "jobs6", "link1")
+BUILD_SCRIPT = (
+    'export PATH="$(cygpath -u "$NATIVE_MSVC_BIN"):$PATH"; '
+    "src/ci/scripts/run-build-from-ci.sh; build_status=$?; "
+    "sccache --stop-server; stop_status=$?; "
+    'if [ "$stop_status" -ne 0 ]; then echo "sccache shutdown failed" >&2; fi; '
+    'if [ "$build_status" -ne 0 ]; then exit "$build_status"; fi; exit "$stop_status"'
+)
 
 
 def validate_config(config, host, setting):
@@ -104,8 +111,7 @@ def main():
             raise TimeoutError("no remaining hosted release experiment time")
         command = [
             r"C:\Program Files\Git\bin\bash.exe", "--noprofile", "--norc", "-c",
-            'export PATH="$(cygpath -u "$NATIVE_MSVC_BIN"):$PATH"; '
-            "exec src/ci/scripts/run-build-from-ci.sh",
+            BUILD_SCRIPT,
         ]
         save(output / "active-stage.json", {"stage": "upstream-ci-recipe", "unix": time.time()})
         with measurement_session([*telemetry_executables(), tools["sccache.exe"]["path"]]) as session:

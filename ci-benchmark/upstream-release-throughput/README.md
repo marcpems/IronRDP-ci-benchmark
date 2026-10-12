@@ -77,3 +77,18 @@ from harness `f5825c51364b439745070882778e026b4c382dde`. All six jobs were
 confirmed assigned to GitHub-hosted runners with the intended standard labels,
 and all reached the measured upstream release command. This is a launch record,
 not a successful qualification or a performance conclusion.
+
+The Arm64 `link1` cell completed the upstream distribution build, but the
+measurement wrapper rejected the still-running sccache server and its Windows
+console host before qualification could run. This is a harness lifecycle
+failure, not an accepted release sample or a compiler failure. The superseded
+pilot was cancelled to avoid continuing known-invalid measurements.
+
+The wrapper now runs `sccache --stop-server` after the unchanged upstream
+command, preserving build failures and treating shutdown failures explicitly.
+A local reproduction with the exact upstream sccache binary reproduced the
+old `sccache.exe`/`conhost.exe` leak; the repaired wrapper exited successfully
+with no remaining descendants. No unknown background processes are allowlisted.
+The measured command includes this small final cache-shutdown overhead.
+Future failed builds retain any produced distributions for diagnosis, clearly
+labelled unqualified. Compiler source, output settings and tests are unchanged.
