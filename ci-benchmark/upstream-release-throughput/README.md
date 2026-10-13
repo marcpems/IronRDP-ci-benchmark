@@ -277,3 +277,54 @@ profile hashes. This checks repeatability and seeks overlapping CPU-model
 observations; standard-runner placement does not guarantee them. Its results
 must be grouped by reported CPU model rather than blindly averaged across
 hardware. No custom runners are used.
+
+### Repeat continuation: no scheduling win established
+
+Run 38381817405 also qualified all three distributions. Each setting retained
+its first-cohort source, configuration, tool hashes, image, profile hashes,
+20 output names and identical qualification counts.
+
+| Setting | Reported CPU model | Final production (min) | Extracted tests (min) |
+|---|---|---:|---:|
+| baseline | AMD EPYC 9V45 | 125.62 | 14.46 |
+| jobs6 | AMD EPYC 9V74 | 191.77 | 20.54 |
+| link1 | AMD EPYC 7763 | 205.35 | 22.04 |
+
+There is now one cross-cohort CPU-model match: on EPYC 7763, baseline took
+195.53 minutes and link1 took 205.35 minutes, **5.03% longer**, not faster.
+This is not proof of a regression: it still compares different VMs and
+independently trained profiles, with only one observation per setting on
+that CPU model. It does not support the apparent 21.65% link1 improvement
+from the first, hardware-mixed cohort.
+
+More importantly, the **unchanged baseline**, including identical PGO profiles,
+took 195.53 minutes on its first VM and 125.62 on its repeat VM: an observed
+35.75% reduction without any scheduling change. That is VM/hardware-associated
+variation, not a measured isolated CPU-model speedup. Averaging all six
+continuations without accounting for hardware would produce a misleading
+answer.
+
+Evidence and the exact comparison scopes are in
+[continuation2-results.json](continuation2-results.json). No further independent
+VM repeats have been launched after this cohort.
+
+### Current recommendation and remaining work
+
+Keep upstream's scheduling defaults: these pilots do not justify changing
+`build.jobs` to six or `llvm.link-jobs` to one. Arm64 showed no improvement in
+its qualified full-recipe pilot; x64 has no established causal scheduling win.
+Do not change compression or remove tests to obtain a better number.
+
+The next useful investigation is a same-VM crossover with identical PGO
+profiles and fresh build/cache directories, rather than another randomly
+placed full-build cohort. Start with LLVM/LLD, the largest baseline final-build
+wall scope, so both settings can fit within the hosted six-hour limit. Use
+opposite execution orders on separate VMs to expose order effects. Such results
+would be component measurements, not whole-release savings.
+
+Only a promising controlled change should advance to repeated full-output
+qualification and a fresh-training split pipeline. That pipeline must account
+for repeated setup, profile/state transfers, any rebuilt stages, packaging and
+tests; the current cold final-stage continuations are not that measurement.
+Neither the controlled crossover nor the fresh-training split pipeline has
+been implemented or launched in this study.
