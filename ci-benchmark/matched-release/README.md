@@ -389,6 +389,16 @@ ordinary Arm64 concurrency lock, so it waits for an active LLVM job instead
 of cancelling or competing with it. The baseline and active LLVM cell are
 not restarted, and the retry uses a fresh run-specific build root.
 
+The older ordinary Arm64 LLVM job 114980960970 in run 38255849700 hit its
+530-minute internal safety deadline at 18:12:52 UTC on 13 October
+(`subprocess.TimeoutExpired` in the full opt-dist command). Its job ended at
+18:15:04 UTC after evidence upload; it is not a qualified release cost.
+The queued Microsoft-only replacement 38431443964 then started. The
+`experiment/matched-release-selfhost-arm64-llvm-pilot` branch schedules one
+fresh LLVM replacement behind it with the current 24-hour job limit and
+ordinary-runner concurrency lock. Interrupted outputs are not reused as
+cold-build inputs, and the qualified baseline remains untouched.
+
 ## GB300 baseline utilization evidence
 
 Run 38282254692 completes and qualifies its 64-CPU baseline. The production
