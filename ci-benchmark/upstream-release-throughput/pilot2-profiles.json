@@ -1,0 +1,47 @@
+{
+  "baseline": {
+    "source_run": "38302741082",
+    "source_harness_sha": "b41cbca7cdf2a2365e75b881f5b6e9139d03a0a4",
+    "files": {
+      "e/provenance.json": "67666b87637ea764e5867b28cb1eeef59de83cef841c927e3ccb52809fe479e6",
+      "e/failure.json": "28633dbffea8ff3e5c34e7eca4cf578857d56a4d859dd2b289d28faf225d415b",
+      "e/upstream-ci.stderr": "32cd512bbb3b590a41bcb654e1b376ca15cc49e0654c19ec53ba66ddc8c184c2",
+      "r/bootstrap.toml": "eddfe6f5b6918dd8216ba1aaff1ac560c8735b3e0ea842147fba93a6000abd68",
+      "r/opt-artifacts/clippy-pgo.profdata": "80e16e0df3cd1ff8bdfdc24cd90634a92eb56d6dc60119642f2846e25b51df26",
+      "r/opt-artifacts/cranelift-pgo.profdata": "a0b2fff0f0810473e795ae3874b197a92ec63f0b4881a32eb18b0d6af9893cce",
+      "r/opt-artifacts/llvm-pgo.profdata": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4",
+      "r/opt-artifacts/rustc-pgo.profdata": "0ad710bc551972ab771ee99d2364c9b7ca70f53d0be4cb0fab5580af4a7fbfe4",
+      "r/opt-artifacts/rustdoc-pgo.profdata": "9568d514ffc67837b0d309ef6816a31108b192b787ad96b8d3875460c84abda7"
+    }
+  },
+  "jobs6": {
+    "source_run": "38302741082",
+    "source_harness_sha": "b41cbca7cdf2a2365e75b881f5b6e9139d03a0a4",
+    "files": {
+      "e/provenance.json": "b9fbbc9f6b7c0e702e42ce8f0ac3a06081300302462c6b484814433f20fa1c4b",
+      "e/failure.json": "995c92ceda84a02b7409669e1a70da6e052c67caa330febb3455e7ad87194670",
+      "e/upstream-ci.stderr": "8f04ec0717d999e37798c541c22aa132c3a620a292c2858c4bc88d9726d67e0a",
+      "r/bootstrap.toml": "769142babef629a64efac145cfa38fb5f4ece8895d38a959ef263edd0a21b86a",
+      "r/opt-artifacts/clippy-pgo.profdata": "54dea927d8eaed29872a8fc892f10338a2aa4226de96af7ba33b8d26cfe3d10f",
+      "r/opt-artifacts/cranelift-pgo.profdata": "488e04c13ff8ceb448a6b310170e4084c8d5780e7eaf7f95fd26fcb9bb7240a5",
+      "r/opt-artifacts/llvm-pgo.profdata": "061d3ed4e2e67f7da79fd3de5d66ba501913bce7a45219e9f4fb7d7c13c81ab7",
+      "r/opt-artifacts/rustc-pgo.profdata": "8cd3ac8a8234a83284f8db621990beb82f23c0cf822d95cd0d098f25609b5f7b",
+      "r/opt-artifacts/rustdoc-pgo.profdata": "ccb6655ac67f75a8fcaa68637495057fb4e8fabe43bdd7da5eead1db875f930f"
+    }
+  },
+  "link1": {
+    "source_run": "38302741082",
+    "source_harness_sha": "b41cbca7cdf2a2365e75b881f5b6e9139d03a0a4",
+    "files": {
+      "e/provenance.json": "6782e470fb39f1ca8c64ef94eadff414f3382280b655f08a8449f02ae60e1959",
+      "e/failure.json": "2eeacf9e66ff275e45bd30e91bf7b29a1af587d4c12055fba7c029f0e03d66f4",
+      "e/upstream-ci.stderr": "a9323c37ead23619a99270de744add5172e0b79470ccf4489812ada170ba434b",
+      "r/bootstrap.toml": "9e6867eaf781df7f5ddebabe7ea9435a04148bf2ccaa86fe8cc67be7cccb6d41",
+      "r/opt-artifacts/clippy-pgo.profdata": "cb487d2740cde82c9726fbf2a652769503b79bb251602ed07feb151326823b4c",
+      "r/opt-artifacts/cranelift-pgo.profdata": "92b4d339c22f85b0d682296fe4bf73a24eccd82e2103786759f82438d043178b",
+      "r/opt-artifacts/llvm-pgo.profdata": "48ee8d424b0a134d13e19404e41f1d80282bae934ce742ff9bb2114c88567adf",
+      "r/opt-artifacts/rustc-pgo.profdata": "48b482997f914525aac9b0af6e7a2eaeeea4627e84aa2b2faea907c827a5c8ae",
+      "r/opt-artifacts/rustdoc-pgo.profdata": "42ecc597dd468f393fd9a3c7ffb15947f298a6734b667e2c9204d29319150a36"
+    }
+  }
+}

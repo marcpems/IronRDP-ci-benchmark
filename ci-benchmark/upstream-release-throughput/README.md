@@ -68,8 +68,9 @@ If production cannot finish, a separately specified pipeline split is needed
 before claiming full-release timing results.
 
 Publication to the harness's main experiment branch does not launch this study.
-Only `experiment/upstream-release-throughput-pilot` or explicit dispatch starts
-the standard-hosted matrix.
+`experiment/upstream-release-throughput-pilot` or ordinary explicit dispatch
+starts the six-cell standard-hosted matrix. The continuation branch and dispatch
+input described below start only its three x64 continuation cells.
 
 The first pilot is
 [38291808264](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38291808264),
@@ -164,8 +165,52 @@ Repeating the unchanged single-job x64 workflow is not a viable completion
 strategy. A continuation needs separately specified job boundaries that retain
 all fresh PGO training, profiles, final build and tests, with transfer/restore
 overhead reported separately. Merely increasing the YAML timeout cannot bypass
-the hosted six-hour limit. No such split has been implemented or launched.
+the hosted six-hour limit. The original pilot did not implement this split.
 
 Machine-readable evidence is in [pilot2-results.json](pilot2-results.json):
 job and step durations, accepted Arm64 process accounting, manifests and
 exclusive phases, and explicitly incomplete x64 stage observations.
+
+## Bounded x64 continuation
+
+The continuation mode completes the missing final-build/qualification work
+without rerunning or shortening the already completed PGO training. It is a
+feasibility continuation, not a replacement measurement of the original
+single-job recipe and not yet an automated fresh-training multi-job pipeline.
+
+Push `experiment/upstream-release-throughput-continuation`, or dispatch with
+`continue_x64_pilot=true`, to run only baseline/jobs6/link1 on standard
+`windows-2025` runners. Each cell downloads its own evidence from run
+38302741082. The original five merged profiles cover LLVM, rustc (also used for
+Cargo), rustdoc, Clippy and Cranelift. No profile is exchanged across settings.
+
+Before building, the driver verifies pinned SHA256 hashes of all five profiles,
+the original configuration, provenance, failure record and training log against
+[pilot2-profiles.json](pilot2-profiles.json). It requires both PGO stages to have
+completed, the same Rust revision, setting, native paths, runner image and
+build-tool identities, and exactly the final command recorded by upstream
+`opt-dist`. Drift fails explicitly rather than silently using another cohort.
+
+The fresh runner repeats the official upstream preparation and final
+distribution command with all six upstream `pgo.*.use` settings, but omits
+`--keep-stage 0` because no previously compiled stage0 build artifacts are
+restored. Bootstrap's keep-stage path assumes those artifacts already exist;
+retaining it on a fresh runner would skip required builds. All compiler stages
+are instead rebuilt as needed, without lowering their optimization settings.
+The distribution is followed by
+the existing extracted-distribution helper. Its eleven test paths, Cranelift
+sysroot assembly and `COMPILETEST_ENABLE_DIST_TESTS=1` match the pinned upstream
+`opt-dist` test recipe. Compression, full tool/docs/MSI outputs, and compiler
+optimization settings are unchanged. The generated production configuration
+must match the original pilot's parsed configuration exactly. Rust/LLVM source
+and training code are not modified.
+
+Only profiles are transferred: no partial LLVM objects, warm compiler cache or
+stage0 build objects are restored. Thus final-build cost can differ from an
+in-process continuation. Final distribution and tests are reported separately,
+with `full_release_timing_complete=false`; earlier training, repeated setup,
+profile download, uploads and the discarded timed-out build tail must not be
+hidden in a claimed full-release speedup. A successful continuation establishes
+output qualification and final-stage feasibility. Reliable end-to-end savings
+still require a matched, repeatable split pipeline with all overhead accounted
+for.

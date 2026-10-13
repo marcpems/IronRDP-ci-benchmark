@@ -1,10 +1,16 @@
 name: Upstream-equivalent Windows release throughput
 on:
   push:
-    branches: [experiment/upstream-release-throughput-pilot]
+    branches: [experiment/upstream-release-throughput-pilot, experiment/upstream-release-throughput-continuation]
   workflow_dispatch:
+    inputs:
+      continue_x64_pilot:
+        description: Continue final x64 builds using pinned profiles from pilot 38302741082
+        type: boolean
+        default: false
 permissions:
   contents: read
+  actions: read
 jobs:
   release:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
@@ -14,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [x64, arm64]
+        arch: ${{ fromJSON((inputs.continue_x64_pilot || github.ref == 'refs/heads/experiment/upstream-release-throughput-continuation') && '["x64"]' || '["x64","arm64"]') }}
         setting: [baseline, jobs6, link1]
     defaults:
       run:
@@ -33,6 +39,7 @@ jobs:
       CODEGEN_BACKENDS: ${{ matrix.arch == 'x64' && 'llvm,cranelift' || 'llvm' }}
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
+      UPSTREAM_CONTINUE_PILOT: ${{ inputs.continue_x64_pilot || github.ref == 'refs/heads/experiment/upstream-release-throughput-continuation' }}
     steps:
       - name: Reserve short hosted build paths
         shell: pwsh
@@ -115,11 +122,23 @@ jobs:
         run: |
           cd "$(cygpath -u "$UPSTREAM_ROOT")/src/ci/citool"
           CARGO_INCREMENTAL=0 CARGO_TARGET_DIR=../../../build/citool cargo build --locked
+      - name: Download pinned completed x64 PGO evidence
+        if: env.UPSTREAM_CONTINUE_PILOT == 'true'
+        uses: actions/download-artifact@v6
+        with:
+          name: upstream-x64-${{ matrix.setting }}-evidence
+          path: ${{ env.UPSTREAM_ROOT }}/../prior-pilot
+          run-id: 38302741082
+          github-token: ${{ github.token }}
       - name: Measure complete upstream release recipe
         shell: pwsh
         run: |
           $hostTriple = if ('${{ matrix.arch }}' -eq 'x64') { 'x86_64-pc-windows-msvc' } else { 'aarch64-pc-windows-msvc' }
-          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script harness\.github\scripts\upstream_release_probe.py --source "$env:UPSTREAM_ROOT" --output "$env:UPSTREAM_EVIDENCE" --host $hostTriple --setting '${{ matrix.setting }}'
+          $probeArgs = @('--source', $env:UPSTREAM_ROOT, '--output', $env:UPSTREAM_EVIDENCE, '--host', $hostTriple, '--setting', '${{ matrix.setting }}')
+          if ($env:UPSTREAM_CONTINUE_PILOT -eq 'true') {
+            $probeArgs += @('--profile-evidence', "$env:UPSTREAM_ROOT\..\prior-pilot")
+          }
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script harness\.github\scripts\upstream_release_probe.py @probeArgs
       - name: Preserve release evidence
         uses: actions/upload-artifact@v6
         if: always() && env.UPSTREAM_EVIDENCE != ''

@@ -18,6 +18,8 @@ from release_phase_summary import summarize
 
 RUST = "76c90957b7e422c4b9c45192b0197214d7de5a54"
 SETTINGS = ("baseline", "jobs6", "link1")
+CONTINUATION_RUN = "38302741082"
+PROFILE_COMPONENTS = ("llvm", "rustc", "cargo", "rustdoc", "clippy", "cranelift")
 BUILD_SCRIPT = (
     'export PATH="$(cygpath -u "$NATIVE_MSVC_BIN"):$PATH"; '
     "src/ci/scripts/run-build-from-ci.sh; build_status=$?; "
@@ -59,12 +61,58 @@ def validate_config(config, host, setting):
         raise RuntimeError("unexpected explicit link-job override")
 
 
+def continuation_command(source):
+    command = "RUST_BACKTRACE=full python x.py dist bootstrap --include-default-paths"
+    for component in PROFILE_COMPONENTS:
+        profile = "rustc" if component == "cargo" else component
+        path = source / "opt-artifacts" / f"{profile}-pgo.profdata"
+        command += f' --set pgo.{component}.use="{path.as_posix()}"'
+    return command + " --keep-stage 0"
+
+
+def validate_continuation(evidence, source, host, setting, tools, image, expected):
+    if host != "x86_64-pc-windows-msvc":
+        raise RuntimeError("only the recorded x64 pilot can be continued")
+    for relative, sha256 in expected["files"].items():
+        path = evidence / relative
+        if not path.is_file() or digest(path) != sha256:
+            raise RuntimeError(f"continuation evidence hash mismatch: {relative}")
+    provenance = json.loads((evidence / "e/provenance.json").read_text())
+    if (provenance["run_id"] != CONTINUATION_RUN or provenance["attempt"] != "1"
+            or provenance["rust_sha"] != RUST or provenance["host"] != host
+            or provenance["setting"] != setting or provenance["source_changes"] is not False):
+        raise RuntimeError("continuation source identity mismatch")
+    if (provenance["image"] != image
+            or {k: v["sha256"] for k, v in tools.items()}
+            != {k: v["sha256"] for k, v in provenance["tools"].items()}):
+        raise RuntimeError("continuation requires the original image and build-tool identities")
+    config = tomllib.loads((evidence / "r/bootstrap.toml").read_text())
+    validate_config(config, host, setting)
+    log = (evidence / "e/upstream-ci.stderr").read_text(errors="replace")
+    for stage in ("Stage 1 (Rustc + rustdoc + cargo + clippy PGO)", "Stage 2 (LLVM PGO)"):
+        if f"Section `{stage}` ended: OK (" not in log:
+            raise RuntimeError(f"continuation requires completed {stage}")
+    command = continuation_command(source)
+    if f"Executing `{command} [at {source}]`" not in log:
+        raise RuntimeError("continuation must reproduce the recorded final command and source path")
+    profiles = evidence / "r/opt-artifacts"
+    required = {f"{name}-pgo.profdata" for name in PROFILE_COMPONENTS if name != "cargo"}
+    if {p.name for p in profiles.glob("*.profdata")} != required:
+        raise RuntimeError("continuation requires all five original merged PGO profiles")
+    for name in required:
+        if f"r/opt-artifacts/{name}" not in expected["files"]:
+            raise RuntimeError(f"missing pinned profile digest: {name}")
+    # Upstream keeps warm stage0-built artifacts; this fresh runner has none.
+    return command.removesuffix(" --keep-stage 0"), config
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--host", choices=("x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc"), required=True)
     parser.add_argument("--setting", choices=SETTINGS, required=True)
+    parser.add_argument("--profile-evidence", type=Path)
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
     expected_machine = ("arm64", "aarch64") if args.host.startswith("aarch64") else ("amd64", "x86_64")
@@ -106,6 +154,29 @@ def main():
     }
     save(output / "provenance.json", provenance)
     try:
+        original_config = None
+        if args.profile_evidence is not None:
+            evidence = args.profile_evidence.resolve()
+            manifest = Path(__file__).resolve().parents[2] / "ci-benchmark/upstream-release-throughput/pilot2-profiles.json"
+            expected = json.loads(manifest.read_text())[args.setting]
+            env["SCRIPT"], original_config = validate_continuation(
+                evidence, source, args.host, args.setting, tools, provenance["image"], expected)
+            profiles = source / "opt-artifacts"
+            profiles.mkdir()
+            for path in (evidence / "r/opt-artifacts").glob("*.profdata"):
+                shutil.copy2(path, profiles / path.name)
+            provenance.update({
+                "script": env["SCRIPT"],
+                "production_mode": "continued final distribution from pinned pilot profiles",
+                "profile_source_run": CONTINUATION_RUN,
+                "profile_evidence": expected,
+                "full_release_timing_complete": False,
+                "cache": "cold final build; original per-setting PGO profiles transferred, no objects restored",
+                "coverage": "original full PGO training retained; full final distribution and extracted-dist suite",
+                "timing_caveat": "not a single-job release timing; excludes earlier PGO work and profile transfer",
+                "cold_build_adjustment": "omit --keep-stage 0 because no earlier build artifacts are restored",
+            })
+            save(output / "provenance.json", provenance)
         remaining = started + 340 * 60 - time.time()
         if remaining <= 0:
             raise TimeoutError("no remaining hosted release experiment time")
@@ -123,14 +194,20 @@ def main():
             print((output / "upstream-ci.stdout").read_text(errors="replace")[-10000:])
             raise RuntimeError(f"upstream release recipe failed: {result['exit_code']}")
         config = source / "bootstrap.toml"
-        validate_config(tomllib.loads(config.read_text()), args.host, args.setting)
+        parsed_config = tomllib.loads(config.read_text())
+        validate_config(parsed_config, args.host, args.setting)
+        if original_config is not None and parsed_config != original_config:
+            raise RuntimeError("continuation changed the original production configuration")
         shutil.copy2(config, output / "production-bootstrap.toml")
         files = [p for p in (source / "build" / "dist").iterdir() if p.is_file()]
         check_manifest(files, args.host)
         save(output / "dist-manifest.json", [
             {"name": p.name, "bytes": p.stat().st_size, "sha256": digest(p)} for p in sorted(files)])
-        save(output / "upstream-recipe-completed.json", {"unix": time.time(), "complete": True})
-        if args.host.startswith("aarch64"):
+        save(output / "upstream-recipe-completed.json", {
+            "unix": time.time(), "complete": True,
+            "scope": "full upstream command" if args.profile_evidence is None else "continued final distribution",
+        })
+        if args.host.startswith("aarch64") or args.profile_evidence is not None:
             os.environ["RELEASE_JOB_STARTED"] = str(started)
             qualify_distribution(source, output, args.host, env)
         subprocess.run(["git", "-C", source, "diff", "--exit-code", "HEAD"], check=True)
@@ -138,8 +215,13 @@ def main():
         save(output / "phase-summary.json", summarize(json.loads(metrics.read_text())))
         save(output / "result.json", {
             **provenance, "complete": True, "completed_unix": time.time(),
-            "upstream_recipe_seconds": result["wall_seconds"],
-            "qualification": "full production recipe, required distribution artifacts and extracted-dist tests passed",
+            ("upstream_recipe_seconds" if args.profile_evidence is None
+             else "continued_final_distribution_seconds"): result["wall_seconds"],
+            "qualification": (
+                "full production recipe, required distribution artifacts and extracted-dist tests passed"
+                if args.profile_evidence is None else
+                "continued final distribution and full extracted-dist tests passed; original PGO inputs retained"
+            ),
         })
     except Exception as error:
         save(output / "failure.json", {"complete": False, "error": str(error), "unix": time.time()})
