@@ -1,0 +1,119 @@
+name: Diagnose x64 runner connectivity without changing machine settings
+on:
+  push:
+    branches: [experiment/matched-x64-runner-diagnostics]
+permissions:
+  contents: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 15
+    steps:
+      - name: Inspect sanitized runner events and HTTPS connectivity
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Unexpected diagnostic runner' }
+          $root = 'E:\actions-runner'
+          & "$root\bin\Runner.Listener.exe" --version
+          if ($LASTEXITCODE) { throw 'Cannot identify installed runner version' }
+          @{Kind='clock'; Utc=[DateTime]::UtcNow.ToString('o')} | ConvertTo-Json -Compress
+          $services = @(Get-CimInstance Win32_Service | Where-Object Name -Like 'actions.runner.*' |
+            Select-Object Name,State,StartMode)
+          @{Kind='runner-services'; Count=$services.Count; Services=$services} | ConvertTo-Json -Depth 4 -Compress
+          foreach ($name in @('HTTP_PROXY','HTTPS_PROXY','ALL_PROXY','NO_PROXY')) {
+            @{Kind='proxy-environment'; Name=$name; Present=![string]::IsNullOrEmpty([Environment]::GetEnvironmentVariable($name))} |
+              ConvertTo-Json -Compress
+          }
+          foreach ($name in @('GITHUB_ACTIONS_RUNNER_HTTP_TIMEOUT','GITHUB_ACTIONS_RUNNER_HTTP_RETRY')) {
+            $value = [Environment]::GetEnvironmentVariable($name)
+            if ($value -and $value -notmatch '^\d+$') { throw "Unexpected numeric runner setting: $name" }
+            @{Kind='runner-http-setting'; Name=$name; Value=$value} | ConvertTo-Json -Compress
+          }
+          $hosts = [System.Collections.Generic.HashSet[string]]::new()
+          [void]$hosts.Add('github.com')
+          [void]$hosts.Add('api.github.com')
+          $logs = @(Get-ChildItem -LiteralPath "$root\_diag" -Filter 'Runner_*.log' -File |
+            Where-Object LastWriteTimeUtc -GT ([DateTime]::UtcNow.AddHours(-8)) |
+            Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 120 |
+            Sort-Object LastWriteTimeUtc)
+          if (!$logs.Count) { throw 'No recent listener diagnostic logs found' }
+          $patterns = [ordered]@{
+            'http-timeout' = 'HTTP request timed out'
+            'request-timeout-exception' = 'TimeoutException'
+            'transport-error' = 'HttpRequestException|SocketException|SSL connection could not|remote certificate is invalid'
+            'dns-error' = 'No such host|name.*could not be resolved'
+            'dispatcher-shutdown' = 'Shutting down JobDispatcher|cancel any running job'
+            'job-cancel' = 'Sending job cancellation|Cancel message|Job cancellation|Cancel running job'
+            'job-renewal-error' = '(?i)(fail|error).*(renew|lease)|(renew|lease).*(fail|error)'
+            'listener-retry' = 'retryable|Runner listener exit|Retrying'
+          }
+          foreach ($log in $logs) {
+            $events = [System.Collections.Generic.List[object]]::new()
+            $stamp = ''
+            foreach ($line in Get-Content -LiteralPath $log.FullName) {
+              if ($line -match '^\[([0-9TZ:. -]+) (INFO|WARN|ERR|VERB)') { $stamp=$Matches[1] }
+              foreach ($match in [regex]::Matches($line, 'https://([a-zA-Z0-9.-]+)')) {
+                $hostName = $match.Groups[1].Value.ToLowerInvariant()
+                if ($hostName -match '(^|\.)github\.com$|(^|\.)actions\.githubusercontent\.com$') {
+                  [void]$hosts.Add($hostName)
+                }
+              }
+              foreach ($event in $patterns.Keys) {
+                if ($line -match $patterns[$event]) {
+                  $events.Add(@{Time=$stamp; Event=$event})
+                }
+              }
+              if ($line -match '^\s*at (GitHub\.(Runner|DistributedTask|Actions|Services)\.[A-Za-z0-9_.<>]+)\(') {
+                $events.Add(@{Time=$stamp; Event='stack-method'; Method=$Matches[1]})
+              }
+            }
+            if ($events.Count) {
+              $counts = @{}
+              foreach ($event in $events) { $counts[$event.Event] = 1 + [int]$counts[$event.Event] }
+              @{Kind='listener-events'; File=$log.Name; Counts=$counts; Events=@($events | Select-Object -Last 18)} |
+                ConvertTo-Json -Depth 5 -Compress
+            }
+          }
+          $targets = @($hosts | Sort-Object | Select-Object -First 8)
+          foreach ($target in $targets) {
+            $uri = [Uri]"https://$target/"
+            $proxy = [System.Net.WebRequest]::GetSystemWebProxy()
+            @{Kind='system-proxy-route'; Hostname=$target; Bypassed=$proxy.IsBypassed($uri)} | ConvertTo-Json -Compress
+            try {
+              $addresses = [System.Net.Dns]::GetHostAddresses($target)
+              @{Kind='dns'; Hostname=$target; AddressCount=$addresses.Count; Success=($addresses.Count -gt 0)} |
+                ConvertTo-Json -Compress
+            } catch {
+              @{Kind='dns'; Hostname=$target; Success=$false; ErrorType=$_.Exception.GetType().FullName} |
+                ConvertTo-Json -Compress
+            }
+            foreach ($round in 1..3) {
+              $timer = [System.Diagnostics.Stopwatch]::StartNew()
+              $request = [System.Net.HttpWebRequest]::Create($uri)
+              $request.Method = 'HEAD'
+              $request.Timeout = 20000
+              $request.ReadWriteTimeout = 20000
+              $request.AllowAutoRedirect = $false
+              $request.UserAgent = 'matched-runner-connectivity-diagnostic'
+              $response = $null
+              try {
+                $response = $request.GetResponse()
+                @{Kind='https'; Hostname=$target; Round=$round; Status=[int]$response.StatusCode; Seconds=$timer.Elapsed.TotalSeconds; TransportSuccess=$true} |
+                  ConvertTo-Json -Compress
+              } catch [System.Net.WebException] {
+                $response = $_.Exception.Response
+                @{Kind='https'; Hostname=$target; Round=$round; Seconds=$timer.Elapsed.TotalSeconds;
+                  TransportSuccess=($null -ne $response); WebStatus=$_.Exception.Status.ToString();
+                  Status=$(if ($response) { [int]$response.StatusCode } else { $null })} |
+                  ConvertTo-Json -Compress
+              } finally {
+                if ($response) { $response.Close() }
+                $request.Abort()
+              }
+            }
+          }

@@ -535,6 +535,19 @@ only the missing LLVM cell. It retains the 180 GiB startup gate, 64 workers,
 24-hour job budget, fresh source/profile/build directories and full qualification.
 The successful baseline and Microsoft-PGO cells are not rebuilt.
 
+## x64 runner connectivity diagnostics
+
+Following the user's observation of repeated 100-second HTTP timeouts and
+listener relaunches, `experiment/matched-x64-runner-diagnostics` runs a
+read-only investigation on the exact x64 runner. It reports installed runner
+version, service state, proxy-presence flags, sanitized listener event categories
+and stack-method names, and DNS/HTTPS transport checks to GitHub hosts discovered
+in the logs. Raw diagnostic logs, credentials, proxy values and URL query strings
+are not uploaded. It uses the release concurrency lock, installs nothing and
+does not change firewall, TLS, proxy, service or timeout settings.
+Successful short HTTPS probes do not prove that long-poll/job-renewal connections
+remain reliable during a multi-hour build.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the
