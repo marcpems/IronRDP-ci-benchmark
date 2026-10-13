@@ -1,0 +1,1442 @@
+{
+  "run_id": "38302741082",
+  "harness_sha": "b41cbca7cdf2a2365e75b881f5b6e9139d03a0a4",
+  "arm64_comparability": "Identical parsed configuration after removing only declared scheduling knobs and their configure-argument copies; identical tool hashes and 22 artifact names. All three recipes and extracted tests passed.",
+  "caveat": "One independent VM per cell. No proven speedup. x64 observations are incomplete and not release timings.",
+  "samples": [
+    {
+      "architecture": "arm64",
+      "setting": "baseline",
+      "job_id": 114989360023,
+      "conclusion": "success",
+      "job_seconds": 11560.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 17.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 75.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 37.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 418.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 68.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 10894.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain actual qualified release artifacts",
+          "seconds": 27.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ],
+      "complete": true,
+      "provenance": {
+        "rust_sha": "76c90957b7e422c4b9c45192b0197214d7de5a54",
+        "host": "aarch64-pc-windows-msvc",
+        "setting": "baseline",
+        "runner_class": "github-hosted",
+        "runner_name": "GitHub Actions 1000000936",
+        "image": "20261004.176.1",
+        "cpu_allowance": 4,
+        "run_id": "38302741082",
+        "attempt": "1",
+        "pilot": true,
+        "tools": {
+          "cl.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\cl.exe",
+            "sha256": "9f36f48c99f07158a62f3d013247095f318d3560b0c31555f3664f0de25ebbcb"
+          },
+          "link.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\link.exe",
+            "sha256": "d760c224cb123adde2305665c8e929a0633224e9726a859b2233ab1cffdef747"
+          },
+          "lib.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\lib.exe",
+            "sha256": "0ca41a337f71dcf7043ee68f80e5d2635dd6e0a187e0beb4be9b04f440fd8594"
+          },
+          "cmake.exe": {
+            "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+            "sha256": "3a6afefa46f0acd68c2fdc1c73e115d7162ab826d5e6976dcc535e25d538cf16"
+          },
+          "ninja.exe": {
+            "path": "C:/ur/r/ninja\\ninja.exe",
+            "sha256": "23e7d60c17b3fcd42d9c00d49eca3c3771b04d7ccb13e49836b06b34e20211c7"
+          },
+          "sccache.exe": {
+            "path": "C:/ur/r/sccache\\sccache.exe",
+            "sha256": "f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7"
+          },
+          "clang-cl.exe": {
+            "path": "C:\\ur\\r\\citools\\clang-rust\\bin\\clang-cl.exe",
+            "sha256": "67077c134b6f4a749a26518f855f52c05ce5fd3836418489381b818493cfcfd4"
+          }
+        },
+        "job_started_unix": 1791835980.0,
+        "configure_args": "--build=aarch64-pc-windows-msvc --host=aarch64-pc-windows-msvc --target=aarch64-pc-windows-msvc,arm64ec-pc-windows-msvc --enable-full-tools --enable-profiler --set llvm.clang-cl=/c/ur/r/citools/clang-rust/bin/clang-cl.exe --enable-ninja",
+        "script": "python x.py dist bootstrap --include-default-paths",
+        "source_changes": false,
+        "compression": "upstream balanced xz",
+        "coverage": "upstream production recipe; additional extracted-dist suite for Arm64",
+        "cache": "fresh per-job local sccache; no upstream private remote cache or prior objects/profiles",
+        "hardware_caveat": "standard x64 has 4 CPUs, upstream x64 release runner has 8 CPUs/32GB",
+        "complete": true,
+        "completed_unix": 1791847495.2514603,
+        "upstream_recipe_seconds": 9160.822221699998,
+        "qualification": "full production recipe, required distribution artifacts and extracted-dist tests passed"
+      },
+      "measurement": {
+        "wall_seconds": 9160.822221699998,
+        "root_process_wall_seconds": 9160.7814542,
+        "user_seconds": 22479.375,
+        "kernel_seconds": 2680.609375,
+        "exit_code": 0,
+        "processes": 23363,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 5216309248,
+        "peak_process_memory_bytes": 2457772032,
+        "cpu_seconds": 25159.984375,
+        "effective_cores": 2.746476655272434,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "qualification_measurement": {
+        "wall_seconds": 1645.8977262000008,
+        "root_process_wall_seconds": 1645.8873590000003,
+        "user_seconds": 2150.5,
+        "kernel_seconds": 1797.078125,
+        "exit_code": 0,
+        "processes": 45449,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [
+          {
+            "pid": 8296,
+            "image": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostarm64\\arm64\\vctip.exe"
+          }
+        ],
+        "peak_job_memory_bytes": 1382739968,
+        "peak_process_memory_bytes": 1256124416,
+        "cpu_seconds": 3947.578125,
+        "effective_cores": 2.3984346427855208,
+        "command": [
+          "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+          "x.py",
+          "test",
+          "--build",
+          "aarch64-pc-windows-msvc",
+          "--stage",
+          "0",
+          "tests/assembly-llvm",
+          "tests/codegen-llvm",
+          "tests/codegen-units",
+          "tests/incremental",
+          "tests/mir-opt",
+          "tests/pretty",
+          "tests/run-make/glibc-symbols-x86_64-unknown-linux-gnu",
+          "tests/run-make/rust-lld-x86_64-unknown-linux-gnu-dist",
+          "tests/ui",
+          "tests/crashes",
+          "tests/rustdoc-html"
+        ]
+      },
+      "phases": {
+        "system": {
+          "cpu_threads_count": 4,
+          "cpu_model": "",
+          "memory_total_bytes": 17169428480
+        },
+        "invocations": [
+          {
+            "command": "dist bootstrap --include-default-paths",
+            "wall_seconds": 9067.6078584,
+            "exclusive_seconds": {
+              "assembly_and_compression": 1793.6648535000002,
+              "compiler_std_backends": 1541.9948018000002,
+              "other": 253.49803179999998,
+              "llvm_and_lld": 3188.7032431,
+              "tools": 1871.5054871000007,
+              "documentation": 417.52189030000005
+            },
+            "unattributed_seconds": 0.7195508000004338
+          }
+        ],
+        "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+      },
+      "manifest": [
+        {
+          "name": "bootstrap-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 7612756,
+          "sha256": "7106e1d091547be5db5941d02adaaa51cf2652d7409678081583f6f3ec9bed8c"
+        },
+        {
+          "name": "cargo-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 10371704,
+          "sha256": "656e19f556b749ecbfbbf6d0424eb88f739cadd1797cc033b4c9456c04322d34"
+        },
+        {
+          "name": "clippy-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 4488788,
+          "sha256": "5131dc197a3cfe5f319427b5f83a17da0d03cac4099cdce358bc282919ee0f06"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 985772,
+          "sha256": "022c47930a8a2615af2269fcc55908fc66aa2084ae2c073c32985cb21e0b0456"
+        },
+        {
+          "name": "llvm-tools-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 67071804,
+          "sha256": "05b06181d9cc90ba6fd6283b10a6a2135c22d7184e68e195f2996314d589bd9a"
+        },
+        {
+          "name": "miri-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 2573076,
+          "sha256": "60430f73cc522c8b02b1f42305d06a4ba98cd7fbd04abf1ba903b556c76ab8d8"
+        },
+        {
+          "name": "rust-analysis-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 16028,
+          "sha256": "cfb83fabca5ddc8fb6a60f1afed3fecbf0547b8103620de102b3576a40326366"
+        },
+        {
+          "name": "rust-analysis-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 16024,
+          "sha256": "cefec2fae85871a5f762f7f45313547059cb0215856128587523c9c578790961"
+        },
+        {
+          "name": "rust-analyzer-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 10270368,
+          "sha256": "428046660b2782a348e82b331ef68afc7330a0c3721fac9dccdfe4b42112d33b"
+        },
+        {
+          "name": "rust-dev-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 473287156,
+          "sha256": "f1baf6e985c59229908a71cca7661c0cc16dadaeeded24ffcaedacfe2f54db0f"
+        },
+        {
+          "name": "rust-docs-json-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 6554796,
+          "sha256": "5cd97e399ab390af9ddfda2460a20fe52b4d5efcbaf74506f047eab0bf8d0b53"
+        },
+        {
+          "name": "rust-docs-json-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 6501704,
+          "sha256": "f8e9ec4ab31cb7248c9bd7d18e31c5431ee1ceadc330d6ccbc170ef2cfcf88af"
+        },
+        {
+          "name": "rust-docs-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 32366844,
+          "sha256": "45731c0b3cb49f420337e0fa89250a52b167d2dba503aac084936e60cec433e3"
+        },
+        {
+          "name": "rust-docs-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 30506472,
+          "sha256": "57b20f8fc051e83841cda6c4da68b531d3f83e3503b5a07ae3ffc689ab3a9918"
+        },
+        {
+          "name": "rust-nightly-aarch64-pc-windows-msvc.msi",
+          "bytes": 332793634,
+          "sha256": "8050d218c732f053d48a674a216ed20ca2a925586db245dfd53646c6ed64c40c"
+        },
+        {
+          "name": "rust-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 241807864,
+          "sha256": "6241f177d85fa3c8721f1130a8e9d987608acbf8465898fdd3b7ea83b6221765"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6685160,
+          "sha256": "15e589366970dea1278f0a896eaa1af34fad8952e50bb7dddfe95235f713f476"
+        },
+        {
+          "name": "rust-std-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 24687788,
+          "sha256": "dca93d18cd8459c5c8bcaf0456fcd11c4cba45353b7e578b5ede8a4fb9012972"
+        },
+        {
+          "name": "rust-std-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 23037836,
+          "sha256": "419bdb048de4a50428923dd9686501ebc314878bfbfaa71042b082044c47d363"
+        },
+        {
+          "name": "rustc-dev-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 143556356,
+          "sha256": "0ae56368bc2c25d88186140111715bcce779ac144b83e79b5f30e5b6c5bcc55a"
+        },
+        {
+          "name": "rustc-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 81465464,
+          "sha256": "6b776a74d64b03d1ca3768ff56d05b669b4185e4f673c274f44759973ff2b831"
+        },
+        {
+          "name": "rustfmt-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 2708340,
+          "sha256": "2322829fdf2b3b34913ae5e56629739c1c0521940df4100e256723a8839956e1"
+        }
+      ]
+    },
+    {
+      "architecture": "arm64",
+      "setting": "jobs6",
+      "job_id": 114989359982,
+      "conclusion": "success",
+      "job_seconds": 11912.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 15.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 93.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 47.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 537.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 4.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 82.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 11079.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 8.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain actual qualified release artifacts",
+          "seconds": 31.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ],
+      "complete": true,
+      "provenance": {
+        "rust_sha": "76c90957b7e422c4b9c45192b0197214d7de5a54",
+        "host": "aarch64-pc-windows-msvc",
+        "setting": "jobs6",
+        "runner_class": "github-hosted",
+        "runner_name": "GitHub Actions 1000000935",
+        "image": "20261004.176.1",
+        "cpu_allowance": 4,
+        "run_id": "38302741082",
+        "attempt": "1",
+        "pilot": true,
+        "tools": {
+          "cl.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\cl.exe",
+            "sha256": "9f36f48c99f07158a62f3d013247095f318d3560b0c31555f3664f0de25ebbcb"
+          },
+          "link.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\link.exe",
+            "sha256": "d760c224cb123adde2305665c8e929a0633224e9726a859b2233ab1cffdef747"
+          },
+          "lib.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\lib.exe",
+            "sha256": "0ca41a337f71dcf7043ee68f80e5d2635dd6e0a187e0beb4be9b04f440fd8594"
+          },
+          "cmake.exe": {
+            "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+            "sha256": "3a6afefa46f0acd68c2fdc1c73e115d7162ab826d5e6976dcc535e25d538cf16"
+          },
+          "ninja.exe": {
+            "path": "C:/ur/r/ninja\\ninja.exe",
+            "sha256": "23e7d60c17b3fcd42d9c00d49eca3c3771b04d7ccb13e49836b06b34e20211c7"
+          },
+          "sccache.exe": {
+            "path": "C:/ur/r/sccache\\sccache.exe",
+            "sha256": "f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7"
+          },
+          "clang-cl.exe": {
+            "path": "C:\\ur\\r\\citools\\clang-rust\\bin\\clang-cl.exe",
+            "sha256": "67077c134b6f4a749a26518f855f52c05ce5fd3836418489381b818493cfcfd4"
+          }
+        },
+        "job_started_unix": 1791835979.0,
+        "configure_args": "--build=aarch64-pc-windows-msvc --host=aarch64-pc-windows-msvc --target=aarch64-pc-windows-msvc,arm64ec-pc-windows-msvc --enable-full-tools --enable-profiler --set build.jobs=6 --set llvm.clang-cl=/c/ur/r/citools/clang-rust/bin/clang-cl.exe --enable-ninja",
+        "script": "python x.py dist bootstrap --include-default-paths",
+        "source_changes": false,
+        "compression": "upstream balanced xz",
+        "coverage": "upstream production recipe; additional extracted-dist suite for Arm64",
+        "cache": "fresh per-job local sccache; no upstream private remote cache or prior objects/profiles",
+        "hardware_caveat": "standard x64 has 4 CPUs, upstream x64 release runner has 8 CPUs/32GB",
+        "complete": true,
+        "completed_unix": 1791847841.4478214,
+        "upstream_recipe_seconds": 9320.5588382,
+        "qualification": "full production recipe, required distribution artifacts and extracted-dist tests passed"
+      },
+      "measurement": {
+        "wall_seconds": 9320.5588382,
+        "root_process_wall_seconds": 9320.5394996,
+        "user_seconds": 23301.140625,
+        "kernel_seconds": 2833.453125,
+        "exit_code": 0,
+        "processes": 23367,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 7342448640,
+        "peak_process_memory_bytes": 2572423168,
+        "cpu_seconds": 26134.59375,
+        "effective_cores": 2.8039728307800855,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "qualification_measurement": {
+        "wall_seconds": 1671.7639333000006,
+        "root_process_wall_seconds": 1671.7588049000005,
+        "user_seconds": 2134.953125,
+        "kernel_seconds": 1810.109375,
+        "exit_code": 0,
+        "processes": 45449,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [
+          {
+            "pid": 4612,
+            "image": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostarm64\\arm64\\vctip.exe"
+          }
+        ],
+        "peak_job_memory_bytes": 1376714752,
+        "peak_process_memory_bytes": 1248993280,
+        "cpu_seconds": 3945.0625,
+        "effective_cores": 2.3598203199734016,
+        "command": [
+          "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+          "x.py",
+          "test",
+          "--build",
+          "aarch64-pc-windows-msvc",
+          "--stage",
+          "0",
+          "tests/assembly-llvm",
+          "tests/codegen-llvm",
+          "tests/codegen-units",
+          "tests/incremental",
+          "tests/mir-opt",
+          "tests/pretty",
+          "tests/run-make/glibc-symbols-x86_64-unknown-linux-gnu",
+          "tests/run-make/rust-lld-x86_64-unknown-linux-gnu-dist",
+          "tests/ui",
+          "tests/crashes",
+          "tests/rustdoc-html"
+        ]
+      },
+      "phases": {
+        "system": {
+          "cpu_threads_count": 4,
+          "cpu_model": "",
+          "memory_total_bytes": 17169387520
+        },
+        "invocations": [
+          {
+            "command": "dist bootstrap --include-default-paths",
+            "wall_seconds": 9217.2183183,
+            "exclusive_seconds": {
+              "assembly_and_compression": 1840.3745296,
+              "compiler_std_backends": 1559.4138038,
+              "other": 346.46345629999996,
+              "llvm_and_lld": 3266.6973249000002,
+              "tools": 1746.6578761,
+              "documentation": 456.6835827000001
+            },
+            "unattributed_seconds": 0.927744900000107
+          }
+        ],
+        "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+      },
+      "manifest": [
+        {
+          "name": "bootstrap-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 7623232,
+          "sha256": "8c9b06d1cdf68fb98e8a7f1406c939de11e5300ce3ab3bf3a211df4f0f5f3fb5"
+        },
+        {
+          "name": "cargo-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 10365420,
+          "sha256": "5bbd3c8afc2f3a1994016e6b21874390906da5eeded5f22adbf3286fe01c3fcf"
+        },
+        {
+          "name": "clippy-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 4475372,
+          "sha256": "1e6f95830d9c4bd0604fe21031c684f1c60faaede06847553fd8f41641453ae7"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 986716,
+          "sha256": "7b5753eb397aad005af847898cf86c10e044257f87da86d98a9f2e986845ad7f"
+        },
+        {
+          "name": "llvm-tools-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 67071900,
+          "sha256": "1f049341eb998c50e597908a4e6168c0664dd8bad3cfbd3e549c89a4015092ed"
+        },
+        {
+          "name": "miri-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 2577128,
+          "sha256": "4e4c8bb5f8042915e86951894a986657ea468af8639847d505748d053ed8f961"
+        },
+        {
+          "name": "rust-analysis-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 16124,
+          "sha256": "f7cff36226cdc41fd5c9800c3e9de2d06985a3e1be0cbe348a7254de2d8a8282"
+        },
+        {
+          "name": "rust-analysis-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 16124,
+          "sha256": "f2f1bc6eccc5b8c2492596796f0901bf4639780581583766c5c1fe7998dd4be9"
+        },
+        {
+          "name": "rust-analyzer-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 10276692,
+          "sha256": "4f67248d509dda39e74fa00fee3c88875fb9c346d0df89c1e391a833d64577f7"
+        },
+        {
+          "name": "rust-dev-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 473322064,
+          "sha256": "1258dd6d64a4f0e967112b50af4ada61aef64515f4dad7f2c92978a5b0326b57"
+        },
+        {
+          "name": "rust-docs-json-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 6554876,
+          "sha256": "aa9283e4ffa3a316bcea45cd864acf43045abede8853f65124d670da67de7ebb"
+        },
+        {
+          "name": "rust-docs-json-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 6501572,
+          "sha256": "b2764ac5ff44d9c9b8f682af82b83153badd7011312d20ada8ac4158fca3517f"
+        },
+        {
+          "name": "rust-docs-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 32369020,
+          "sha256": "217551d56d43ac3670caaf8668462e0e6cc288cee01da7d0b5d31e9fe42dd42a"
+        },
+        {
+          "name": "rust-docs-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 30506636,
+          "sha256": "a2d025d6982a0230dbc84026417b12f917316396ec8faea3abd971108bf1b5cd"
+        },
+        {
+          "name": "rust-nightly-aarch64-pc-windows-msvc.msi",
+          "bytes": 332760866,
+          "sha256": "0a09d8e73e9bd7ebbbefc02998f17b9c414dda17f841af5d8f9f97322188bb6b"
+        },
+        {
+          "name": "rust-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 241819456,
+          "sha256": "d88369b3cef0f5a1959a8b7e22d128a3d55d89e5a27e0b67ddf089f5fcacccc7"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6685304,
+          "sha256": "ad9456ec85bb9e60a233f5dc5c674537e62cbffacdb995c3a55a34aa0a31fe3e"
+        },
+        {
+          "name": "rust-std-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 24688776,
+          "sha256": "f5a034972f4f415cf11ea25d2b52b39a6eaf99c44beb2e6c8aed0eb34f790f96"
+        },
+        {
+          "name": "rust-std-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 23034540,
+          "sha256": "c2859b3dc80965190bb13058e085b9f75187a2e27dd2672e43c99ece744c31a2"
+        },
+        {
+          "name": "rustc-dev-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 144060492,
+          "sha256": "84838b72d075dcd57c075968f935d96e33dafc8d3f1605074fe211dae263b73b"
+        },
+        {
+          "name": "rustc-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 81466692,
+          "sha256": "a9c0d17c088d6c8711e45e925e0176538bc4621df6d7734dfd1f2a11e32b02c6"
+        },
+        {
+          "name": "rustfmt-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 2741600,
+          "sha256": "c78c70882ba4791a1d3a82582467c17f4cdda0f115fea6906df285e9dfa36b1b"
+        }
+      ]
+    },
+    {
+      "architecture": "arm64",
+      "setting": "link1",
+      "job_id": 114989359953,
+      "conclusion": "success",
+      "job_seconds": 11771.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 17.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 79.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 40.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 471.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 3.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 80.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 11024.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 7.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain actual qualified release artifacts",
+          "seconds": 33.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 4.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ],
+      "complete": true,
+      "provenance": {
+        "rust_sha": "76c90957b7e422c4b9c45192b0197214d7de5a54",
+        "host": "aarch64-pc-windows-msvc",
+        "setting": "link1",
+        "runner_class": "github-hosted",
+        "runner_name": "GitHub Actions 1000000933",
+        "image": "20261004.176.1",
+        "cpu_allowance": 4,
+        "run_id": "38302741082",
+        "attempt": "1",
+        "pilot": true,
+        "tools": {
+          "cl.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\cl.exe",
+            "sha256": "9f36f48c99f07158a62f3d013247095f318d3560b0c31555f3664f0de25ebbcb"
+          },
+          "link.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\link.exe",
+            "sha256": "d760c224cb123adde2305665c8e929a0633224e9726a859b2233ab1cffdef747"
+          },
+          "lib.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostARM64\\ARM64\\lib.exe",
+            "sha256": "0ca41a337f71dcf7043ee68f80e5d2635dd6e0a187e0beb4be9b04f440fd8594"
+          },
+          "cmake.exe": {
+            "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+            "sha256": "3a6afefa46f0acd68c2fdc1c73e115d7162ab826d5e6976dcc535e25d538cf16"
+          },
+          "ninja.exe": {
+            "path": "C:/ur/r/ninja\\ninja.exe",
+            "sha256": "23e7d60c17b3fcd42d9c00d49eca3c3771b04d7ccb13e49836b06b34e20211c7"
+          },
+          "sccache.exe": {
+            "path": "C:/ur/r/sccache\\sccache.exe",
+            "sha256": "f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7"
+          },
+          "clang-cl.exe": {
+            "path": "C:\\ur\\r\\citools\\clang-rust\\bin\\clang-cl.exe",
+            "sha256": "67077c134b6f4a749a26518f855f52c05ce5fd3836418489381b818493cfcfd4"
+          }
+        },
+        "job_started_unix": 1791835980.0,
+        "configure_args": "--build=aarch64-pc-windows-msvc --host=aarch64-pc-windows-msvc --target=aarch64-pc-windows-msvc,arm64ec-pc-windows-msvc --enable-full-tools --enable-profiler --set llvm.link-jobs=1 --set llvm.clang-cl=/c/ur/r/citools/clang-rust/bin/clang-cl.exe --enable-ninja",
+        "script": "python x.py dist bootstrap --include-default-paths",
+        "source_changes": false,
+        "compression": "upstream balanced xz",
+        "coverage": "upstream production recipe; additional extracted-dist suite for Arm64",
+        "cache": "fresh per-job local sccache; no upstream private remote cache or prior objects/profiles",
+        "hardware_caveat": "standard x64 has 4 CPUs, upstream x64 release runner has 8 CPUs/32GB",
+        "complete": true,
+        "completed_unix": 1791847699.5321498,
+        "upstream_recipe_seconds": 9246.034103,
+        "qualification": "full production recipe, required distribution artifacts and extracted-dist tests passed"
+      },
+      "measurement": {
+        "wall_seconds": 9246.034103,
+        "root_process_wall_seconds": 9246.0062144,
+        "user_seconds": 22615.6875,
+        "kernel_seconds": 2753.125,
+        "exit_code": 0,
+        "processes": 23363,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 5150973952,
+        "peak_process_memory_bytes": 2481410048,
+        "cpu_seconds": 25368.8125,
+        "effective_cores": 2.7437506954218076,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "qualification_measurement": {
+        "wall_seconds": 1688.3469647000002,
+        "root_process_wall_seconds": 1688.340195499999,
+        "user_seconds": 2126.34375,
+        "kernel_seconds": 1816.8125,
+        "exit_code": 0,
+        "processes": 45449,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [
+          {
+            "pid": 7192,
+            "image": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostarm64\\arm64\\vctip.exe"
+          }
+        ],
+        "peak_job_memory_bytes": 1371172864,
+        "peak_process_memory_bytes": 1252655104,
+        "cpu_seconds": 3943.15625,
+        "effective_cores": 2.335512979525896,
+        "command": [
+          "C:\\hostedtoolcache\\windows\\Python\\3.13.16\\arm64\\python.exe",
+          "x.py",
+          "test",
+          "--build",
+          "aarch64-pc-windows-msvc",
+          "--stage",
+          "0",
+          "tests/assembly-llvm",
+          "tests/codegen-llvm",
+          "tests/codegen-units",
+          "tests/incremental",
+          "tests/mir-opt",
+          "tests/pretty",
+          "tests/run-make/glibc-symbols-x86_64-unknown-linux-gnu",
+          "tests/run-make/rust-lld-x86_64-unknown-linux-gnu-dist",
+          "tests/ui",
+          "tests/crashes",
+          "tests/rustdoc-html"
+        ]
+      },
+      "phases": {
+        "system": {
+          "cpu_threads_count": 4,
+          "cpu_model": "",
+          "memory_total_bytes": 17169387520
+        },
+        "invocations": [
+          {
+            "command": "dist bootstrap --include-default-paths",
+            "wall_seconds": 9143.2889671,
+            "exclusive_seconds": {
+              "assembly_and_compression": 1785.9896227,
+              "compiler_std_backends": 1630.3307731,
+              "other": 414.5580371,
+              "llvm_and_lld": 3159.5130969,
+              "tools": 1649.1610752,
+              "documentation": 502.20361369999995
+            },
+            "unattributed_seconds": 1.5327483999990363
+          }
+        ],
+        "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+      },
+      "manifest": [
+        {
+          "name": "bootstrap-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 7614940,
+          "sha256": "cd96fa4374dd1ea5661ea20b2d6960d68c1348ee45c44ae9557d709b92cc33f9"
+        },
+        {
+          "name": "cargo-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 10370916,
+          "sha256": "0c991a711cc92d3427c49e2d6ca6fa39ea492f35db6b95b5c2e2cc715dead28c"
+        },
+        {
+          "name": "clippy-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 4477052,
+          "sha256": "ea54623a13a331048e71e091e1f352a68c662effec6872abf1183641b4c11b76"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 985824,
+          "sha256": "b080ade223f57a62ed683619855e83bdaa59e6f0ccc3cac46deca2b4bc74d69c"
+        },
+        {
+          "name": "llvm-tools-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 67071924,
+          "sha256": "02e021a2cd4d4c89cb598721d1a9fe56c1f464485760c259534b847ed3dae2e2"
+        },
+        {
+          "name": "miri-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 2574264,
+          "sha256": "f3ee51c4f9120e6890c426dc1b743f2540b853d6e8b882b9be2930821d9ed1d9"
+        },
+        {
+          "name": "rust-analysis-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 16180,
+          "sha256": "99f6828b88c222a14e342528b9e72a17d70bf09af8477c874305f4935e6895e0"
+        },
+        {
+          "name": "rust-analysis-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 16164,
+          "sha256": "127d40381db01eb727571cc964b3fafd7d95f63e1ee58cb30bcf091f0d24eb1c"
+        },
+        {
+          "name": "rust-analyzer-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 10301924,
+          "sha256": "bbd347e609809f3d71c56030b75b03bac66e541ccf73ec09ba31f20fdad7e507"
+        },
+        {
+          "name": "rust-dev-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 473287440,
+          "sha256": "4eb4dc586730cee7d1b4bbc08c6dc214efe804ff09a98e2784b96606e5efa487"
+        },
+        {
+          "name": "rust-docs-json-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 6554852,
+          "sha256": "d0dbc2b4ed8675fe51345a1b301e2e58d3f9415264e926dba13746f594d7b0d4"
+        },
+        {
+          "name": "rust-docs-json-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 6501544,
+          "sha256": "39ea5fbc2c67fe2bf91806cff64b357cf6d7b6069325a8582a032c2053605d67"
+        },
+        {
+          "name": "rust-docs-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 32369264,
+          "sha256": "55cbb87f23956c7f37a7bc6d3f9d5c035a4325209f376dcf14a158629e40d3ed"
+        },
+        {
+          "name": "rust-docs-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 30504244,
+          "sha256": "61e2d8412294e123a5394f5900923f44558e3f9c19366d4aa9c76a261b4c8e88"
+        },
+        {
+          "name": "rust-nightly-aarch64-pc-windows-msvc.msi",
+          "bytes": 332748578,
+          "sha256": "1bc7fe8238838752f9c9dccc0fdad9b9c6c1b9e3aa9eaf57d7ba2168c54f0fea"
+        },
+        {
+          "name": "rust-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 241801872,
+          "sha256": "761fc19135702adf06738f016a0fb0ac4dc73aea59087668bec8b821fdd966df"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6685348,
+          "sha256": "71529c8387b15586454198ed1cf2beeaf19687b3eb7280e2ff7f416bb91993c9"
+        },
+        {
+          "name": "rust-std-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 24689048,
+          "sha256": "0c2ebea29360690ae2fd2d673232508fdf9ecfdcbb0d10a558eec1ac148d08b0"
+        },
+        {
+          "name": "rust-std-nightly-arm64ec-pc-windows-msvc.tar.xz",
+          "bytes": 23037392,
+          "sha256": "00078f9a61551b091410d2c338d9d9a6f65c03eee71e8b26a46e2a2dd4d0a9bd"
+        },
+        {
+          "name": "rustc-dev-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 143727464,
+          "sha256": "f811ccc46daec5f7f4ffc8382c2ac1946d8b2e9b8bf79dd147bfd9950868bf06"
+        },
+        {
+          "name": "rustc-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 81477004,
+          "sha256": "68e4c81130583de4ce791e19c2441a1459c8f0096b921ff7afa9446b0bd6cd8e"
+        },
+        {
+          "name": "rustfmt-nightly-aarch64-pc-windows-msvc.tar.xz",
+          "bytes": 2706388,
+          "sha256": "9eac998812d33425d857e778c9d0a56337922d040c310cacc7d84776913a0d14"
+        }
+      ]
+    },
+    {
+      "architecture": "x64",
+      "setting": "baseline",
+      "job_id": 114989359940,
+      "conclusion": "failure",
+      "job_seconds": 20417.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 9.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 31.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 20.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 172.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 83.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 20085.0,
+          "conclusion": "failure"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve unqualified distribution for diagnosis",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "failure": {
+        "complete": false,
+        "error": "Command '['C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe', '--noprofile', '--norc', '-c', 'export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\"']' timed out after 20071.823058128357 seconds",
+        "unix": 1791856381.8618126
+      },
+      "completed_pgo_stage_seconds": {
+        "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)": 13559.63,
+        "Stage 2 (LLVM PGO)": 6047.18
+      },
+      "timeout_stage": "final distribution build; neither distribution nor extracted tests complete"
+    },
+    {
+      "architecture": "x64",
+      "setting": "jobs6",
+      "job_id": 114989360047,
+      "conclusion": "failure",
+      "job_seconds": 20416.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 8.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 26.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 26.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 4.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 149.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 66.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 20121.0,
+          "conclusion": "failure"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve unqualified distribution for diagnosis",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 3.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "failure": {
+        "complete": false,
+        "error": "Command '['C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe', '--noprofile', '--norc', '-c', 'export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\"']' timed out after 20107.636157274246 seconds",
+        "unix": 1791856381.9559493
+      },
+      "completed_pgo_stage_seconds": {
+        "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)": 12302.36,
+        "Stage 2 (LLVM PGO)": 5065.68
+      },
+      "timeout_stage": "final distribution build; neither distribution nor extracted tests complete"
+    },
+    {
+      "architecture": "x64",
+      "setting": "link1",
+      "job_id": 114989359829,
+      "conclusion": "failure",
+      "job_seconds": 20427.0,
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 8.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 30.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 20.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 166.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 74.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 20113.0,
+          "conclusion": "failure"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve unqualified distribution for diagnosis",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ],
+      "complete": false,
+      "failure": {
+        "complete": false,
+        "error": "Command '['C:\\\\Program Files\\\\Git\\\\bin\\\\bash.exe', '--noprofile', '--norc', '-c', 'export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\"']' timed out after 20085.404055595398 seconds",
+        "unix": 1791856394.0506575
+      },
+      "completed_pgo_stage_seconds": {
+        "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)": 13198.53,
+        "Stage 2 (LLVM PGO)": 5985.2
+      },
+      "timeout_stage": "final distribution build; neither distribution nor extracted tests complete"
+    }
+  ]
+}
