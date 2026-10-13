@@ -377,3 +377,14 @@ deadline remains in force; incomplete crossovers are not accepted.
 Only a repeatable component improvement should advance to full-output
 qualification. No component percentage will be presented as an end-to-end
 fresh-PGO release saving.
+
+For this crossover, a candidate advances only if its paired LLVM/LLD time is
+lower on all three VMs and its median paired reduction is at least 5%, with
+every correctness/configuration gate passing. This is a practical screening
+threshold, not a statistical confidence claim. Failure to clear it means no
+recommendation for that knob from this study, not proof that it can never help.
+
+Controlled run
+[38412986554](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38412986554)
+was launched from harness `2df4605b893745a4283a12c3d9b6d0ba8adbc035`.
+Its component measurements and acceptance decision are pending.
