@@ -585,6 +585,16 @@ It keeps fresh per-compiler targets and records failures without silently
 retrying or excluding a test. The first isolated diagnostic did not use
 that accounting context, so its success alone cannot validate the benchmark.
 
+Full-sequence diagnostic 38440022998 passed all five build commands and all
+four original correctness commands for each of the three released compilers
+under the 64-CPU accounting context. No workload source or timeout was changed.
+The original UDP timeout remains unexplained; these passes do not establish
+a repaired defect or prove the failure was unrelated to the compiler.
+After these two bounded diagnostics, one new complete paired pilot replay is
+scheduled with fresh targets and all correctness gates unchanged. No successful
+block from the failed run is reused. Any resulting report must disclose the
+excluded first replay and unresolved intermittent correctness failure.
+
 The reconciled production breakdown in [gb300-release-costs.json](gb300-release-costs.json)
 sums exclusive bootstrap scopes across all production invocations, including
 intermediate instrumented builds. The remainder is explicitly outside bootstrap
