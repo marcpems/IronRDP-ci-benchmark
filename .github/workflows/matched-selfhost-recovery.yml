@@ -1,0 +1,40 @@
+name: Recover matched self-hosted build space
+on:
+  push:
+    branches: [experiment/matched-selfhost-recovery]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    strategy:
+      fail-fast: false
+      matrix:
+        machine: [gb300, x64]
+    runs-on: ${{ fromJSON(matrix.machine == 'gb300' && '["self-hosted","Windows","ARM64","HighCoreCount"]' || '["self-hosted","Windows","X64"]') }}
+    concurrency:
+      group: ${{ matrix.machine == 'gb300' && 'matched-highcore-arm64-selfhost' || 'matched-x64-selfhost' }}
+      cancel-in-progress: false
+    timeout-minutes: 30
+    steps:
+      - name: Inspect only experiment-owned build directories
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = if ('${{ matrix.machine }}' -eq 'gb300') { 'GB300-Arm64' } else { 'MARCPE-TEST01-X64' }
+          if ($env:RUNNER_NAME -ne $expected) { throw 'Unexpected recovery runner' }
+          Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=3' | Select-Object DeviceID,Size,FreeSpace | ConvertTo-Json
+          $roots = if ('${{ matrix.machine }}' -eq 'gb300') {
+            @('D:\v47351434', 'D:\v47985162', 'D:\m48685449b1', 'D:\m82254692b1')
+          } else {
+            @('E:\m31778023', 'E:\m36237914b1', 'E:\m36237914m1', 'E:\m36237914l1')
+          }
+          foreach ($root in $roots) {
+            foreach ($part in @('r\build', 'r\build\dist', 'r\opt-artifacts', 'e')) {
+              $path = Join-Path $root $part
+              if (Test-Path -LiteralPath $path) {
+                $files = Get-ChildItem -LiteralPath $path -File -Recurse -Force | Measure-Object Length -Sum
+                @{Path=$path; Files=$files.Count; Bytes=$files.Sum} | ConvertTo-Json -Compress
+              }
+            }
+          }
