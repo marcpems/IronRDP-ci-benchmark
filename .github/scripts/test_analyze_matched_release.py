@@ -14,7 +14,7 @@ def fixture(root):
     releases.mkdir()
     benchmarks.mkdir()
     protocol = {"rust_sha": RUST, "llvm_sha": LLVM, "perf_sha": PERF, "source_sha": "workload",
-                "release_repetitions_per_cell": 3, "warmup_rounds": 1, "measured_rounds": 3}
+                "cores": 4, "release_repetitions_per_cell": 3, "warmup_rounds": 1, "measured_rounds": 3}
     jobs = {"jobs": []}
     for arch, host in HOSTS.items():
         for vm in range(1, 4):

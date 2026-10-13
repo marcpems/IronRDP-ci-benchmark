@@ -453,6 +453,40 @@ committed only after all selected distributions qualify; a missing selection
 fails rather than silently selecting an old run. No benchmark is launched
 merely by adding this workflow.
 
+The separate `analyze_selfhost_matched.py` accepts only complete, qualified
+pilot compiler sets with exact per-variant job/archive provenance and a
+complete paired native replay. It reports observed production/job increases
+and IronRDP savings, with no confidence interval from a single observation.
+Its one-page Word layout explicitly labels the results preliminary, retains
+the distinction from the hosted preregistration, and shows the full GitHub
+cleanup-step time alongside whole-job time. Release artifacts are organized
+under one `--releases` subdirectory per runner class; each benchmark index is
+passed separately with `--index`. The renderer's two-machine layout is checked
+using Word pagination, not assumed from document dimensions.
+
+### Fresh 24-hour retries
+
+The GB300 baseline's 22 distribution files were checksum-preserved at
+`D:\m82254692b1\retained-dist` by
+[recovery 38367095934](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38367095934).
+The observed free space rose from 163.16 to 192.85 decimal GB. Removing only
+the inspected build cache of successful preflight 38247985162 in
+[recovery 38367787711](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38367787711)
+then brought free space to 194.03 GB, above the unchanged 180 GiB floor.
+Preflight evidence and baseline source/evidence were retained.
+
+Fresh optimized-only runs from harness
+`d400690ed8276c28a3a302a9044288e75da04cd9` are:
+
+- [GB300 38368036985](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38368036985):
+  passed its storage/runner gate and started source preparation.
+- [x64 38368289662](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38368289662):
+  queued behind baseline archive preservation/reclamation. Its completed
+  inventory observed 380.03 GB free on E: before recovery.
+
+These launches are not completed release timings. The ordinary Arm64 runner
+remains offline; its missing optimized cells are not replaced with GB300 data.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the

@@ -17,6 +17,31 @@ from native_ci_probe import NATIVE_COMMANDS, paired_order
 HOSTS = {"x64": "x86_64-pc-windows-msvc", "arm64": "aarch64-pc-windows-msvc"}
 
 
+def validate_native_block(block, protocol, variant, round_index):
+    metadata = block["metadata"]
+    if (metadata["source_sha"] != protocol["source_sha"] or metadata["variant"] != variant
+            or metadata["round"] != round_index):
+        raise ValueError("benchmark block identity mismatch")
+    env = metadata["profile_environment"]
+    if (env["CARGO_NET_OFFLINE"] != "true" or env["CARGO_BUILD_JOBS"] != str(protocol["cores"])
+            or "RUST_TEST_THREADS" in env):
+        raise ValueError("timed compilation environment changed")
+    rows = block["measurements"]
+    if [row["name"] for row in rows] != [name for name, _ in NATIVE_COMMANDS]:
+        raise ValueError("missing or reordered native command")
+    if any(row["exit_code"] or row["wall_seconds"] <= 0 or row["cpu_seconds"] <= 0
+           or row["affinity"] != list(range(protocol["cores"])) or "--frozen" not in row["command"]
+           or row["compiled_artifacts"] <= 0 for row in rows):
+        raise ValueError("invalid or failed offline compilation")
+    if round_index == 0:
+        tests = block["correctness"]
+        if ([row["name"] for row in tests] != [name for name, _ in NATIVE_COMMANDS[1:]]
+                or any(row["exit_code"] or row["environment_overrides"] != {"RUST_TEST_THREADS": "1"}
+                       for row in tests)):
+            raise ValueError("missing, failed, or changed correctness commands")
+    return sum(row["wall_seconds"] for row in rows)
+
+
 def change(control, treatment, paired=False, reduction=False):
     if len(control) != len(treatment) or not control or min(control + treatment) <= 0:
         raise ValueError("expected positive complete comparison samples")
@@ -34,6 +59,8 @@ def change(control, treatment, paired=False, reduction=False):
 
 
 def analyze(releases, benchmarks, jobs, protocol):
+    if protocol["cores"] != 4:
+        raise ValueError("hosted comparison requires the four-CPU protocol")
     n = protocol["release_repetitions_per_cell"]
     cells, runs, tools = {}, set(), {}
     job_rows = jobs["jobs"]
@@ -127,27 +154,9 @@ def analyze(releases, benchmarks, jobs, protocol):
                     or run["position"] != paired_order(list(VARIANTS), vm, r).index(variant)):
                 raise ValueError("incorrect warmup or variant order")
             block = json.loads((path.parent / run["path"]).read_text())
-            metadata = block["metadata"]
-            if metadata["source_sha"] != protocol["source_sha"] or metadata["variant"] != variant or metadata["round"] != r:
-                raise ValueError("benchmark block identity mismatch")
-            env = metadata["profile_environment"]
-            if env["CARGO_NET_OFFLINE"] != "true" or env["CARGO_BUILD_JOBS"] != "4" or "RUST_TEST_THREADS" in env:
-                raise ValueError("timed compilation environment changed")
-            rows = block["measurements"]
-            if [row["name"] for row in rows] != [name for name, _ in NATIVE_COMMANDS]:
-                raise ValueError("missing or reordered native command")
-            if any(row["exit_code"] or row["wall_seconds"] <= 0 or row["cpu_seconds"] <= 0
-                   or row["affinity"] != [0, 1, 2, 3] or "--frozen" not in row["command"]
-                   or row["compiled_artifacts"] <= 0 for row in rows):
-                raise ValueError("invalid or failed offline compilation")
-            if r == 0:
-                tests = block["correctness"]
-                if ([row["name"] for row in tests] != [name for name, _ in NATIVE_COMMANDS[1:]]
-                        or any(row["exit_code"] or row["environment_overrides"] != {"RUST_TEST_THREADS": "1"}
-                               for row in tests)):
-                    raise ValueError("missing, failed, or changed correctness commands")
+            total = validate_native_block(block, protocol, variant, r)
             if not run["warmup"]:
-                values[variant].append(sum(row["wall_seconds"] for row in rows))
+                values[variant].append(total)
         if blocks != expected:
             raise ValueError("incomplete paired benchmark rounds")
         for variant in VARIANTS:
