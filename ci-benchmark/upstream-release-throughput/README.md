@@ -214,3 +214,8 @@ hidden in a claimed full-release speedup. A successful continuation establishes
 output qualification and final-stage feasibility. Reliable end-to-end savings
 still require a matched, repeatable split pipeline with all overhead accounted
 for.
+
+The three-cell continuation was launched as
+[38356308993](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38356308993),
+from harness `d2ed87af57cdb0b2824d80151d2343d2ff1ab3ca`. This records the launch,
+not successful final-build qualification or an end-to-end speedup.
