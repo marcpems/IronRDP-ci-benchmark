@@ -7,7 +7,7 @@ import unittest
 
 from build_arm_compilers import digest
 from matched_release import LLVM, PERF, RUST, VARIANTS
-from matched_release_probe import install, one_file
+from matched_release_probe import install, one_file, release_runs
 
 
 class ReleaseProbeTests(unittest.TestCase):
@@ -57,11 +57,40 @@ class ReleaseProbeTests(unittest.TestCase):
                 self.assertEqual((compiler.parent.parent / f"lib/rustlib/{host}/lib/std.rlib").read_bytes(),
                                  b"shared")
                 self.assertFalse((compiler.parent.parent / f"lib/rustlib/{host}/lib/old.rlib").exists())
+            runner = {"runner_class": "self-hosted-arm64-highcore", "runner_name": "GB300-Arm64",
+                      "build_affinity_count": 64, "build_jobs": 64, "logical_cpus": 72}
+            runs = {variant: str(100 + n) for n, variant in enumerate(VARIANTS)}
+            originals = {}
+            for variant in VARIANTS:
+                path = root / f"release-{arch}-{variant}-{vm}-evidence" / "result.json"
+                originals[path] = path.read_text()
+                item = {**json.loads(originals[path]), **runner, "full_distribution": True,
+                        "run_id": runs[variant]}
+                path.write_text(json.dumps(item))
+            selfhost_args = (arch, host, vm, runs, False, args[-1])
+            actual = install(root, root / "selfhost", *selfhost_args, runner=runner)
+            self.assertEqual(set(actual[0]), set(VARIANTS))
+            with self.assertRaisesRegex(RuntimeError, "machine or resource-class"):
+                install(root, root / "wrong-machine", *selfhost_args,
+                        runner={**runner, "build_jobs": 4})
+            with self.assertRaisesRegex(RuntimeError, "identity"):
+                install(root, root / "wrong-run", arch, host, vm,
+                        {**runs, "baseline": "999"}, False, args[-1], runner=runner)
+            for path, original in originals.items():
+                path.write_text(original)
             archive = one_file(root / f"release-{arch}-baseline-{vm}-dist",
                                f"rustc-nightly-{host}.tar.xz")
             archive.write_bytes(b"corrupt")
             with self.assertRaisesRegex(RuntimeError, "checksum mismatch"):
                 install(root, root / "rejected", *args)
+
+    def test_hosted_and_selfhost_provenance_cannot_be_mixed(self):
+        runs = dict.fromkeys(VARIANTS, "123")
+        with self.assertRaisesRegex(RuntimeError, "hosted benchmarks require one"):
+            release_runs(runs, None)
+        for invalid in ("123", {"baseline": "123"}, {**runs, "baseline": "not-a-run"}):
+            with self.assertRaisesRegex(RuntimeError, "per-variant numeric"):
+                release_runs(invalid, {"runner_class": "self-hosted-x64"})
 
     def test_duplicate_evidence_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:

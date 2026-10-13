@@ -29,7 +29,9 @@ def paired_order(variants, vm, round_index):
     return variants.copy() if (vm + round_index) % 2 else list(reversed(variants))
 
 
-def build_environment(env, compiler):
+def build_environment(env, compiler, cores=4):
+    if type(cores) is not int or cores < 1:
+        raise ValueError("Cargo worker count must be a positive integer")
     for key in env:
         if key.startswith("CARGO_PROFILE_") and key != "CARGO_PROFILE_DEV_DEBUG" and env[key]:
             raise RuntimeError(f"Unexpected profile override: {key}")
@@ -38,7 +40,7 @@ def build_environment(env, compiler):
         if env.get(key):
             raise RuntimeError(f"Unexpected compiler override: {key}")
     return {**{k: v for k, v in env.items() if k not in ("GH_TOKEN", "GITHUB_TOKEN")},
-            **PROFILE_ENV, "RUSTC": str(compiler)}
+            **PROFILE_ENV, "CARGO_BUILD_JOBS": str(cores), "RUSTC": str(compiler)}
 
 
 def telemetry_executables():
@@ -59,7 +61,7 @@ def telemetry_executables():
 def run_block(source, output, compiler, protocol, identity, verify_tests, correctness_env=None,
               native_only=False):
     output.mkdir()
-    env = build_environment(os.environ, compiler)
+    env = build_environment(os.environ, compiler, protocol["cores"])
     version = subprocess.check_output([str(compiler), "-vV"], text=True, env=env)
     host = os.environ["BENCHMARK_HOST"]
     if (f"host: {host}\n" not in version or protocol["rust_sha"] not in version
@@ -68,7 +70,8 @@ def run_block(source, output, compiler, protocol, identity, verify_tests, correc
     lock = (source / "Cargo.lock").read_bytes().replace(b"\r\n", b"\n")
     metadata = {
         **identity, "source_sha": protocol["source_sha"], "rustc": version,
-        "compiler_executable": str(compiler), "profile_environment": PROFILE_ENV,
+        "compiler_executable": str(compiler),
+        "profile_environment": {key: env[key] for key in PROFILE_ENV},
         "lock_lf_sha256": hashlib.sha256(lock).hexdigest(),
         "cargo": subprocess.check_output(["cargo", "-V"], env=env, text=True).strip(),
         "platform": platform.platform(), "logical_cpus": os.cpu_count(),
@@ -77,7 +80,8 @@ def run_block(source, output, compiler, protocol, identity, verify_tests, correc
             "GITHUB_RUN_ID", "GITHUB_RUN_ATTEMPT", "ImageOS", "ImageVersion",
         )},
     }
-    hardware = (["pwsh", "-NoProfile", "-Command",
+    shell = "powershell" if os.environ.get("RUNNER_ENVIRONMENT") == "self-hosted" else "pwsh"
+    hardware = ([shell, "-NoProfile", "-Command",
                  "Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,"
                  "NumberOfLogicalProcessors | ConvertTo-Json"]
                 if os.name == "nt" else ["lscpu", "--json"])

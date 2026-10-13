@@ -10,7 +10,7 @@ import tarfile
 
 from build_arm_compilers import digest, save
 from compiler_probe import validate_meter
-from matched_release import RUST, VARIANTS, check_build_paths
+from matched_release import RUST, VARIANTS, build_cores, check_build_paths, runner_class, validate_runner
 from msvc_experiment import equivalent_tools, tool_identity
 from native_ci_probe import paired_order, run_block
 
@@ -22,7 +22,19 @@ def one_file(root, name):
     return files[0]
 
 
-def install(root, destination, arch, host, vm, run_id, pilot, protocol):
+def release_runs(run_id, runner):
+    if runner is None:
+        if not isinstance(run_id, str):
+            raise RuntimeError("hosted benchmarks require one release run")
+        return dict.fromkeys(VARIANTS, run_id)
+    if (not isinstance(run_id, dict) or set(run_id) != set(VARIANTS)
+            or any(not isinstance(value, str) or not value.isdecimal() for value in run_id.values())):
+        raise RuntimeError("self-hosted benchmarks require explicit per-variant numeric release IDs")
+    return run_id
+
+
+def install(root, destination, arch, host, vm, run_id, pilot, protocol, runner=None):
+    runs = release_runs(run_id, runner)
     destination.mkdir(exist_ok=False)
     compilers, metadata = {}, {}
     evidence = {}
@@ -31,9 +43,15 @@ def install(root, destination, arch, host, vm, run_id, pilot, protocol):
         path = one_file(directory, "result.json")
         item = json.loads(path.read_text())
         if (not item["complete"] or item["rust_sha"] != RUST or item["host"] != host
-                or item["variant"] != variant or item["run_id"] != run_id
+                or item["variant"] != variant or item["run_id"] != runs[variant]
                 or item["vm"] != vm or item["pilot"] != pilot or item["attempt"] != "1"):
             raise RuntimeError("release identity, qualification, or attempt mismatch")
+        if runner is None:
+            if item.get("runner_class", "github-hosted") != "github-hosted":
+                raise RuntimeError("self-hosted releases cannot enter the hosted comparison")
+        elif (not item.get("full_distribution")
+              or any(item.get(key) != value for key, value in runner.items())):
+            raise RuntimeError("release machine or resource-class mismatch")
         if item["llvm_sha"] != protocol["llvm_sha"] or item["perf_sha"] != protocol["perf_sha"]:
             raise RuntimeError("release submodule mismatch")
         manifest = json.loads(one_file(directory, "dist-manifest.json").read_text())
@@ -83,7 +101,10 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--clang", type=Path, required=True)
     parser.add_argument("--protocol", type=Path, required=True)
-    parser.add_argument("--release-run", required=True)
+    selection = parser.add_mutually_exclusive_group(required=True)
+    selection.add_argument("--release-run")
+    selection.add_argument("--release-runs", type=Path,
+                           help="Self-hosted only: JSON mapping variant to qualified release run ID")
     parser.add_argument("--pilot", action="store_true")
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
@@ -91,7 +112,22 @@ def main():
     protocol = json.loads(args.protocol.read_text())
     host, vm = os.environ["BENCHMARK_HOST"], int(os.environ["BENCHMARK_REPLICATE"])
     arch = "arm64" if host.startswith("aarch64") else "x64"
-    if os.cpu_count() != protocol["cores"] or vm not in range(1, protocol["release_repetitions_per_cell"] + 1):
+    validate_runner(host)
+    runner = None
+    run_ids = args.release_run
+    if runner_class() != "github-hosted":
+        if args.release_runs is None:
+            raise RuntimeError("self-hosted benchmarks require explicit per-variant release provenance")
+        run_ids = json.loads(args.release_runs.read_text())
+        runner = {"runner_class": runner_class(), "runner_name": os.environ["RUNNER_NAME"],
+                  "build_affinity_count": build_cores(), "build_jobs": build_cores(),
+                  "logical_cpus": os.cpu_count()}
+        protocol = {**protocol, "cores": build_cores(), "resource_class": runner_class()}
+    elif args.release_runs is not None:
+        raise RuntimeError("per-variant release runs are not permitted in the hosted protocol")
+    elif os.cpu_count() != protocol["cores"]:
+        raise RuntimeError("hosted protocol capacity mismatch")
+    if vm not in range(1, protocol["release_repetitions_per_cell"] + 1):
         raise RuntimeError("unexpected native runner capacity or replicate")
     actual = subprocess.check_output(["git", "-C", source, "rev-parse", "HEAD"], text=True).strip()
     if actual != protocol["source_sha"]:
@@ -100,7 +136,7 @@ def main():
     output.mkdir(exist_ok=False)
     compilers, cargo, metadata, evidence, standard = install(
         args.artifacts.resolve(), output / "compilers", arch, host, vm,
-        args.release_run, args.pilot, protocol)
+        run_ids, args.pilot, protocol, runner)
     tools = tool_identity(args.clang.resolve())
     if not equivalent_tools(tools, metadata["baseline"]["tools"]):
         raise RuntimeError("benchmark native tools differ from release construction")
@@ -119,6 +155,8 @@ def main():
         "compiler_metadata": metadata, "artifact_evidence": evidence, "stdlib": standard,
         "cargo_sha256": digest(cargo), "runs": [], "complete": False,
     }
+    if runner is not None:
+        index.update(selfhost_schema=1, runner=runner, release_runs=run_ids)
     save(output / "index.json", index)
     warmups = 0 if args.pilot else protocol["warmup_rounds"]
     rounds = 1 if args.pilot else warmups + protocol["measured_rounds"]

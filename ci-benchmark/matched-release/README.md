@@ -436,6 +436,17 @@ its start/end and before/after free bytes. Whole-job comparisons must disclose
 this added maintenance rather than attributing it to compiler production.
 The 180 GiB high-core startup floor remains unchanged.
 
+Self-hosted downstream replay uses an explicit JSON mapping from each variant
+to its release-run ID (`matched_release_probe.py --release-runs FILE`).
+It requires matching qualified source, runner name, resource class, logical
+CPU count, build worker/affinity counts and native tool hashes; it still
+extracts the actual checksummed distributions and shares baseline Cargo/std.
+The high-core replay sets both Cargo workers and measured affinity to 64.
+Four-worker behavior remains the default for other native probes.
+Hosted replay still requires a single release run and rejects self-hosted
+artifacts. Separate self-hosted index metadata must not enter the hosted
+18-job analyzer, and pilot observations remain excluded from its final estimates.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the

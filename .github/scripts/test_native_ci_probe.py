@@ -18,18 +18,21 @@ from process_metrics import measure, measurement_session
 
 class NativeCiTests(unittest.TestCase):
     def test_correctness_overrides_do_not_change_measured_environment(self):
-        for override, native_only in ((None, False), ({"RUST_TEST_THREADS": "1"}, False),
-                                      ({"RUST_TEST_THREADS": "1"}, True)):
+        for override, native_only, workers in (
+                (None, False, 4), ({"RUST_TEST_THREADS": "1"}, False, 4),
+                ({"RUST_TEST_THREADS": "1"}, True, 4), ({"RUST_TEST_THREADS": "1"}, True, 64)):
             with self.subTest(override=override), tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 source = root / "source"
                 source.mkdir()
                 (source / "Cargo.lock").write_text("fixture")
                 protocol = {"rust_sha": "source", "rust_version": "version",
-                            "source_sha": "workload", "cores": 4}
+                            "source_sha": "workload", "cores": workers}
                 calls = []
 
                 def fake_measure(command, cwd, env, cores, log, **kwargs):
+                    self.assertEqual(cores, workers)
+                    self.assertEqual(env["CARGO_BUILD_JOBS"], str(workers))
                     calls.append(log.name)
                     if log.name.endswith("-correctness"):
                         self.assertEqual(env.get("RUST_TEST_THREADS"), (override or {}).get("RUST_TEST_THREADS"))
@@ -56,6 +59,8 @@ class NativeCiTests(unittest.TestCase):
                                  [name for name, _ in (NATIVE_COMMANDS if native_only else COMMANDS)])
                 self.assertTrue(all(row["environment_overrides"] == (override or {})
                                     for row in result["correctness"]))
+                self.assertEqual(result["metadata"]["profile_environment"]["CARGO_BUILD_JOBS"],
+                                 str(workers))
 
     @unittest.skipUnless(os.name == "nt", "Windows tool discovery")
     def test_x64_telemetry_lookup_is_exact_native_architecture(self):
@@ -139,6 +144,15 @@ class NativeCiTests(unittest.TestCase):
             self.assertEqual(paired_order(variants, vm, 1), paired_order(variants, vm, 3))
             self.assertEqual(paired_order(["official"], vm, 0), ["official"])
         self.assertEqual(variants, ["official", "optimized"])
+
+    def test_explicit_cargo_workers_do_not_change_other_profile_controls(self):
+        env = build_environment({}, Path("compiler"), 64)
+        self.assertEqual(env["CARGO_BUILD_JOBS"], "64")
+        self.assertEqual({k: env[k] for k in PROFILE_ENV if k != "CARGO_BUILD_JOBS"},
+                         {k: v for k, v in PROFILE_ENV.items() if k != "CARGO_BUILD_JOBS"})
+        for invalid in (0, -1, True, 1.5):
+            with self.assertRaises(ValueError):
+                build_environment({}, Path("compiler"), invalid)
 
     def test_hash_mismatch_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
