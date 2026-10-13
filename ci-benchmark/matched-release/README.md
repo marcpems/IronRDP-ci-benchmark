@@ -382,6 +382,13 @@ required by its validation and release workflows. The
 only Microsoft-PGO and LLVM/ThinLTO with corrected routing and fresh roots,
 preserving rather than rebuilding the qualified baseline.
 
+After the interrupted Microsoft-PGO attempt, the
+`experiment/matched-release-selfhost-arm64-msvc-only-pilot` branch schedules
+only that missing recipe using the current 24-hour job budget. It shares the
+ordinary Arm64 concurrency lock, so it waits for an active LLVM job instead
+of cancelling or competing with it. The baseline and active LLVM cell are
+not restarted, and the retry uses a fresh run-specific build root.
+
 ## GB300 baseline utilization evidence
 
 Run 38282254692 completes and qualifies its 64-CPU baseline. The production
