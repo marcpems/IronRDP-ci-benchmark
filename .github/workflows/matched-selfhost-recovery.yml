@@ -1,7 +1,7 @@
 name: Recover matched self-hosted build space
 on:
   push:
-    branches: [experiment/matched-selfhost-recovery, experiment/matched-selfhost-reclaim, experiment/matched-selfhost-preflight-reclaim]
+    branches: [experiment/matched-selfhost-recovery, experiment/matched-selfhost-reclaim, experiment/matched-selfhost-preflight-reclaim, experiment/matched-selfhost-postrelease-inventory]
   workflow_dispatch:
     inputs:
       reclaim:
@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        machine: ${{ fromJSON(endsWith(github.ref_name, '-preflight-reclaim') && '["gb300"]' || '["gb300","x64"]') }}
+        machine: ${{ fromJSON((endsWith(github.ref_name, '-preflight-reclaim') || endsWith(github.ref_name, '-postrelease-inventory')) && '["gb300"]' || '["gb300","x64"]') }}
     runs-on: ${{ fromJSON(matrix.machine == 'gb300' && '["self-hosted","Windows","ARM64","HighCoreCount"]' || '["self-hosted","Windows","X64"]') }}
     concurrency:
       group: ${{ matrix.machine == 'gb300' && 'matched-highcore-arm64-selfhost' || 'matched-x64-selfhost' }}
@@ -27,7 +27,7 @@ jobs:
       PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - name: Inspect only experiment-owned build directories
-        if: env.RECLAIM != 'true'
+        if: env.RECLAIM != 'true' && !endsWith(github.ref_name, '-postrelease-inventory')
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -45,6 +45,27 @@ jobs:
               if (Test-Path -LiteralPath $path) {
                 $files = Get-ChildItem -LiteralPath $path -File -Recurse -Force | Measure-Object Length -Sum
                 @{Path=$path; Files=$files.Count; Bytes=$files.Sum} | ConvertTo-Json -Compress
+              }
+            }
+          }
+      - name: Inspect remaining completed-release training and runtime caches
+        if: endsWith(github.ref_name, '-postrelease-inventory')
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected inventory runner' }
+          Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=3' | Select-Object DeviceID,Size,FreeSpace | ConvertTo-Json
+          foreach ($root in @('D:\m68036985m1','D:\m82254692b1','D:\m48685449b1')) {
+            foreach ($part in @('r\build','r\opt-artifacts','r\src\tools\rustc-perf','e','retained-dist')) {
+              $path = Join-Path $root $part
+              if (!(Test-Path -LiteralPath $path)) { continue }
+              $files = Get-ChildItem -LiteralPath $path -File -Recurse -Force | Measure-Object Length -Sum
+              @{Path=$path; Files=$files.Count; Bytes=$files.Sum} | ConvertTo-Json -Compress
+              if ($part -in @('r\opt-artifacts','r\src\tools\rustc-perf','e')) {
+                foreach ($child in Get-ChildItem -LiteralPath $path -Directory) {
+                  $files = Get-ChildItem -LiteralPath $child.FullName -File -Recurse -Force | Measure-Object Length -Sum
+                  @{Path=$child.FullName; Files=$files.Count; Bytes=$files.Sum} | ConvertTo-Json -Compress
+                }
               }
             }
           }
