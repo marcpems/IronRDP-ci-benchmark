@@ -548,6 +548,26 @@ does not change firewall, TLS, proxy, service or timeout settings.
 Successful short HTTPS probes do not prove that long-poll/job-renewal connections
 remain reliable during a multi-hour build.
 
+[Diagnostic 38404765834](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38404765834)
+completed successfully. The installed runner is 2.337.0, with no registered
+Actions Windows service or explicit proxy/HTTP-timeout override detected.
+Both cancelled jobs' listener logs contain repeated broker HTTP timeouts,
+dispatcher shutdown/job cancellation, and fatal stacks through
+`BrokerHttpClient.GetRunnerMessageAsync` / `BrokerMessageListener.GetNextMessageAsync`
+at their termination times. This identifies runner-control-channel failure,
+not manual cancellation or a demonstrated compiler defect.
+DNS and three short HTTPS probes per discovered GitHub endpoint succeeded at
+transport level; unauthenticated service roots returned expected 400/404 responses.
+That does not identify why long polls time out.
+
+The installed version's `VssUtil.GetHttpRequestSettings` supports
+`GITHUB_ACTIONS_RUNNER_HTTP_TIMEOUT=300` as a reversible mitigation to test.
+Its default is 100 seconds, independently of workflow build limits.
+The setting must be inherited when launching the listener; setting it only in
+a workflow step cannot configure the parent process. No override or listener
+restart was applied by the diagnostic workflow. Multi-hour stability remains
+unverified and expensive x64 retries remain paused.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the
