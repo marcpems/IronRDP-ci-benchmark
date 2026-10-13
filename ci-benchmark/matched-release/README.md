@@ -420,8 +420,21 @@ The `selfhost-x64-optimized-pilot` and
 `selfhost-arm64-highcore-optimized-pilot` branch suffixes restart only the
 missing optimized variants. All training and build directories are fresh;
 successful baselines remain separately identified pilot observations.
-Storage maintenance, when needed, is a separate workflow rather than
-unreported reuse of a partial compiler build.
+Recovery of historical baselines uses the separate
+`matched-selfhost-recovery.yml` workflow (`experiment/matched-selfhost-reclaim`).
+It validates the exact qualified source/run/runner identity and every archive
+against the complete distribution manifest, moves the archives to the same
+experiment's `retained-dist`, preserves bootstrap metrics, and removes only
+that experiment's `r/build` subdirectory. Source, evidence and PGO profiles
+remain. No failed build is reused as a cold build.
+
+New successful self-hosted cells perform the same reclamation **after**
+distribution/evidence uploads so the following variant can use the available
+space. This maintenance is outside the recorded production interval but
+inside whole-job wall time; the separate `*-maintenance` artifact records
+its start/end and before/after free bytes. Whole-job comparisons must disclose
+this added maintenance rather than attributing it to compiler production.
+The 180 GiB high-core startup floor remains unchanged.
 
 ## Separate release-throughput investigation
 

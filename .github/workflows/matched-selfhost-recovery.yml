@@ -1,7 +1,13 @@
 name: Recover matched self-hosted build space
 on:
   push:
-    branches: [experiment/matched-selfhost-recovery]
+    branches: [experiment/matched-selfhost-recovery, experiment/matched-selfhost-reclaim]
+  workflow_dispatch:
+    inputs:
+      reclaim:
+        description: Preserve verified baseline archives and reclaim only their build subdirectory
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -15,9 +21,13 @@ jobs:
     concurrency:
       group: ${{ matrix.machine == 'gb300' && 'matched-highcore-arm64-selfhost' || 'matched-x64-selfhost' }}
       cancel-in-progress: false
-    timeout-minutes: 30
+    timeout-minutes: 90
+    env:
+      RECLAIM: ${{ inputs.reclaim || endsWith(github.ref_name, '-reclaim') }}
+      PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - name: Inspect only experiment-owned build directories
+        if: env.RECLAIM != 'true'
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -38,3 +48,23 @@ jobs:
               }
             }
           }
+      - uses: actions/checkout@v6
+        if: env.RECLAIM == 'true'
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        if: env.RECLAIM == 'true'
+        with:
+          python-version: "3.13"
+          architecture: ${{ matrix.machine == 'gb300' && 'arm64' || 'x64' }}
+      - name: Preserve qualified baseline and recover only its disposable build files
+        if: env.RECLAIM == 'true'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ('${{ matrix.machine }}' -eq 'gb300') {
+            python .github\scripts\recover_matched_build.py --root D:\m82254692b1 --machine self-hosted-arm64-highcore --run-id 38282254692 --variant baseline
+          } else {
+            python .github\scripts\recover_matched_build.py --root E:\m36237914b1 --machine self-hosted-x64 --run-id 38236237914 --variant baseline
+          }
+          if ($LASTEXITCODE) { throw 'Verified baseline recovery failed' }

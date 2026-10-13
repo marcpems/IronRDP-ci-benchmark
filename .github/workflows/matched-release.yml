@@ -162,6 +162,18 @@ jobs:
           path: ${{ env.MATCHED_ROOT }}/e/diagnostic-compiler.zip
           compression-level: 0
           retention-days: 7
+      - name: Reclaim qualified self-hosted build space after uploads
+        if: success() && contains(github.ref_name, '-selfhost-') && !endsWith(github.ref_name, '-stack-diagnostic')
+        run: |
+          python harness\.github\scripts\recover_matched_build.py --root "$env:MATCHED_ROOT" --machine "$env:RELEASE_MACHINE_CLASS" --run-id "$env:GITHUB_RUN_ID" --variant "${{ matrix.variant }}" --vm "${{ matrix.vm }}"
+          if ($LASTEXITCODE) { throw 'Qualified build-space recovery failed' }
+      - name: Retain self-hosted maintenance accounting
+        if: always() && contains(github.ref_name, '-selfhost-') && env.MATCHED_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: release-${{ matrix.arch }}-${{ matrix.variant }}-${{ matrix.vm }}-maintenance
+          path: ${{ env.MATCHED_ROOT }}/e/space-recovery.json
+          retention-days: 30
       - name: Preserve unqualified distribution files for diagnosis
         uses: actions/upload-artifact@v6
         if: failure() && env.MATCHED_ROOT != '' && !endsWith(github.ref_name, '-stack-diagnostic')
