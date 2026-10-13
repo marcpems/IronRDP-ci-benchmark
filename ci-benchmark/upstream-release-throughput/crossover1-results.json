@@ -1,0 +1,751 @@
+{
+  "run_id": "38412986554",
+  "harness_sha": "2df4605b893745a4283a12c3d9b6d0ba8adbc035",
+  "complete": true,
+  "scope": "Three same-VM LLVM/LLD scheduling crossovers, identical baseline PGO inputs and production optimization, nine fresh builds; not full release timings.",
+  "quality": "Within each VM, non-scheduling TOML/CMake fields, output names, signatures and fresh object counts match. All nine component probes passed; same profile and tool hashes across VMs.",
+  "llvm_profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4",
+  "tool_hashes": {
+    "cl.exe": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57",
+    "link.exe": "a8c42e25c91ca2453e1110540ac08f0fc12d7539454a11b9af8baeecb469837d",
+    "lib.exe": "d8dae02a50c7571c6c0ea5cd7a853830aaca8fad13f8f4be147828d51dd4adec",
+    "cmake.exe": "ab8247ca4554871e5d75c0ee118ee8663727bd6fdf37ad76b17e9cc8d5f286a8",
+    "ninja.exe": "23e7d60c17b3fcd42d9c00d49eca3c3771b04d7ccb13e49836b06b34e20211c7",
+    "sccache.exe": "f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7",
+    "clang-cl.exe": "986af49c2d1eefeac324f724ff54597753d1053927fa5d58a37a457f578e1cf8"
+  },
+  "advancement_rule": "Every paired VM faster and median paired time reduction at least 5%; all quality gates pass.",
+  "decisions": {
+    "jobs6": {
+      "paired_time_changes_percent": [
+        0.35034944471263874,
+        3.530765862562557,
+        -2.556903827224999
+      ],
+      "median_time_change_percent": 0.35034944471263874,
+      "all_three_faster": false,
+      "advance_to_full_release": false
+    },
+    "link1": {
+      "paired_time_changes_percent": [
+        -0.2704669104076629,
+        0.39291119695161747,
+        -0.18598834732581615
+      ],
+      "median_time_change_percent": -0.18598834732581615,
+      "all_three_faster": false,
+      "advance_to_full_release": false
+    }
+  },
+  "jobs6_paired_peak_memory_increase_percent": [
+    45.45000027214545,
+    44.65504040833687,
+    47.481223421551945
+  ],
+  "jobs6_median_peak_memory_increase_percent": 45.45000027214545,
+  "conclusion": "Neither knob clears the preregistered threshold. Retain upstream scheduling defaults; no full-release candidate advances from this crossover.",
+  "vms": [
+    {
+      "first_setting": "baseline",
+      "job_id": 115349895679,
+      "runner_name": "GitHub Actions 1000000946",
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "order": [
+        "baseline",
+        "jobs6",
+        "link1"
+      ],
+      "whole_job_seconds": 15114.0,
+      "preparation": {
+        "wall_seconds": 88.8637407,
+        "root_process_wall_seconds": 88.86365599999999,
+        "user_seconds": 172.984375,
+        "kernel_seconds": 35.109375,
+        "exit_code": 0,
+        "processes": 367,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 1676075008,
+        "peak_process_memory_bytes": 1307115520,
+        "cpu_seconds": 208.09375,
+        "effective_cores": 2.3417171993976167,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "samples": [
+        {
+          "setting": "baseline",
+          "position": 0,
+          "measurement": {
+            "wall_seconds": 4889.3700392,
+            "root_process_wall_seconds": 4889.369948,
+            "user_seconds": 16769.3125,
+            "kernel_seconds": 1622.609375,
+            "exit_code": 0,
+            "processes": 13842,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 5267771392,
+            "peak_process_memory_bytes": 2241687552,
+            "cpu_seconds": 18391.921875,
+            "effective_cores": 3.7616138127293985,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 4885.927110299999,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "AMD EPYC 7763 64-Core Processor                ",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 4886.2036002,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 4885.927110299999
+                },
+                "unattributed_seconds": 0.27648990000125195
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        },
+        {
+          "setting": "jobs6",
+          "position": 1,
+          "measurement": {
+            "wall_seconds": 4906.676306599999,
+            "root_process_wall_seconds": 4906.676236799999,
+            "user_seconds": 16907.8125,
+            "kernel_seconds": 1603.4375,
+            "exit_code": 0,
+            "processes": 13846,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 7661973504,
+            "peak_process_memory_bytes": 2240438272,
+            "cpu_seconds": 18511.25,
+            "effective_cores": 3.7726658216887894,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 4903.0449288,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "AMD EPYC 7763 64-Core Processor                ",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 4903.3019033,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 4903.0449288
+                },
+                "unattributed_seconds": 0.2569745000000694
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        },
+        {
+          "setting": "link1",
+          "position": 2,
+          "measurement": {
+            "wall_seconds": 4877.8914178999985,
+            "root_process_wall_seconds": 4877.891334299999,
+            "user_seconds": 16826.125,
+            "kernel_seconds": 1603.734375,
+            "exit_code": 0,
+            "processes": 13842,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 5247623168,
+            "peak_process_memory_bytes": 2241454080,
+            "cpu_seconds": 18429.859375,
+            "effective_cores": 3.7782430554664366,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 4872.7122942000005,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "AMD EPYC 7763 64-Core Processor                ",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 4872.9623106,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 4872.7122942000005
+                },
+                "unattributed_seconds": 0.2500163999993674
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        }
+      ],
+      "installed_output_counts": {
+        "llvm": 2709,
+        "lld": 32
+      },
+      "paired_component_change_percent": {
+        "baseline": 0.0,
+        "jobs6": 0.35034944471263874,
+        "link1": -0.2704669104076629
+      }
+    },
+    {
+      "first_setting": "jobs6",
+      "job_id": 115349895157,
+      "runner_name": "GitHub Actions 1000000945",
+      "cpu_model": "Intel(R) Xeon(R) 6973P-C",
+      "order": [
+        "jobs6",
+        "link1",
+        "baseline"
+      ],
+      "whole_job_seconds": 9550.0,
+      "preparation": {
+        "wall_seconds": 74.54326449999996,
+        "root_process_wall_seconds": 74.54314119999992,
+        "user_seconds": 114.78125,
+        "kernel_seconds": 26.5625,
+        "exit_code": 0,
+        "processes": 367,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 1672437760,
+        "peak_process_memory_bytes": 1303863296,
+        "cpu_seconds": 141.34375,
+        "effective_cores": 1.8961304008895408,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "samples": [
+        {
+          "setting": "jobs6",
+          "position": 0,
+          "measurement": {
+            "wall_seconds": 3119.6235717,
+            "root_process_wall_seconds": 3119.623453,
+            "user_seconds": 10550.625,
+            "kernel_seconds": 1163.640625,
+            "exit_code": 0,
+            "processes": 13846,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 7661412352,
+            "peak_process_memory_bytes": 2240380928,
+            "cpu_seconds": 11714.265625,
+            "effective_cores": 3.7550253598758574,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 3116.7314989,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "Intel(R) Xeon(R) 6973P-C",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 3116.9292786,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 3116.7314989
+                },
+                "unattributed_seconds": 0.19777969999995548
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        },
+        {
+          "setting": "link1",
+          "position": 1,
+          "measurement": {
+            "wall_seconds": 3027.7029590999996,
+            "root_process_wall_seconds": 3027.7028296000003,
+            "user_seconds": 10407.078125,
+            "kernel_seconds": 1120.5,
+            "exit_code": 0,
+            "processes": 13842,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 5267890176,
+            "peak_process_memory_bytes": 2241359872,
+            "cpu_seconds": 11527.578125,
+            "effective_cores": 3.8073675921057437,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 3022.2682695999997,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "Intel(R) Xeon(R) 6973P-C",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 3022.4678285,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 3022.2682695999997
+                },
+                "unattributed_seconds": 0.19955890000028376
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        },
+        {
+          "setting": "baseline",
+          "position": 2,
+          "measurement": {
+            "wall_seconds": 3013.5800676,
+            "root_process_wall_seconds": 3013.5799798000007,
+            "user_seconds": 10274.234375,
+            "kernel_seconds": 1103.390625,
+            "exit_code": 0,
+            "processes": 13842,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 5296332800,
+            "peak_process_memory_bytes": 2241175552,
+            "cpu_seconds": 11377.625,
+            "effective_cores": 3.7754513717171894,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 3010.4399141,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "Intel(R) Xeon(R) 6973P-C",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 3010.6144674,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 3010.4399141
+                },
+                "unattributed_seconds": 0.1745533000002979
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        }
+      ],
+      "installed_output_counts": {
+        "llvm": 2709,
+        "lld": 32
+      },
+      "paired_component_change_percent": {
+        "jobs6": 3.530765862562557,
+        "link1": 0.39291119695161747,
+        "baseline": 0.0
+      }
+    },
+    {
+      "first_setting": "link1",
+      "job_id": 115349896012,
+      "runner_name": "GitHub Actions 1000000947",
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "order": [
+        "link1",
+        "baseline",
+        "jobs6"
+      ],
+      "whole_job_seconds": 14570.0,
+      "preparation": {
+        "wall_seconds": 96.52648579999999,
+        "root_process_wall_seconds": 96.52640869999999,
+        "user_seconds": 161.765625,
+        "kernel_seconds": 32.96875,
+        "exit_code": 0,
+        "processes": 367,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 1675436032,
+        "peak_process_memory_bytes": 1307324416,
+        "cpu_seconds": 194.734375,
+        "effective_cores": 2.01741908851301,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "samples": [
+        {
+          "setting": "link1",
+          "position": 0,
+          "measurement": {
+            "wall_seconds": 4743.2198565,
+            "root_process_wall_seconds": 4743.2197524,
+            "user_seconds": 16221.265625,
+            "kernel_seconds": 1553.046875,
+            "exit_code": 0,
+            "processes": 13842,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 5235212288,
+            "peak_process_memory_bytes": 2240929792,
+            "cpu_seconds": 17774.3125,
+            "effective_cores": 3.7473094306692296,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 4739.928266299999,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "AMD EPYC 7763 64-Core Processor                ",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 4740.1639096,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 4739.928266299999
+                },
+                "unattributed_seconds": 0.2356433000004472
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        },
+        {
+          "setting": "baseline",
+          "position": 1,
+          "measurement": {
+            "wall_seconds": 4753.2528106,
+            "root_process_wall_seconds": 4753.2527409,
+            "user_seconds": 16285.453125,
+            "kernel_seconds": 1540.484375,
+            "exit_code": 0,
+            "processes": 13842,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 5189648384,
+            "peak_process_memory_bytes": 2240978944,
+            "cpu_seconds": 17825.9375,
+            "effective_cores": 3.7502607604306752,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 4748.760407299999,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "AMD EPYC 7763 64-Core Processor                ",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 4748.9886491,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 4748.760407299999
+                },
+                "unattributed_seconds": 0.2282418000004327
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        },
+        {
+          "setting": "jobs6",
+          "position": 2,
+          "measurement": {
+            "wall_seconds": 4631.2107689,
+            "root_process_wall_seconds": 4631.2107039,
+            "user_seconds": 16052.734375,
+            "kernel_seconds": 1516.4375,
+            "exit_code": 0,
+            "processes": 13846,
+            "affinity": [
+              0,
+              1,
+              2,
+              3
+            ],
+            "affinity_groups": null,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": [],
+            "peak_job_memory_bytes": 7653756928,
+            "peak_process_memory_bytes": 2241261568,
+            "cpu_seconds": 17569.171875,
+            "effective_cores": 3.7936454961156967,
+            "command": [
+              "C:\\Program Files\\Git\\bin\\bash.exe",
+              "--noprofile",
+              "--norc",
+              "-c",
+              "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+            ]
+          },
+          "llvm_lld_seconds": 4627.3391707,
+          "phases": {
+            "system": {
+              "cpu_threads_count": 4,
+              "cpu_model": "AMD EPYC 7763 64-Core Processor                ",
+              "memory_total_bytes": 17174360064
+            },
+            "invocations": [
+              {
+                "command": "build src/llvm-project/llvm src/llvm-project/lld --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+                "wall_seconds": 4627.5731184,
+                "exclusive_seconds": {
+                  "llvm_and_lld": 4627.3391707
+                },
+                "unattributed_seconds": 0.23394769999958953
+              }
+            ],
+            "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+          },
+          "signature": {
+            "--version": "23.1.3-rust-1.101.0-nightly",
+            "--targets-built": "AArch64 AMDGPU ARM BPF Hexagon LoongArch MSP430 Mips NVPTX PowerPC RISCV Sparc SystemZ WebAssembly X86 AVR M68k CSKY Xtensa"
+          },
+          "fresh_objects": {
+            "llvm": 3373,
+            "lld": 120
+          },
+          "component_checks_passed": true,
+          "profile_sha256": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4"
+        }
+      ],
+      "installed_output_counts": {
+        "llvm": 2709,
+        "lld": 32
+      },
+      "paired_component_change_percent": {
+        "link1": -0.18598834732581615,
+        "baseline": 0.0,
+        "jobs6": -2.556903827224999
+      }
+    }
+  ]
+}

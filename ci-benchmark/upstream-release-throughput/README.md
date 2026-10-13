@@ -3,6 +3,40 @@
 This study uses only standard GitHub-hosted `windows-2025` and `windows-11-arm`
 runners. It never dispatches to either custom timing runner.
 
+## Completed findings
+
+**Retain upstream's scheduling defaults.** Neither of the two tested,
+quality-preserving scheduling changes produced a repeatable useful speedup.
+The final same-VM experiment removes the CPU-model and per-setting PGO-profile
+confounds in the earlier x64 pilots:
+
+| Change | Median paired LLVM/LLD time change | Observed range across three VMs | Decision |
+|---|---:|---:|---|
+| `build.jobs=6` on four logical CPUs | +0.35% | -2.56% to +3.53% | Do not adopt from this evidence |
+| `llvm.link-jobs=1` | -0.19% | -0.27% to +0.39% | Do not adopt from this evidence |
+
+Positive time changes mean slower. LLVM/LLD already used about 94% of the
+four-logical-CPU allowance; six jobs increased median paired peak memory by
+45.45% without a repeatable time reduction. Neither candidate met the
+preregistered advancement rule, so no additional full-release candidate run
+is warranted by this crossover.
+
+The study also qualified all three Arm64 full-recipe pilots and all six x64
+final-build continuations, retaining balanced XZ and the required outputs/tests.
+The x64 continuations are explicitly **not** measurements of a single-job,
+fresh-training, end-to-end release. That command exceeded the hosted safety
+deadline; no total release speedup or total fresh-release duration is claimed.
+Standard x64 hardware also differs from upstream's eight-CPU release runner.
+
+Earlier apparent x64 improvements were not defensible scheduling results:
+different VM CPU models, despite identical runner labels, changed the
+unchanged baseline's final-build time by 35.75%. Do not pool those raw times
+or present that variation as a configuration optimization.
+
+The bounded scheduling investigation is complete. Unimplemented future
+experiments below are proposals, not measured improvements or pending
+qualification of an accepted candidate.
+
 ## Fixed recipe
 
 Rust source is the unmodified upstream revision
@@ -387,4 +421,63 @@ recommendation for that knob from this study, not proof that it can never help.
 Controlled run
 [38412986554](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38412986554)
 was launched from harness `2df4605b893745a4283a12c3d9b6d0ba8adbc035`.
-Its component measurements and acceptance decision are pending.
+All three jobs completed successfully.
+
+### Controlled results
+
+Each row compares settings on the **same VM**, with identical baseline PGO
+inputs and fresh object/cache trees. Times are exclusive LLVM/LLD wall minutes.
+
+| VM's first setting | CPU model | Baseline | Six jobs | Single link |
+|---|---|---:|---:|---:|
+| baseline | AMD EPYC 7763 | 81.43 | 81.72 | 81.21 |
+| jobs6 | Intel Xeon 6973P-C | 50.17 | 51.95 | 50.37 |
+| link1 | AMD EPYC 7763 | 79.15 | 77.12 | 79.00 |
+
+All nine builds produced the same fresh object counts: 3,373 LLVM objects and
+120 LLD objects. Installed output names and LLVM version/target signatures
+matched; the IR roundtrip and linked Windows executable checks passed in every
+trial. The downloaded evidence was also compared after completion to verify
+within-VM TOML/CMake equality excluding only the scheduling knobs, and common
+profile/tool hashes across VMs.
+
+Six-job paired changes were +0.35%, +3.53% and -2.56%; single-link changes
+were -0.27%, +0.39% and -0.19%. Neither setting was faster on all three VMs
+or achieved a median 5% reduction. The earlier cross-machine apparent gains
+therefore do not survive this controlled screening.
+
+Measured LLVM/LLD CPU utilization ranged from 93.68% to 95.18% of the allowed
+four logical CPUs. Baseline peak job memory was 4.83-4.93 GiB; six jobs used
+7.13-7.14 GiB. This identifies a CPU-busy component, not a large scheduling
+idle-time gap that six jobs can eliminate.
+
+Machine-readable paired evidence and acceptance decisions are in
+[crossover1-results.json](crossover1-results.json). No candidate advanced and
+no further jobs remain running for this experiment.
+
+## Priorities beyond these tested scheduling changes
+
+1. **Preserve experimental hardware and profile controls.** For any future
+   release optimization, compare within a VM where feasible and report VM/CPU
+   identity. Full-duration testing needs a genuine staged workflow on standard
+   runners, with state transfer and rebuilt work accounted for; the existing
+   continuations cannot silently substitute for that measurement.
+2. **Investigate the non-LLVM critical path before adding more LLVM jobs.**
+   In the first qualified x64 baseline continuation, tools took 43.88 minutes,
+   compiler/std/backends 42.39, and assembly/compression 23.65, versus 79.39 in
+   LLVM/LLD. These are exclusive wall scopes, including links/waits, not pure
+   compilation CPU. The full-command CPU average was about 78%, whereas the
+   controlled LLVM/LLD component used about 94%; adding LLVM scheduling
+   parallelism does not address the rest of that critical path.
+3. **Treat packaging concurrency as a separate, unproven orchestration change.**
+   Preserve balanced XZ and all components, and account for dependency order:
+   upstream's combined installer reads already-compressed component archives.
+   There is no demonstrated one-line defer-compression fix. At the pinned
+   revision, `dist.compression-profile=no-op` is explicitly forbidden for
+   `x dist` (it is for `x install`), so it must not be used to manufacture a
+   faster but incomplete release. A concurrent-packaging design would require
+   its own identical-output validation before recommendation.
+
+Faster compression presets, fewer tests/components, lower optimization and
+removing the comparison harness's four-CPU cap are not quality-preserving
+upstream scheduling wins established by this study.
