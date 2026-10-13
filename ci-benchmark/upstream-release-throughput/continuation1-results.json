@@ -1,0 +1,1180 @@
+{
+  "run_id": "38356308993",
+  "harness_sha": "d2ed87af57cdb0b2824d80151d2343d2ff1ab3ca",
+  "profile_source_run": "38302741082",
+  "scope": "Qualified cold final distribution and extracted tests, not a complete single-job fresh-PGO release measurement. Earlier training and transfer/setup overhead not included in production time.",
+  "comparability": "All three full final distributions and tests passed; same image/tool hashes and 20 artifact-name sets. Parsed configs differ only by preregistered scheduling knobs and their recorded configure arguments. Profiles are original per-setting profiles, not a common profile across settings.",
+  "confound": "Each setting landed on a different CPU model. Observed differences cannot be attributed to scheduling. Earlier jobs6 PGO lead also compared Intel 8573C with AMD EPYC 7763.",
+  "samples": [
+    {
+      "setting": "baseline",
+      "job_id": 115159909297,
+      "whole_job_seconds": 13384.0,
+      "cpu_model": "AMD EPYC 7763 64-Core Processor",
+      "result": {
+        "rust_sha": "76c90957b7e422c4b9c45192b0197214d7de5a54",
+        "host": "x86_64-pc-windows-msvc",
+        "setting": "baseline",
+        "runner_class": "github-hosted",
+        "runner_name": "GitHub Actions 1000000940",
+        "image": "20260925.250.1",
+        "cpu_allowance": 4,
+        "run_id": "38356308993",
+        "attempt": "1",
+        "pilot": true,
+        "tools": {
+          "cl.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe",
+            "sha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57"
+          },
+          "link.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe",
+            "sha256": "a8c42e25c91ca2453e1110540ac08f0fc12d7539454a11b9af8baeecb469837d"
+          },
+          "lib.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\lib.exe",
+            "sha256": "d8dae02a50c7571c6c0ea5cd7a853830aaca8fad13f8f4be147828d51dd4adec"
+          },
+          "cmake.exe": {
+            "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+            "sha256": "ab8247ca4554871e5d75c0ee118ee8663727bd6fdf37ad76b17e9cc8d5f286a8"
+          },
+          "ninja.exe": {
+            "path": "D:/ur/r/ninja\\ninja.exe",
+            "sha256": "23e7d60c17b3fcd42d9c00d49eca3c3771b04d7ccb13e49836b06b34e20211c7"
+          },
+          "sccache.exe": {
+            "path": "D:/ur/r/sccache\\sccache.exe",
+            "sha256": "f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7"
+          },
+          "clang-cl.exe": {
+            "path": "D:\\ur\\r\\citools\\clang-rust\\bin\\clang-cl.exe",
+            "sha256": "986af49c2d1eefeac324f724ff54597753d1053927fa5d58a37a457f578e1cf8"
+          }
+        },
+        "job_started_unix": 1791872541.0,
+        "configure_args": "--build=x86_64-pc-windows-msvc --host=x86_64-pc-windows-msvc --target=x86_64-pc-windows-msvc --enable-full-tools --enable-profiler --set rust.codegen-units=1 --set llvm.clang-cl=/d/ur/r/citools/clang-rust/bin/clang-cl.exe --enable-ninja",
+        "script": "RUST_BACKTRACE=full python x.py dist bootstrap --include-default-paths --set pgo.llvm.use=\"D:/ur/r/opt-artifacts/llvm-pgo.profdata\" --set pgo.rustc.use=\"D:/ur/r/opt-artifacts/rustc-pgo.profdata\" --set pgo.cargo.use=\"D:/ur/r/opt-artifacts/rustc-pgo.profdata\" --set pgo.rustdoc.use=\"D:/ur/r/opt-artifacts/rustdoc-pgo.profdata\" --set pgo.clippy.use=\"D:/ur/r/opt-artifacts/clippy-pgo.profdata\" --set pgo.cranelift.use=\"D:/ur/r/opt-artifacts/cranelift-pgo.profdata\"",
+        "source_changes": false,
+        "compression": "upstream balanced xz",
+        "coverage": "original full PGO training retained; full final distribution and extracted-dist suite",
+        "cache": "cold final build; original per-setting PGO profiles transferred, no objects restored",
+        "hardware_caveat": "standard x64 has 4 CPUs, upstream x64 release runner has 8 CPUs/32GB",
+        "production_mode": "continued final distribution from pinned pilot profiles",
+        "profile_source_run": "38302741082",
+        "profile_evidence": {
+          "source_run": "38302741082",
+          "source_harness_sha": "b41cbca7cdf2a2365e75b881f5b6e9139d03a0a4",
+          "files": {
+            "e/provenance.json": "67666b87637ea764e5867b28cb1eeef59de83cef841c927e3ccb52809fe479e6",
+            "e/failure.json": "28633dbffea8ff3e5c34e7eca4cf578857d56a4d859dd2b289d28faf225d415b",
+            "e/upstream-ci.stderr": "32cd512bbb3b590a41bcb654e1b376ca15cc49e0654c19ec53ba66ddc8c184c2",
+            "r/bootstrap.toml": "eddfe6f5b6918dd8216ba1aaff1ac560c8735b3e0ea842147fba93a6000abd68",
+            "r/opt-artifacts/clippy-pgo.profdata": "80e16e0df3cd1ff8bdfdc24cd90634a92eb56d6dc60119642f2846e25b51df26",
+            "r/opt-artifacts/cranelift-pgo.profdata": "a0b2fff0f0810473e795ae3874b197a92ec63f0b4881a32eb18b0d6af9893cce",
+            "r/opt-artifacts/llvm-pgo.profdata": "d95d6bf599208725fbd2ed74a7476d1ab39bb5e8c4f98a10ce1514c7cc0268e4",
+            "r/opt-artifacts/rustc-pgo.profdata": "0ad710bc551972ab771ee99d2364c9b7ca70f53d0be4cb0fab5580af4a7fbfe4",
+            "r/opt-artifacts/rustdoc-pgo.profdata": "9568d514ffc67837b0d309ef6816a31108b192b787ad96b8d3875460c84abda7"
+          }
+        },
+        "full_release_timing_complete": false,
+        "timing_caveat": "not a single-job release timing; excludes earlier PGO work and profile transfer",
+        "cold_build_adjustment": "omit --keep-stage 0 because no earlier build artifacts are restored",
+        "complete": true,
+        "completed_unix": 1791885894.637137,
+        "continued_final_distribution_seconds": 11731.650472000001,
+        "qualification": "continued final distribution and full extracted-dist tests passed; original PGO inputs retained"
+      },
+      "production_measurement": {
+        "wall_seconds": 11731.650472000001,
+        "root_process_wall_seconds": 11731.6136649,
+        "user_seconds": 33971.390625,
+        "kernel_seconds": 2591.0625,
+        "exit_code": 0,
+        "processes": 23794,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 6978981888,
+        "peak_process_memory_bytes": 2891268096,
+        "cpu_seconds": 36562.453125,
+        "effective_cores": 3.1165651595454382,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "qualification_measurement": {
+        "wall_seconds": 1289.8620164000004,
+        "root_process_wall_seconds": 1289.8594826000008,
+        "user_seconds": 2629.546875,
+        "kernel_seconds": 1851.859375,
+        "exit_code": 0,
+        "processes": 45774,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [
+          {
+            "pid": 6824,
+            "image": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vctip.exe"
+          }
+        ],
+        "peak_job_memory_bytes": 1613574144,
+        "peak_process_memory_bytes": 1201008640,
+        "cpu_seconds": 4481.40625,
+        "effective_cores": 3.4743299616710837,
+        "command": [
+          "C:\\hostedtoolcache\\windows\\Python\\3.13.15\\x64\\python.exe",
+          "x.py",
+          "test",
+          "--build",
+          "x86_64-pc-windows-msvc",
+          "--stage",
+          "0",
+          "tests/assembly-llvm",
+          "tests/codegen-llvm",
+          "tests/codegen-units",
+          "tests/incremental",
+          "tests/mir-opt",
+          "tests/pretty",
+          "tests/run-make/glibc-symbols-x86_64-unknown-linux-gnu",
+          "tests/run-make/rust-lld-x86_64-unknown-linux-gnu-dist",
+          "tests/ui",
+          "tests/crashes",
+          "tests/rustdoc-html"
+        ]
+      },
+      "phases": {
+        "system": {
+          "cpu_threads_count": 4,
+          "cpu_model": "AMD EPYC 7763 64-Core Processor                ",
+          "memory_total_bytes": 17174360064
+        },
+        "invocations": [
+          {
+            "command": "dist bootstrap --include-default-paths --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+            "wall_seconds": 11646.555011,
+            "exclusive_seconds": {
+              "assembly_and_compression": 1419.2955187,
+              "compiler_std_backends": 2543.5732119000004,
+              "other": 126.0620866,
+              "llvm_and_lld": 4763.1236614,
+              "tools": 2632.7968302,
+              "documentation": 161.28375649999998
+            },
+            "unattributed_seconds": 0.41994569999951636
+          }
+        ],
+        "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+      },
+      "manifest": [
+        {
+          "name": "bootstrap-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 8133612,
+          "sha256": "f62b1ff1772a3eb70f909d1860b49ef8211abeb140847ef682455a18464aaf15"
+        },
+        {
+          "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10013180,
+          "sha256": "bde10e13a2de0ad03ba83e61976b78ce9d473fddfdc484f66d1fd44506dfcda5"
+        },
+        {
+          "name": "clippy-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3928184,
+          "sha256": "048ba7e3fe870791ce420541f3a4bf0d95a4f471fceaa232c7ac8e72e54a0c0c"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 1003256,
+          "sha256": "7b86702b3a809655a32a7344ae9c369eaf97d33bf5e015e4d6a7fd86e611bf61"
+        },
+        {
+          "name": "llvm-tools-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 74724980,
+          "sha256": "e50b1468b1a9fc3a9ec9918e92bd9994401fb798dff48f38ead4daa8c22b4f3b"
+        },
+        {
+          "name": "miri-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2691200,
+          "sha256": "00d574ce6ad67bdca5568d92e30c9c961df2c7272e57e2d14f837c5fcfc998d5"
+        },
+        {
+          "name": "reproducible-artifacts-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24841788,
+          "sha256": "97a6d448154695691ee195c3aafa7b8f5c079733d06678f93873f9223025c68f"
+        },
+        {
+          "name": "rust-analysis-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 16112,
+          "sha256": "864cadc04ebb215affcd38927f11bfa86b7c3a3d43da5c6462c08591d074c478"
+        },
+        {
+          "name": "rust-analyzer-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10111236,
+          "sha256": "6cd22d33087b12f27cd2a0e56089d58ddda9c67dd46b75e6a11a4e6b4873b960"
+        },
+        {
+          "name": "rust-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 529139344,
+          "sha256": "11c2e709d621dc9a65d54102fa8753f574c7ac9115902d769501dd6dfefe0509"
+        },
+        {
+          "name": "rust-docs-json-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 6544844,
+          "sha256": "138243a3ae5cb34925e035de792250dc8832596dc548b7d0d6bb81b276bd9ebe"
+        },
+        {
+          "name": "rust-docs-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 32293452,
+          "sha256": "73e13b665307a25acab5479701b41b5b74ee4ff5f399343ddd2dabab1318733b"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.msi",
+          "bytes": 327969917,
+          "sha256": "ac861e1c735d28f832b437b21163ff4be3f714b99b558b82188f199a259860f9"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 262703024,
+          "sha256": "f89c112d2fcc51bb244c92d80ae10896d0df1451a04473b28af2035c1cca2779"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6685676,
+          "sha256": "6769ad3aed3f8ebea432cbf3ff9bbd01cfc717f6cb0936600da080b4f80c3937"
+        },
+        {
+          "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24550560,
+          "sha256": "1ccd773308bd062f30b95c8a4bebca3518bc560d2589779ea749c22d35b75877"
+        },
+        {
+          "name": "rustc-codegen-cranelift-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3269920,
+          "sha256": "d78d902916b934d3e9c54db48236515204254dead1cd3a2d0bee68ba6b3b73e8"
+        },
+        {
+          "name": "rustc-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 151821500,
+          "sha256": "440aed28d23d0150f13304f35fe5c2f03181e173f09c9882e9013a0abe31cc60"
+        },
+        {
+          "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 92440884,
+          "sha256": "a6ad09d9246625e72c07925ba7a424648a88fd570a9917575f707007083c4d26"
+        },
+        {
+          "name": "rustfmt-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2650208,
+          "sha256": "59ffdca617aa1424d0cdde6d1770f3e2a10cfde0beb2efe5a8d700439eb8a1cf"
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 3.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 12.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 31.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 20.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 166.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 61.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Download pinned completed x64 PGO evidence",
+          "seconds": 4.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 13054.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 4.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain actual qualified release artifacts",
+          "seconds": 16.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ],
+      "uncontrolled_production_change_percent": 0.0,
+      "qualification_summary": {
+        "summaries": 10,
+        "passed": 25648,
+        "failed": 0,
+        "ignored": 739,
+        "measured": 0,
+        "filtered": 541
+      }
+    },
+    {
+      "setting": "jobs6",
+      "job_id": 115159909514,
+      "whole_job_seconds": 12370.0,
+      "cpu_model": "INTEL(R) XEON(R) PLATINUM 8573C",
+      "result": {
+        "rust_sha": "76c90957b7e422c4b9c45192b0197214d7de5a54",
+        "host": "x86_64-pc-windows-msvc",
+        "setting": "jobs6",
+        "runner_class": "github-hosted",
+        "runner_name": "GitHub Actions 1000000941",
+        "image": "20260925.250.1",
+        "cpu_allowance": 4,
+        "run_id": "38356308993",
+        "attempt": "1",
+        "pilot": true,
+        "tools": {
+          "cl.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe",
+            "sha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57"
+          },
+          "link.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe",
+            "sha256": "a8c42e25c91ca2453e1110540ac08f0fc12d7539454a11b9af8baeecb469837d"
+          },
+          "lib.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\lib.exe",
+            "sha256": "d8dae02a50c7571c6c0ea5cd7a853830aaca8fad13f8f4be147828d51dd4adec"
+          },
+          "cmake.exe": {
+            "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+            "sha256": "ab8247ca4554871e5d75c0ee118ee8663727bd6fdf37ad76b17e9cc8d5f286a8"
+          },
+          "ninja.exe": {
+            "path": "D:/ur/r/ninja\\ninja.exe",
+            "sha256": "23e7d60c17b3fcd42d9c00d49eca3c3771b04d7ccb13e49836b06b34e20211c7"
+          },
+          "sccache.exe": {
+            "path": "D:/ur/r/sccache\\sccache.exe",
+            "sha256": "f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7"
+          },
+          "clang-cl.exe": {
+            "path": "D:\\ur\\r\\citools\\clang-rust\\bin\\clang-cl.exe",
+            "sha256": "986af49c2d1eefeac324f724ff54597753d1053927fa5d58a37a457f578e1cf8"
+          }
+        },
+        "job_started_unix": 1791872538.0,
+        "configure_args": "--build=x86_64-pc-windows-msvc --host=x86_64-pc-windows-msvc --target=x86_64-pc-windows-msvc --enable-full-tools --enable-profiler --set rust.codegen-units=1 --set build.jobs=6 --set llvm.clang-cl=/d/ur/r/citools/clang-rust/bin/clang-cl.exe --enable-ninja",
+        "script": "RUST_BACKTRACE=full python x.py dist bootstrap --include-default-paths --set pgo.llvm.use=\"D:/ur/r/opt-artifacts/llvm-pgo.profdata\" --set pgo.rustc.use=\"D:/ur/r/opt-artifacts/rustc-pgo.profdata\" --set pgo.cargo.use=\"D:/ur/r/opt-artifacts/rustc-pgo.profdata\" --set pgo.rustdoc.use=\"D:/ur/r/opt-artifacts/rustdoc-pgo.profdata\" --set pgo.clippy.use=\"D:/ur/r/opt-artifacts/clippy-pgo.profdata\" --set pgo.cranelift.use=\"D:/ur/r/opt-artifacts/cranelift-pgo.profdata\"",
+        "source_changes": false,
+        "compression": "upstream balanced xz",
+        "coverage": "original full PGO training retained; full final distribution and extracted-dist suite",
+        "cache": "cold final build; original per-setting PGO profiles transferred, no objects restored",
+        "hardware_caveat": "standard x64 has 4 CPUs, upstream x64 release runner has 8 CPUs/32GB",
+        "production_mode": "continued final distribution from pinned pilot profiles",
+        "profile_source_run": "38302741082",
+        "profile_evidence": {
+          "source_run": "38302741082",
+          "source_harness_sha": "b41cbca7cdf2a2365e75b881f5b6e9139d03a0a4",
+          "files": {
+            "e/provenance.json": "b9fbbc9f6b7c0e702e42ce8f0ac3a06081300302462c6b484814433f20fa1c4b",
+            "e/failure.json": "995c92ceda84a02b7409669e1a70da6e052c67caa330febb3455e7ad87194670",
+            "e/upstream-ci.stderr": "8f04ec0717d999e37798c541c22aa132c3a620a292c2858c4bc88d9726d67e0a",
+            "r/bootstrap.toml": "769142babef629a64efac145cfa38fb5f4ece8895d38a959ef263edd0a21b86a",
+            "r/opt-artifacts/clippy-pgo.profdata": "54dea927d8eaed29872a8fc892f10338a2aa4226de96af7ba33b8d26cfe3d10f",
+            "r/opt-artifacts/cranelift-pgo.profdata": "488e04c13ff8ceb448a6b310170e4084c8d5780e7eaf7f95fd26fcb9bb7240a5",
+            "r/opt-artifacts/llvm-pgo.profdata": "061d3ed4e2e67f7da79fd3de5d66ba501913bce7a45219e9f4fb7d7c13c81ab7",
+            "r/opt-artifacts/rustc-pgo.profdata": "8cd3ac8a8234a83284f8db621990beb82f23c0cf822d95cd0d098f25609b5f7b",
+            "r/opt-artifacts/rustdoc-pgo.profdata": "ccb6655ac67f75a8fcaa68637495057fb4e8fabe43bdd7da5eead1db875f930f"
+          }
+        },
+        "full_release_timing_complete": false,
+        "timing_caveat": "not a single-job release timing; excludes earlier PGO work and profile transfer",
+        "cold_build_adjustment": "omit --keep-stage 0 because no earlier build artifacts are restored",
+        "complete": true,
+        "completed_unix": 1791884881.2676013,
+        "continued_final_distribution_seconds": 10803.4764604,
+        "qualification": "continued final distribution and full extracted-dist tests passed; original PGO inputs retained"
+      },
+      "production_measurement": {
+        "wall_seconds": 10803.4764604,
+        "root_process_wall_seconds": 10803.4557821,
+        "user_seconds": 31069.03125,
+        "kernel_seconds": 2290.75,
+        "exit_code": 0,
+        "processes": 23798,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 9571848192,
+        "peak_process_memory_bytes": 2855014400,
+        "cpu_seconds": 33359.78125,
+        "effective_cores": 3.087874664445268,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "qualification_measurement": {
+        "wall_seconds": 1195.9742905000003,
+        "root_process_wall_seconds": 1195.9720273000003,
+        "user_seconds": 2472.578125,
+        "kernel_seconds": 1716.546875,
+        "exit_code": 0,
+        "processes": 45774,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [
+          {
+            "pid": 1836,
+            "image": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vctip.exe"
+          }
+        ],
+        "peak_job_memory_bytes": 1444343808,
+        "peak_process_memory_bytes": 1247928320,
+        "cpu_seconds": 4189.125,
+        "effective_cores": 3.502688170870843,
+        "command": [
+          "C:\\hostedtoolcache\\windows\\Python\\3.13.15\\x64\\python.exe",
+          "x.py",
+          "test",
+          "--build",
+          "x86_64-pc-windows-msvc",
+          "--stage",
+          "0",
+          "tests/assembly-llvm",
+          "tests/codegen-llvm",
+          "tests/codegen-units",
+          "tests/incremental",
+          "tests/mir-opt",
+          "tests/pretty",
+          "tests/run-make/glibc-symbols-x86_64-unknown-linux-gnu",
+          "tests/run-make/rust-lld-x86_64-unknown-linux-gnu-dist",
+          "tests/ui",
+          "tests/crashes",
+          "tests/rustdoc-html"
+        ]
+      },
+      "phases": {
+        "system": {
+          "cpu_threads_count": 4,
+          "cpu_model": "INTEL(R) XEON(R) PLATINUM 8573C",
+          "memory_total_bytes": 17174360064
+        },
+        "invocations": [
+          {
+            "command": "dist bootstrap --include-default-paths --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+            "wall_seconds": 10709.9652313,
+            "exclusive_seconds": {
+              "assembly_and_compression": 1593.1624901999999,
+              "compiler_std_backends": 2366.4902529,
+              "other": 126.9373571,
+              "llvm_and_lld": 4051.9624594999996,
+              "tools": 2426.244512299999,
+              "documentation": 144.5503146
+            },
+            "unattributed_seconds": 0.6178447000020242
+          }
+        ],
+        "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+      },
+      "manifest": [
+        {
+          "name": "bootstrap-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 8122756,
+          "sha256": "dd4a8c85f0e8ca203ee3774d155a095170fd0660bbd96ec6704217b00f49dbc6"
+        },
+        {
+          "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10013944,
+          "sha256": "ce4fa33d2cf01b973136f0f1b9775013bf7a77c129c7ae7ddbb657c1d6b3f9f9"
+        },
+        {
+          "name": "clippy-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3941164,
+          "sha256": "8ebc665371f9f30b2546aeb162cea3ea54ae1eddbf7b3c45d1cb308b7bc5067d"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 1004756,
+          "sha256": "5638f1f49ecc4fd7d5dad4f29accd04434dda3f852ae70569d881aae481dcffa"
+        },
+        {
+          "name": "llvm-tools-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 74716148,
+          "sha256": "b278c6c64e6cd14925ec34609cf63d9a9ad5c0b02ed091181182a6fc83d4bd92"
+        },
+        {
+          "name": "miri-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2693832,
+          "sha256": "dd480806bd67e0e1a70e5eb3489923d57c8c304271f0e36f52991fdbb4bee0f7"
+        },
+        {
+          "name": "reproducible-artifacts-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24842288,
+          "sha256": "d9843b745d1c7ca2ed56ccde9eea287209fe2955ad73133f6b3991a185fd4f50"
+        },
+        {
+          "name": "rust-analysis-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 16196,
+          "sha256": "d2d6c841a4db3eb3cfb9d82d4544d1c2492e409e083ad09370e889be7bf676f5"
+        },
+        {
+          "name": "rust-analyzer-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10112092,
+          "sha256": "033e50426356b5693b660601dfa9235f2dcb3be1c8fcc5e89b110b5b7f256e17"
+        },
+        {
+          "name": "rust-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 529096100,
+          "sha256": "2150c8e91e71a956011c44b264ceba534bc863530996e43a0f54c6f78f4f6229"
+        },
+        {
+          "name": "rust-docs-json-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 6544776,
+          "sha256": "cd69a7c690b81a9fa2929e236e1743bc3ba09ec67649c392c4ab611c76512149"
+        },
+        {
+          "name": "rust-docs-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 32293600,
+          "sha256": "4ed7b56579bfacac253e8229cff7496f0b73817770be1d603d9462fa076e6376"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.msi",
+          "bytes": 327990397,
+          "sha256": "38f19d0993792dee897e6033380006d2a089533865c9da0c53647985c109f3d8"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 262807140,
+          "sha256": "82bb4771597af8b4646756225c64edcb83e7be7d03b8c47481666cbd0071ba34"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6685404,
+          "sha256": "6e6e9a2fa9ae0909fbe0d3d04e8a958a6a763ffdd50b33ec8b01bef866a55bfb"
+        },
+        {
+          "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24551360,
+          "sha256": "98987871968c6e289fe6ab6fec122c68e04216f1ce86a55bbf90e1d4e98908e9"
+        },
+        {
+          "name": "rustc-codegen-cranelift-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3272656,
+          "sha256": "3eb242aa337fdeeafee4ae98439f8e328fd614d22655dd51fec51b40b331719d"
+        },
+        {
+          "name": "rustc-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 151899476,
+          "sha256": "b6bd0f72c39d7fb0d667fbcdacba277a4f86989f9c61284d2034e2439ba8d2c7"
+        },
+        {
+          "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 92487772,
+          "sha256": "dc65c37184c7e55e8b0b07ff38f59747987cf9f7cbaac8f804e5d2deac3ebb15"
+        },
+        {
+          "name": "rustfmt-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2652028,
+          "sha256": "9beecf72428d2c0b6c8eb7bc4033ed63df59ffd52bf7f7a6a9356ecef4b4fcf2"
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 8.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 26.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 30.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 3.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 158.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 69.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Download pinned completed x64 PGO evidence",
+          "seconds": 9.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 12036.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 6.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain actual qualified release artifacts",
+          "seconds": 14.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v6",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 0.0,
+          "conclusion": "success"
+        }
+      ],
+      "uncontrolled_production_change_percent": -7.911708704715337,
+      "qualification_summary": {
+        "summaries": 10,
+        "passed": 25648,
+        "failed": 0,
+        "ignored": 739,
+        "measured": 0,
+        "filtered": 541
+      }
+    },
+    {
+      "setting": "link1",
+      "job_id": 115159909386,
+      "whole_job_seconds": 10504.0,
+      "cpu_model": "Intel(R) Xeon(R) 6973P-C",
+      "result": {
+        "rust_sha": "76c90957b7e422c4b9c45192b0197214d7de5a54",
+        "host": "x86_64-pc-windows-msvc",
+        "setting": "link1",
+        "runner_class": "github-hosted",
+        "runner_name": "GitHub Actions 1000000939",
+        "image": "20260925.250.1",
+        "cpu_allowance": 4,
+        "run_id": "38356308993",
+        "attempt": "1",
+        "pilot": true,
+        "tools": {
+          "cl.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\cl.exe",
+            "sha256": "b0a1818ebae6da7f18230a84e76ce839212584ac4c2ab55b97a0d5268085da57"
+          },
+          "link.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\link.exe",
+            "sha256": "a8c42e25c91ca2453e1110540ac08f0fc12d7539454a11b9af8baeecb469837d"
+          },
+          "lib.exe": {
+            "path": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\HostX64\\x64\\lib.exe",
+            "sha256": "d8dae02a50c7571c6c0ea5cd7a853830aaca8fad13f8f4be147828d51dd4adec"
+          },
+          "cmake.exe": {
+            "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+            "sha256": "ab8247ca4554871e5d75c0ee118ee8663727bd6fdf37ad76b17e9cc8d5f286a8"
+          },
+          "ninja.exe": {
+            "path": "D:/ur/r/ninja\\ninja.exe",
+            "sha256": "23e7d60c17b3fcd42d9c00d49eca3c3771b04d7ccb13e49836b06b34e20211c7"
+          },
+          "sccache.exe": {
+            "path": "D:/ur/r/sccache\\sccache.exe",
+            "sha256": "f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7"
+          },
+          "clang-cl.exe": {
+            "path": "D:\\ur\\r\\citools\\clang-rust\\bin\\clang-cl.exe",
+            "sha256": "986af49c2d1eefeac324f724ff54597753d1053927fa5d58a37a457f578e1cf8"
+          }
+        },
+        "job_started_unix": 1791872538.0,
+        "configure_args": "--build=x86_64-pc-windows-msvc --host=x86_64-pc-windows-msvc --target=x86_64-pc-windows-msvc --enable-full-tools --enable-profiler --set rust.codegen-units=1 --set llvm.link-jobs=1 --set llvm.clang-cl=/d/ur/r/citools/clang-rust/bin/clang-cl.exe --enable-ninja",
+        "script": "RUST_BACKTRACE=full python x.py dist bootstrap --include-default-paths --set pgo.llvm.use=\"D:/ur/r/opt-artifacts/llvm-pgo.profdata\" --set pgo.rustc.use=\"D:/ur/r/opt-artifacts/rustc-pgo.profdata\" --set pgo.cargo.use=\"D:/ur/r/opt-artifacts/rustc-pgo.profdata\" --set pgo.rustdoc.use=\"D:/ur/r/opt-artifacts/rustdoc-pgo.profdata\" --set pgo.clippy.use=\"D:/ur/r/opt-artifacts/clippy-pgo.profdata\" --set pgo.cranelift.use=\"D:/ur/r/opt-artifacts/cranelift-pgo.profdata\"",
+        "source_changes": false,
+        "compression": "upstream balanced xz",
+        "coverage": "original full PGO training retained; full final distribution and extracted-dist suite",
+        "cache": "cold final build; original per-setting PGO profiles transferred, no objects restored",
+        "hardware_caveat": "standard x64 has 4 CPUs, upstream x64 release runner has 8 CPUs/32GB",
+        "production_mode": "continued final distribution from pinned pilot profiles",
+        "profile_source_run": "38302741082",
+        "profile_evidence": {
+          "source_run": "38302741082",
+          "source_harness_sha": "b41cbca7cdf2a2365e75b881f5b6e9139d03a0a4",
+          "files": {
+            "e/provenance.json": "6782e470fb39f1ca8c64ef94eadff414f3382280b655f08a8449f02ae60e1959",
+            "e/failure.json": "2eeacf9e66ff275e45bd30e91bf7b29a1af587d4c12055fba7c029f0e03d66f4",
+            "e/upstream-ci.stderr": "a9323c37ead23619a99270de744add5172e0b79470ccf4489812ada170ba434b",
+            "r/bootstrap.toml": "9e6867eaf781df7f5ddebabe7ea9435a04148bf2ccaa86fe8cc67be7cccb6d41",
+            "r/opt-artifacts/clippy-pgo.profdata": "cb487d2740cde82c9726fbf2a652769503b79bb251602ed07feb151326823b4c",
+            "r/opt-artifacts/cranelift-pgo.profdata": "92b4d339c22f85b0d682296fe4bf73a24eccd82e2103786759f82438d043178b",
+            "r/opt-artifacts/llvm-pgo.profdata": "48ee8d424b0a134d13e19404e41f1d80282bae934ce742ff9bb2114c88567adf",
+            "r/opt-artifacts/rustc-pgo.profdata": "48b482997f914525aac9b0af6e7a2eaeeea4627e84aa2b2faea907c827a5c8ae",
+            "r/opt-artifacts/rustdoc-pgo.profdata": "42ecc597dd468f393fd9a3c7ffb15947f298a6734b667e2c9204d29319150a36"
+          }
+        },
+        "full_release_timing_complete": false,
+        "timing_caveat": "not a single-job release timing; excludes earlier PGO work and profile transfer",
+        "cold_build_adjustment": "omit --keep-stage 0 because no earlier build artifacts are restored",
+        "complete": true,
+        "completed_unix": 1791883016.2273052,
+        "continued_final_distribution_seconds": 9191.626236,
+        "qualification": "continued final distribution and full extracted-dist tests passed; original PGO inputs retained"
+      },
+      "production_measurement": {
+        "wall_seconds": 9191.626236,
+        "root_process_wall_seconds": 9191.5890821,
+        "user_seconds": 25640.828125,
+        "kernel_seconds": 2020.890625,
+        "exit_code": 0,
+        "processes": 23794,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [],
+        "peak_job_memory_bytes": 7047344128,
+        "peak_process_memory_bytes": 2888794112,
+        "cpu_seconds": 27661.71875,
+        "effective_cores": 3.0094477342496675,
+        "command": [
+          "C:\\Program Files\\Git\\bin\\bash.exe",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "export PATH=\"$(cygpath -u \"$NATIVE_MSVC_BIN\"):$PATH\"; src/ci/scripts/run-build-from-ci.sh; build_status=$?; sccache --stop-server; stop_status=$?; if [ \"$stop_status\" -ne 0 ]; then echo \"sccache shutdown failed\" >&2; fi; if [ \"$build_status\" -ne 0 ]; then exit \"$build_status\"; fi; exit \"$stop_status\""
+        ]
+      },
+      "qualification_measurement": {
+        "wall_seconds": 1001.6940947000003,
+        "root_process_wall_seconds": 1001.6920062000008,
+        "user_seconds": 2049.375,
+        "kernel_seconds": 1408.4375,
+        "exit_code": 0,
+        "processes": 45774,
+        "affinity": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "affinity_groups": null,
+        "accounting": "Windows Job Object CPU delta over measured command interval",
+        "background_processes_at_completion": [
+          {
+            "pid": 3708,
+            "image": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\bin\\Hostx64\\x64\\vctip.exe"
+          }
+        ],
+        "peak_job_memory_bytes": 1409654784,
+        "peak_process_memory_bytes": 1223331840,
+        "cpu_seconds": 3457.8125,
+        "effective_cores": 3.4519645451594565,
+        "command": [
+          "C:\\hostedtoolcache\\windows\\Python\\3.13.15\\x64\\python.exe",
+          "x.py",
+          "test",
+          "--build",
+          "x86_64-pc-windows-msvc",
+          "--stage",
+          "0",
+          "tests/assembly-llvm",
+          "tests/codegen-llvm",
+          "tests/codegen-units",
+          "tests/incremental",
+          "tests/mir-opt",
+          "tests/pretty",
+          "tests/run-make/glibc-symbols-x86_64-unknown-linux-gnu",
+          "tests/run-make/rust-lld-x86_64-unknown-linux-gnu-dist",
+          "tests/ui",
+          "tests/crashes",
+          "tests/rustdoc-html"
+        ]
+      },
+      "phases": {
+        "system": {
+          "cpu_threads_count": 4,
+          "cpu_model": "Intel(R) Xeon(R) 6973P-C",
+          "memory_total_bytes": 17174360064
+        },
+        "invocations": [
+          {
+            "command": "dist bootstrap --include-default-paths --set pgo.llvm.use=D:/ur/r/opt-artifacts/llvm-pgo.profdata --set pgo.rustc.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.cargo.use=D:/ur/r/opt-artifacts/rustc-pgo.profdata --set pgo.rustdoc.use=D:/ur/r/opt-artifacts/rustdoc-pgo.profdata --set pgo.clippy.use=D:/ur/r/opt-artifacts/clippy-pgo.profdata --set pgo.cranelift.use=D:/ur/r/opt-artifacts/cranelift-pgo.profdata",
+            "wall_seconds": 9103.3359196,
+            "exclusive_seconds": {
+              "assembly_and_compression": 1380.8751442000002,
+              "compiler_std_backends": 1957.3235389000001,
+              "other": 195.18520750000002,
+              "llvm_and_lld": 3366.6287656000004,
+              "tools": 2071.1993007,
+              "documentation": 131.81620679999997
+            },
+            "unattributed_seconds": 0.30775589999939257
+          }
+        ],
+        "note": "exclusive bootstrap scopes; compile scopes include linking and waits, not raw compiler CPU"
+      },
+      "manifest": [
+        {
+          "name": "bootstrap-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 8129152,
+          "sha256": "8d49df4cc3c99b996576758751ec4b6b39a2e88848146db8c33f7b316273980c"
+        },
+        {
+          "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10012356,
+          "sha256": "9bec912dcd0342942d2008cea62ecda7f86a0dbe28688fddad7173bcf3ea82f2"
+        },
+        {
+          "name": "clippy-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3942904,
+          "sha256": "7968e946d251927c091541ee21b40e3e7889233662418a2ad85ce79623ce2680"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 1001828,
+          "sha256": "215f0557b3354a123482f5f6514e33ee210db0f967903910d0db0e0b53a306fd"
+        },
+        {
+          "name": "llvm-tools-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 74711460,
+          "sha256": "abd4ce18f6d871bcf3255f96abe44eebedca38546f2d3fc7be1c87a7dd7e3769"
+        },
+        {
+          "name": "miri-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2696220,
+          "sha256": "47d9026e85daef4a63d43d7a49e548875b26300129b60da3854737331bd7bae8"
+        },
+        {
+          "name": "reproducible-artifacts-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24846812,
+          "sha256": "9a2e1a21d0e61d286d0b8b8b893d780fa9950e233e9d09630a408fbd758b72cb"
+        },
+        {
+          "name": "rust-analysis-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 16252,
+          "sha256": "e4ddcba688d2cbac65a1365b23c4c7f8e5b35f43b764d5f25fe0e7f082560f81"
+        },
+        {
+          "name": "rust-analyzer-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10111512,
+          "sha256": "9cfed49f7e03b6ca63f675546e8dcaf4bc03d6d1eaba236d90df69e20465539e"
+        },
+        {
+          "name": "rust-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 529030356,
+          "sha256": "7f6619032ebc45dc55603c47029660baf6993aa7cd00da56182b7725ed4c677c"
+        },
+        {
+          "name": "rust-docs-json-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 6544496,
+          "sha256": "5c4c04262c21119f9d8a2241cdffdea7c0c6c04eb9fb47c0d1a06e5d7f005f12"
+        },
+        {
+          "name": "rust-docs-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 32295036,
+          "sha256": "66b7e2979e8eb6ca5e58869380a4223b5d0ac2c2b45b315858b280bea4dc2297"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.msi",
+          "bytes": 327961725,
+          "sha256": "1afbf3ab34f243edc3eb85e46c81e76ddf7a5f632e992d2a45264586b51957ed"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 262744436,
+          "sha256": "62b9b3b92db71ae2c29c03a64b08f443f9e9b6194b306336f4a2cfc1b6e49368"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6685040,
+          "sha256": "6e26115f430e66ae381d75527fb30a6e18cbefc513cd688f596e6f1e1a1bd533"
+        },
+        {
+          "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24551048,
+          "sha256": "06febfb152337269ac0fdb61cc2257a046a708ed7f4e17c894618e28f2024216"
+        },
+        {
+          "name": "rustc-codegen-cranelift-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3268328,
+          "sha256": "564dbfd594630d14492c45147b8d3322cfe3e7bb6a31003dcba70dd5df8628f5"
+        },
+        {
+          "name": "rustc-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 151752660,
+          "sha256": "7c23830c06cd881fd0f97220da8d595b1074cb944118a0432cb1e11c039c7088"
+        },
+        {
+          "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 92444480,
+          "sha256": "b0ad4f462d4c29fad344fb0f9abc63f959b37449d3e8e7e4e0c3fe21b3b71a48"
+        },
+        {
+          "name": "rustfmt-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2656016,
+          "sha256": "f238ca05a6a7c6dc1cdb5b800ab398a97df7f6a2f4c4d1eeb83b8b06f3b8f990"
+        }
+      ],
+      "steps": [
+        {
+          "name": "Set up job",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Reserve short hosted build paths",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 8.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v6",
+          "seconds": 23.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Initialize upstream release recipe",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream sccache",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Clang",
+          "seconds": 20.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream WIX",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Check out upstream submodules",
+          "seconds": 131.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Install upstream Ninja and verify line endings",
+          "seconds": 1.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Build upstream CI helper",
+          "seconds": 65.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Download pinned completed x64 PGO evidence",
+          "seconds": 4.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Measure complete upstream release recipe",
+          "seconds": 10223.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Preserve release evidence",
+          "seconds": 5.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain actual qualified release artifacts",
+          "seconds": 14.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 0.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v6",
+          "seconds": 2.0,
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "seconds": 1.0,
+          "conclusion": "success"
+        }
+      ],
+      "uncontrolled_production_change_percent": -21.65103914459685,
+      "qualification_summary": {
+        "summaries": 10,
+        "passed": 25648,
+        "failed": 0,
+        "ignored": 739,
+        "measured": 0,
+        "filtered": 541
+      }
+    }
+  ]
+}

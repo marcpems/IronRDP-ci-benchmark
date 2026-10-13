@@ -157,7 +157,9 @@ tests completed, so none is an accepted release sample.
 These stages include building instrumented compilers, training and profile
 processing; they are not training-only times. The six-job cell reached the
 final-build boundary earlier, with an 11.4% lower sum of PGO-stage times than
-baseline. This is a single-run lead worth investigating, **not** a measured
+baseline. Subsequent hardware inspection found that this compared an Intel
+Xeon Platinum 8573C with an AMD EPYC 7763: the difference cannot be attributed
+to the six-job setting, even for those completed stages. It is **not** a measured
 full-release speedup. The x64 standard runner has half the logical CPUs of
 upstream's release runner and lacks its private remote cache.
 
@@ -219,3 +221,59 @@ The three-cell continuation was launched as
 [38356308993](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38356308993),
 from harness `d2ed87af57cdb0b2824d80151d2343d2ff1ab3ca`. This records the launch,
 not successful final-build qualification or an end-to-end speedup.
+
+### First continuation: all qualified, CPU models confound timing
+
+Run 38356308993 completed all three final distributions and their extracted
+tests successfully. The same 20 artifact names, tool hashes, runner image and
+production configuration (except the declared scheduling settings) were
+verified. Each test log reports 25,648 passed, zero failed, 739 ignored and
+541 filtered tests across ten summaries, with identical counts across cells.
+Profiles remain the original per-setting profiles, not a common profile shared
+across settings.
+
+However, `windows-2025` assigned three different CPU models. Equal runner
+labels, image versions and four-logical-CPU allowances do **not** establish
+equal processor performance.
+
+| Setting | Reported CPU model | Final production (min) | Extracted tests (min) | Whole continuation job (min) | Average CPU / 4 CPUs |
+|---|---|---:|---:|---:|---:|
+| baseline | AMD EPYC 7763 | 195.53 | 21.50 | 223.07 | 77.91% |
+| jobs6 | Intel Xeon Platinum 8573C | 180.06 | 19.93 | 206.17 | 77.20% |
+| link1 | Intel Xeon 6973P-C | 153.19 | 16.69 | 175.07 | 75.24% |
+
+The raw final-production differences are -7.91% and -21.65%, respectively.
+Neither is an established scheduling benefit: processor models differ, there
+is only one sample per setting, and each setting retains its independently
+trained PGO profiles. Even the separately run tests, which use the same
+four-job scheduling across settings, are materially faster on the candidate
+machines. Do not recommend `llvm.link-jobs=1` as a 22% release optimization
+from this table.
+
+Baseline exclusive bootstrap wall time was 79.39 minutes in LLVM/LLD,
+43.88 in tools, 42.39 in the compiler/standard library/backends,
+23.65 in assembly/compression, 2.69 in docs and 2.10 in other scopes.
+Remaining recipe and unattributed overhead was about 1.43 minutes.
+These remain wall scopes, not raw compilation CPU. Process-tree CPU averages
+3.12 effective logical cores; peak job memory was 6.50 GiB, compared with
+8.91 GiB for jobs6 and 6.56 GiB for link1.
+
+These results establish that complete optimized x64 outputs and qualification
+fit on standard runners when the final build is continued separately. They
+do not establish a fresh-training end-to-end release duration or a safe
+performance recommendation. Do not sum the earlier PGO stages and this cold
+rebuild and present that as an observed single-job release.
+
+Evidence is in [continuation1-results.json](continuation1-results.json).
+The immediate priority is CPU-model-matched observations before attributing
+any savings to scheduling, followed by repeatable fresh-training split-pipeline
+accounting. Balanced compression and existing output/test requirements remain
+fixed.
+
+One repeat three-cell continuation cohort,
+[38381817405](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38381817405),
+was dispatched at the same harness revision and with the same per-setting
+profile hashes. This checks repeatability and seeks overlapping CPU-model
+observations; standard-runner placement does not guarantee them. Its results
+must be grouped by reported CPU model rather than blindly averaged across
+hardware. No custom runners are used.
