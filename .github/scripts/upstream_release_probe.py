@@ -113,7 +113,10 @@ def main():
     parser.add_argument("--host", choices=("x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc"), required=True)
     parser.add_argument("--setting", choices=SETTINGS, required=True)
     parser.add_argument("--profile-evidence", type=Path)
+    parser.add_argument("--llvm-crossover", action="store_true")
     args = parser.parse_args()
+    if args.llvm_crossover and args.profile_evidence is None:
+        parser.error("--llvm-crossover requires pinned --profile-evidence")
     source, output = args.source.resolve(), args.output.resolve()
     expected_machine = ("arm64", "aarch64") if args.host.startswith("aarch64") else ("amd64", "x86_64")
     if (os.name != "nt" or os.environ.get("RUNNER_ENVIRONMENT") != "github-hosted"
@@ -158,9 +161,10 @@ def main():
         if args.profile_evidence is not None:
             evidence = args.profile_evidence.resolve()
             manifest = Path(__file__).resolve().parents[2] / "ci-benchmark/upstream-release-throughput/pilot2-profiles.json"
-            expected = json.loads(manifest.read_text())[args.setting]
+            profile_setting = "baseline" if args.llvm_crossover else args.setting
+            expected = json.loads(manifest.read_text())[profile_setting]
             env["SCRIPT"], original_config = validate_continuation(
-                evidence, source, args.host, args.setting, tools, provenance["image"], expected)
+                evidence, source, args.host, profile_setting, tools, provenance["image"], expected)
             profiles = source / "opt-artifacts"
             profiles.mkdir()
             for path in (evidence / "r/opt-artifacts").glob("*.profdata"):
@@ -177,6 +181,11 @@ def main():
                 "cold_build_adjustment": "omit --keep-stage 0 because no earlier build artifacts are restored",
             })
             save(output / "provenance.json", provenance)
+        if args.llvm_crossover:
+            from upstream_llvm_crossover import run_crossover
+
+            run_crossover(source, output, args.setting, env, provenance, original_config)
+            return
         remaining = started + 340 * 60 - time.time()
         if remaining <= 0:
             raise TimeoutError("no remaining hosted release experiment time")

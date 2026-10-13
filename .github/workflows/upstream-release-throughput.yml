@@ -1,11 +1,15 @@
 name: Upstream-equivalent Windows release throughput
 on:
   push:
-    branches: [experiment/upstream-release-throughput-pilot, experiment/upstream-release-throughput-continuation]
+    branches: [experiment/upstream-release-throughput-pilot, experiment/upstream-release-throughput-continuation, experiment/upstream-llvm-crossover]
   workflow_dispatch:
     inputs:
       continue_x64_pilot:
         description: Continue final x64 builds using pinned profiles from pilot 38302741082
+        type: boolean
+        default: false
+      llvm_crossover:
+        description: Compare all three LLVM/LLD scheduling settings serially on each x64 VM
         type: boolean
         default: false
 permissions:
@@ -20,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: ${{ fromJSON((inputs.continue_x64_pilot || github.ref == 'refs/heads/experiment/upstream-release-throughput-continuation') && '["x64"]' || '["x64","arm64"]') }}
+        arch: ${{ fromJSON((inputs.continue_x64_pilot || inputs.llvm_crossover || github.ref == 'refs/heads/experiment/upstream-release-throughput-continuation' || github.ref == 'refs/heads/experiment/upstream-llvm-crossover') && '["x64"]' || '["x64","arm64"]') }}
         setting: [baseline, jobs6, link1]
     defaults:
       run:
@@ -40,6 +44,7 @@ jobs:
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
       UPSTREAM_CONTINUE_PILOT: ${{ inputs.continue_x64_pilot || github.ref == 'refs/heads/experiment/upstream-release-throughput-continuation' }}
+      UPSTREAM_LLVM_CROSSOVER: ${{ inputs.llvm_crossover || github.ref == 'refs/heads/experiment/upstream-llvm-crossover' }}
     steps:
       - name: Reserve short hosted build paths
         shell: pwsh
@@ -85,8 +90,10 @@ jobs:
           $targets = if ('${{ matrix.arch }}' -eq 'x64') { $hostTriple } else { "$hostTriple,arm64ec-pc-windows-msvc" }
           $config = "--build=$hostTriple --host=$hostTriple --target=$targets --enable-full-tools --enable-profiler"
           if ('${{ matrix.arch }}' -eq 'x64') { $config += ' --set rust.codegen-units=1' }
-          if ('${{ matrix.setting }}' -eq 'jobs6') { $config += ' --set build.jobs=6' }
-          if ('${{ matrix.setting }}' -eq 'link1') { $config += ' --set llvm.link-jobs=1' }
+          if ($env:UPSTREAM_LLVM_CROSSOVER -ne 'true') {
+            if ('${{ matrix.setting }}' -eq 'jobs6') { $config += ' --set build.jobs=6' }
+            if ('${{ matrix.setting }}' -eq 'link1') { $config += ' --set llvm.link-jobs=1' }
+          }
           "RUST_CONFIGURE_ARGS=$config" >> $env:GITHUB_ENV
           $script = 'python x.py dist bootstrap --include-default-paths'
           if ('${{ matrix.arch }}' -eq 'x64') {
@@ -123,21 +130,22 @@ jobs:
           cd "$(cygpath -u "$UPSTREAM_ROOT")/src/ci/citool"
           CARGO_INCREMENTAL=0 CARGO_TARGET_DIR=../../../build/citool cargo build --locked
       - name: Download pinned completed x64 PGO evidence
-        if: env.UPSTREAM_CONTINUE_PILOT == 'true'
+        if: env.UPSTREAM_CONTINUE_PILOT == 'true' || env.UPSTREAM_LLVM_CROSSOVER == 'true'
         uses: actions/download-artifact@v6
         with:
-          name: upstream-x64-${{ matrix.setting }}-evidence
+          name: upstream-x64-${{ env.UPSTREAM_LLVM_CROSSOVER == 'true' && 'baseline' || matrix.setting }}-evidence
           path: ${{ env.UPSTREAM_ROOT }}/../prior-pilot
           run-id: 38302741082
           github-token: ${{ github.token }}
-      - name: Measure complete upstream release recipe
+      - name: ${{ env.UPSTREAM_LLVM_CROSSOVER == 'true' && 'Measure same-VM LLVM and LLD crossover' || 'Measure complete upstream release recipe' }}
         shell: pwsh
         run: |
           $hostTriple = if ('${{ matrix.arch }}' -eq 'x64') { 'x86_64-pc-windows-msvc' } else { 'aarch64-pc-windows-msvc' }
           $probeArgs = @('--source', $env:UPSTREAM_ROOT, '--output', $env:UPSTREAM_EVIDENCE, '--host', $hostTriple, '--setting', '${{ matrix.setting }}')
-          if ($env:UPSTREAM_CONTINUE_PILOT -eq 'true') {
+          if ($env:UPSTREAM_CONTINUE_PILOT -eq 'true' -or $env:UPSTREAM_LLVM_CROSSOVER -eq 'true') {
             $probeArgs += @('--profile-evidence', "$env:UPSTREAM_ROOT\..\prior-pilot")
           }
+          if ($env:UPSTREAM_LLVM_CROSSOVER -eq 'true') { $probeArgs += '--llvm-crossover' }
           harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture ${{ matrix.arch }} -Script harness\.github\scripts\upstream_release_probe.py @probeArgs
       - name: Preserve release evidence
         uses: actions/upload-artifact@v6
@@ -153,7 +161,7 @@ jobs:
           retention-days: 30
       - name: Retain actual qualified release artifacts
         uses: actions/upload-artifact@v6
-        if: success()
+        if: success() && env.UPSTREAM_LLVM_CROSSOVER != 'true'
         with:
           name: upstream-${{ matrix.arch }}-${{ matrix.setting }}-dist
           path: ${{ env.UPSTREAM_ROOT }}/build/dist
@@ -161,7 +169,7 @@ jobs:
           retention-days: 7
       - name: Preserve unqualified distribution for diagnosis
         uses: actions/upload-artifact@v6
-        if: failure() && env.UPSTREAM_ROOT != ''
+        if: failure() && env.UPSTREAM_ROOT != '' && env.UPSTREAM_LLVM_CROSSOVER != 'true'
         with:
           name: upstream-${{ matrix.arch }}-${{ matrix.setting }}-unqualified-dist
           path: ${{ env.UPSTREAM_ROOT }}/build/dist

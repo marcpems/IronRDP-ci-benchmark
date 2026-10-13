@@ -326,5 +326,54 @@ Only a promising controlled change should advance to repeated full-output
 qualification and a fresh-training split pipeline. That pipeline must account
 for repeated setup, profile/state transfers, any rebuilt stages, packaging and
 tests; the current cold final-stage continuations are not that measurement.
-Neither the controlled crossover nor the fresh-training split pipeline has
-been implemented or launched in this study.
+At the end of the repeat cohort, neither design was implemented. The following
+section implements the component crossover; a fresh-training split pipeline
+remains separate unfinished work.
+
+## Controlled same-VM LLVM/LLD crossover
+
+The next implementation adds `llvm_crossover=true` dispatch, or the
+`experiment/upstream-llvm-crossover` push branch. This mode runs three standard
+`windows-2025` jobs. The matrix setting names identify the first setting, not
+three different isolated treatments:
+
+| Job label | Serial execution order on that VM |
+|---|---|
+| x64 / baseline | baseline, jobs6, link1 |
+| x64 / jobs6 | jobs6, link1, baseline |
+| x64 / link1 | link1, baseline, jobs6 |
+
+Every setting occupies each execution position once. This balances positions,
+not every possible carryover sequence; paired effects must still be reported
+per VM, with the observed variation across the three pairs.
+
+Every trial uses the **same baseline PGO profiles** from run 38302741082,
+verified against the published hashes. Upstream preparation and a dry run
+prepare the common bootstrap before timing. The measured command builds
+`src/llvm-project/llvm` and `src/llvm-project/lld` using the original final
+release's configuration and PGO-use arguments. It does not build a reduced
+LLVM target set, substitute linkers, lower optimization or change compression.
+Rust/LLVM source is unchanged.
+
+Before each trial, its LLVM and LLD output directories must be absent, and its
+local sccache directory must be newly created. Completed output trees are
+renamed outside the active build paths, never reused for the next trial.
+Bootstrap prerequisites and OS caches are common; those are not claimed cold.
+The wrapper stops the cache server after every command. The standard
+four-logical-CPU affinity allowance applies to every treatment.
+
+Acceptance requires unchanged parsed production configuration and CMake caches
+except the declared scheduling settings, the requested LLVM profile and job
+counts, matching fresh object-name sets and installed output-name sets, and
+matching LLVM version/target signatures. The fresh assembler/disassembler
+round-trips IR; the fresh code generator and LLD must produce a Windows program
+that exits with the expected code. These are **component checks**, not a
+replacement for full release qualification.
+
+The primary paired metric is the exclusive LLVM/LLD bootstrap wall scope,
+with complete wrapper wall/CPU and preparation separately retained. This avoids
+counting stage0 downloads as compilation. The 340-minute job-relative safety
+deadline remains in force; incomplete crossovers are not accepted.
+Only a repeatable component improvement should advance to full-output
+qualification. No component percentage will be presented as an end-to-end
+fresh-PGO release saving.
