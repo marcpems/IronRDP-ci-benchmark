@@ -490,8 +490,44 @@ Fresh optimized-only runs from harness
   reclamation. Its free space rose from 380.00 to 411.97 GB; the 19 baseline
   distribution files remain at `E:\m36237914b1\retained-dist`.
 
-These launches are not completed release timings. The ordinary Arm64 runner
-remains offline; its missing optimized cells are not replaced with GB300 data.
+Launch alone is not a completed release timing. The ordinary Arm64 runner was
+offline at launch, then returned and started its previously queued LLVM cell
+at 09:22:47 UTC on 13 October. That older cell retains its nine-hour budget;
+its missing Microsoft-PGO cell is not replaced with GB300 data.
+
+The x64 Microsoft-PGO retry was cancelled at 11:34:47 UTC during training.
+Its logs record `KeyboardInterrupt` and `STATUS_CONTROL_C_EXIT`, not the
+24-hour timeout or a demonstrated compiler defect. The initiator is unknown.
+Evidence was preserved; LLVM job 115275351619 started afterward. No automatic
+replacement of the cancelled Microsoft-PGO job was launched.
+
+### Qualified GB300 Microsoft-PGO pilot
+
+Job 115197808134 in run 38368036985 subsequently completed successfully.
+It used fresh profiles, the same Rust revision, the same native tool hashes
+and the same 64-worker/64-CPU resource class as its qualified baseline.
+
+| GB300 recipe | Full production seconds | Whole job seconds | Production increase |
+|---|---:|---:|---:|
+| Controlled no-PGO baseline | 8,309.483881 | 10,083 | reference |
+| Microsoft-retained PGO | 10,955.446016 | 12,912 | +31.84% |
+
+The whole-job increase is 28.06%; this additionally includes post-upload
+build-space cleanup, which was outside the historical baseline job. The
+extracted-distribution suite passed in 1,181.04 seconds. The PGO distribution
+retains all 22 baseline artifact names and adds the expected
+`reproducible-artifacts-nightly-aarch64-pc-windows-msvc.tar.xz` profile bundle.
+Upstream bootstrap creates that bundle when PGO-use profiles are present;
+it is not an omitted baseline tool or an unannounced reduced output scope.
+These are single pilot observations. No new IronRDP saving is claimed yet.
+
+The following LLVM job 115281290625 failed before preparation at the unchanged
+180 GiB gate: only 148.37 decimal GB remained. Completed build-space reclamation
+had already preserved the PGO archives at `D:\m68036985m1\retained-dist`.
+Read-only inventory 38393790110 confirmed approximately 148.48 GB free, about
+44.79 GB below the gate. The inspected remaining Cargo/training caches and old
+failed build cannot by themselves recover that shortfall. No further storage
+limit reduction or source-repository deletion was performed.
 
 ## Separate release-throughput investigation
 
