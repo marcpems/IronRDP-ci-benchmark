@@ -576,6 +576,15 @@ each retained released compiler and executes the exact test three times per
 compiler, recording every outcome. These are diagnostic repetitions, never
 retries accepted into the failed benchmark or replacements for full correctness.
 
+Isolated diagnostic 38438214909 completed all nine test executions successfully
+(three per compiler). This does not establish the cause of the full-suite
+failure or prove compiler equivalence. The next bounded diagnostic runs all
+five build commands followed by all four original correctness commands for
+every compiler, with the benchmark's 64-CPU Windows Job Object accounting.
+It keeps fresh per-compiler targets and records failures without silently
+retrying or excluding a test. The first isolated diagnostic did not use
+that accounting context, so its success alone cannot validate the benchmark.
+
 The reconciled production breakdown in [gb300-release-costs.json](gb300-release-costs.json)
 sums exclusive bootstrap scopes across all production invocations, including
 intermediate instrumented builds. The remainder is explicitly outside bootstrap

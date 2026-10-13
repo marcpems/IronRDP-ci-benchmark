@@ -26,9 +26,9 @@ jobs:
         with:
           python-version: "3.13"
           architecture: arm64
-      - name: Reproduce unchanged UDP test across all three released compilers
+      - name: Reproduce full correctness sequence with benchmark accounting
         run: |
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture arm64 -Script .github\scripts\matched_udp_diagnostic.py
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture arm64 -Script .github\scripts\matched_udp_diagnostic.py --full-suite
           if ($LASTEXITCODE) { throw 'UDP diagnostic reported failure' }
       - uses: actions/upload-artifact@v6
         if: always()
