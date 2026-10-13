@@ -1,7 +1,7 @@
 name: Recover matched self-hosted build space
 on:
   push:
-    branches: [experiment/matched-selfhost-recovery, experiment/matched-selfhost-reclaim]
+    branches: [experiment/matched-selfhost-recovery, experiment/matched-selfhost-reclaim, experiment/matched-selfhost-preflight-reclaim]
   workflow_dispatch:
     inputs:
       reclaim:
@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        machine: [gb300, x64]
+        machine: ${{ fromJSON(endsWith(github.ref_name, '-preflight-reclaim') && '["gb300"]' || '["gb300","x64"]') }}
     runs-on: ${{ fromJSON(matrix.machine == 'gb300' && '["self-hosted","Windows","ARM64","HighCoreCount"]' || '["self-hosted","Windows","X64"]') }}
     concurrency:
       group: ${{ matrix.machine == 'gb300' && 'matched-highcore-arm64-selfhost' || 'matched-x64-selfhost' }}
@@ -58,7 +58,7 @@ jobs:
           python-version: "3.13"
           architecture: ${{ matrix.machine == 'gb300' && 'arm64' || 'x64' }}
       - name: Preserve qualified baseline and recover only its disposable build files
-        if: env.RECLAIM == 'true'
+        if: env.RECLAIM == 'true' && !endsWith(github.ref_name, '-preflight-reclaim')
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -68,3 +68,23 @@ jobs:
             python .github\scripts\recover_matched_build.py --root E:\m36237914b1 --machine self-hosted-x64 --run-id 38236237914 --variant baseline
           }
           if ($LASTEXITCODE) { throw 'Verified baseline recovery failed' }
+      - name: Reclaim only the inspected successful GB300 preflight build cache
+        if: endsWith(github.ref_name, '-preflight-reclaim')
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected preflight recovery runner' }
+          $validation = Get-Content -LiteralPath 'D:\v47985162\e\validation.json' -Raw | ConvertFrom-Json
+          if (!$validation.complete -or $validation.runner -ne 'GB300-Arm64' -or $validation.build_jobs -ne 64 -or $validation.release_qualified) {
+            throw 'Expected the successful native 64-CPU preflight, not release output'
+          }
+          foreach ($path in @('D:\v47985162','D:\v47985162\r','D:\v47985162\r\build')) {
+            $item = Get-Item -LiteralPath $path -Force
+            if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { throw 'Redirected preflight directory' }
+          }
+          if (Test-Path -LiteralPath 'D:\v47985162\r\build\dist') { throw 'Unexpected distribution in preflight cache' }
+          $before = [System.IO.DriveInfo]::new('D:\').AvailableFreeSpace
+          python -c "import shutil; shutil.rmtree(r'D:\v47985162\r\build')"
+          if ($LASTEXITCODE) { throw 'Preflight build-cache removal failed' }
+          if (Test-Path -LiteralPath 'D:\v47985162\r\build') { throw 'Preflight build cache remains' }
+          @{Path='D:\v47985162\r\build'; FreeBytesBefore=$before; FreeBytesAfter=[System.IO.DriveInfo]::new('D:\').AvailableFreeSpace; Complete=$true} | ConvertTo-Json
