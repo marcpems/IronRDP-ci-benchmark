@@ -535,6 +535,24 @@ only the missing LLVM cell. It retains the 180 GiB startup gate, 64 workers,
 24-hour job budget, fresh source/profile/build directories and full qualification.
 The successful baseline and Microsoft-PGO cells are not rebuilt.
 
+### Complete GB300 pilot set and downstream replay
+
+LLVM PGO + ThinLTO job 115297414553 in run 38397813994 qualified successfully.
+Production took 12,197.582781 seconds (203.29 minutes), 46.79% above the
+controlled baseline. The whole job took 14,169 seconds, including post-upload
+cleanup; extracted-distribution qualification passed in 1,172.15 seconds.
+It retains all 22 baseline archive names plus the same expected PGO profile
+bundle as the Microsoft-PGO recipe.
+
+`selfhost-arm64-highcore-pilot-runs.json` selects the three qualified runs:
+baseline 38282254692, Microsoft PGO 38368036985 and LLVM PGO + ThinLTO
+38397813994. Their actual qualification records, source pins, native tool
+hashes, archive-name coverage and archived 64-worker bootstrap configurations
+were checked before selection. The separate high-core benchmark branch
+replays these released compilers with shared baseline Cargo/std and 64 Cargo
+workers/CPU affinity. This is one paired pilot round, not the repeated hosted
+study. Release costs alone do not establish downstream IronRDP savings.
+
 ## x64 runner connectivity diagnostics
 
 Following the user's observation of repeated 100-second HTTP timeouts and
@@ -567,6 +585,13 @@ The setting must be inherited when launching the listener; setting it only in
 a workflow step cannot configure the parent process. No override or listener
 restart was applied by the diagnostic workflow. Multi-hour stability remains
 unverified and expensive x64 retries remain paused.
+
+After the user reported repairing the runner and authorized restarting, fresh
+optimized-only run 38406317769 started on 13 October at 13:36:25 UTC with
+harness `3037a03df7a9cee3b624fc5443f697037127941e`. It preserves the qualified
+baseline, uses fresh roots and serializes the two optimized jobs. The runner
+briefly reported offline during the build but later returned online; this
+does not yet establish multi-hour reliability or qualified release success.
 
 ## Separate release-throughput investigation
 
