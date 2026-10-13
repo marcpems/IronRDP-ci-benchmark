@@ -1,0 +1,41 @@
+name: Diagnose excluded GB300 UDP correctness failure
+on:
+  push:
+    branches: [experiment/matched-gb300-udp-diagnostic]
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, HighCoreCount]
+    timeout-minutes: 90
+    concurrency:
+      group: matched-highcore-arm64-selfhost
+      cancel-in-progress: false
+    defaults:
+      run:
+        shell: powershell
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Reproduce unchanged UDP test across all three released compilers
+        run: |
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture arm64 -Script .github\scripts\matched_udp_diagnostic.py
+          if ($LASTEXITCODE) { throw 'UDP diagnostic reported failure' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: gb300-udp-correctness-diagnostic
+          path: |
+            D:\b31290827\udp-diagnostic-${{ github.run_id }}\*.json
+            D:\b31290827\udp-diagnostic-${{ github.run_id }}\*.stdout
+            D:\b31290827\udp-diagnostic-${{ github.run_id }}\*.stderr
+          retention-days: 30

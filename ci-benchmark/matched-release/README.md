@@ -565,6 +565,17 @@ The actual paired replay is
 launched from harness `e852f146c9ad84d4d38a4d3f015461a1fec9f114`.
 Its launch is not yet a completed downstream result.
 
+That replay subsequently failed correctness, so it is excluded rather than
+used to claim a compile saving. Baseline completed all correctness commands;
+Microsoft-PGO compiled all five measured commands, then
+`e2e::egfx_moves_onto_the_udp_tunnel_with_soft_sync` timed out at `e2e.rs:1335`
+waiting for the server connection to end after tunnel closure. LLVM replay
+was not reached. The automatic report generator stopped without publishing
+a report. `matched-udp-diagnostic.yml` rebuilds the unchanged workload with
+each retained released compiler and executes the exact test three times per
+compiler, recording every outcome. These are diagnostic repetitions, never
+retries accepted into the failed benchmark or replacements for full correctness.
+
 The reconciled production breakdown in [gb300-release-costs.json](gb300-release-costs.json)
 sums exclusive bootstrap scopes across all production invocations, including
 intermediate instrumented builds. The remainder is explicitly outside bootstrap
