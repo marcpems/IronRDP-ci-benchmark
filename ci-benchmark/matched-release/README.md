@@ -605,6 +605,36 @@ scheduled with fresh targets and all correctness gates unchanged. No successful
 block from the failed run is reused. Any resulting report must disclose the
 excluded first replay and unresolved intermittent correctness failure.
 
+### Actual GB300 release-cost versus IronRDP result
+
+Fresh paired replay
+[38441909371](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38441909371)
+completed successfully with all original correctness commands passing for each
+released compiler. The strict self-hosted analyzer validated the selected release
+jobs, checksummed archive/configuration provenance, common Cargo/std, native
+tool identities, command coverage and CPU/worker class.
+
+| Recipe | Production minutes | Production increase | IronRDP native compile seconds | Compile saving |
+|---|---:|---:|---:|---:|
+| Controlled no-PGO | 138.49 | reference | 200.275 | reference |
+| Microsoft-retained PGO | 182.59 | +31.84% | 157.300 | 21.46% |
+| LLVM PGO + ThinLTO | 203.29 | +46.79% | 156.281 | 21.97% |
+
+The LLVM recipe is only 1.019 seconds faster than Microsoft PGO in this one
+paired observation, while its production takes another 20.70 minutes. This
+does not establish a repeatable advantage for ThinLTO. These are complete
+recipe contrasts, not an isolated LTO treatment with identical profiles.
+
+The [one-page Word report](GB300-Rust-Release-Pilot.docx) includes whole-job
+costs, cleanup-policy differences and the correctness caveat. Its final,
+actual-data document was rendered with Word and verified to occupy exactly
+one page. [Machine-readable results](gb300-pilot-results.json) include the
+five-command compilation breakdown and qualification history. The failed
+first replay and both diagnostic runs are not timing samples in this report.
+The unexplained initial UDP correctness timeout remains a limitation, not
+a defect claimed fixed by rerunning. One pilot does not satisfy the repeated
+hosted protocol or support pooling with ordinary Arm64 or x64.
+
 The reconciled production breakdown in [gb300-release-costs.json](gb300-release-costs.json)
 sums exclusive bootstrap scopes across all production invocations, including
 intermediate instrumented builds. The remainder is explicitly outside bootstrap
