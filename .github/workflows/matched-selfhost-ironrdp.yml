@@ -1,0 +1,117 @@
+name: Replay qualified matched self-hosted compilers
+on:
+  push:
+    branches:
+      - experiment/matched-release-selfhost-x64-benchmark-pilot
+      - experiment/matched-release-selfhost-arm64-highcore-benchmark-pilot
+permissions:
+  contents: read
+  actions: read
+jobs:
+  benchmark:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    strategy:
+      matrix:
+        machine: ${{ fromJSON(contains(github.ref_name, '-x64-') && '["x64"]' || '["arm64-highcore"]') }}
+    runs-on: ${{ fromJSON(matrix.machine == 'x64' && '["self-hosted","Windows","X64"]' || '["self-hosted","Windows","ARM64","HighCoreCount"]') }}
+    concurrency:
+      group: ${{ matrix.machine == 'x64' && 'matched-x64-selfhost' || 'matched-highcore-arm64-selfhost' }}
+      cancel-in-progress: false
+    timeout-minutes: 240
+    defaults:
+      run:
+        shell: powershell
+    env:
+      RELEASE_MACHINE_CLASS: self-hosted-${{ matrix.machine }}
+      BENCHMARK_ARCH: ${{ matrix.machine == 'x64' && 'x64' || 'arm64' }}
+      BENCHMARK_HOST: ${{ matrix.machine == 'x64' && 'x86_64-pc-windows-msvc' || 'aarch64-pc-windows-msvc' }}
+      BENCHMARK_PLATFORM: windows-selfhost-${{ matrix.machine }}
+      BENCHMARK_REPLICATE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Prepare isolated paths and explicit release provenance
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expected = if ($env:BENCHMARK_ARCH -eq 'x64') { 'MARCPE-TEST01-X64' } else { 'GB300-Arm64' }
+          if ($env:RUNNER_NAME -ne $expected) { throw 'Unexpected benchmark runner' }
+          $plan = 'ci-benchmark\matched-release\selfhost-${{ matrix.machine }}-pilot-runs.json'
+          $runs = Get-Content -LiteralPath $plan -Raw | ConvertFrom-Json
+          foreach ($variant in @('baseline', 'msvc-pgo', 'llvm-pgo-thin')) {
+            if ($runs.$variant -notmatch '^\d+$') { throw "Missing qualified release ID: $variant" }
+          }
+          "BASELINE_RUN=$($runs.baseline)" >> $env:GITHUB_ENV
+          "MSVC_RUN=$($runs.'msvc-pgo')" >> $env:GITHUB_ENV
+          "LLVM_RUN=$($runs.'llvm-pgo-thin')" >> $env:GITHUB_ENV
+          $name = "b$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))"
+          $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) $name
+          if (Test-Path -LiteralPath $root) { throw 'Expected fresh benchmark directories' }
+          New-Item -ItemType Directory "$root\t","$root\c" | Out-Null
+          "BENCHMARK_ROOT=$root" >> $env:GITHUB_ENV
+          "CARGO_HOME=$root\c" >> $env:GITHUB_ENV
+          "TEMP=$root\t" >> $env:GITHUB_ENV
+          "TMP=$root\t" >> $env:GITHUB_ENV
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: ${{ env.BENCHMARK_ARCH }}
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: release-${{ env.BENCHMARK_ARCH }}-baseline-1-*
+          path: ${{ env.BENCHMARK_ROOT }}/a
+          run-id: ${{ env.BASELINE_RUN }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: release-${{ env.BENCHMARK_ARCH }}-msvc-pgo-1-*
+          path: ${{ env.BENCHMARK_ROOT }}/a
+          run-id: ${{ env.MSVC_RUN }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: release-${{ env.BENCHMARK_ARCH }}-llvm-pgo-thin-1-*
+          path: ${{ env.BENCHMARK_ROOT }}/a
+          run-id: ${{ env.LLVM_RUN }}
+          github-token: ${{ github.token }}
+      - name: Prepare native tools without changing persistent machine policy
+        run: |
+          $ErrorActionPreference = 'Stop'
+          [System.IO.Directory]::Move((Resolve-Path workload).Path, "$env:BENCHMARK_ROOT\s")
+          if ($env:BENCHMARK_ARCH -eq 'x64' -and !(Get-Command nasm -ErrorAction SilentlyContinue)) {
+            $nasm = "$env:ProgramFiles\NASM"
+            if (!(Test-Path -LiteralPath "$nasm\nasm.exe")) {
+              choco install nasm --yes --no-progress
+              if ($LASTEXITCODE) { throw 'Missing NASM dependency could not be installed' }
+            }
+            "$nasm" >> $env:GITHUB_PATH
+          }
+          $suffix = if ($env:BENCHMARK_ARCH -eq 'arm64') { 'woa64' } else { 'win64' }
+          $tools = "$env:BENCHMARK_ROOT\tools"
+          New-Item -ItemType Directory $tools | Out-Null
+          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o "$tools\clang.exe"
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          7z x -y -bd -bso0 "-o$tools\clang" "$tools\clang.exe"
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+      - name: Replay the actual qualified compilers offline
+        run: |
+          $env:RUNNER_TEMP = "$env:BENCHMARK_ROOT\t"
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture $env:BENCHMARK_ARCH -Script .github\scripts\matched_release_probe.py --source "$env:BENCHMARK_ROOT\s" --artifacts "$env:BENCHMARK_ROOT\a" --output "$env:BENCHMARK_ROOT\e" --clang "$env:BENCHMARK_ROOT\tools\clang\bin" --protocol ci-benchmark\matched-release\protocol.json --release-runs "ci-benchmark\matched-release\selfhost-${{ matrix.machine }}-pilot-runs.json" --pilot
+          if ($LASTEXITCODE) { throw 'Matched offline replay failed' }
+      - uses: actions/upload-artifact@v6
+        if: always() && env.BENCHMARK_ROOT != ''
+        with:
+          name: matched-ironrdp-selfhost-${{ matrix.machine }}-1
+          path: |
+            ${{ env.BENCHMARK_ROOT }}/e/index.json
+            ${{ env.BENCHMARK_ROOT }}/e/round-*
+            ${{ env.BENCHMARK_ROOT }}/e/meter-validation
+          retention-days: 30

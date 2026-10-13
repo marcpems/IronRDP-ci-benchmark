@@ -446,6 +446,12 @@ Four-worker behavior remains the default for other native probes.
 Hosted replay still requires a single release run and rejects self-hosted
 artifacts. Separate self-hosted index metadata must not enter the hosted
 18-job analyzer, and pilot observations remain excluded from its final estimates.
+`matched-selfhost-ironrdp.yml` schedules the two available self-hosted machine
+classes separately, using the same per-machine concurrency locks as release
+construction. Its `selfhost-<machine>-pilot-runs.json` selection files are
+committed only after all selected distributions qualify; a missing selection
+fails rather than silently selecting an old run. No benchmark is launched
+merely by adding this workflow.
 
 ## Separate release-throughput investigation
 
