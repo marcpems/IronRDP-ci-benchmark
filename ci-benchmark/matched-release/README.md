@@ -560,6 +560,32 @@ replays these released compilers with shared baseline Cargo/std and 64 Cargo
 workers/CPU affinity. This is one paired pilot round, not the repeated hosted
 study. Release costs alone do not establish downstream IronRDP savings.
 
+The actual paired replay is
+[38431290827](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38431290827),
+launched from harness `e852f146c9ad84d4d38a4d3f015461a1fec9f114`.
+Its launch is not yet a completed downstream result.
+
+The reconciled production breakdown in [gb300-release-costs.json](gb300-release-costs.json)
+sums exclusive bootstrap scopes across all production invocations, including
+intermediate instrumented builds. The remainder is explicitly outside bootstrap
+(training workloads, profile processing and orchestration), not called raw
+compilation. Each column reconciles to its observed production interval.
+
+| Production wall minutes | No PGO | Microsoft PGO | LLVM PGO + ThinLTO |
+|---|---:|---:|---:|
+| Assembly/compression | 102.21 | 102.91 | 103.38 |
+| Compiler/std/backends | 7.79 | 13.14 | 17.09 |
+| LLVM/LLD | 4.23 | 14.56 | 21.88 |
+| Tools | 13.00 | 18.28 | 21.59 |
+| Documentation | 7.76 | 7.48 | 10.51 |
+| Other/bootstrap unattributed | 2.41 | 2.07 | 2.13 |
+| Outside-bootstrap production | 1.09 | 24.16 | 26.71 |
+
+Assembly/compression remains about 102-103 minutes in all three recipes.
+PGO adds training and compiler-building cost without materially shortening
+that dominant baseline component. These scopes include linking and waiting;
+they are wall-time categories, not process CPU measurements.
+
 ## x64 runner connectivity diagnostics
 
 Following the user's observation of repeated 100-second HTTP timeouts and

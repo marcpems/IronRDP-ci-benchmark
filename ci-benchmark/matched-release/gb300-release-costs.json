@@ -1,0 +1,59 @@
+{
+  "machine": "self-hosted-arm64-highcore",
+  "pilot": true,
+  "repetitions": 1,
+  "note": "Exclusive bootstrap wall time, not raw compiler CPU. Outside-bootstrap production includes training workloads, profile processing and orchestration. Whole-job time also includes setup, verification, uploads and optimized-job cleanup.",
+  "variants": {
+    "baseline": {
+      "run_id": "38282254692",
+      "job_id": 114922087331,
+      "rust_sha": "7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238",
+      "production_seconds": 8309.483880758286,
+      "job_seconds": 10083.0,
+      "production_wall_breakdown_seconds": {
+        "assembly_and_compression": 6132.724041,
+        "compiler_std_backends": 467.3925000000001,
+        "other": 142.6515139,
+        "llvm_and_lld": 254.0525856,
+        "tools": 780.2661564999999,
+        "documentation": 465.53382450000004,
+        "bootstrap_unattributed": 1.5200341999989178,
+        "outside_bootstrap_production": 65.34322505828641
+      }
+    },
+    "msvc-pgo": {
+      "run_id": "38368036985",
+      "job_id": 115197808134,
+      "rust_sha": "7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238",
+      "production_seconds": 10955.44601559639,
+      "job_seconds": 12912.0,
+      "production_wall_breakdown_seconds": {
+        "compiler_std_backends": 788.3624288,
+        "tools": 1096.6261992,
+        "other": 119.6409231,
+        "llvm_and_lld": 873.4262968,
+        "assembly_and_compression": 6174.3280005999995,
+        "documentation": 448.91516180000013,
+        "bootstrap_unattributed": 4.5628255999999965,
+        "outside_bootstrap_production": 1449.5841796963905
+      }
+    },
+    "llvm-pgo-thin": {
+      "run_id": "38397813994",
+      "job_id": 115297414553,
+      "rust_sha": "7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238",
+      "production_seconds": 12197.582781076431,
+      "job_seconds": 14169.0,
+      "production_wall_breakdown_seconds": {
+        "compiler_std_backends": 1025.4894341000002,
+        "tools": 1295.3428687,
+        "other": 123.2614954,
+        "llvm_and_lld": 1312.9485099,
+        "assembly_and_compression": 6202.655516400001,
+        "documentation": 630.8384515,
+        "bootstrap_unattributed": 4.659063999995851,
+        "outside_bootstrap_production": 1602.3874410764329
+      }
+    }
+  }
+}
