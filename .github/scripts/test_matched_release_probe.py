@@ -66,13 +66,26 @@ class ReleaseProbeTests(unittest.TestCase):
                 originals[path] = path.read_text()
                 item = {**json.loads(originals[path]), **runner, "full_distribution": True,
                         "run_id": runs[variant]}
+                (path.parent / "bootstrap.toml").write_text("[build]\njobs = 64\n")
                 path.write_text(json.dumps(item))
             selfhost_args = (arch, host, vm, runs, False, args[-1])
             actual = install(root, root / "selfhost", *selfhost_args, runner=runner)
             self.assertEqual(set(actual[0]), set(VARIANTS))
+            baseline = root / f"release-{arch}-baseline-{vm}-evidence" / "result.json"
+            legacy = json.loads(baseline.read_text())
+            del legacy["build_jobs"]
+            baseline.write_text(json.dumps(legacy))
+            actual = install(root, root / "legacy", *selfhost_args, runner=runner)
+            self.assertEqual(actual[3]["baseline"]["runner_configuration"]["build_jobs_source"],
+                             "bootstrap.toml")
+            config = baseline.parent / "bootstrap.toml"
+            config.write_text("[build]\njobs = 4\n")
+            with self.assertRaisesRegex(RuntimeError, "bootstrap worker count"):
+                install(root, root / "wrong-config", *selfhost_args, runner=runner)
+            config.write_text("[build]\njobs = 64\n")
             with self.assertRaisesRegex(RuntimeError, "machine or resource-class"):
                 install(root, root / "wrong-machine", *selfhost_args,
-                        runner={**runner, "build_jobs": 4})
+                        runner={**runner, "runner_name": "other"})
             with self.assertRaisesRegex(RuntimeError, "identity"):
                 install(root, root / "wrong-run", arch, host, vm,
                         {**runs, "baseline": "999"}, False, args[-1], runner=runner)

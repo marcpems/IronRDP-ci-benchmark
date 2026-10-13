@@ -8,6 +8,7 @@ import unittest
 from analyze_selfhost_matched import analyze, word_document
 from build_arm_compilers import digest, save
 from matched_release import LLVM, PERF, RUST, VARIANTS
+from matched_release_probe import runner_configuration
 from native_ci_probe import NATIVE_COMMANDS, paired_order
 
 
@@ -40,6 +41,7 @@ class SelfhostAnalysisTests(unittest.TestCase):
                     "run_id": run_id, "variant": variant, "host": host, "vm": 1,
                     "attempt": "1", "tools": tools}
             save(folder / "result.json", item)
+            (folder / "bootstrap.toml").write_text(f"[build]\njobs = {cores}\n")
             save(folder / "distribution-timing.json", {"wall_seconds": 100 * (n + 1)})
             save(folder / "extracted-dist-tests.json", {"exit_code": 0, "wall_seconds": 10})
             names = [f"rustc-nightly-{host}.tar.xz"]
@@ -50,7 +52,10 @@ class SelfhostAnalysisTests(unittest.TestCase):
             index["release_runs"][variant] = run_id
             index["compiler_metadata"][variant] = item
             checksum = digest(folder / "result.json")
-            index["artifact_evidence"][variant] = {"result_sha256": checksum, "archives": hashes}
+            index["artifact_evidence"][variant] = {
+                "result_sha256": checksum, "archives": hashes,
+                "runner_configuration": runner_configuration(folder, item, runner),
+            }
             jobs["jobs"].append({
                 "id": n + 1, "run_id": int(run_id), "run_attempt": 1, "status": "completed",
                 "conclusion": "success", "name": f"{arch} / {variant} / 1",

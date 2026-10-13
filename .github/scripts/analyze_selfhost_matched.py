@@ -9,7 +9,7 @@ from pathlib import Path
 from analyze_matched_release import HOSTS, validate_native_block
 from build_arm_compilers import digest, save
 from matched_release import VARIANTS
-from matched_release_probe import one_file, release_runs
+from matched_release_probe import one_file, release_runs, runner_configuration
 from msvc_experiment import equivalent_tools
 from native_ci_probe import paired_order
 from recover_matched_build import RUNNERS
@@ -40,12 +40,13 @@ def analyze(releases, index_path, jobs, protocol):
         if (not item["complete"] or not item["full_distribution"] or not item["pilot"]
                 or item["run_id"] != runs[variant] or item["variant"] != variant
                 or item["host"] != host or item["vm"] != 1 or item["attempt"] != "1"
-                or any(item.get(key) != value for key, value in runner.items())
                 or any(item[key] != protocol[key] for key in ("rust_sha", "llvm_sha", "perf_sha"))):
             raise ValueError("release qualification, source or machine mismatch")
         if not equivalent_tools(item["tools"], index["tools"]):
             raise ValueError("release and benchmark tools differ")
         evidence = index["artifact_evidence"][variant]
+        if evidence["runner_configuration"] != runner_configuration(folder, item, runner):
+            raise ValueError("bootstrap configuration provenance mismatch")
         if (index["compiler_metadata"][variant] != item
                 or evidence["result_sha256"] != digest(path)):
             raise ValueError("actual compiler metadata provenance mismatch")

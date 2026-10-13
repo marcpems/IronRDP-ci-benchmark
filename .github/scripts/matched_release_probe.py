@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tarfile
+import tomllib
 
 from build_arm_compilers import digest, save
 from compiler_probe import validate_meter
@@ -33,6 +34,19 @@ def release_runs(run_id, runner):
     return run_id
 
 
+def runner_configuration(directory, item, runner):
+    if (not item.get("full_distribution")
+            or any(item.get(key) != value for key, value in runner.items() if key != "build_jobs")
+            or ("build_jobs" in item and item["build_jobs"] != runner["build_jobs"])):
+        raise RuntimeError("release machine or resource-class mismatch")
+    path = one_file(directory, "bootstrap.toml")
+    jobs = tomllib.loads(path.read_text())["build"]["jobs"]
+    if jobs != runner["build_jobs"]:
+        raise RuntimeError("recorded bootstrap worker count differs from the runner protocol")
+    return {"bootstrap_sha256": digest(path), "build_jobs": jobs,
+            "build_jobs_source": "metadata-and-bootstrap.toml" if "build_jobs" in item else "bootstrap.toml"}
+
+
 def install(root, destination, arch, host, vm, run_id, pilot, protocol, runner=None):
     runs = release_runs(run_id, runner)
     destination.mkdir(exist_ok=False)
@@ -49,15 +63,14 @@ def install(root, destination, arch, host, vm, run_id, pilot, protocol, runner=N
         if runner is None:
             if item.get("runner_class", "github-hosted") != "github-hosted":
                 raise RuntimeError("self-hosted releases cannot enter the hosted comparison")
-        elif (not item.get("full_distribution")
-              or any(item.get(key) != value for key, value in runner.items())):
-            raise RuntimeError("release machine or resource-class mismatch")
         if item["llvm_sha"] != protocol["llvm_sha"] or item["perf_sha"] != protocol["perf_sha"]:
             raise RuntimeError("release submodule mismatch")
         manifest = json.loads(one_file(directory, "dist-manifest.json").read_text())
         checksums = {row["name"]: row["sha256"] for row in manifest}
         metadata[variant] = item
         evidence[variant] = {"result_sha256": digest(path), "archives": {}}
+        if runner is not None:
+            evidence[variant]["runner_configuration"] = runner_configuration(directory, item, runner)
         dist = root / f"release-{arch}-{variant}-{vm}-dist"
         folder = destination / variant
         folder.mkdir()

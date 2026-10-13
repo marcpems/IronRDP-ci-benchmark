@@ -443,6 +443,11 @@ CPU count, build worker/affinity counts and native tool hashes; it still
 extracts the actual checksummed distributions and shares baseline Cargo/std.
 The high-core replay sets both Cargo workers and measured affinity to 64.
 Four-worker behavior remains the default for other native probes.
+The older qualified x64 baseline predates the `build_jobs` metadata field:
+its archived `bootstrap.toml` explicitly records four workers. Self-hosted
+replay verifies the archived configuration for every variant, binds its hash
+into benchmark provenance, and records when that file supplies the legacy
+worker-count evidence. It never silently assumes a missing worker count.
 Hosted replay still requires a single release run and rejects self-hosted
 artifacts. Separate self-hosted index metadata must not enter the hosted
 18-job analyzer, and pilot observations remain excluded from its final estimates.
@@ -481,8 +486,9 @@ Fresh optimized-only runs from harness
 - [GB300 38368036985](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38368036985):
   passed its storage/runner gate and started source preparation.
 - [x64 38368289662](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38368289662):
-  queued behind baseline archive preservation/reclamation. Its completed
-  inventory observed 380.03 GB free on E: before recovery.
+  started source checkout after successful baseline archive preservation and
+  reclamation. Its free space rose from 380.00 to 411.97 GB; the 19 baseline
+  distribution files remain at `E:\m36237914b1\retained-dist`.
 
 These launches are not completed release timings. The ordinary Arm64 runner
 remains offline; its missing optimized cells are not replaced with GB300 data.
