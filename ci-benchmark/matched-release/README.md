@@ -529,6 +529,12 @@ Read-only inventory 38393790110 confirmed approximately 148.48 GB free, about
 failed build cannot by themselves recover that shortfall. No further storage
 limit reduction or source-repository deletion was performed.
 
+After additional user-provided space, the
+`experiment/matched-release-selfhost-arm64-highcore-llvm-pilot` branch retries
+only the missing LLVM cell. It retains the 180 GiB startup gate, 64 workers,
+24-hour job budget, fresh source/profile/build directories and full qualification.
+The successful baseline and Microsoft-PGO cells are not rebuilt.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the

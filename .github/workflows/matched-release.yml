@@ -1,7 +1,7 @@
 name: Matched full Rust release cost
 on:
   push:
-    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic, experiment/matched-release-selfhost-arm64-pilot, experiment/matched-release-selfhost-x64-pilot, experiment/matched-release-selfhost-arm64-highcore-pilot, experiment/matched-release-selfhost-arm64-optimized-pilot, experiment/matched-release-selfhost-x64-optimized-pilot, experiment/matched-release-selfhost-arm64-highcore-optimized-pilot]
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic, experiment/matched-release-selfhost-arm64-pilot, experiment/matched-release-selfhost-x64-pilot, experiment/matched-release-selfhost-arm64-highcore-pilot, experiment/matched-release-selfhost-arm64-optimized-pilot, experiment/matched-release-selfhost-x64-optimized-pilot, experiment/matched-release-selfhost-arm64-highcore-optimized-pilot, experiment/matched-release-selfhost-arm64-highcore-llvm-pilot]
   workflow_dispatch:
     inputs:
       pilot:
