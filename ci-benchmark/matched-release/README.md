@@ -406,6 +406,23 @@ packaging/assembly rather than failure to select 64 compile workers.
 They do not yet separate compression CPU from file I/O or other packaging
 costs; changing the required distribution scope would invalidate this comparison.
 
+## Recovery after nine-hour self-hosted limits
+
+Both four-CPU x64 optimized jobs in run 38236237914 hit the 530-minute
+safety boundary. Microsoft-PGO reached final Clippy construction; the LLVM
+option was linking LLVM tools in its final PGO-use build. Neither result is
+a completed release cost. Subsequent self-hosted jobs use a 1,440-minute
+(24-hour) workflow budget and a 1,430-minute internal deadline, preserving
+ten minutes for uploads. This is headroom, not an expected duration.
+Hosted limits are unchanged.
+
+The `selfhost-x64-optimized-pilot` and
+`selfhost-arm64-highcore-optimized-pilot` branch suffixes restart only the
+missing optimized variants. All training and build directories are fresh;
+successful baselines remain separately identified pilot observations.
+Storage maintenance, when needed, is a separate workflow rather than
+unreported reuse of a partial compiler build.
+
 ## Separate release-throughput investigation
 
 The [local throughput report](../release-throughput/README.md) explains the

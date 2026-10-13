@@ -108,7 +108,7 @@ compression-profile = "balanced"
 
 
 def run(command, source, env, output, name):
-    limit_minutes = 530 if runner_class() != "github-hosted" else 350
+    limit_minutes = 1430 if runner_class() != "github-hosted" else 350
     remaining = float(os.environ["RELEASE_JOB_STARTED"]) + limit_minutes * 60 - time.time()
     if remaining <= 0:
         raise TimeoutError(f"full release job reached the {limit_minutes}-minute safety boundary")

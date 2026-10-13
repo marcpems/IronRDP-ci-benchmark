@@ -1,7 +1,7 @@
 name: Matched full Rust release cost
 on:
   push:
-    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic, experiment/matched-release-selfhost-arm64-pilot, experiment/matched-release-selfhost-x64-pilot, experiment/matched-release-selfhost-arm64-highcore-pilot, experiment/matched-release-selfhost-arm64-optimized-pilot]
+    branches: [experiment/matched-release-pilot, experiment/matched-release-full, experiment/matched-release-stack-diagnostic, experiment/matched-release-llvm-pilot, experiment/matched-release-repair-stack-diagnostic, experiment/matched-release-msvc-pilot, experiment/matched-release-fresh-repair-stack-diagnostic, experiment/matched-release-selfhost-arm64-pilot, experiment/matched-release-selfhost-x64-pilot, experiment/matched-release-selfhost-arm64-highcore-pilot, experiment/matched-release-selfhost-arm64-optimized-pilot, experiment/matched-release-selfhost-x64-optimized-pilot, experiment/matched-release-selfhost-arm64-highcore-optimized-pilot]
   workflow_dispatch:
     inputs:
       pilot:
@@ -16,7 +16,7 @@ jobs:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     name: ${{ matrix.arch }} / ${{ matrix.variant }} / ${{ matrix.vm }}
     runs-on: ${{ fromJSON(contains(github.ref_name, '-highcore-') && '["self-hosted","Windows","ARM64","HighCoreCount"]' || contains(github.ref_name, '-selfhost-x64-') && '["self-hosted","Windows","X64"]' || contains(github.ref_name, '-selfhost-arm64-') && '["self-hosted","Windows","ARM64","MatchedStandardArm64"]' || matrix.arch == 'x64' && '["windows-2025"]' || '["windows-11-arm"]') }}
-    timeout-minutes: ${{ contains(github.ref_name, '-selfhost-') && 540 || 360 }}
+    timeout-minutes: ${{ contains(github.ref_name, '-selfhost-') && 1440 || 360 }}
     defaults:
       run:
         shell: ${{ contains(github.ref_name, '-selfhost-') && 'powershell' || 'pwsh' }}

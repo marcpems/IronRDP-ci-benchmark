@@ -86,9 +86,9 @@ class MatchedReleaseTests(unittest.TestCase):
         }), patch.object(release.time, "time", return_value=100 + 400 * 60), \
                 patch.object(release, "execute") as execute, patch.object(release, "save"):
             release.run(["build"], Path("."), {}, Path("."), "full-dist")
-            self.assertEqual(execute.call_args.kwargs["timeout"], 130 * 60)
-            with patch.object(release.time, "time", return_value=100 + 530 * 60):
-                with self.assertRaisesRegex(TimeoutError, "530-minute"):
+            self.assertEqual(execute.call_args.kwargs["timeout"], 1030 * 60)
+            with patch.object(release.time, "time", return_value=100 + 1430 * 60):
+                with self.assertRaisesRegex(TimeoutError, "1430-minute"):
                     release.run(["build"], Path("."), {}, Path("."), "full-dist")
 
     def test_preparation_checks_declared_source_before_building(self):
