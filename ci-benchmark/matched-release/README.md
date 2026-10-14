@@ -1,5 +1,15 @@
 # Matched Rust release cost and IronRDP benefit
 
+## x64 replay download interruption
+
+All three x64 release recipes qualified. The first downstream replay,
+38588758754, failed during setup: downloading the 1.72 GB LLVM distribution
+artifact exhausted five retries. No compilation measurements or correctness
+tests started. The evidence and maintenance artifacts downloaded successfully;
+the failure is not a compiler or correctness result. One fresh complete replay
+is scheduled with unchanged qualification gates and fresh benchmark directories.
+The failed setup is excluded, and no partial download is treated as verified.
+
 This new study replaces cross-version comparisons with actual full distribution
 builds and downstream measurements of their resulting compilers. The
 [protocol](protocol.json) is preregistered; amendments below are declared before
