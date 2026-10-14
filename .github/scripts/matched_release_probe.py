@@ -119,6 +119,7 @@ def main():
     selection.add_argument("--release-runs", type=Path,
                            help="Self-hosted only: JSON mapping variant to qualified release run ID")
     parser.add_argument("--pilot", action="store_true")
+    parser.add_argument("--correctness-temp", type=Path)
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
     check_build_paths(source, output)
@@ -127,6 +128,12 @@ def main():
     arch = "arm64" if host.startswith("aarch64") else "x64"
     validate_runner(host)
     runner = None
+    correctness_env = {"RUST_TEST_THREADS": "1"}
+    if args.correctness_temp is not None:
+        if runner_class() != "self-hosted-x64" or not args.correctness_temp.is_dir():
+            raise RuntimeError("correctness temporary directory requires the self-hosted x64 runner")
+        correctness_env.update(TEMP=str(args.correctness_temp.resolve()),
+                               TMP=str(args.correctness_temp.resolve()))
     run_ids = args.release_run
     if runner_class() != "github-hosted":
         if args.release_runs is None:
@@ -170,6 +177,7 @@ def main():
     }
     if runner is not None:
         index.update(selfhost_schema=1, runner=runner, release_runs=run_ids)
+        index["correctness_environment"] = correctness_env
     save(output / "index.json", index)
     warmups = 0 if args.pilot else protocol["warmup_rounds"]
     rounds = 1 if args.pilot else warmups + protocol["measured_rounds"]
@@ -178,7 +186,7 @@ def main():
             name = f"round-{round_index}-{variant}"
             run_block(source, output / name, compilers[variant], protocol,
                       {"variant": variant, "round": round_index}, round_index == 0,
-                      correctness_env={"RUST_TEST_THREADS": "1"}, native_only=True)
+                      correctness_env=correctness_env, native_only=True)
             index["runs"].append({"variant": variant, "round": round_index, "position": position,
                                   "warmup": round_index < warmups, "path": f"{name}/results.json"})
             save(output / "index.json", index)

@@ -116,6 +116,38 @@ class SelfhostAnalysisTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "environment"):
                 analyze(*args)
 
+    def test_correctness_temp_is_explicit_consistent_and_x64_only(self):
+        for highcore in (False, True):
+            with self.subTest(highcore=highcore), tempfile.TemporaryDirectory() as tmp:
+                args = self.fixture(Path(tmp), highcore=highcore)
+                path = args[1]
+                index = json.loads(path.read_text())
+                env = {"RUST_TEST_THREADS": "1", "TEMP": r"C:\matched-correctness-555",
+                       "TMP": r"C:\matched-correctness-555"}
+                index["correctness_environment"] = env
+                save(path, index)
+                for run in index["runs"]:
+                    block_path = path.parent / run["path"]
+                    block = json.loads(block_path.read_text())
+                    for check in block["correctness"]:
+                        check["environment_overrides"] = env
+                    save(block_path, block)
+                if highcore:
+                    with self.assertRaisesRegex(ValueError, "temporary environment"):
+                        analyze(*args)
+                else:
+                    self.assertTrue(analyze(*args)["pilot"])
+                    block_path = path.parent / index["runs"][0]["path"]
+                    block = json.loads(block_path.read_text())
+                    block["correctness"][0]["environment_overrides"] = {"RUST_TEST_THREADS": "1"}
+                    save(block_path, block)
+                    with self.assertRaisesRegex(ValueError, "correctness commands"):
+                        analyze(*args)
+                    index["correctness_environment"]["TMP"] = r"E:\wrong"
+                    save(path, index)
+                    with self.assertRaisesRegex(ValueError, "temporary environment"):
+                        analyze(*args)
+
     def test_failure_mixing_and_missing_maintenance_are_rejected(self):
         for problem in ("timeout", "wrong-run", "hosted", "wrong-tools", "missing-cleanup", "unqualified"):
             with self.subTest(problem=problem), tempfile.TemporaryDirectory() as tmp:

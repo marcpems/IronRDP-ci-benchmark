@@ -30,6 +30,18 @@ with deterministic disposal of the file and hash handles. The exact helper
 passed a known SHA-256 test vector under Windows PowerShell 5.1; no hashing
 gate was removed.
 
+Run 38632084070 passed archive staging and all five baseline compile commands,
+then failed `filesystem_controls_query_the_opened_file_handle` on
+`STATUS_INVALID_DEVICE_REQUEST`. Diagnostic 38636102151 confirmed E: is ReFS:
+`fsutil objectid create` rejects it with "An NTFS volume is required", while
+the same disposable-file probe succeeds on C: (NTFS). This is not the GB300
+UDP failure. Subsequent x64 replays place only correctness-process TEMP/TMP
+in a fresh, explicitly checked C: NTFS directory, consistently for all recipes.
+Timed compilation, target directories and Cargo home remain on E:. The exact
+correctness overrides are recorded and validated separately; hosted and GB300
+defaults remain unchanged. No test is skipped, no assertion is weakened, and
+the failed partial baseline is excluded.
+
 ## x64 replay download interruption
 
 All three x64 release recipes qualified. The first downstream replay,

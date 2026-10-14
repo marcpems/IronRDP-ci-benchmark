@@ -147,8 +147,16 @@ jobs:
           if ($LASTEXITCODE) { throw 'Clang extraction failed' }
       - name: Replay the actual qualified compilers offline
         run: |
+          $ErrorActionPreference = 'Stop'
           $env:RUNNER_TEMP = "$env:BENCHMARK_ROOT\t"
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture $env:BENCHMARK_ARCH -Script .github\scripts\matched_release_probe.py --source "$env:BENCHMARK_ROOT\s" --artifacts "$env:BENCHMARK_ROOT\a" --output "$env:BENCHMARK_ROOT\e" --clang "$env:BENCHMARK_ROOT\tools\clang\bin" --protocol ci-benchmark\matched-release\protocol.json --release-runs "ci-benchmark\matched-release\selfhost-${{ matrix.machine }}-pilot-runs.json" --pilot
+          $extra = @()
+          if ($env:BENCHMARK_ARCH -eq 'x64') {
+            if ([IO.DriveInfo]::new('C:\').DriveFormat -ne 'NTFS') { throw 'Correctness tests require NTFS temporary files' }
+            $testTemp = "C:\matched-correctness-$env:GITHUB_RUN_ID"
+            New-Item -ItemType Directory $testTemp | Out-Null
+            $extra = @('--correctness-temp', $testTemp)
+          }
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture $env:BENCHMARK_ARCH -Script .github\scripts\matched_release_probe.py --source "$env:BENCHMARK_ROOT\s" --artifacts "$env:BENCHMARK_ROOT\a" --output "$env:BENCHMARK_ROOT\e" --clang "$env:BENCHMARK_ROOT\tools\clang\bin" --protocol ci-benchmark\matched-release\protocol.json --release-runs "ci-benchmark\matched-release\selfhost-${{ matrix.machine }}-pilot-runs.json" --pilot @extra
           if ($LASTEXITCODE) { throw 'Matched offline replay failed' }
       - uses: actions/upload-artifact@v6
         if: always() && env.BENCHMARK_ROOT != ''

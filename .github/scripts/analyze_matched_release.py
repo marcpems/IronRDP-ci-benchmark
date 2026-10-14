@@ -17,7 +17,7 @@ from native_ci_probe import NATIVE_COMMANDS, paired_order
 HOSTS = {"x64": "x86_64-pc-windows-msvc", "arm64": "aarch64-pc-windows-msvc"}
 
 
-def validate_native_block(block, protocol, variant, round_index):
+def validate_native_block(block, protocol, variant, round_index, correctness_env=None):
     metadata = block["metadata"]
     if (metadata["source_sha"] != protocol["source_sha"] or metadata["variant"] != variant
             or metadata["round"] != round_index):
@@ -36,7 +36,8 @@ def validate_native_block(block, protocol, variant, round_index):
     if round_index == 0:
         tests = block["correctness"]
         if ([row["name"] for row in tests] != [name for name, _ in NATIVE_COMMANDS[1:]]
-                or any(row["exit_code"] or row["environment_overrides"] != {"RUST_TEST_THREADS": "1"}
+                or any(row["exit_code"] or row["environment_overrides"] != (
+                    {"RUST_TEST_THREADS": "1"} if correctness_env is None else correctness_env)
                        for row in tests)):
             raise ValueError("missing, failed, or changed correctness commands")
     return sum(row["wall_seconds"] for row in rows)

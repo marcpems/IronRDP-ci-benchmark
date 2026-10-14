@@ -4,7 +4,7 @@ import argparse
 from datetime import datetime
 import json
 import math
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 
 from analyze_matched_release import HOSTS, validate_native_block
 from build_arm_compilers import digest, save
@@ -32,6 +32,14 @@ def analyze(releases, index_path, jobs, protocol):
             or runner["logical_cpus"] < cores):
         raise ValueError("incomplete or incompatible self-hosted pilot")
     runs = release_runs(index["release_runs"], runner)
+    correctness_env = index.get("correctness_environment", {"RUST_TEST_THREADS": "1"})
+    if correctness_env != {"RUST_TEST_THREADS": "1"}:
+        temporary = PureWindowsPath(correctness_env.get("TEMP", ""))
+        if (machine != "self-hosted-x64" or not temporary.is_absolute()
+                or temporary.drive.lower() != "c:"
+                or correctness_env != {"RUST_TEST_THREADS": "1", "TEMP": str(temporary),
+                                       "TMP": str(temporary)}):
+            raise ValueError("unexpected correctness-only temporary environment")
     cells = {}
     for variant in VARIANTS:
         folder = releases / f"release-{arch}-{variant}-1-evidence"
@@ -100,7 +108,7 @@ def analyze(releases, index_path, jobs, protocol):
             raise ValueError("missing or incorrectly ordered pilot block")
         seen.add(variant)
         block = json.loads((index_path.parent / run["path"]).read_text())
-        seconds = validate_native_block(block, expected_protocol, variant, 0)
+        seconds = validate_native_block(block, expected_protocol, variant, 0, correctness_env)
         if not math.isfinite(seconds):
             raise ValueError("non-finite benchmark duration")
         cells[variant]["ironrdp_seconds"] = seconds
@@ -110,7 +118,8 @@ def analyze(releases, index_path, jobs, protocol):
         row["job_increase_percent"] = 100 * (row["job_seconds"] / baseline["job_seconds"] - 1)
         row["ironrdp_saving_percent"] = 100 * (1 - row["ironrdp_seconds"] / baseline["ironrdp_seconds"])
     return {"machine": machine, "runner": runner, "pilot": True, "repetitions": 1,
-            "protocol": expected_protocol, "benchmark_run": index["benchmark_run"], "variants": cells}
+            "protocol": expected_protocol, "benchmark_run": index["benchmark_run"], "variants": cells,
+            "correctness_environment": correctness_env}
 
 
 def word_document(results, path):
