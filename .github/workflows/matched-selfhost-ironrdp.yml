@@ -67,19 +67,19 @@ jobs:
       - uses: actions/download-artifact@v6
         with:
           pattern: release-${{ env.BENCHMARK_ARCH }}-baseline-1-${{ matrix.machine == 'x64' && 'evidence' || '*' }}
-          path: ${{ env.BENCHMARK_ROOT }}/a
+          path: ${{ env.BENCHMARK_ROOT }}/a${{ matrix.machine == 'x64' && '/release-x64-baseline-1-evidence' || '' }}
           run-id: ${{ env.BASELINE_RUN }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v6
         with:
           pattern: release-${{ env.BENCHMARK_ARCH }}-msvc-pgo-1-${{ matrix.machine == 'x64' && 'evidence' || '*' }}
-          path: ${{ env.BENCHMARK_ROOT }}/a
+          path: ${{ env.BENCHMARK_ROOT }}/a${{ matrix.machine == 'x64' && '/release-x64-msvc-pgo-1-evidence' || '' }}
           run-id: ${{ env.MSVC_RUN }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v6
         with:
           pattern: release-${{ env.BENCHMARK_ARCH }}-llvm-pgo-thin-1-${{ matrix.machine == 'x64' && 'evidence' || '*' }}
-          path: ${{ env.BENCHMARK_ROOT }}/a
+          path: ${{ env.BENCHMARK_ROOT }}/a${{ matrix.machine == 'x64' && '/release-x64-llvm-pgo-thin-1-evidence' || '' }}
           run-id: ${{ env.LLVM_RUN }}
           github-token: ${{ github.token }}
       - name: Verify and stage retained x64 release archives

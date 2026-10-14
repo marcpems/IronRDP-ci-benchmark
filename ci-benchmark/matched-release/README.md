@@ -10,6 +10,13 @@ tool qualification checks remain in place. This changes setup transport only:
 workload targets and Cargo home remain fresh, and no interrupted build is reused.
 GB300 archive transport is unchanged.
 
+The first retained-archive setup (38628375935) exposed the download action's
+single-match layout: each evidence artifact was extracted directly into `a`,
+not into its artifact-name directory. The setup failed before archive staging
+or measurements. Each x64 evidence download now has an explicit per-variant
+destination. The replacement starts in a fresh root; the overwritten evidence
+from that failed setup is never reused.
+
 ## x64 replay download interruption
 
 All three x64 release recipes qualified. The first downstream replay,
