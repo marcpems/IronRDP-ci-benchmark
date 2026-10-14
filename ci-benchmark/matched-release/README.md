@@ -1,5 +1,15 @@
 # Matched Rust release cost and IronRDP benefit
 
+The second x64 replay, 38601292855, also exhausted LLVM distribution download
+retries before measurements. Subsequent x64 setup downloads the release
+evidence only and copies archives from each selected release's local
+`retained-dist`. Every archive is SHA-256 checked against the downloaded
+manifest both before and after copying. Missing or mismatched archives fail
+explicitly; there is no partial-download fallback. The normal compiler/source/
+tool qualification checks remain in place. This changes setup transport only:
+workload targets and Cargo home remain fresh, and no interrupted build is reused.
+GB300 archive transport is unchanged.
+
 ## x64 replay download interruption
 
 All three x64 release recipes qualified. The first downstream replay,

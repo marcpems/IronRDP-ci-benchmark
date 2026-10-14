@@ -66,22 +66,56 @@ jobs:
           architecture: ${{ env.BENCHMARK_ARCH }}
       - uses: actions/download-artifact@v6
         with:
-          pattern: release-${{ env.BENCHMARK_ARCH }}-baseline-1-*
+          pattern: release-${{ env.BENCHMARK_ARCH }}-baseline-1-${{ matrix.machine == 'x64' && 'evidence' || '*' }}
           path: ${{ env.BENCHMARK_ROOT }}/a
           run-id: ${{ env.BASELINE_RUN }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v6
         with:
-          pattern: release-${{ env.BENCHMARK_ARCH }}-msvc-pgo-1-*
+          pattern: release-${{ env.BENCHMARK_ARCH }}-msvc-pgo-1-${{ matrix.machine == 'x64' && 'evidence' || '*' }}
           path: ${{ env.BENCHMARK_ROOT }}/a
           run-id: ${{ env.MSVC_RUN }}
           github-token: ${{ github.token }}
       - uses: actions/download-artifact@v6
         with:
-          pattern: release-${{ env.BENCHMARK_ARCH }}-llvm-pgo-thin-1-*
+          pattern: release-${{ env.BENCHMARK_ARCH }}-llvm-pgo-thin-1-${{ matrix.machine == 'x64' && 'evidence' || '*' }}
           path: ${{ env.BENCHMARK_ROOT }}/a
           run-id: ${{ env.LLVM_RUN }}
           github-token: ${{ github.token }}
+      - name: Verify and stage retained x64 release archives
+        if: matrix.machine == 'x64'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Unexpected archive source runner' }
+          $runs = Get-Content -LiteralPath 'ci-benchmark\matched-release\selfhost-x64-pilot-runs.json' -Raw | ConvertFrom-Json
+          $codes = @{baseline='b'; 'msvc-pgo'='m'; 'llvm-pgo-thin'='l'}
+          foreach ($variant in @('baseline', 'msvc-pgo', 'llvm-pgo-thin')) {
+            $run = [string]$runs.$variant
+            if ($run -notmatch '^\d{8,}$') { throw 'Invalid release run ID' }
+            $retained = "E:\m$($run.Substring($run.Length - 8))$($codes[$variant])1\retained-dist"
+            $evidence = "$env:BENCHMARK_ROOT\a\release-x64-$variant-1-evidence"
+            $manifests = @(Get-ChildItem -LiteralPath $evidence -Recurse -Filter dist-manifest.json)
+            if ($manifests.Count -ne 1) { throw 'Expected exactly one downloaded distribution manifest' }
+            $manifest = @(Get-Content -LiteralPath $manifests[0].FullName -Raw | ConvertFrom-Json)
+            if (!$manifest.Count) { throw 'Empty release manifest' }
+            $destination = "$env:BENCHMARK_ROOT\a\release-x64-$variant-1-dist"
+            New-Item -ItemType Directory $destination | Out-Null
+            foreach ($entry in $manifest) {
+              if ([IO.Path]::GetFileName($entry.name) -cne $entry.name -or $entry.name -in @('.', '..')) {
+                throw 'Invalid archive filename'
+              }
+              $archive = Join-Path $retained $entry.name
+              if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ine $entry.sha256) {
+                throw "Retained archive checksum mismatch: $archive"
+              }
+              Copy-Item -LiteralPath $archive -Destination $destination
+              $copy = Join-Path $destination $entry.name
+              if ((Get-FileHash -LiteralPath $copy -Algorithm SHA256).Hash -ine $entry.sha256) {
+                throw "Staged archive checksum mismatch: $copy"
+              }
+            }
+            Write-Output "Verified $($manifest.Count) retained archives for $variant from release $run"
+          }
       - name: Prepare native tools without changing persistent machine policy
         run: |
           $ErrorActionPreference = 'Stop'
