@@ -1,0 +1,36 @@
+name: Diagnose x64 correctness temporary filesystem
+on:
+  push:
+    branches: [experiment/matched-x64-filesystem-diagnostic]
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 10
+    concurrency:
+      group: matched-x64-selfhost
+      cancel-in-progress: false
+    steps:
+      - name: Inspect volumes and probe object IDs on disposable files
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Unexpected runner' }
+          foreach ($volume in @('C:\', 'E:\')) {
+            $drive = [IO.DriveInfo]::new($volume)
+            @{Volume=$volume; Format=$drive.DriveFormat; FreeBytes=$drive.AvailableFreeSpace} | ConvertTo-Json
+          }
+          foreach ($directory in @($env:TEMP, 'E:\b32084070\t')) {
+            if (!(Test-Path -LiteralPath $directory)) { throw "Missing test directory: $directory" }
+            $file = Join-Path $directory ("matched-objectid-" + [guid]::NewGuid().ToString() + '.tmp')
+            try {
+              [IO.File]::WriteAllText($file, 'disposable filesystem capability probe')
+              $output = & fsutil.exe objectid create $file 2>&1
+              $code = $LASTEXITCODE
+              @{Directory=$directory; ExitCode=$code; Output=($output | Out-String)} | ConvertTo-Json
+            } finally {
+              if (Test-Path -LiteralPath $file) { Remove-Item -LiteralPath $file }
+            }
+          }
