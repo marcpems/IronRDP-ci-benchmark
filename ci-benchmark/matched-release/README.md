@@ -17,6 +17,13 @@ or measurements. Each x64 evidence download now has an explicit per-variant
 destination. The replacement starts in a fresh root; the overwritten evidence
 from that failed setup is never reused.
 
+Run 38629796046 then reached staging but exposed Windows PowerShell 5's JSON
+array pipeline behavior: the array wrapper created one nested manifest entry.
+Direct assignment now preserves scalar entries for iteration. The corrected
+iteration was exercised against all three actual manifests under Windows
+PowerShell 5.1 (19/20/20 entries), rather than only parsing the script syntax.
+Neither setup failure reached compilation measurements.
+
 ## x64 replay download interruption
 
 All three x64 release recipes qualified. The first downstream replay,

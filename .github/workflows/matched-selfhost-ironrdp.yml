@@ -96,7 +96,7 @@ jobs:
             $evidence = "$env:BENCHMARK_ROOT\a\release-x64-$variant-1-evidence"
             $manifests = @(Get-ChildItem -LiteralPath $evidence -Recurse -Filter dist-manifest.json)
             if ($manifests.Count -ne 1) { throw 'Expected exactly one downloaded distribution manifest' }
-            $manifest = @(Get-Content -LiteralPath $manifests[0].FullName -Raw | ConvertFrom-Json)
+            $manifest = Get-Content -LiteralPath $manifests[0].FullName -Raw | ConvertFrom-Json
             if (!$manifest.Count) { throw 'Empty release manifest' }
             $destination = "$env:BENCHMARK_ROOT\a\release-x64-$variant-1-dist"
             New-Item -ItemType Directory $destination | Out-Null
