@@ -87,6 +87,16 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Unexpected archive source runner' }
+          function Get-ArchiveSha256([string]$path) {
+            $stream = [IO.File]::OpenRead($path)
+            $sha = [Security.Cryptography.SHA256]::Create()
+            try {
+              return [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '').ToLowerInvariant()
+            } finally {
+              $sha.Dispose()
+              $stream.Dispose()
+            }
+          }
           $runs = Get-Content -LiteralPath 'ci-benchmark\matched-release\selfhost-x64-pilot-runs.json' -Raw | ConvertFrom-Json
           $codes = @{baseline='b'; 'msvc-pgo'='m'; 'llvm-pgo-thin'='l'}
           foreach ($variant in @('baseline', 'msvc-pgo', 'llvm-pgo-thin')) {
@@ -105,12 +115,12 @@ jobs:
                 throw 'Invalid archive filename'
               }
               $archive = Join-Path $retained $entry.name
-              if ((Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash -ine $entry.sha256) {
+              if ((Get-ArchiveSha256 $archive) -ine $entry.sha256) {
                 throw "Retained archive checksum mismatch: $archive"
               }
               Copy-Item -LiteralPath $archive -Destination $destination
               $copy = Join-Path $destination $entry.name
-              if ((Get-FileHash -LiteralPath $copy -Algorithm SHA256).Hash -ine $entry.sha256) {
+              if ((Get-ArchiveSha256 $copy) -ine $entry.sha256) {
                 throw "Staged archive checksum mismatch: $copy"
               }
             }

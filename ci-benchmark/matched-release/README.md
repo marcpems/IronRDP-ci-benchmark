@@ -24,6 +24,12 @@ iteration was exercised against all three actual manifests under Windows
 PowerShell 5.1 (19/20/20 entries), rather than only parsing the script syntax.
 Neither setup failure reached compilation measurements.
 
+Run 38630900550 revealed that `Get-FileHash` is unavailable in the runner's
+PowerShell environment. Archive verification now uses streaming .NET SHA-256,
+with deterministic disposal of the file and hash handles. The exact helper
+passed a known SHA-256 test vector under Windows PowerShell 5.1; no hashing
+gate was removed.
+
 ## x64 replay download interruption
 
 All three x64 release recipes qualified. The first downstream replay,
