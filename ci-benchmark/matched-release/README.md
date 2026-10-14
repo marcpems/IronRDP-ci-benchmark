@@ -1,5 +1,39 @@
 # Matched Rust release cost and IronRDP benefit
 
+## Completed x64 and GB300 pilots
+
+The fresh x64 replay [38636440191](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38636440191)
+passed all five timed compilation commands and all four original correctness
+commands for every actual released compiler. The strict analyzer accepted the
+complete round, including identical correctness-only NTFS temporary overrides.
+No results from failed runs are reused.
+
+The [one-page combined Word report](Self-Hosted-Rust-Release-Pilots.docx) and
+[machine-readable results](selfhost-pilot-results.json) now include both x64 and
+GB300, with their separate qualification histories. Word pagination was checked
+after rendering. Production excludes setup, verification and uploads; the
+results also retain whole-job and cleanup durations and all five native
+compilation components.
+
+| Machine / recipe | Full production minutes | Increase vs no PGO | IronRDP seconds | Compile saving |
+|---|---:|---:|---:|---:|
+| x64 / 4 CPUs / no PGO | 134.1 | Reference | 737.35 | Reference |
+| x64 / 4 CPUs / Microsoft PGO | 548.1 | +308.66% | 555.78 | 24.62% |
+| x64 / 4 CPUs / LLVM PGO + ThinLTO | 787.3 | +486.97% | 526.00 | 28.66% |
+| GB300 / 64 CPUs / no PGO | 138.5 | Reference | 200.28 | Reference |
+| GB300 / 64 CPUs / Microsoft PGO | 182.6 | +31.84% | 157.30 | 21.46% |
+| GB300 / 64 CPUs / LLVM PGO + ThinLTO | 203.3 | +46.79% | 156.28 | 21.97% |
+
+On x64 the LLVM recipe saves another 29.78 seconds per five-command sequence
+relative to Microsoft PGO (5.36% faster), but costs another 239.16 production
+minutes. On GB300 the respective differences are 1.02 seconds and 20.70 minutes.
+These are single paired pilot observations, not established repeatable
+advantages. Machines are not pooled; four-CPU x64 and 64-CPU GB300 are not an
+architecture-controlled comparison. Ordinary four-CPU Arm64 remains separate,
+and the repeated standard-hosted study remains incomplete.
+
+## Excluded x64 replay history
+
 The second x64 replay, 38601292855, also exhausted LLVM distribution download
 retries before measurements. Subsequent x64 setup downloads the release
 evidence only and copies archives from each selected release's local
@@ -48,8 +82,8 @@ All three x64 release recipes qualified. The first downstream replay,
 38588758754, failed during setup: downloading the 1.72 GB LLVM distribution
 artifact exhausted five retries. No compilation measurements or correctness
 tests started. The evidence and maintenance artifacts downloaded successfully;
-the failure is not a compiler or correctness result. One fresh complete replay
-is scheduled with unchanged qualification gates and fresh benchmark directories.
+the failure is not a compiler or correctness result. Fresh replacements used
+unchanged qualification gates and fresh benchmark directories.
 The failed setup is excluded, and no partial download is treated as verified.
 
 This new study replaces cross-version comparisons with actual full distribution
