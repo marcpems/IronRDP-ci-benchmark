@@ -1,0 +1,20 @@
+name: GB300 runner dispatch probe
+on:
+  push:
+    branches: [experiment/gb300-dispatch-probe]
+permissions:
+  contents: read
+jobs:
+  probe:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, HighCoreCount]
+    timeout-minutes: 2
+    steps:
+      - name: Confirm fresh job delivery without starting a build
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected runner' }
+          @{Runner=$env:RUNNER_NAME; Architecture=$env:RUNNER_ARCH;
+            LogicalCPUs=[Environment]::ProcessorCount; UTC=[DateTime]::UtcNow.ToString('o')} |
+            ConvertTo-Json
