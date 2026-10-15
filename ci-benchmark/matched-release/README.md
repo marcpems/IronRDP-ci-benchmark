@@ -48,6 +48,28 @@ each GB300 build. `matched-gb300-scaling.yml` replaces only the failed GB300
 32/16/4 chain; running x64 and ordinary Arm64 cells remain untouched.
 The compiler recipe, source, worker counts and timing boundaries are unchanged.
 
+Native probe 38722992402 passed all selected/excluded CPU checks at 32, 16 and
+4 CPUs on GB300's `[64, 8]` processor groups. Replacement 38723101166 passed
+capacity preflight, but GitHub reported loss of runner communication during
+source/tool preparation at 11:03:32 UTC. GB300 was then offline; production
+never started. This is distinct from the earlier preflight bug.
+
+The ordinary Arm64/16 cell in 38716997224 failed at 11:25:48 UTC while rendering
+the unstable book in the final distribution stage, after both PGO stages.
+`rustbook` reported Windows error 183 ("already exists") creating the
+`library-features` directory. The directory was present as a directory on
+subsequent inspection. Isolated diagnostic 38728217117 used the retained
+renderer and book input but fresh destinations, with the same 16-CPU affinity:
+all eight attempts passed (two each with default or single-threaded Rayon on
+D: ReFS and C: NTFS). This does not establish the original failure's cause,
+nor prove a filesystem or concurrency fix. The failed release is excluded.
+
+`matched-arm64-scaling.yml` schedules a fresh ordinary Arm64 16/4 chain,
+without changing the compiler recipe or suppressing documentation. It does
+not resume the failed tree or reuse its profiles. The original x64 chain
+continues independently. Failed runs and diagnostic replays are not accepted
+production measurements.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined
