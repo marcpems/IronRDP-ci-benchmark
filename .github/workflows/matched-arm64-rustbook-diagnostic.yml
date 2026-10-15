@@ -1,0 +1,43 @@
+name: Diagnose retained Arm64 rustbook rendering failure
+on:
+  push:
+    branches: [experiment/matched-arm64-rustbook-diagnostic]
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, MatchedStandardArm64]
+    timeout-minutes: 20
+    concurrency:
+      group: matched-arm64-selfhost
+      cancel-in-progress: false
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Inspect failed path and compare fresh renderer outputs
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-D4-Arm64') { throw 'Unexpected runner' }
+          foreach ($volume in @('C:\', 'D:\')) {
+            $drive = [IO.DriveInfo]::new($volume)
+            @{Volume=$volume; Format=$drive.DriveFormat; FreeBytes=$drive.AvailableFreeSpace} | ConvertTo-Json
+          }
+          $failed = 'D:\m16997224t16r1\r\build\aarch64-pc-windows-msvc\doc\unstable-book\library-features'
+          Get-Item -LiteralPath $failed -Force | Format-List FullName,Attributes,Mode,Length,LinkType,Target
+          python .github\scripts\diagnose_rustbook.py
+          if ($LASTEXITCODE) { throw 'Diagnostic harness failed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: arm64-rustbook-diagnostic
+          path: ${{ runner.temp }}/rustbook-diagnostic-${{ github.run_id }}
+          retention-days: 30
