@@ -145,7 +145,8 @@ def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, time
         kernel.GetCurrentProcess(), c.byref(own_mask), c.byref(system_mask),
     ))
     allowed = [i for i in range(c.sizeof(size) * 8) if own_mask.value & (1 << i)]
-    multi_group = cores == 64
+    from windows_job_affinity import requires_group_affinity
+    multi_group = requires_group_affinity(cores)
     if not multi_group and cores > len(allowed):
         raise RuntimeError("requested CPU affinity exceeds available CPUs")
     if session is not None and not session["active"]:

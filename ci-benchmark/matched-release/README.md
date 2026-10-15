@@ -32,6 +32,22 @@ be reported as measured scaling observations, not confidence intervals or
 guaranteed GitHub-hosted performance. A 360-minute hosted budget is evaluated
 against **whole-job** duration, not just compilation.
 
+The initial GB300 cell in 38716997224 remained unassigned after the runner
+returned online. It finally started at 10:46:53 UTC on 15 October, then
+failed before checkout: Windows PowerShell's `.NET Environment.ProcessorCount`
+reported only 8 CPUs (the smaller processor group), causing an incorrect
+32-CPU capacity rejection. Fresh dispatch probe 38722680331 succeeded and
+independently recorded that 8-CPU view. The original scheduling delay's
+service-side cause is not established.
+
+The replacement preflight uses the machine-wide CIM logical CPU count.
+Measured builds use explicit Windows Job Object processor-group affinity on
+multi-group machines at every allocation, not only at 64 CPUs. A real native
+probe must execute on every selected CPU and reject every excluded CPU before
+each GB300 build. `matched-gb300-scaling.yml` replaces only the failed GB300
+32/16/4 chain; running x64 and ordinary Arm64 cells remain untouched.
+The compiler recipe, source, worker counts and timing boundaries are unchanged.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined

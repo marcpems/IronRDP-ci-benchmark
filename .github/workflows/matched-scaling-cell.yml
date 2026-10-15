@@ -39,7 +39,10 @@ jobs:
           if (!$names.ContainsKey($machine) -or $env:RUNNER_NAME -ne $names[$machine]) { throw 'Unexpected runner' }
           $cores = [int]$env:RELEASE_BUILD_CORES
           $allowed = if ($machine -eq 'arm64-highcore') { @(4,16,32) } else { @(4,16) }
-          if ($cores -notin $allowed -or [Environment]::ProcessorCount -lt $cores) { throw 'Invalid CPU allocation' }
+          $processors = Get-CimInstance Win32_Processor
+          $logical = ($processors | Measure-Object -Property NumberOfLogicalProcessors -Sum).Sum
+          Write-Output "Requested CPUs: $cores; machine logical CPUs: $logical; PowerShell group count: $([Environment]::ProcessorCount)"
+          if ($cores -notin $allowed -or $logical -lt $cores) { throw 'Invalid CPU allocation' }
           if ($env:GITHUB_RUN_ATTEMPT -ne '1') { throw 'Use a fresh workflow run, not an in-place rerun' }
           "RELEASE_JOB_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
           "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
@@ -54,7 +57,7 @@ jobs:
           New-Item -ItemType Directory "$root\e" | Out-Null
           @{Drive=$drive.Name; AvailableBytes=$drive.AvailableFreeSpace; TotalBytes=$drive.TotalSize; Format=$drive.DriveFormat} |
             ConvertTo-Json > "$root\e\storage-start.json"
-          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors |
+          $processors | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors |
             ConvertTo-Json > "$root\e\cpu.json"
           Get-CimInstance Win32_ComputerSystem | Select-Object TotalPhysicalMemory |
             ConvertTo-Json > "$root\e\memory.json"

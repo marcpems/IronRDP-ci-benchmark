@@ -1,0 +1,24 @@
+name: GB300 MSVC PGO Rust ThinLTO scaling replacement
+on:
+  push:
+    branches: [experiment/msvc-rust-thin-scaling-gb300]
+permissions:
+  contents: read
+jobs:
+  highcore-32:
+    uses: ./.github/workflows/matched-scaling-cell.yml
+    with:
+      machine: arm64-highcore
+      cores: 32
+  highcore-16:
+    needs: highcore-32
+    uses: ./.github/workflows/matched-scaling-cell.yml
+    with:
+      machine: arm64-highcore
+      cores: 16
+  highcore-4:
+    needs: highcore-16
+    uses: ./.github/workflows/matched-scaling-cell.yml
+    with:
+      machine: arm64-highcore
+      cores: 4

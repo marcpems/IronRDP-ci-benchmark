@@ -286,6 +286,9 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
         )
     save(output / "provenance.json", provenance)
     preparation = time.time()
+    if variant == SCALING_VARIANT and runner_class() == "self-hosted-arm64-highcore":
+        execute([sys.executable, Path(__file__).with_name("windows_job_affinity.py"), str(build_cores())],
+                source, env, output, "scaling-processor-group-probe", timeout=120, cores=build_cores())
     # Build both runtimes on every variant so preparation is a common control.
     provenance["runtime"] = rebuild_clang_runtime(runtime_source, output, clang, env, identity, host)
     provenance["runtime_probe"] = clang_profile_preflight(output, clang, env, identity, host)

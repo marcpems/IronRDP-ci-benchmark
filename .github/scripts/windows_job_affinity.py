@@ -35,6 +35,10 @@ def selected_groups(counts, cores):
     return selected
 
 
+def requires_group_affinity(cores):
+    return cores == 64 or api().GetActiveProcessorGroupCount() > 1
+
+
 def configure_job_groups(job, cores):
     kernel = api()
     counts = [kernel.GetActiveProcessorCount(group)

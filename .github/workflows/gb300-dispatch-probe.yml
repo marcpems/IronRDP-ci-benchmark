@@ -8,7 +8,7 @@ jobs:
   probe:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     runs-on: [self-hosted, Windows, ARM64, HighCoreCount]
-    timeout-minutes: 2
+    timeout-minutes: 5
     steps:
       - name: Confirm fresh job delivery without starting a build
         shell: powershell
@@ -18,3 +18,37 @@ jobs:
           @{Runner=$env:RUNNER_NAME; Architecture=$env:RUNNER_ARCH;
             LogicalCPUs=[Environment]::ProcessorCount; UTC=[DateTime]::UtcNow.ToString('o')} |
             ConvertTo-Json
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Exercise every selected and excluded CPU under real job limits
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          @'
+          import json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, str(Path(".github/scripts").resolve()))
+          from msvc_experiment import execute
+          root = Path(os.environ["RUNNER_TEMP"]) / ("gb300-affinity-" + os.environ["GITHUB_RUN_ID"])
+          root.mkdir(exist_ok=False)
+          for cores in (32, 16, 4):
+              name = f"affinity-{cores}"
+              execute([sys.executable, Path(".github/scripts/windows_job_affinity.py").resolve(), str(cores)],
+                      Path.cwd(), dict(os.environ), root, name, timeout=60, cores=cores)
+              result = json.loads((root / f"{name}.stdout").read_text())
+              assert len(result["exercised"]) == cores
+              assert len(result["excluded_rejected"]) == sum(result["group_counts"]) - cores
+              print(json.dumps({"cores": cores, **result}), flush=True)
+          '@ | python -
+          if ($LASTEXITCODE) { throw 'Native group-affinity probe failed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: gb300-scaling-affinity
+          path: ${{ runner.temp }}/gb300-affinity-${{ github.run_id }}
+          retention-days: 30
