@@ -1,5 +1,13 @@
 # Matched Rust release cost and IronRDP benefit
 
+The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
+adds a short goal and TL;DR, the same measured comparison without runner names,
+and an adoption proposal. It separates observed PGO benefits from the combined
+LLVM-linker/ThinLTO treatment, and models larger-runner whole-job times against
+GitHub's 360-minute limit with a 300-minute planning target. These are conditional
+production-speedup scenarios, not measured hosted scaling or promised timings
+for particular CPU counts. The original one-page report remains unchanged.
+
 ## Completed x64, ordinary Arm64 and GB300 pilots
 
 The fresh x64 replay [38636440191](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38636440191)
