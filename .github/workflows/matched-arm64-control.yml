@@ -1,0 +1,41 @@
+name: Preserve failed Arm64 build and run fresh four-CPU control
+on:
+  push:
+    branches: [experiment/msvc-rust-thin-scaling-arm64-control]
+permissions:
+  contents: read
+jobs:
+  preserve:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, MatchedStandardArm64]
+    timeout-minutes: 45
+    concurrency:
+      group: matched-arm64-selfhost
+      cancel-in-progress: false
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Retain every failed-build file with verified checksums before reclaiming D
+        shell: powershell
+        run: |
+          python .github\scripts\relocate_failed_scaling_build.py
+          if ($LASTEXITCODE) { throw 'Verified failed-build relocation failed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: arm64-failed-build-relocation
+          path: C:\matched-retained\m16997224t16r1\relocation.json
+          retention-days: 30
+  arm64-4:
+    needs: preserve
+    uses: ./.github/workflows/matched-scaling-cell.yml
+    with:
+      machine: arm64
+      cores: 4

@@ -1,0 +1,91 @@
+"""Preserve the inspected failed build on another volume before reclaiming its cache."""
+
+import json
+import os
+from pathlib import Path
+import shutil
+import stat
+
+from build_arm_compilers import digest, save
+
+
+def physical_directory(path):
+    if not path.is_dir() or path.resolve() != path.absolute() or (
+            getattr(path.lstat(), "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT):
+        raise RuntimeError(f"Expected physical directory: {path}")
+
+
+def manifest(directory):
+    physical_directory(directory)
+    rows = []
+    def fail(error):
+        raise error
+    for parent, folders, names in os.walk(directory, onerror=fail, followlinks=False):
+        for name in folders:
+            physical_directory(Path(parent) / name)
+        for name in sorted(names):
+            path = Path(parent) / name
+            if (path.is_symlink() or not path.is_file()
+                    or getattr(path.lstat(), "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT):
+                raise RuntimeError(f"Unexpected redirected or non-file build entry: {path}")
+            rows.append({"path": str(path.relative_to(directory)),
+                         "bytes": path.stat().st_size, "sha256": digest(path)})
+    return sorted(rows, key=lambda row: row["path"])
+
+
+def relocate(build, destination):
+    physical_directory(build.parent)
+    physical_directory(destination.parent)
+    if destination.exists() or destination.is_symlink():
+        raise RuntimeError("Expected a fresh retained-build destination")
+    before = manifest(build)
+    if not before:
+        raise RuntimeError("Refusing an empty build relocation")
+    size = sum(row["bytes"] for row in before)
+    if shutil.disk_usage(destination.parent).free < size + 50 * 1024 ** 3:
+        raise RuntimeError("Retained volume needs build size plus 50 GiB free")
+    record = {"source": str(build), "destination": str(destination),
+              "files": before, "bytes": size, "complete": False}
+    accounting = destination.parent / "relocation.json"
+    save(accounting, record)
+    shutil.copytree(build, destination)
+    if manifest(destination) != before or manifest(build) != before:
+        raise RuntimeError("Build changed or retained copy failed checksum verification; source preserved")
+    physical_directory(build.parent)
+    physical_directory(build)
+    shutil.rmtree(build)
+    record["complete"] = True
+    record["source_volume_free_bytes"] = shutil.disk_usage(build.parent).free
+    save(accounting, record)
+    print(json.dumps({key: value for key, value in record.items() if key != "files"}), flush=True)
+
+
+def main():
+    if (os.name != "nt" or os.environ.get("RUNNER_NAME") != "MARCPE-D4-Arm64"
+            or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"):
+        raise RuntimeError("Expected the exact ordinary Arm64 runner")
+    root = Path(r"D:\m16997224t16r1")
+    for path in (root, root / "r", root / "e", root / "r/build"):
+        physical_directory(path)
+    provenance = json.loads((root / "e/provenance.json").read_text())
+    failure = json.loads((root / "e/fresh-pgo-full-dist.json").read_text())
+    if (provenance.get("run_id") != "38716997224"
+            or provenance.get("runner_name") != "MARCPE-D4-Arm64"
+            or provenance.get("variant") != "msvc-pgo-rust-thin"
+            or provenance.get("build_affinity_count") != 16
+            or provenance.get("paths", {}).get("source") != str(root / "r")
+            or failure.get("exit_code") != 1 or (root / "e/result.json").exists()
+            or (root / "r/build/dist").exists()):
+        raise RuntimeError("Expected the inspected failed, unqualified build without distribution")
+    retained = Path(r"C:\matched-retained")
+    if retained.exists():
+        physical_directory(retained)
+    else:
+        retained.mkdir()
+    destination = retained / root.name
+    destination.mkdir(exist_ok=False)
+    relocate(root / "r/build", destination / "build")
+
+
+if __name__ == "__main__":
+    main()

@@ -77,6 +77,24 @@ not resume the failed tree or reuse its profiles. The original x64 chain
 continues independently. Failed runs and diagnostic replays are not accepted
 production measurements.
 
+The fresh ordinary Arm64/16 release in 38728610658 completed and qualified:
+production 6721.889759 seconds (112.03 minutes), extracted-distribution tests
+3208.655321 seconds (53.48 minutes), and the whole successful job 11334 seconds
+(188.90 minutes). Its source/tool identity, full manifest and PGO/Rust ThinLTO
+audit passed. No four-to-sixteen scaling ratio is available yet.
+
+The dependent four-CPU cell stopped before checkout because D: had less than
+180 GiB free, even after successful qualified-build cleanup. Read-only inventory
+38755283083 found about 175 GiB free and 23.73 GiB in the earlier failed
+documentation build. `matched-arm64-control.yml` preserves every file of that
+specific failed build on C: with SHA256 verification before removing its D:
+copy, then schedules only a fresh four-CPU control. Sources, profiles, logs and
+qualified archives remain untouched; the 180 GiB guard is not relaxed.
+
+GB300 run 38731573412 also lost runner communication, at 14:49:34 UTC during
+the build/qualification step. It is excluded and its dependent 16/4 cells
+were skipped. No completed GB300 scaling result is available from that run.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined
