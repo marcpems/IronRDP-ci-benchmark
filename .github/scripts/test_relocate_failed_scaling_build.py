@@ -1,6 +1,8 @@
 import json
+import os
 from pathlib import Path
 import tempfile
+import subprocess
 import unittest
 from unittest.mock import patch
 
@@ -35,9 +37,9 @@ class RelocationTests(unittest.TestCase):
 
     def test_corrupt_copy_keeps_original(self):
         copytree = recovery.shutil.copytree
-        def corrupt(source, target):
+        def corrupt(source, target, **kwargs):
             with patch.object(recovery.shutil, "copytree", copytree):
-                copytree(source, target)
+                copytree(source, target, **kwargs)
             (target / "rustbook.exe").write_bytes(b"corrupt")
         with patch.object(recovery.shutil, "copytree", side_effect=corrupt):
             with self.assertRaisesRegex(RuntimeError, "checksum verification"):
@@ -57,6 +59,24 @@ class RelocationTests(unittest.TestCase):
                 recovery.relocate(self.build, self.destination)
         self.assertTrue(self.build.exists())
         self.assertFalse(self.destination.exists())
+
+    @unittest.skipUnless(os.name == "nt", "Windows directory junctions")
+    def test_internal_junction_is_retargeted_and_preserved(self):
+        subprocess.run([os.environ["COMSPEC"], "/c", "mklink", "/J",
+                        str(self.build / "host"), str(self.build / "docs")],
+                       check=True, capture_output=True)
+        recovery.relocate(self.build, self.destination)
+        self.assertEqual((self.destination / "host").resolve(), self.destination / "docs")
+        self.assertEqual((self.destination / "host/book.md").read_text(), "retained input")
+
+    @unittest.skipUnless(os.name == "nt", "Windows directory junctions")
+    def test_external_junction_is_rejected_without_removing_source(self):
+        subprocess.run([os.environ["COMSPEC"], "/c", "mklink", "/J",
+                        str(self.build / "outside"), str(self.destination.parent)],
+                       check=True, capture_output=True)
+        with self.assertRaisesRegex(RuntimeError, "leaves retained tree"):
+            recovery.relocate(self.build, self.destination)
+        self.assertTrue(self.build.exists())
 
 
 if __name__ == "__main__":
