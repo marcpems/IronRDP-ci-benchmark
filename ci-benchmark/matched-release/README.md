@@ -54,6 +54,13 @@ capacity preflight, but GitHub reported loss of runner communication during
 source/tool preparation at 11:03:32 UTC. GB300 was then offline; production
 never started. This is distinct from the earlier preflight bug.
 
+GB300 was online again at 11:57 UTC. Recovery probe 38731374184 received a
+job, found no other runner workers or active build processes, and passed the
+32/16/4 CPU-affinity checks. Three Git processes predated the failed release
+and showed no CPU or I/O counter growth over 15 seconds; they were left
+untouched. The GB300-only chain is restarted in a fresh run and build root,
+not resumed in the disconnected job's partially prepared tree.
+
 The ordinary Arm64/16 cell in 38716997224 failed at 11:25:48 UTC while rendering
 the unstable book in the final distribution stage, after both PGO stages.
 `rustbook` reported Windows error 183 ("already exists") creating the
