@@ -44,8 +44,21 @@ jobs:
             $_.ProcessId -notin $ancestors -and
             ($_.Name -in $tools -or $_.CommandLine -like '*D:\m23101166t32r1*')
           })
-          $workers + $leftovers | Select-Object Name,ProcessId,ParentProcessId |
-            ConvertTo-Json
+          foreach ($candidate in ($workers + $leftovers)) {
+            $parent = $processes | Where-Object ProcessId -eq $candidate.ParentProcessId
+            $grandparent = if ($parent) {
+              $processes | Where-Object ProcessId -eq $parent.ParentProcessId
+            }
+            $operation = if ($candidate.CommandLine -match '\b(submodule|fetch|clone|status|rev-parse|log|diff|index-pack|remote-https|maintenance)\b') {
+              $Matches[1]
+            } else { 'unidentified' }
+            @{Name=$candidate.Name; ProcessId=$candidate.ProcessId;
+              CreatedUTC=$candidate.CreationDate.ToUniversalTime().ToString('o');
+              ParentProcessId=$candidate.ParentProcessId; ParentName=$parent.Name;
+              GrandparentName=$grandparent.Name; GitOperation=$operation;
+              ReferencesFailedRoot=($candidate.CommandLine -like '*D:\m23101166t32r1*')} |
+              ConvertTo-Json
+          }
           if ($workers.Count -or $leftovers.Count) {
             throw 'Potential surviving or concurrent work detected; investigate without killing processes'
           }
