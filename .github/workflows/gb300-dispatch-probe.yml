@@ -59,6 +59,25 @@ jobs:
               ReferencesFailedRoot=($candidate.CommandLine -like '*D:\m23101166t32r1*')} |
               ConvertTo-Json
           }
+          if ($leftovers.Count) {
+            Start-Sleep -Seconds 15
+            $current = @(Get-CimInstance Win32_Process)
+            $blocking = @()
+            foreach ($candidate in $leftovers) {
+              $now = $current | Where-Object ProcessId -eq $candidate.ProcessId
+              if (!$now) { continue }
+              $unchanged = $now.CreationDate -eq $candidate.CreationDate
+              foreach ($counter in @('KernelModeTime','UserModeTime','ReadTransferCount','WriteTransferCount','OtherTransferCount')) {
+                if ($now.$counter -ne $candidate.$counter) { $unchanged = $false }
+              }
+              $oldIdleGit = $candidate.Name -eq 'git.exe' -and $unchanged -and
+                $candidate.CreationDate.ToUniversalTime() -lt [DateTime]::Parse('2026-10-15T10:50:31Z').ToUniversalTime() -and
+                $candidate.CommandLine -notlike '*D:\m23101166t32r1*'
+              @{ProcessId=$candidate.ProcessId; PredatesReleaseAndIdle=$oldIdleGit} | ConvertTo-Json
+              if (!$oldIdleGit) { $blocking += $candidate }
+            }
+            $leftovers = $blocking
+          }
           if ($workers.Count -or $leftovers.Count) {
             throw 'Potential surviving or concurrent work detected; investigate without killing processes'
           }
