@@ -1,0 +1,35 @@
+{
+  "study": "msvc-rust-thin-scaling-v1",
+  "variant": "msvc-pgo-rust-thin",
+  "rust_sha": "7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238",
+  "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+  "rustc_perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
+  "native_compiler": "clang-cl",
+  "native_linker": "Microsoft link.exe",
+  "native_librarian": "Microsoft lib.exe",
+  "rust_lto": "thin",
+  "llvm_native_lto": false,
+  "scope": "Full Rust release only: fresh full-tool/frontend/backend PGO, tools, docs, MSI, applicable backends and Arm64EC; original extracted-distribution qualification. No IronRDP replay.",
+  "cells_in_execution_order": {
+    "MARCPE-TEST01-X64": [16, 4],
+    "MARCPE-D4-Arm64": [16, 4],
+    "GB300-Arm64": [32, 16, 4]
+  },
+  "replicates_per_cell": 1,
+  "allocation": "Logical CPU affinity and bootstrap/Cargo/CMake worker counts set together. x64 has only 8 physical cores / 16 logical CPUs, not 16 physical cores.",
+  "controlled_settings": {
+    "llvm_link_jobs": 1,
+    "training_cargo_jobs": 4,
+    "training_frontend_threads": 1,
+    "compiler_codegen_units_x64": 1,
+    "compiler_codegen_units_arm64": 16,
+    "std_codegen_units": 1
+  },
+  "primary": "Production wall time from before opt-dist helper construction through completed full distribution; includes fresh training/merges/builds/packaging, excludes setup/qualification/uploads/cleanup.",
+  "secondary": "Actual successful job wall time and exclusive production phase breakdown; queue/offline waiting reported separately.",
+  "controls": "Fresh run-specific physical roots, Cargo homes and profiles per cell; no compiler or profile cache reuse. Serialize within each machine; allow independent machines in parallel.",
+  "analysis": "Compare 4->16 on each machine and 4->16->32 on GB300 using only matching source, tools, flags and qualified results. Report measured ratios and the 360-minute hosted threshold, not a guaranteed hosted-VM projection. Cross-machine ratios are not CPU scaling.",
+  "qualification": "Verify full manifests, executed backend profiles, native compiler/linker/librarian hashes, explicit Rust PGO/ThinLTO flags, CPU accounting and common extracted tests.",
+  "limitations": "Initial single-pass scaling pilots with fixed order, no confidence intervals. Prior Microsoft-PGO releases had Rust cross-crate ThinLTO off and cannot serve as this recipe's four-CPU controls. No larger GitHub-hosted runner was measured.",
+  "failure_policy": "Failed, timed-out or unqualified cells are excluded; dependent cells stop rather than reuse partial output. Offline GB300 may queue for at most GitHub's queue limit; relaunch fresh if the queue expires."
+}

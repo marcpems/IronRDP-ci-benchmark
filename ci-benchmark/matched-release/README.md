@@ -1,5 +1,37 @@
 # Matched Rust release cost and IronRDP benefit
 
+## Release-only Microsoft-retained PGO + Rust ThinLTO scaling
+
+The separate [scaling protocol](msvc-scaling-protocol.json) schedules x64/16,
+ordinary Arm64/16 and high-core Arm64/32 first, then matching four-CPU
+controls. A 16-CPU point on the high-core machine supplies a same-machine
+4/16/32 curve. Seven cold full-release cells run serially within each
+machine; independent machines may run concurrently. No IronRDP jobs are
+scheduled. GB300 was registered but offline when this batch was requested.
+
+This recipe retains `clang-cl`, Microsoft `link.exe` and `lib.exe`, with
+fresh PGO and **Rust-side cross-crate ThinLTO enabled**. Native LLVM ThinLTO
+stays off because its bitcode is not supported by Microsoft `/LTCG`.
+Earlier report rows labelled Microsoft-retained PGO had Rust cross-crate
+ThinLTO off, so they are not reused as four-CPU controls. The distinct
+`msvc-pgo-rust-thin` variant and study metadata prevent mixing these results.
+
+CPU allocations mean logical processors, not necessarily physical cores:
+the x64 machine has 8 physical cores / 16 logical CPUs. Bootstrap/Cargo/CMake
+workers follow each allocation; training remains at four Cargo jobs and one
+frontend thread, and LLVM link jobs stay at one across this scaling series.
+Full distribution scope, fresh profiles, source pins, native tools and
+qualification gates are unchanged. The workflow rejects inadequate space,
+wrong runners and in-place reruns; completed artifacts are retained before
+only that cell's verified disposable build directory is reclaimed.
+
+The batch starts from `experiment/msvc-rust-thin-scaling` through
+`matched-msvc-scaling.yml`. Each cell has its own 24-hour self-hosted deadline.
+An offline runner can still hit GitHub's queue limit. Single-pass ratios will
+be reported as measured scaling observations, not confidence intervals or
+guaranteed GitHub-hosted performance. A 360-minute hosted budget is evaluated
+against **whole-job** duration, not just compilation.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined

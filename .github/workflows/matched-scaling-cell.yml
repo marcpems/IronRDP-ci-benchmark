@@ -1,0 +1,149 @@
+name: Full MSVC PGO and Rust ThinLTO scaling cell
+on:
+  workflow_call:
+    inputs:
+      machine:
+        type: string
+        required: true
+      cores:
+        type: number
+        required: true
+permissions:
+  contents: read
+jobs:
+  release:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    name: ${{ inputs.machine }} / ${{ inputs.cores }} CPUs / MSVC PGO Rust ThinLTO
+    runs-on: ${{ fromJSON(inputs.machine == 'x64' && '["self-hosted","Windows","X64"]' || inputs.machine == 'arm64-highcore' && '["self-hosted","Windows","ARM64","HighCoreCount"]' || '["self-hosted","Windows","ARM64","MatchedStandardArm64"]') }}
+    concurrency:
+      group: ${{ inputs.machine == 'arm64-highcore' && 'matched-highcore-arm64-selfhost' || format('matched-{0}-selfhost', inputs.machine) }}
+      cancel-in-progress: false
+    timeout-minutes: 1440
+    defaults:
+      run:
+        shell: powershell
+    env:
+      RELEASE_MACHINE_CLASS: self-hosted-${{ inputs.machine }}
+      RELEASE_SCALING_STUDY: msvc-rust-thin-scaling-v1
+      RELEASE_BUILD_CORES: ${{ inputs.cores }}
+      RELEASE_REPLICATE: "1"
+      RELEASE_PILOT: "true"
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - name: Check exact runner, capacity and fresh paths
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $names = @{x64='MARCPE-TEST01-X64'; arm64='MARCPE-D4-Arm64'; 'arm64-highcore'='GB300-Arm64'}
+          $machine = '${{ inputs.machine }}'
+          if (!$names.ContainsKey($machine) -or $env:RUNNER_NAME -ne $names[$machine]) { throw 'Unexpected runner' }
+          $cores = [int]$env:RELEASE_BUILD_CORES
+          $allowed = if ($machine -eq 'arm64-highcore') { @(4,16,32) } else { @(4,16) }
+          if ($cores -notin $allowed -or [Environment]::ProcessorCount -lt $cores) { throw 'Invalid CPU allocation' }
+          if ($env:GITHUB_RUN_ATTEMPT -ne '1') { throw 'Use a fresh workflow run, not an in-place rerun' }
+          "RELEASE_JOB_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=false" >> $env:GITHUB_ENV
+          $root = Join-Path ([IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) "m$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))t${cores}r1"
+          $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($root))
+          if ($drive.AvailableFreeSpace -lt 180GB) { throw 'Need at least 180 GiB free before a full release cell' }
+          if (Test-Path -LiteralPath $root) { throw 'Expected a fresh physical build root' }
+          New-Item -ItemType Directory "$root\e" | Out-Null
+          @{Drive=$drive.Name; AvailableBytes=$drive.AvailableFreeSpace; TotalBytes=$drive.TotalSize; Format=$drive.DriveFormat} |
+            ConvertTo-Json > "$root\e\storage-start.json"
+          Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors |
+            ConvertTo-Json > "$root\e\cpu.json"
+          Get-CimInstance Win32_ComputerSystem | Select-Object TotalPhysicalMemory |
+            ConvertTo-Json > "$root\e\memory.json"
+          "MATCHED_ROOT=$root" >> $env:GITHUB_ENV
+          $arch = if ($machine -eq 'x64') { 'x64' } else { 'arm64' }
+          "RELEASE_ARCH=$arch" >> $env:GITHUB_ENV
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: marcpems/rust-arm64-compiler-ab
+          ref: 7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: llvm/llvm-project
+          ref: ca7933e47d3a3451d81e72ac174dcb5aa28b59d1
+          path: clang-runtime-source
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: ${{ env.RELEASE_ARCH }}
+      - name: Prepare pinned native sources and tools
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = "$env:MATCHED_ROOT\r"
+          [IO.Directory]::Move((Resolve-Path rust-source).Path, $source)
+          [IO.Directory]::Move((Resolve-Path clang-runtime-source).Path, "$env:MATCHED_ROOT\l")
+          git -C $source submodule update --init --recursive --depth 1 --jobs 8
+          if ($LASTEXITCODE) { throw 'Submodule checkout failed' }
+          $suffix = if ($env:RELEASE_ARCH -eq 'arm64') { 'woa64' } else { 'win64' }
+          New-Item -ItemType Directory "$source\citools\clang-rust","$source\wix\bin" | Out-Null
+          curl.exe --fail --location --retry 3 "https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-$suffix.exe" -o "$source\citools\clang.exe"
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          7z x -y -bd -bso0 "-o$source\citools\clang-rust" "$source\citools\clang.exe"
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip -o "$source\wix\wix.zip"
+          if ($LASTEXITCODE) { throw 'WIX download failed' }
+          7z x -y -bd -bso0 "-o$source\wix\bin" "$source\wix\wix.zip"
+          if ($LASTEXITCODE) { throw 'WIX extraction failed' }
+      - name: Build and qualify full MSVC PGO and Rust ThinLTO release
+        run: |
+          $hostTriple = if ($env:RELEASE_ARCH -eq 'arm64') { 'aarch64-pc-windows-msvc' } else { 'x86_64-pc-windows-msvc' }
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture $env:RELEASE_ARCH -Script harness\.github\scripts\matched_release.py --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e" --host $hostTriple --variant msvc-pgo-rust-thin
+      - name: Preserve release evidence
+        if: always() && env.MATCHED_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: scaling-${{ inputs.machine }}-${{ inputs.cores }}cpu-1-evidence
+          path: |
+            ${{ env.MATCHED_ROOT }}/e/*.json
+            ${{ env.MATCHED_ROOT }}/e/*.stdout
+            ${{ env.MATCHED_ROOT }}/e/*.stderr
+            ${{ env.MATCHED_ROOT }}/e/*.txt
+            ${{ env.MATCHED_ROOT }}/e/*.toml
+            ${{ env.MATCHED_ROOT }}/e/*.cmake
+            ${{ env.MATCHED_ROOT }}/r/build/metrics.json
+            ${{ env.MATCHED_ROOT }}/r/opt-artifacts/*.profdata
+          compression-level: 1
+          retention-days: 30
+      - name: Preserve qualified full distribution
+        if: success()
+        uses: actions/upload-artifact@v6
+        with:
+          name: scaling-${{ inputs.machine }}-${{ inputs.cores }}cpu-1-dist
+          path: ${{ env.MATCHED_ROOT }}/r/build/dist
+          compression-level: 0
+          retention-days: 7
+      - name: Reclaim only qualified build space after uploads
+        if: success()
+        run: |
+          python harness\.github\scripts\recover_matched_build.py --root "$env:MATCHED_ROOT" --machine "$env:RELEASE_MACHINE_CLASS" --run-id "$env:GITHUB_RUN_ID" --variant msvc-pgo-rust-thin --vm 1 --scaling-cores $env:RELEASE_BUILD_CORES
+          if ($LASTEXITCODE) { throw 'Qualified build-space recovery failed' }
+      - name: Preserve maintenance accounting
+        if: always() && env.MATCHED_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: scaling-${{ inputs.machine }}-${{ inputs.cores }}cpu-1-maintenance
+          path: ${{ env.MATCHED_ROOT }}/e/space-recovery.json
+          retention-days: 30
+      - name: Preserve unqualified distributions without accepting their timings
+        if: failure() && env.MATCHED_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: scaling-${{ inputs.machine }}-${{ inputs.cores }}cpu-1-unqualified-dist
+          path: ${{ env.MATCHED_ROOT }}/r/build/dist
+          compression-level: 0
+          retention-days: 7

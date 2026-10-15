@@ -438,6 +438,21 @@ def audit_runtime_modules(text, runtime_path):
         raise RuntimeError("PDB lacks the required profiling runtime modules")
 
 
+def audit_rust_flags(lines, *, pgo, thin):
+    observed = {"pgo": False, "thin": False, "dylib_lto": False}
+    for line in lines:
+        if re.search(r"-C\s*linker=[^\r\n]*lld-link", line, re.I):
+            raise RuntimeError("Unexpected lld-link selection for a Rust compilation")
+        observed["pgo"] |= "-Cprofile-use=" in line
+        observed["thin"] |= bool(re.search(r"-C\s*lto=thin(?=[\s\"']|$)", line))
+        observed["dylib_lto"] |= "-Zdylib-lto" in line
+    if thin and not (observed["thin"] and observed["dylib_lto"]):
+        raise RuntimeError("No evidence that Rust-side dylib ThinLTO was enabled")
+    if pgo and not observed["pgo"]:
+        raise RuntimeError("No evidence of rustc PGO use")
+    return observed
+
+
 def audit_build(source, host, phase, output, identity):
     cache_path = source / "build" / host / "llvm/build/CMakeCache.txt"
     shutil.copy2(cache_path, output / "CMakeCache.txt")
@@ -469,12 +484,8 @@ def audit_build(source, host, phase, output, identity):
             "runtime": runtime, "required_modules_verified": True,
         })
     # Building the shipped rust-lld tool is not the same as using it to link rustc.
-    if re.search(r"-C\s*linker=[^\r\n]*lld-link", log, re.I):
-        raise RuntimeError("Unexpected lld-link selection for a Rust compilation")
-    if phase == "pgo-rust-thin" and ("-Clto=thin" not in log or "-Zdylib-lto" not in log):
-        raise RuntimeError("No evidence that Rust-side dylib ThinLTO was enabled")
-    if phase in ("pgo", "pgo-rust-thin") and "-Cprofile-use=" not in log:
-        raise RuntimeError("No evidence of rustc PGO use")
+    audit_rust_flags(log.splitlines(), pgo=phase in ("pgo", "pgo-rust-thin"),
+                     thin=phase == "pgo-rust-thin")
     save(output / "audit.json", {"llvm_lto": False, "microsoft_linker": True,
                                "clang_cpp_compiler": True, "rust_thin_lto": phase == "pgo-rust-thin"})
 

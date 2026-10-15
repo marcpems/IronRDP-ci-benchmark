@@ -1,6 +1,7 @@
 """Matched cold full-distribution builds; never substitutes compiler-only timings."""
 
 import argparse
+import itertools
 import json
 import os
 from pathlib import Path
@@ -13,7 +14,7 @@ import tomllib
 
 from build_arm_compilers import digest, save
 from msvc_experiment import (
-    clang_profile_preflight, cmake_toolchain, environment, execute,
+    audit_rust_flags, clang_profile_preflight, cmake_toolchain, environment, execute,
     rebuild_clang_runtime, tool_identity,
 )
 
@@ -21,6 +22,8 @@ RUST = "7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238"
 LLVM = "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019"
 PERF = "208d929efe770996eb02cd3d2712623ea48b7646"
 VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
+SCALING_VARIANT = "msvc-pgo-rust-thin"
+SCALING_STUDY = "msvc-rust-thin-scaling-v1"
 
 
 def runner_class():
@@ -31,6 +34,15 @@ def runner_class():
 
 
 def build_cores():
+    study = os.environ.get("RELEASE_SCALING_STUDY")
+    requested = os.environ.get("RELEASE_BUILD_CORES")
+    if study is not None or requested is not None:
+        if study != SCALING_STUDY or runner_class() == "github-hosted":
+            raise RuntimeError("CPU overrides require the explicit self-hosted scaling study")
+        allowed = ("4", "16", "32") if runner_class() == "self-hosted-arm64-highcore" else ("4", "16")
+        if requested not in allowed:
+            raise RuntimeError("unsupported CPU allocation for the scaling study")
+        return int(requested)
     return 64 if runner_class() == "self-hosted-arm64-highcore" else 4
 
 
@@ -96,7 +108,7 @@ codegen-backends = {json.dumps(backends)}
 lld = true
 llvm-tools = true
 llvm-bitcode-linker = true
-lto = "{'thin' if llvm else 'thin-local'}"
+lto = "{'thin' if llvm or variant == SCALING_VARIANT else 'thin-local'}"
 [target.{host}]
 linker = "{'lld-link.exe' if llvm else 'link.exe'}"
 ar = "{librarian.as_posix()}"
@@ -210,7 +222,7 @@ def main():
     parser.add_argument("--runtime-source", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--host", choices=("x86_64-pc-windows-msvc", "aarch64-pc-windows-msvc"), required=True)
-    parser.add_argument("--variant", choices=VARIANTS, required=True)
+    parser.add_argument("--variant", choices=(*VARIANTS, SCALING_VARIANT), required=True)
     args = parser.parse_args()
     source, output = args.source.resolve(), args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -224,6 +236,8 @@ def main():
 def prepare(source, runtime_source, output, host, variant, full_distribution=True,
             rust_revision=RUST):
     validate_runner(host)
+    if (variant == SCALING_VARIANT) != (os.environ.get("RELEASE_SCALING_STUDY") == SCALING_STUDY):
+        raise RuntimeError("scaling allocations require the distinct Microsoft-PGO/Rust-ThinLTO recipe")
     check_build_paths(source, runtime_source, output)
     for path, revision in ((source, rust_revision), (source / "src/llvm-project", LLVM),
                            (source / "src/tools/rustc-perf", PERF)):
@@ -243,8 +257,8 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
         "DIST_REQUIRE_ALL_TOOLS": "1", "DIST_TRY_BUILD": "0",
         "MATCHED_BUILD_CORES": str(build_cores()),
     })
-    if build_cores() == 64:
-        env.update({"CARGO_BUILD_JOBS": "64", "CMAKE_BUILD_PARALLEL_LEVEL": "64"})
+    if build_cores() == 64 or variant == SCALING_VARIANT:
+        env.update({"CARGO_BUILD_JOBS": str(build_cores()), "CMAKE_BUILD_PARALLEL_LEVEL": str(build_cores())})
     env["CMAKE_TOOLCHAIN_FILE"] = str(cmake_toolchain(output, identity))
     provenance = {
         "rust_sha": rust_revision, "llvm_sha": LLVM, "perf_sha": PERF, "host": host,
@@ -265,6 +279,11 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
         "paths": {"source": str(source), "runtime": str(runtime_source), "output": str(output),
                   "cargo_home": env["CARGO_HOME"], "temp": env["TEMP"]},
     }
+    if variant == SCALING_VARIANT:
+        provenance.update(
+            scaling_study=SCALING_STUDY,
+            rust_lto="thin", llvm_thin_lto=False, native_linker="link.exe", native_librarian="lib.exe",
+        )
     save(output / "provenance.json", provenance)
     preparation = time.time()
     # Build both runtimes on every variant so preparation is a common control.
@@ -333,10 +352,19 @@ def build(source, runtime_source, output, host, variant):
                 values[key.split(":", 1)[0]] = value
         expected = {"CMAKE_LINKER": clang / "lld-link.exe" if variant == "llvm-pgo-thin"
                     else Path(identity["files"]["link.exe"]["path"]), "CMAKE_AR": librarian}
+        if variant == SCALING_VARIANT:
+            expected["CMAKE_CXX_COMPILER"] = clang / "clang-cl.exe"
+            if values.get("LLVM_ENABLE_LTO") != "OFF":
+                raise RuntimeError("Microsoft-retained scaling requires LLVM native LTO off")
         for key, binary in expected.items():
             if digest(Path(values[key])) != digest(binary):
                 raise RuntimeError(f"{component} used an unexpected {key}")
         shutil.copy2(cache, output / f"{component}-CMakeCache.txt")
+    if variant == SCALING_VARIANT:
+        with (output / "fresh-pgo-full-dist.stdout").open(errors="replace") as stdout, \
+                (output / "fresh-pgo-full-dist.stderr").open(errors="replace") as stderr:
+            audit = audit_rust_flags(itertools.chain(stdout, stderr), pgo=True, thin=True)
+        save(output / "rust-optimization-audit.json", audit)
     qualify_distribution(source, output, host, env)
     # The retained archives are the actual distribution outputs used by downstream checks.
     save(output / "result.json", {

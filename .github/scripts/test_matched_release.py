@@ -9,6 +9,71 @@ import matched_release as release
 
 
 class MatchedReleaseTests(unittest.TestCase):
+    def test_scaling_keeps_microsoft_tools_and_enables_only_rust_thinlto(self):
+        for machine, allocations in (("x64", (4, 16)), ("arm64", (4, 16)),
+                                     ("arm64-highcore", (4, 16, 32))):
+            host = "x86_64-pc-windows-msvc" if machine == "x64" else "aarch64-pc-windows-msvc"
+            for cores in allocations:
+                with self.subTest(machine=machine, cores=cores), patch.dict(release.os.environ, {
+                    "RELEASE_MACHINE_CLASS": f"self-hosted-{machine}",
+                    "RELEASE_SCALING_STUDY": release.SCALING_STUDY,
+                    "RELEASE_BUILD_CORES": str(cores),
+                }):
+                    self.assertEqual(release.build_cores(), cores)
+                    config = tomllib.loads(release.configuration(
+                        host, Path("C:/clang/bin"), Path("C:/VS/lib.exe"), release.SCALING_VARIANT))
+                    self.assertEqual(config["build"]["jobs"], cores)
+                    self.assertTrue(config["build"]["extended"])
+                    self.assertTrue(config["build"]["docs"])
+                    self.assertEqual(config["rust"]["lto"], "thin")
+                    self.assertFalse(config["llvm"]["thin-lto"])
+                    self.assertEqual(config["llvm"]["link-jobs"], 1)
+                    self.assertEqual(config["target"][host]["linker"], "link.exe")
+                    self.assertEqual(config["target"][host]["ar"], "C:/VS/lib.exe")
+
+    def test_scaling_cpu_overrides_fail_closed(self):
+        for machine, study, cores in (
+            ("github-hosted", release.SCALING_STUDY, "16"),
+            ("self-hosted-x64", "unknown", "16"),
+            ("self-hosted-x64", release.SCALING_STUDY, "32"),
+            ("self-hosted-arm64", release.SCALING_STUDY, "0"),
+            ("self-hosted-arm64-highcore", release.SCALING_STUDY, "64"),
+        ):
+            with self.subTest(machine=machine, study=study, cores=cores), patch.dict(release.os.environ, {
+                "RELEASE_MACHINE_CLASS": machine, "RELEASE_SCALING_STUDY": study,
+                "RELEASE_BUILD_CORES": cores,
+            }):
+                with self.assertRaises(RuntimeError):
+                    release.build_cores()
+        with patch.dict(release.os.environ, {
+            "RELEASE_MACHINE_CLASS": "self-hosted-x64",
+            "RELEASE_SCALING_STUDY": release.SCALING_STUDY, "RELEASE_BUILD_CORES": "16",
+            "RUNNER_ENVIRONMENT": "self-hosted", "RUNNER_NAME": "MARCPE-TEST01-X64",
+        }), patch.object(release.os, "name", "nt"), \
+                patch.object(release.os, "cpu_count", return_value=8), \
+                patch.object(release.platform, "machine", return_value="AMD64"):
+            with self.assertRaisesRegex(RuntimeError, "unexpected self-hosted"):
+                release.validate_runner("x86_64-pc-windows-msvc")
+
+    def test_scaling_recipe_cannot_silently_enter_old_study(self):
+        with patch.object(release, "validate_runner"):
+            with self.assertRaisesRegex(RuntimeError, "distinct"):
+                release.prepare(Path("C:/mr/r"), Path("C:/mr/l"), Path("C:/mr/e"),
+                                "aarch64-pc-windows-msvc", release.SCALING_VARIANT)
+            with patch.dict(release.os.environ, {"RELEASE_SCALING_STUDY": release.SCALING_STUDY}):
+                with self.assertRaisesRegex(RuntimeError, "distinct"):
+                    release.prepare(Path("C:/mr/r"), Path("C:/mr/l"), Path("C:/mr/e"),
+                                    "aarch64-pc-windows-msvc", "msvc-pgo")
+
+    def test_rust_lto_audit_distinguishes_thin_from_thin_local(self):
+        flags = "-Cprofile-use=profile -Zdylib-lto -Clto=thin -Clinker=link.exe"
+        self.assertTrue(release.audit_rust_flags([flags], pgo=True, thin=True)["thin"])
+        for changed in (flags.replace("lto=thin", "lto=thin-local"),
+                        flags.replace("linker=link.exe", "linker=lld-link.exe"),
+                        flags.replace("-Cprofile-use=profile", "")):
+            with self.subTest(changed=changed), self.assertRaises(RuntimeError):
+                release.audit_rust_flags([changed], pgo=True, thin=True)
+
     def test_highcore_is_a_separate_native_arm64_resource_class(self):
         with patch.dict(release.os.environ, {
             "RELEASE_MACHINE_CLASS": "self-hosted-arm64-highcore",

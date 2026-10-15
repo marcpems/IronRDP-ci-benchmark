@@ -9,14 +9,14 @@ import stat
 import time
 
 from build_arm_compilers import digest, save
-from matched_release import RUST
+from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
 
 RUNNERS = {
     "self-hosted-arm64-highcore": "GB300-Arm64",
     "self-hosted-x64": "MARCPE-TEST01-X64",
     "self-hosted-arm64": "MARCPE-D4-Arm64",
 }
-CODES = {"baseline": "b", "msvc-pgo": "m", "llvm-pgo-thin": "l"}
+CODES = {"baseline": "b", "msvc-pgo": "m", "llvm-pgo-thin": "l", SCALING_VARIANT: "t"}
 
 
 def verify_archives(directory, manifest):
@@ -33,9 +33,16 @@ def verify_archives(directory, manifest):
             raise RuntimeError(f"distribution checksum or size mismatch: {path}")
 
 
-def recover(root, machine, run_id, variant, vm):
+def recover(root, machine, run_id, variant, vm, scaling_cores=None):
     root = root.absolute()
+    if (variant == SCALING_VARIANT) != (scaling_cores is not None):
+        raise RuntimeError("scaling recovery requires explicit CPU allocation and recipe")
     expected_name = f"m{run_id[-8:]}{CODES[variant]}{vm}"
+    if scaling_cores is not None:
+        allowed = (4, 16, 32) if machine == "self-hosted-arm64-highcore" else (4, 16)
+        if scaling_cores not in allowed:
+            raise RuntimeError("unexpected scaling CPU allocation")
+        expected_name = f"m{run_id[-8:]}t{scaling_cores}r{vm}"
     if root.name != expected_name:
         raise RuntimeError("unexpected experiment directory name")
     build, evidence = root / "r" / "build", root / "e"
@@ -46,6 +53,11 @@ def recover(root, machine, run_id, variant, vm):
                               & stat.FILE_ATTRIBUTE_REPARSE_POINT):
             raise RuntimeError(f"refusing redirected experiment directory: {path}")
     result = json.loads((evidence / "result.json").read_text())
+    if scaling_cores is not None and (
+            result.get("scaling_study") != SCALING_STUDY
+            or result.get("build_jobs") != scaling_cores
+            or result.get("build_affinity_count") != scaling_cores):
+        raise RuntimeError("scaling result resource provenance mismatch")
     if (result.get("complete") is not True or result.get("full_distribution") is not True
             or result.get("rust_sha") != RUST or result.get("runner_class") != machine
             or result.get("runner_name") != RUNNERS[machine]
@@ -86,13 +98,14 @@ def main():
     parser.add_argument("--run-id", required=True)
     parser.add_argument("--variant", choices=CODES, required=True)
     parser.add_argument("--vm", type=int, default=1)
+    parser.add_argument("--scaling-cores", type=int)
     args = parser.parse_args()
     root = args.root.absolute()
     if (os.name != "nt" or root.parent != Path(root.anchor)
             or os.environ.get("RUNNER_NAME") != RUNNERS[args.machine]
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"):
         raise RuntimeError("expected the exact self-hosted runner and direct-volume experiment root")
-    recover(root, args.machine, args.run_id, args.variant, args.vm)
+    recover(root, args.machine, args.run_id, args.variant, args.vm, args.scaling_cores)
 
 
 if __name__ == "__main__":

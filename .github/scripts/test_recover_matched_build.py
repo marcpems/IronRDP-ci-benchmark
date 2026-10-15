@@ -4,13 +4,13 @@ import tempfile
 import unittest
 
 from build_arm_compilers import digest, save
-from matched_release import RUST
+from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
 from recover_matched_build import recover
 
 
 class RecoveryTests(unittest.TestCase):
-    def fixture(self, parent):
-        root = Path(parent) / "m82254692b1"
+    def fixture(self, parent, scaling_cores=None):
+        root = Path(parent) / ("m82254692b1" if scaling_cores is None else f"m82254692t{scaling_cores}r1")
         dist = root / "r" / "build" / "dist"
         dist.mkdir(parents=True)
         (dist / "rustc.tar.xz").write_bytes(b"archive")
@@ -22,13 +22,26 @@ class RecoveryTests(unittest.TestCase):
         save(evidence / "result.json", {
             "complete": True, "full_distribution": True, "rust_sha": RUST,
             "runner_class": "self-hosted-arm64-highcore", "runner_name": "GB300-Arm64",
-            "run_id": "38282254692", "variant": "baseline", "vm": 1, "attempt": "1",
+            "run_id": "38282254692", "variant": "baseline" if scaling_cores is None else SCALING_VARIANT,
+            "vm": 1, "attempt": "1",
             "paths": {"source": str(root / "r")},
+            **({"scaling_study": SCALING_STUDY, "build_jobs": scaling_cores,
+                "build_affinity_count": scaling_cores} if scaling_cores is not None else {}),
         })
         save(evidence / "dist-manifest.json", [{
             "name": "rustc.tar.xz", "bytes": 7, "sha256": digest(dist / "rustc.tar.xz"),
         }])
         return root
+
+    def test_scaling_recovery_requires_matching_explicit_cpu_count(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = self.fixture(tmp, scaling_cores=32)
+            for wrong in (None, 4, 64):
+                with self.subTest(wrong=wrong), self.assertRaises(RuntimeError):
+                    recover(root, "self-hosted-arm64-highcore", "38282254692", SCALING_VARIANT, 1, wrong)
+                self.assertTrue((root / "r" / "build" / "dist").is_dir())
+            recover(root, "self-hosted-arm64-highcore", "38282254692", SCALING_VARIANT, 1, 32)
+            self.assertTrue((root / "retained-dist" / "rustc.tar.xz").is_file())
 
     def test_preserves_archives_evidence_profiles_and_supports_retry(self):
         with tempfile.TemporaryDirectory() as tmp:
