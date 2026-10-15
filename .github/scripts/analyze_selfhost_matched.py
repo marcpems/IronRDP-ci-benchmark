@@ -127,8 +127,8 @@ def word_document(results, path):
     from docx.enum.section import WD_ORIENT
     from docx.shared import Inches, Pt
 
-    if not 1 <= len(results) <= 2 or len({r["machine"] for r in results}) != len(results):
-        raise ValueError("one-page pilot report requires one or two distinct machines")
+    if not 1 <= len(results) <= 3 or len({r["machine"] for r in results}) != len(results):
+        raise ValueError("one-page pilot report requires one to three distinct machines")
     document = Document()
     section = document.sections[0]
     section.orientation = WD_ORIENT.LANDSCAPE
@@ -136,8 +136,8 @@ def word_document(results, path):
     section.top_margin = section.bottom_margin = Inches(0.45)
     section.left_margin = section.right_margin = Inches(0.5)
     style = document.styles["Normal"]
-    style.font.name, style.font.size = "Calibri", Pt(10)
-    style.paragraph_format.space_after = Pt(5)
+    style.font.name, style.font.size = "Calibri", Pt(9 if len(results) == 3 else 10)
+    style.paragraph_format.space_after = Pt(2 if len(results) == 3 else 5)
     document.add_heading("Rust release cost versus IronRDP savings", 0)
     document.add_paragraph(
         "PRELIMINARY: separate self-hosted pilots, one qualified build per recipe and one paired "

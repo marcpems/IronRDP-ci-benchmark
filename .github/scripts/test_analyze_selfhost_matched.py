@@ -133,6 +133,29 @@ class SelfhostAnalysisTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "unexpected self-hosted machine"):
                 analyze(*args)
 
+    def test_three_machine_report_preserves_each_separate_pilot(self):
+        from docx import Document
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            results = []
+            for name, options in (("x64", {}), ("arm64", {"ordinary_arm64": True}),
+                                  ("gb300", {"highcore": True})):
+                folder = root / name
+                folder.mkdir()
+                results.append(analyze(*self.fixture(folder, **options)))
+            path = root / "three-machines.docx"
+            word_document(results, path)
+            document = Document(path)
+            self.assertEqual(len(document.tables[0].rows), 10)
+            text = "\n".join(cell.text for row in document.tables[0].rows for cell in row.cells)
+            for result in results:
+                self.assertIn(result["runner"]["runner_name"], text)
+            with self.assertRaisesRegex(ValueError, "distinct machines"):
+                word_document([results[0], results[0]], path)
+            with self.assertRaisesRegex(ValueError, "one to three"):
+                word_document(results + [results[0]], path)
+
     def test_correctness_temp_is_explicit_consistent_and_ordinary_only(self):
         for highcore, ordinary_arm64 in ((False, False), (True, False), (False, True)):
             with self.subTest(highcore=highcore, ordinary_arm64=ordinary_arm64), \

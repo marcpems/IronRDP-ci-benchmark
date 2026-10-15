@@ -131,6 +131,127 @@
     }
   },
   {
+    "machine": "self-hosted-arm64",
+    "runner": {
+      "runner_class": "self-hosted-arm64",
+      "runner_name": "MARCPE-D4-Arm64",
+      "build_affinity_count": 4,
+      "build_jobs": 4,
+      "logical_cpus": 20
+    },
+    "pilot": true,
+    "repetitions": 1,
+    "protocol": {
+      "schema": 5,
+      "rust_sha": "7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238",
+      "amendment": "After excluded failed pilots 38122240736 and 38133940060: short same-volume physical paths, common MSVC-target compiler-private DLL-data import correction, upstream qualification extraction layout, LLVM ThinLTO disabled only on discarded intermediate LLVM training builds, and small MIR scope wrappers separated from the large expression dispatch frame. Final LLVM/Rust LTO, native tools, full distribution scope, default stack limit and timing boundaries unchanged.",
+      "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+      "perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
+      "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+      "rust_version": "1.101.0-nightly",
+      "variants": [
+        "baseline",
+        "msvc-pgo",
+        "llvm-pgo-thin"
+      ],
+      "architectures": [
+        "x64",
+        "arm64"
+      ],
+      "cores": 4,
+      "release_repetitions_per_cell": 3,
+      "pilot_excluded": true,
+      "baseline": "controlled no-PGO full distribution on this exact source; not the current shipped x64 PGO release recipe",
+      "release_scope": "cold complete nightly distribution including full tools, docs, MSI and Arm64EC on Arm64; fresh full opt-dist tool/frontend/backend profiles in each optimized job",
+      "release_primary": "full distribution production wall seconds from before helper construction through completed dist, including fresh training; excludes initial source/tool setup, post-build verification and uploads",
+      "release_secondary": "actual completed GitHub job started_at-to-completed_at, including setup, validation and artifact uploads; record queue separately",
+      "release_pairing": "independent clean build VM per variant and replicate; compare within architecture, report CPU model mix; do not claim same-VM pairing",
+      "native_linker": "baseline and msvc-pgo keep clang-cl/link.exe/lib.exe; llvm-pgo-thin keeps clang-cl but uses lld-link/llvm-lib and both LLVM and Rust ThinLTO",
+      "profiles": "fresh within each production job; no borrowed profiles; these contrasts measure complete recipes, not an isolated LTO treatment with identical profiles",
+      "intermediate_llvm": "LLVM ThinLTO disabled during initial frontend preparation, frontend PGO optimization with static LLVM, and static backend instrumentation; static linkage and Rust LTO preserved; final distribution uses configured LLVM ThinLTO",
+      "ironrdp": "evaluate the actual resulting release compilers; paired compiler order on each benchmark VM; baseline Cargo and native std shared to isolate compiler effects; five original native commands offline",
+      "ironrdp_vms_per_release_replicate": 1,
+      "warmup_rounds": 1,
+      "measured_rounds": 3,
+      "correctness_test_threads": 1,
+      "correctness": "all four original native commands outside timing; serial consistently, no skipped tests or retries; previous parallel failure unresolved",
+      "uncertainty": "release costs independently resample whole build jobs within variant; IronRDP resamples whole matched replicate/VM clusters; 10000 bootstrap draws; three replicas gives limited precision",
+      "timeouts": "350-minute safety stop and 360-minute hosted cap; unfinished jobs are right-censored lower bounds, never completed durations or zero benefit",
+      "exclusions": "pilot excluded; no successful-cell substitution into failed full matrices; amendments before replacement runs; no mixing historical source or compiler-only results",
+      "report": "one-page Word comparison with release cost increase percent and IronRDP compile savings percent, denominators and qualification limits; no fitted old-to-new timing projection",
+      "resource_class": "self-hosted-arm64"
+    },
+    "benchmark_run": "38695519744",
+    "variants": {
+      "baseline": {
+        "production_seconds": 10804.579602241516,
+        "job_seconds": 16677.0,
+        "maintenance_seconds": 0,
+        "job_id": 114732069401,
+        "release_run": "38225557840",
+        "ironrdp_seconds": 1348.545724399999,
+        "production_increase_percent": 0.0,
+        "job_increase_percent": 0.0,
+        "ironrdp_saving_percent": 0.0,
+        "native_components_seconds": {
+          "xtask-bootstrap": 8.096611200002371,
+          "workspace-tests": 1026.3840346999932,
+          "native-tls-tests": 31.958790300006513,
+          "gateway-native-tls-tests": 143.70193039999867,
+          "gateway-smartcard-tests": 138.40435779999825
+        }
+      },
+      "msvc-pgo": {
+        "production_seconds": 25914.764468193054,
+        "job_seconds": 31707.0,
+        "maintenance_seconds": 139.0,
+        "job_id": 115748404230,
+        "release_run": "38532798400",
+        "ironrdp_seconds": 1018.9281292999949,
+        "production_increase_percent": 139.84981759787104,
+        "job_increase_percent": 90.12412304371288,
+        "ironrdp_saving_percent": 24.44244856781991,
+        "native_components_seconds": {
+          "xtask-bootstrap": 7.219142999994801,
+          "workspace-tests": 780.2345322000037,
+          "native-tls-tests": 22.652106900000945,
+          "gateway-native-tls-tests": 104.1407074000017,
+          "gateway-smartcard-tests": 104.68163979999372
+        }
+      },
+      "llvm-pgo-thin": {
+        "production_seconds": 39385.06286263466,
+        "job_seconds": 45598.0,
+        "maintenance_seconds": 155.0,
+        "job_id": 115779336959,
+        "release_run": "38542164879",
+        "ironrdp_seconds": 972.7049958000134,
+        "production_increase_percent": 264.52193710955527,
+        "job_increase_percent": 173.4184805420639,
+        "ironrdp_saving_percent": 27.870076764894737,
+        "native_components_seconds": {
+          "xtask-bootstrap": 6.21380670000508,
+          "workspace-tests": 750.664712800004,
+          "native-tls-tests": 20.252515300002415,
+          "gateway-native-tls-tests": 98.32122349999554,
+          "gateway-smartcard-tests": 97.25273750000633
+        }
+      }
+    },
+    "correctness_environment": {
+      "RUST_TEST_THREADS": "1",
+      "TEMP": "C:\\matched-correctness-38695519744",
+      "TMP": "C:\\matched-correctness-38695519744"
+    },
+    "qualification_history": {
+      "excluded_preflight_run": "38695414694",
+      "reason": "Ordinary Arm64 D: is ReFS; preflight stopped before compilation because the original object-ID test requires NTFS.",
+      "amendment": "Only correctness TEMP/TMP moved to fresh C: NTFS directory for all variants; timed builds remain on D:.",
+      "fresh_complete_replay_run": "38695519744",
+      "no_failed_run_blocks_reused": true
+    }
+  },
+  {
     "machine": "self-hosted-arm64-highcore",
     "runner": {
       "runner_class": "self-hosted-arm64-highcore",

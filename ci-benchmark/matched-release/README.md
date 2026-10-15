@@ -1,6 +1,6 @@
 # Matched Rust release cost and IronRDP benefit
 
-## Completed x64 and GB300 pilots
+## Completed x64, ordinary Arm64 and GB300 pilots
 
 The fresh x64 replay [38636440191](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38636440191)
 passed all five timed compilation commands and all four original correctness
@@ -8,9 +8,15 @@ commands for every actual released compiler. The strict analyzer accepted the
 complete round, including identical correctness-only NTFS temporary overrides.
 No results from failed runs are reused.
 
+The ordinary Arm64 replay [38695519744](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38695519744)
+also passed the complete paired round and strict analysis. Its replay step
+took 62m 20s; the whole job took 1h 59m 42s, completing at 08:56:35 UTC on
+15 October 2026. All nine self-hosted releases and all three downstream
+comparisons are now qualified; the repeated standard-hosted study is not.
+
 The [one-page combined Word report](Self-Hosted-Rust-Release-Pilots.docx) and
-[machine-readable results](selfhost-pilot-results.json) now include both x64 and
-GB300, with their separate qualification histories. Word pagination was checked
+[machine-readable results](selfhost-pilot-results.json) now include all three
+machines, with their separate qualification histories. Word pagination was checked
 after rendering. Production excludes setup, verification and uploads; the
 results also retain whole-job and cleanup durations and all five native
 compilation components.
@@ -20,6 +26,9 @@ compilation components.
 | x64 / 4 CPUs / no PGO | 134.1 | Reference | 737.35 | Reference |
 | x64 / 4 CPUs / Microsoft PGO | 548.1 | +308.66% | 555.78 | 24.62% |
 | x64 / 4 CPUs / LLVM PGO + ThinLTO | 787.3 | +486.97% | 526.00 | 28.66% |
+| Ordinary Arm64 / 4 CPUs / no PGO | 180.1 | Reference | 1348.55 | Reference |
+| Ordinary Arm64 / 4 CPUs / Microsoft PGO | 431.9 | +139.85% | 1018.93 | 24.44% |
+| Ordinary Arm64 / 4 CPUs / LLVM PGO + ThinLTO | 656.4 | +264.52% | 972.70 | 27.87% |
 | GB300 / 64 CPUs / no PGO | 138.5 | Reference | 200.28 | Reference |
 | GB300 / 64 CPUs / Microsoft PGO | 182.6 | +31.84% | 157.30 | 21.46% |
 | GB300 / 64 CPUs / LLVM PGO + ThinLTO | 203.3 | +46.79% | 156.28 | 21.97% |
@@ -27,6 +36,8 @@ compilation components.
 On x64 the LLVM recipe saves another 29.78 seconds per five-command sequence
 relative to Microsoft PGO (5.36% faster), but costs another 239.16 production
 minutes. On GB300 the respective differences are 1.02 seconds and 20.70 minutes.
+On ordinary Arm64 LLVM saves another 46.22 seconds over Microsoft PGO (4.54%
+faster), at another 224.50 production minutes.
 These are single paired pilot observations, not established repeatable
 advantages. Machines are not pooled; four-CPU x64 and 64-CPU GB300 are not an
 architecture-controlled comparison. Ordinary four-CPU Arm64 remains separate,
@@ -55,8 +66,8 @@ The ordinary Arm64 replay branch is
 filesystem for correctness, and shares the ordinary release concurrency lock. It uses the
 same five offline commands, four original correctness commands, common
 baseline Cargo/std and fresh targets as the existing pilots. GB300 retains
-its separate labels, selection and 64-worker policy. Ordinary Arm64
-downstream savings remain pending; qualification is not a benchmark result.
+its separate labels, selection and 64-worker policy. The accepted ordinary
+Arm64 results are included above, without substituting any GB300 measurements.
 
 Initial replay 38695414694 stopped at filesystem preflight before downloading
 archives or compiling: ordinary Arm64's D: is also ReFS. The replacement uses
