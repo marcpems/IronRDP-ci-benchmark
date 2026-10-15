@@ -9,6 +9,9 @@ jobs:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     runs-on: [self-hosted, Windows, ARM64, HighCoreCount]
     timeout-minutes: 5
+    concurrency:
+      group: matched-highcore-arm64-selfhost
+      cancel-in-progress: false
     steps:
       - name: Confirm fresh job delivery without starting a build
         shell: powershell
@@ -18,6 +21,37 @@ jobs:
           @{Runner=$env:RUNNER_NAME; Architecture=$env:RUNNER_ARCH;
             LogicalCPUs=[Environment]::ProcessorCount; UTC=[DateTime]::UtcNow.ToString('o')} |
             ConvertTo-Json
+      - name: Check for surviving work from the disconnected release
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $processes = @(Get-CimInstance Win32_Process)
+          $ancestors = @()
+          $cursor = $PID
+          while ($cursor -ne 0 -and $cursor -notin $ancestors) {
+            $ancestors += $cursor
+            $parent = $processes | Where-Object ProcessId -eq $cursor
+            if (!$parent) { break }
+            $cursor = $parent.ParentProcessId
+          }
+          $workers = @($processes | Where-Object {
+            $_.Name -eq 'Runner.Worker.exe' -and $_.ProcessId -notin $ancestors
+          })
+          $tools = @('git.exe','curl.exe','7z.exe','cmake.exe','ninja.exe',
+            'clang-cl.exe','cl.exe','link.exe','lib.exe','rustc.exe','rustdoc.exe',
+            'cargo.exe','opt-dist.exe','bootstrap.exe')
+          $leftovers = @($processes | Where-Object {
+            $_.ProcessId -notin $ancestors -and
+            ($_.Name -in $tools -or $_.CommandLine -like '*D:\m23101166t32r1*')
+          })
+          $workers + $leftovers | Select-Object Name,ProcessId,ParentProcessId |
+            ConvertTo-Json
+          if ($workers.Count -or $leftovers.Count) {
+            throw 'Potential surviving or concurrent work detected; investigate without killing processes'
+          }
+          $drive = [IO.DriveInfo]::new('D:\')
+          @{Format=$drive.DriveFormat; FreeBytes=$drive.AvailableFreeSpace;
+            OtherWorkers=$workers.Count; BuildProcesses=$leftovers.Count} | ConvertTo-Json
       - uses: actions/checkout@v6
         with:
           persist-credentials: false
