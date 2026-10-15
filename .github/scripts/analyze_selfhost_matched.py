@@ -35,7 +35,7 @@ def analyze(releases, index_path, jobs, protocol):
     correctness_env = index.get("correctness_environment", {"RUST_TEST_THREADS": "1"})
     if correctness_env != {"RUST_TEST_THREADS": "1"}:
         temporary = PureWindowsPath(correctness_env.get("TEMP", ""))
-        if (machine != "self-hosted-x64" or not temporary.is_absolute()
+        if (machine not in ("self-hosted-x64", "self-hosted-arm64") or not temporary.is_absolute()
                 or temporary.drive.lower() != "c:"
                 or correctness_env != {"RUST_TEST_THREADS": "1", "TEMP": str(temporary),
                                        "TMP": str(temporary)}):

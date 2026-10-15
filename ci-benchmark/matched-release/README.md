@@ -52,11 +52,18 @@ Arm64EC. The selection is recorded in `selfhost-arm64-pilot-runs.json`.
 The ordinary Arm64 replay branch is
 `experiment/matched-release-selfhost-arm64-benchmark-pilot`. It requires
 `MatchedStandardArm64`, checks the exact runner name and NTFS temporary
-filesystem, and shares the ordinary release concurrency lock. It uses the
+filesystem for correctness, and shares the ordinary release concurrency lock. It uses the
 same five offline commands, four original correctness commands, common
 baseline Cargo/std and fresh targets as the existing pilots. GB300 retains
 its separate labels, selection and 64-worker policy. Ordinary Arm64
 downstream savings remain pending; qualification is not a benchmark result.
+
+Initial replay 38695414694 stopped at filesystem preflight before downloading
+archives or compiling: ordinary Arm64's D: is also ReFS. The replacement uses
+the already qualified x64 arrangement: correctness-only TEMP/TMP on explicitly
+checked C: NTFS, identically for all three recipes. Timed builds, Cargo home
+and cold targets stay on D:. This change is recorded in the replay index and
+checked by the analyzer; GB300 and hosted defaults remain unchanged.
 
 ## Excluded x64 replay history
 

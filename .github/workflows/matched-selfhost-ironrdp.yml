@@ -55,8 +55,10 @@ jobs:
           $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) $name
           if ($env:RELEASE_MACHINE_CLASS -eq 'self-hosted-arm64') {
             $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($root))
-            Write-Output "Ordinary Arm64 temporary filesystem: $($drive.DriveFormat)"
-            if ($drive.DriveFormat -ne 'NTFS') { throw 'Original correctness tests require NTFS temporary files' }
+            Write-Output "Ordinary Arm64 timed-build filesystem: $($drive.DriveFormat)"
+          }
+          if ($env:RELEASE_MACHINE_CLASS -ne 'self-hosted-arm64-highcore') {
+            if ([IO.DriveInfo]::new('C:\').DriveFormat -ne 'NTFS') { throw 'Correctness tests require NTFS temporary files' }
           }
           if (Test-Path -LiteralPath $root) { throw 'Expected fresh benchmark directories' }
           New-Item -ItemType Directory "$root\t","$root\c" | Out-Null
@@ -160,7 +162,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $env:RUNNER_TEMP = "$env:BENCHMARK_ROOT\t"
           $extra = @()
-          if ($env:BENCHMARK_ARCH -eq 'x64') {
+          if ($env:RELEASE_MACHINE_CLASS -ne 'self-hosted-arm64-highcore') {
             if ([IO.DriveInfo]::new('C:\').DriveFormat -ne 'NTFS') { throw 'Correctness tests require NTFS temporary files' }
             $testTemp = "C:\matched-correctness-$env:GITHUB_RUN_ID"
             New-Item -ItemType Directory $testTemp | Out-Null

@@ -130,8 +130,9 @@ def main():
     runner = None
     correctness_env = {"RUST_TEST_THREADS": "1"}
     if args.correctness_temp is not None:
-        if runner_class() != "self-hosted-x64" or not args.correctness_temp.is_dir():
-            raise RuntimeError("correctness temporary directory requires the self-hosted x64 runner")
+        if (runner_class() not in ("self-hosted-x64", "self-hosted-arm64")
+                or not args.correctness_temp.is_dir()):
+            raise RuntimeError("correctness temporary directory requires an ordinary self-hosted runner")
         correctness_env.update(TEMP=str(args.correctness_temp.resolve()),
                                TMP=str(args.correctness_temp.resolve()))
     run_ids = args.release_run

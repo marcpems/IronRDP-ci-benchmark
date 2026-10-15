@@ -133,10 +133,11 @@ class SelfhostAnalysisTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "unexpected self-hosted machine"):
                 analyze(*args)
 
-    def test_correctness_temp_is_explicit_consistent_and_x64_only(self):
-        for highcore in (False, True):
-            with self.subTest(highcore=highcore), tempfile.TemporaryDirectory() as tmp:
-                args = self.fixture(Path(tmp), highcore=highcore)
+    def test_correctness_temp_is_explicit_consistent_and_ordinary_only(self):
+        for highcore, ordinary_arm64 in ((False, False), (True, False), (False, True)):
+            with self.subTest(highcore=highcore, ordinary_arm64=ordinary_arm64), \
+                    tempfile.TemporaryDirectory() as tmp:
+                args = self.fixture(Path(tmp), highcore=highcore, ordinary_arm64=ordinary_arm64)
                 path = args[1]
                 index = json.loads(path.read_text())
                 env = {"RUST_TEST_THREADS": "1", "TEMP": r"C:\matched-correctness-555",
