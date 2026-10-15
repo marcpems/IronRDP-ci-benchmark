@@ -32,6 +32,32 @@ advantages. Machines are not pooled; four-CPU x64 and 64-CPU GB300 are not an
 architecture-controlled comparison. Ordinary four-CPU Arm64 remains separate,
 and the repeated standard-hosted study remains incomplete.
 
+## Qualified ordinary four-CPU Arm64 releases
+
+LLVM release [38542164879](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38542164879)
+completed successfully on `MARCPE-D4-Arm64`, including full distribution and
+extracted-suite qualification. Production was 39,385.06 seconds (10h 56m 25s);
+the whole job was 45,598 seconds (12h 39m 58s). The selected baseline and
+Microsoft-PGO releases are 38225557840 and 38532798400, respectively.
+All three match the pinned source/submodules, native tool hashes, exact
+runner, four-worker bootstrap settings and full archive coverage, including
+Arm64EC. The selection is recorded in `selfhost-arm64-pilot-runs.json`.
+
+| Recipe | Production seconds | Increase vs no PGO |
+|---|---:|---:|
+| No PGO | 10,804.58 | Reference |
+| Microsoft PGO | 25,914.76 | +139.85% |
+| LLVM PGO + ThinLTO | 39,385.06 | +264.52% |
+
+The ordinary Arm64 replay branch is
+`experiment/matched-release-selfhost-arm64-benchmark-pilot`. It requires
+`MatchedStandardArm64`, checks the exact runner name and NTFS temporary
+filesystem, and shares the ordinary release concurrency lock. It uses the
+same five offline commands, four original correctness commands, common
+baseline Cargo/std and fresh targets as the existing pilots. GB300 retains
+its separate labels, selection and 64-worker policy. Ordinary Arm64
+downstream savings remain pending; qualification is not a benchmark result.
+
 ## Excluded x64 replay history
 
 The second x64 replay, 38601292855, also exhausted LLVM distribution download

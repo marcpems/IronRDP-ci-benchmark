@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - experiment/matched-release-selfhost-x64-benchmark-pilot
+      - experiment/matched-release-selfhost-arm64-benchmark-pilot
       - experiment/matched-release-selfhost-arm64-highcore-benchmark-pilot
 permissions:
   contents: read
@@ -12,10 +13,10 @@ jobs:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     strategy:
       matrix:
-        machine: ${{ fromJSON(contains(github.ref_name, '-x64-') && '["x64"]' || '["arm64-highcore"]') }}
-    runs-on: ${{ fromJSON(matrix.machine == 'x64' && '["self-hosted","Windows","X64"]' || '["self-hosted","Windows","ARM64","HighCoreCount"]') }}
+        machine: ${{ fromJSON(contains(github.ref_name, '-x64-') && '["x64"]' || contains(github.ref_name, '-highcore-') && '["arm64-highcore"]' || '["arm64"]') }}
+    runs-on: ${{ fromJSON(matrix.machine == 'x64' && '["self-hosted","Windows","X64"]' || matrix.machine == 'arm64-highcore' && '["self-hosted","Windows","ARM64","HighCoreCount"]' || '["self-hosted","Windows","ARM64","MatchedStandardArm64"]') }}
     concurrency:
-      group: ${{ matrix.machine == 'x64' && 'matched-x64-selfhost' || 'matched-highcore-arm64-selfhost' }}
+      group: ${{ matrix.machine == 'x64' && 'matched-x64-selfhost' || matrix.machine == 'arm64-highcore' && 'matched-highcore-arm64-selfhost' || 'matched-arm64-selfhost' }}
       cancel-in-progress: false
     timeout-minutes: 240
     defaults:
@@ -36,7 +37,11 @@ jobs:
       - name: Prepare isolated paths and explicit release provenance
         run: |
           $ErrorActionPreference = 'Stop'
-          $expected = if ($env:BENCHMARK_ARCH -eq 'x64') { 'MARCPE-TEST01-X64' } else { 'GB300-Arm64' }
+          $expected = @{
+            'self-hosted-x64' = 'MARCPE-TEST01-X64'
+            'self-hosted-arm64' = 'MARCPE-D4-Arm64'
+            'self-hosted-arm64-highcore' = 'GB300-Arm64'
+          }[$env:RELEASE_MACHINE_CLASS]
           if ($env:RUNNER_NAME -ne $expected) { throw 'Unexpected benchmark runner' }
           $plan = 'ci-benchmark\matched-release\selfhost-${{ matrix.machine }}-pilot-runs.json'
           $runs = Get-Content -LiteralPath $plan -Raw | ConvertFrom-Json
@@ -48,6 +53,11 @@ jobs:
           "LLVM_RUN=$($runs.'llvm-pgo-thin')" >> $env:GITHUB_ENV
           $name = "b$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))"
           $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) $name
+          if ($env:RELEASE_MACHINE_CLASS -eq 'self-hosted-arm64') {
+            $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($root))
+            Write-Output "Ordinary Arm64 temporary filesystem: $($drive.DriveFormat)"
+            if ($drive.DriveFormat -ne 'NTFS') { throw 'Original correctness tests require NTFS temporary files' }
+          }
           if (Test-Path -LiteralPath $root) { throw 'Expected fresh benchmark directories' }
           New-Item -ItemType Directory "$root\t","$root\c" | Out-Null
           "BENCHMARK_ROOT=$root" >> $env:GITHUB_ENV

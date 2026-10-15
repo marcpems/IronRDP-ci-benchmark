@@ -13,15 +13,19 @@ from native_ci_probe import NATIVE_COMMANDS, paired_order
 
 
 class SelfhostAnalysisTests(unittest.TestCase):
-    def fixture(self, root, highcore=False):
+    def fixture(self, root, highcore=False, ordinary_arm64=False):
         protocol = {"rust_sha": RUST, "llvm_sha": LLVM, "perf_sha": PERF,
                     "source_sha": "workload", "cores": 4}
-        arch = "arm64" if highcore else "x64"
-        machine = "self-hosted-arm64-highcore" if highcore else "self-hosted-x64"
-        host = "aarch64-pc-windows-msvc" if highcore else "x86_64-pc-windows-msvc"
+        arch = "arm64" if highcore or ordinary_arm64 else "x64"
+        machine = ("self-hosted-arm64-highcore" if highcore else
+                   "self-hosted-arm64" if ordinary_arm64 else "self-hosted-x64")
+        host = "aarch64-pc-windows-msvc" if arch == "arm64" else "x86_64-pc-windows-msvc"
         cores = 64 if highcore else 4
-        runner = {"runner_class": machine, "runner_name": "GB300-Arm64" if highcore else "MARCPE-TEST01-X64",
-                  "build_affinity_count": cores, "build_jobs": cores, "logical_cpus": 72 if highcore else 16}
+        runner = {"runner_class": machine,
+                  "runner_name": ("GB300-Arm64" if highcore else
+                                  "MARCPE-D4-Arm64" if ordinary_arm64 else "MARCPE-TEST01-X64"),
+                  "build_affinity_count": cores, "build_jobs": cores,
+                  "logical_cpus": 72 if highcore else 20 if ordinary_arm64 else 16}
         tools = {"msvc": "same", "sdk": "same", "files": {}}
         releases, output = root / "releases", root / "benchmark"
         releases.mkdir()
@@ -114,6 +118,19 @@ class SelfhostAnalysisTests(unittest.TestCase):
             block["metadata"]["profile_environment"]["CARGO_BUILD_JOBS"] = "4"
             save(path, block)
             with self.assertRaisesRegex(ValueError, "environment"):
+                analyze(*args)
+
+    def test_ordinary_arm64_remains_a_separate_four_worker_pilot(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            args = self.fixture(Path(tmp), ordinary_arm64=True)
+            result = analyze(*args)
+            self.assertEqual(result["machine"], "self-hosted-arm64")
+            self.assertEqual(result["runner"]["build_jobs"], 4)
+            self.assertEqual(result["runner"]["runner_name"], "MARCPE-D4-Arm64")
+            index = json.loads(args[1].read_text())
+            index["runner"]["runner_name"] = "GB300-Arm64"
+            save(args[1], index)
+            with self.assertRaisesRegex(ValueError, "unexpected self-hosted machine"):
                 analyze(*args)
 
     def test_correctness_temp_is_explicit_consistent_and_x64_only(self):
