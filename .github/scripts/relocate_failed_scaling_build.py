@@ -20,7 +20,7 @@ def physical_directory(path):
         raise RuntimeError(f"Expected physical directory: {path}")
 
 
-def manifest(directory):
+def manifest(directory, source_root=None):
     physical_directory(directory)
     rows = []
     def fail(error):
@@ -30,10 +30,14 @@ def manifest(directory):
             path = Path(parent) / name
             if is_junction(path):
                 target = path.resolve()
-                if not target.is_relative_to(directory) or target == directory:
-                    raise RuntimeError(f"Build junction leaves retained tree: {path}")
-                rows.append({"path": str(path.relative_to(directory)),
-                             "junction": str(target.relative_to(directory))})
+                if target == source_root:
+                    rows.append({"path": str(path.relative_to(directory)),
+                                 "source_junction": str(target)})
+                elif target.is_relative_to(directory) and target != directory:
+                    rows.append({"path": str(path.relative_to(directory)),
+                                 "junction": str(target.relative_to(directory))})
+                else:
+                    raise RuntimeError(f"Build junction leaves retained tree: {path} -> {target}")
                 folders.remove(name)
             else:
                 physical_directory(path)
@@ -52,7 +56,7 @@ def relocate(build, destination):
     physical_directory(destination.parent)
     if destination.exists() or destination.is_symlink():
         raise RuntimeError("Expected a fresh retained-build destination")
-    before = manifest(build)
+    before = manifest(build, source_root=build.parent)
     if not before:
         raise RuntimeError("Refusing an empty build relocation")
     size = sum(row.get("bytes", 0) for row in before)
@@ -67,11 +71,14 @@ def relocate(build, destination):
                 if is_junction(Path(parent) / name)]
     shutil.copytree(build, destination, ignore=ignore_junctions)
     for row in before:
-        if "junction" in row:
+        if "junction" in row or "source_junction" in row:
+            target = (destination / row["junction"] if "junction" in row
+                      else Path(row["source_junction"]))
             subprocess.run([os.environ["COMSPEC"], "/c", "mklink", "/J",
-                            str(destination / row["path"]), str(destination / row["junction"])],
+                            str(destination / row["path"]), str(target)],
                            check=True, capture_output=True)
-    if manifest(destination) != before or manifest(build) != before:
+    if (manifest(destination, source_root=build.parent) != before
+            or manifest(build, source_root=build.parent) != before):
         raise RuntimeError("Build changed or retained copy failed checksum verification; source preserved")
     physical_directory(build.parent)
     physical_directory(build)

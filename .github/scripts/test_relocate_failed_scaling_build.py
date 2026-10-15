@@ -78,6 +78,17 @@ class RelocationTests(unittest.TestCase):
             recovery.relocate(self.build, self.destination)
         self.assertTrue(self.build.exists())
 
+    @unittest.skipUnless(os.name == "nt", "Windows directory junctions")
+    def test_source_root_junction_does_not_copy_or_remove_source(self):
+        (self.build.parent / "source.txt").write_text("source remains")
+        subprocess.run([os.environ["COMSPEC"], "/c", "mklink", "/J",
+                        str(self.build / "rustc-src"), str(self.build.parent)],
+                       check=True, capture_output=True)
+        recovery.relocate(self.build, self.destination)
+        self.assertEqual((self.destination / "rustc-src").resolve(), self.build.parent)
+        self.assertEqual((self.build.parent / "source.txt").read_text(), "source remains")
+        self.assertFalse((self.destination / "source.txt").exists())
+
 
 if __name__ == "__main__":
     unittest.main()
