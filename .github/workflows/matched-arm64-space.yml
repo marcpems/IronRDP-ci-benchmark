@@ -1,0 +1,58 @@
+name: Inspect ordinary Arm64 scaling disk usage
+on:
+  push:
+    branches: [experiment/matched-arm64-space]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, MatchedStandardArm64]
+    timeout-minutes: 15
+    concurrency:
+      group: matched-arm64-selfhost
+      cancel-in-progress: false
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Inventory only known scaling experiment directories
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-D4-Arm64') { throw 'Unexpected runner' }
+          @'
+          import json, os, shutil, stat
+          from pathlib import Path
+          print(json.dumps({"free_bytes": shutil.disk_usage("D:\\").free}), flush=True)
+          def usage(path):
+              files = size = 0
+              def fail(error):
+                  raise error
+              for directory, folders, names in os.walk(path, onerror=fail, followlinks=False):
+                  folders[:] = [name for name in folders if not (
+                      (Path(directory) / name).lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)]
+                  for name in names:
+                      item = (Path(directory) / name).lstat()
+                      if item.st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+                          continue
+                      files += 1
+                      size += item.st_size
+              print(json.dumps({"path": str(path), "files": files, "bytes": size}), flush=True)
+          for root in (Path(r"D:\m16997224t16r1"), Path(r"D:\m28610658t16r1")):
+              if not root.is_dir() or root.is_junction():
+                  raise RuntimeError(f"Expected retained physical experiment root: {root}")
+              for part in ("r/build", "r/opt-artifacts", "r/src/tools/rustc-perf", "e", "retained-dist"):
+                  path = root / part
+                  if not path.exists():
+                      continue
+                  if path.is_symlink() or path.is_junction():
+                      raise RuntimeError(f"Redirected inventory path: {path}")
+                  usage(path)
+                  if part in ("r/opt-artifacts", "r/src/tools/rustc-perf", "e"):
+                      for child in path.iterdir():
+                          if child.is_dir() and not child.is_symlink() and not child.is_junction():
+                              usage(child)
+          '@ | python -
+          if ($LASTEXITCODE) { throw 'Disk inventory failed' }
