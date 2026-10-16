@@ -21,6 +21,15 @@ def physical_directory(path):
         raise RuntimeError(f"Expected physical directory: {path}")
 
 
+def symlink_record(path, directory):
+    target = path.resolve()
+    if (not target.is_relative_to(directory) or target == directory
+            or not (target.is_file() or target.is_dir())):
+        raise RuntimeError(f"Symlink leaves retained tree or has no target: {path}")
+    return {"path": str(path.relative_to(directory)), "symlink": str(target.relative_to(directory)),
+            "directory": target.is_dir()}
+
+
 def manifest(directory, source_root=None):
     physical_directory(directory)
     rows = []
@@ -29,7 +38,10 @@ def manifest(directory, source_root=None):
     for parent, folders, names in os.walk(directory, onerror=fail, followlinks=False):
         for name in folders[:]:
             path = Path(parent) / name
-            if is_junction(path):
+            if path.is_symlink():
+                rows.append(symlink_record(path, directory))
+                folders.remove(name)
+            elif is_junction(path):
                 target = path.resolve()
                 if target == source_root:
                     rows.append({"path": str(path.relative_to(directory)),
@@ -44,7 +56,10 @@ def manifest(directory, source_root=None):
                 physical_directory(path)
         for name in sorted(names):
             path = Path(parent) / name
-            if (path.is_symlink() or not path.is_file()
+            if path.is_symlink():
+                rows.append(symlink_record(path, directory))
+                continue
+            if (not path.is_file()
                     or getattr(path.lstat(), "st_file_attributes", 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT):
                 raise RuntimeError(f"Unexpected redirected or non-file build entry: {path}")
             rows.append({"path": str(path.relative_to(directory)),
@@ -67,12 +82,15 @@ def relocate(build, destination):
               "files": before, "bytes": size, "complete": False}
     accounting = destination.parent / "relocation.json"
     save(accounting, record)
-    def ignore_junctions(parent, names):
+    def ignore_links(parent, names):
         return [name for name in names
-                if is_junction(Path(parent) / name)]
-    shutil.copytree(build, destination, ignore=ignore_junctions)
+                if (Path(parent) / name).is_symlink() or is_junction(Path(parent) / name)]
+    shutil.copytree(build, destination, ignore=ignore_links)
     for row in before:
-        if "junction" in row or "source_junction" in row:
+        if "symlink" in row:
+            os.symlink(destination / row["symlink"], destination / row["path"],
+                       target_is_directory=row["directory"])
+        elif "junction" in row or "source_junction" in row:
             target = (destination / row["junction"] if "junction" in row
                       else Path(row["source_junction"]))
             subprocess.run([os.environ["COMSPEC"], "/c", "mklink", "/J",

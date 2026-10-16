@@ -101,6 +101,27 @@ class RelocationTests(unittest.TestCase):
                 recovery.verify_reconnection({**report, key: value}, "MARCPE-TEST01-X64",
                                              root, "116693884027", "new-run")
 
+    def test_internal_file_symlink_is_preserved_without_following_external_links(self):
+        link = self.build / "docs/license"
+        link.symlink_to(self.build / "rustbook.exe")
+        (self.build / "docs-alias").symlink_to(self.build / "docs", target_is_directory=True)
+        recovery.relocate(self.build, self.destination)
+        retained = self.destination / "docs/license"
+        self.assertTrue(retained.is_symlink())
+        self.assertEqual(retained.resolve(), self.destination / "rustbook.exe")
+        self.assertEqual(retained.read_bytes(), b"retained executable")
+        self.assertTrue((self.destination / "docs-alias").is_symlink())
+        self.assertEqual((self.destination / "docs-alias").resolve(), self.destination / "docs")
+
+    def test_external_file_symlink_prevents_relocation(self):
+        external = self.destination.parent / "other"
+        external.write_bytes(b"outside")
+        (self.build / "outside").symlink_to(external)
+        with self.assertRaises(RuntimeError):
+            recovery.relocate(self.build, self.destination)
+        self.assertTrue(self.build.exists())
+        self.assertEqual(external.read_bytes(), b"outside")
+
 
 if __name__ == "__main__":
     unittest.main()
