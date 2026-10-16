@@ -123,8 +123,11 @@ effect. Whole-job figures exclude queue time, failed attempts and separate
 recovery jobs; they are not total experiment cost.
 
 The x64 16-logical-CPU release also qualified, but its job exceeded six hours.
-Its fresh four-CPU control is still running, so no x64 scaling ratio is
-reported. All these cells use the new Microsoft-retained PGO plus Rust
+Its fresh four-CPU control (job 116693884027) lost runner communication at
+04:38:42 UTC on 16 October, during the combined build/qualification step.
+GitHub then reported the x64 runner offline, and the job log was unavailable.
+The incomplete control is excluded; no x64 scaling ratio is reported.
+All these cells use the new Microsoft-retained PGO plus Rust
 cross-crate ThinLTO recipe; the older PGO-only pilots are not controls.
 
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
