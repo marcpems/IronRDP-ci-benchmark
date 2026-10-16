@@ -246,6 +246,13 @@ and no surviving experiment processes. Its 32-CPU job `116979807783` passed
 the unchanged capacity, 180 GiB and fresh-root guards and started setup.
 The order remains 32, then 16, then 4 CPUs; no timings from this new chain
 are accepted until full production and qualification finish.
+That 32-CPU job subsequently lost runner communication at 13:48:33 UTC
+on 16 October, about 54 minutes into the combined build/qualification step.
+GitHub marked it failed and the dependent 16/4 jobs were skipped. The runner
+was reported offline; the job log and new release evidence were unavailable.
+This attempt is excluded from scaling results. The disconnect cause remains
+unproven, and the new interrupted root `D:\m03042998t32r1` must be inspected
+for surviving work and retained evidence before any further restart.
 
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
