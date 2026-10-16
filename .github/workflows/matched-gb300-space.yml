@@ -1,23 +1,31 @@
-name: Inspect GB300 experiment disk usage
+name: Inspect matched runner experiment disk usage
 on:
   push:
     branches: [experiment/matched-gb300-space]
+  workflow_call:
+    inputs:
+      machine:
+        type: string
+        default: gb300
 permissions:
   contents: read
 jobs:
   inspect:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    runs-on: [self-hosted, Windows, ARM64, HighCoreCount]
+    runs-on: ${{ fromJSON(inputs.machine == 'arm64' && '["self-hosted","Windows","ARM64","MatchedStandardArm64"]' || '["self-hosted","Windows","ARM64","HighCoreCount"]') }}
     timeout-minutes: 30
     concurrency:
-      group: matched-highcore-arm64-selfhost
+      group: ${{ inputs.machine == 'arm64' && 'matched-arm64-selfhost' || 'matched-highcore-arm64-selfhost' }}
       cancel-in-progress: false
+    env:
+      INVENTORY_RUNNER: ${{ inputs.machine == 'arm64' && 'MARCPE-D4-Arm64' || 'GB300-Arm64' }}
+      INVENTORY_NAME: ${{ inputs.machine == 'arm64' && 'arm64-space-inventory' || 'gb300-space-inventory' }}
     steps:
       - name: Check for surviving work after the runner restart
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected inventory runner' }
+          if ($env:RUNNER_NAME -ne $env:INVENTORY_RUNNER) { throw 'Unexpected inventory runner' }
           $processes = @(Get-CimInstance Win32_Process)
           $ancestors = @()
           $cursor = $PID
@@ -59,7 +67,7 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected inventory runner' }
+          if ($env:RUNNER_NAME -ne $env:INVENTORY_RUNNER) { throw 'Unexpected inventory runner' }
           @'
           import json, os, re, shutil, stat, time
           from pathlib import Path
@@ -89,7 +97,7 @@ jobs:
                               raise RuntimeError(f"Unknown filesystem entry: {entry.path}")
               return {"path": str(path), "bytes": size, "files": count,
                       "complete": True, "skipped_links": skipped}
-          output = Path(os.environ["RUNNER_TEMP"]) / "gb300-space-inventory.json"
+          output = Path(os.environ["RUNNER_TEMP"]) / f"{os.environ['INVENTORY_NAME']}.json"
           output.write_text(json.dumps(report, indent=2), encoding="utf-8")
           print(json.dumps(report["volumes"]), flush=True)
           for root in sorted(Path("D:\\").iterdir()):
@@ -110,20 +118,27 @@ jobs:
                           "full_distribution", "rust_sha", "vm", "attempt", "build_jobs",
                           "build_affinity_count", "stage", "retained_distribution")
                           if key in data}
-              for relative in ("r", "r/build", "r/opt-artifacts", "e", "e/cargo-home", "retained-dist"):
-                  path = root / relative
+              parts = {root / relative for relative in (
+                  "r", "r/build", "r/opt-artifacts", "e", "e/cargo-home", "retained-dist")}
+              for parent in (root, root / "e", root / "r/opt-artifacts"):
+                  if parent.is_dir():
+                      if redirected(parent):
+                          raise RuntimeError(f"Redirected inventory parent: {parent}")
+                      parts.update(child for child in parent.iterdir() if child.is_dir())
+              for path in sorted(parts):
                   if path.exists():
                       if redirected(path):
-                          raise RuntimeError(f"Redirected inventory path: {path}")
+                          row["usage"].append({"path": str(path), "redirected": True, "not_scanned": True})
+                          continue
                       row["usage"].append(bounded_usage(path))
               report["roots"].append(row)
               output.write_text(json.dumps(report, indent=2), encoding="utf-8")
               print(json.dumps(row), flush=True)
           '@ | python -
-          if ($LASTEXITCODE) { throw 'GB300 inventory failed' }
+          if ($LASTEXITCODE) { throw 'Matched runner inventory failed' }
       - uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: gb300-space-inventory
-          path: ${{ runner.temp }}/gb300-space-inventory.json
+          name: ${{ env.INVENTORY_NAME }}
+          path: ${{ runner.temp }}/${{ env.INVENTORY_NAME }}.json
           retention-days: 30
