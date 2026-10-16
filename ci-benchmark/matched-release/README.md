@@ -181,6 +181,21 @@ then runs only the missing four-CPU control from fresh sources and profiles.
 This recovery requires a successful same-run reconnection report. The
 interrupted training logs are diagnostic evidence, not accepted timings.
 
+GB300 reconnected on 16 October, but the 32-CPU cell in `38869810910`
+failed disk preflight before compilation; its 16/4-CPU dependents were skipped.
+The following read-only inventory (`38893912254`) also lost runner
+communication. After the runner was restarted, bounded inspections
+`38897182002` and `38897351896` succeeded with no surviving experiment worker.
+Unrelated Python services were identified and left untouched.
+`matched-gb300-space.yml` now records metadata incrementally and limits each
+directory scan to 45 seconds, explicitly marking incomplete sizes as lower
+bounds rather than using them as totals. D: still had about 76.5 GiB free,
+roughly 104 GiB below the unchanged release guard. The two retained failed
+build directories total approximately 57 GiB; reclaiming those alone cannot
+enable a release. No GB300 data was removed, and no replacement 32-CPU
+production run was started without sufficient storage. Additional space is
+required before the 32-first scaling chain can resume.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined
