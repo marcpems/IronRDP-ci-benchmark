@@ -128,7 +128,7 @@ GB300 run 38731573412 also lost runner communication, at 14:49:34 UTC during
 the build/qualification step. It is excluded and its dependent 16/4 cells
 were skipped. No completed GB300 scaling result is available from that run.
 
-### First qualified CPU-scaling comparison
+### Qualified CPU-scaling comparisons
 
 The fresh ordinary Arm64 four-CPU control
 [38756702383 / 116502060812](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38756702383/job/116502060812)
@@ -142,17 +142,28 @@ extracted-distribution tests.
 | Machine / allocation | Full production minutes | Successful whole-job minutes |
 |---|---:|---:|
 | Ordinary Arm64 / 4 CPUs | 507.79 | 606.70 |
+| Ordinary Arm64 / 8 CPUs | 137.13 | 217.70 |
 | Ordinary Arm64 / 16 CPUs | 112.03 | 188.90 |
 | x64 / 16 logical CPUs | 610.70 | 720.22 |
 
+The [eight-CPU cell, 38873093226 / 116882096128](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38873093226/job/116882096128)
+also passed the same provenance, configuration, profile, actual-affinity,
+Rust PGO/ThinLTO and extracted-distribution checks. Production took
+8227.535959 seconds, qualification 3275.982914 seconds, and the successful
+whole job 13062 seconds. Retained-distribution verification and build-space
+reclamation completed successfully. Relative to four CPUs, eight CPUs reduced
+production time by **73.00%** (**3.70x**) and whole-job time by **64.12%**
+(**2.79x**). Going from eight to sixteen CPUs reduced production time by a
+further **18.30%** and whole-job time by **13.23%**.
+
 On this Arm64 machine, 4 to 16 CPUs reduced production time by **77.94%**
 (**4.53x** speedup), and successful whole-job time by **68.86%** (**3.21x**).
-The 16-CPU job fits both the 360-minute hosted ceiling and a 300-minute
+The 8- and 16-CPU jobs fit both the 360-minute hosted ceiling and a 300-minute
 planning budget; the four-CPU job does not. These are self-hosted observations,
 not measurements of GitHub larger runners or guaranteed hosted performance.
-The production speedup exceeds the fourfold CPU-count increase: fixed-order,
-single-pass results need repetition before explaining or generalizing that
-effect. Whole-job figures exclude queue time, failed attempts and separate
+The four-to-eight and four-to-sixteen production speedups exceed their
+CPU-count increases: fixed-order, single-pass results need repetition before
+explaining or generalizing that effect. Whole-job figures exclude queue time, failed attempts and separate
 recovery jobs; they are not total experiment cost.
 
 The x64 16-logical-CPU release also qualified, but its job exceeded six hours.
