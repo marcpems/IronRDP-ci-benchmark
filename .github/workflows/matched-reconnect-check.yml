@@ -5,6 +5,10 @@ on:
       machine:
         type: string
         required: true
+      archived_gb300_evidence:
+        description: Use the preserved GB300 failed-run evidence after local disk cleanup
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -18,7 +22,16 @@ jobs:
     timeout-minutes: 10
     env:
       MACHINE: ${{ inputs.machine }}
+      ARCHIVED_GB300_EVIDENCE: ${{ inputs.archived_gb300_evidence }}
     steps:
+      - name: Retrieve preserved GB300 interrupted-run evidence
+        if: inputs.archived_gb300_evidence
+        uses: actions/download-artifact@v6
+        with:
+          name: reconnected-arm64-highcore-interrupted-evidence
+          run-id: 38869810910
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/gb300-prior-evidence-${{ github.run_id }}
       - name: Check prior job, process isolation and available storage
         shell: powershell
         env:
@@ -40,9 +53,26 @@ jobs:
           if ($job.status -ne 'completed' -or $job.conclusion -ne 'failure' -or "$($job.run_id)" -ne $case.Run) {
             throw 'Prior release is not the expected failed job'
           }
-          $provenance = Get-Content -LiteralPath "$($case.Root)\e\provenance.json" -Raw | ConvertFrom-Json
+          $evidence = "$($case.Root)\e"
+          $evidenceOrigin = 'retained-local'
+          if ($env:ARCHIVED_GB300_EVIDENCE -eq 'true') {
+            if ($env:MACHINE -ne 'arm64-highcore') { throw 'Archived evidence is restricted to GB300' }
+            $previous = Join-Path $env:RUNNER_TEMP "gb300-prior-evidence-$($env:GITHUB_RUN_ID)"
+            $receipt = Get-Content -LiteralPath "$previous\scaling-reconnection.json" -Raw | ConvertFrom-Json
+            if ($receipt.Runner -ne $case.Runner -or $receipt.FailedJob -ne $case.Job -or
+                $receipt.FailedRoot -ne $case.Root -or $receipt.RecoveryRun -ne '38869810910' -or
+                $null -eq $receipt.Processes -or @($receipt.Processes).Count -ne 0) {
+              throw 'Archived GB300 reconnection receipt identity mismatch'
+            }
+            $evidence = Join-Path $previous 'interrupted'
+            $evidenceOrigin = 'archived-run-38869810910'
+            Write-Output 'Using archived failed-run provenance; live process and storage checks still apply'
+          }
+          "RECONNECT_SOURCE=$evidence" >> $env:GITHUB_ENV
+          $provenance = Get-Content -LiteralPath "$evidence\provenance.json" -Raw | ConvertFrom-Json
           if ($provenance.run_id -ne $case.Run -or $provenance.runner_name -ne $case.Runner -or
-              $provenance.variant -ne 'msvc-pgo-rust-thin' -or $provenance.build_affinity_count -ne $case.Cores) {
+              $provenance.variant -ne 'msvc-pgo-rust-thin' -or $provenance.build_affinity_count -ne $case.Cores -or
+              $provenance.paths.source -ne "$($case.Root)\r") {
             throw 'Unexpected retained release provenance'
           }
           $processes = @(Get-CimInstance Win32_Process)
@@ -58,6 +88,7 @@ jobs:
             $_.ProcessId -notin $ancestors -and
             ($_.Name -eq 'Runner.Worker.exe' -or
              $_.CommandLine -like "*$($case.Root)*" -or
+             ($_.Name -eq 'python.exe' -and $_.CommandLine -match 'matched_release\.py|build_arm_compilers\.py|\s-\s*$') -or
              $_.Name -in @('cmake.exe','ninja.exe','clang-cl.exe','cl.exe','link.exe',
                           'rustc.exe','rustdoc.exe','cargo.exe','opt-dist.exe','bootstrap.exe'))
           })
@@ -65,6 +96,7 @@ jobs:
           $report = @{
             Runner=$env:RUNNER_NAME; FailedJob=$case.Job; FailedRoot=$case.Root
             RecoveryRun=$env:GITHUB_RUN_ID
+            EvidenceOrigin=$evidenceOrigin; FailedRootPresent=(Test-Path -LiteralPath $case.Root)
             UTC=[DateTime]::UtcNow.ToString('o')
             LastBootUTC=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o')
             FreeBytes=$drive.AvailableFreeSpace; DriveFormat=$drive.DriveFormat
@@ -78,11 +110,11 @@ jobs:
             throw 'Surviving or concurrent work detected; no process was killed and no release was restarted'
           }
       - name: Stage interrupted-release evidence under one physical upload root
-        if: always() && env.RECONNECT_EVIDENCE != ''
+        if: always() && env.RECONNECT_EVIDENCE != '' && env.RECONNECT_SOURCE != ''
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          $source = if ($env:MACHINE -eq 'x64') { 'E:\m16997224t4r1\e' } else { 'D:\m31573412t32r1\e' }
+          $source = $env:RECONNECT_SOURCE
           $destination = Join-Path $env:RECONNECT_EVIDENCE 'interrupted'
           New-Item -ItemType Directory -Path $destination | Out-Null
           Get-ChildItem -LiteralPath $source -File |

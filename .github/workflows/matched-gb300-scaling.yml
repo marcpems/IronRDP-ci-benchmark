@@ -10,6 +10,7 @@ jobs:
     uses: ./.github/workflows/matched-reconnect-check.yml
     with:
       machine: arm64-highcore
+      archived_gb300_evidence: true
   highcore-32:
     needs: highcore-ready
     uses: ./.github/workflows/matched-scaling-cell.yml
