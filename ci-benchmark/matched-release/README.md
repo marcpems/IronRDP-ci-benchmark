@@ -42,6 +42,16 @@ and a free-space report distinguish deletion from preservation, and subsequent
 space preparation skips caches deliberately disposed of. No experiment root
 or unqualified build is recursively removed by this cleanup.
 
+Cleanup [38888150667](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38888150667)
+completed after the eight-CPU measurement. It removed four obsolete cache
+trees containing 8,357,881,526 file bytes (7.78 GiB), with both qualified
+result identities and protected archives/profiles reverified. Observed free
+space afterward was 219.22 GiB on C: and 167.51 GiB on D:. Drive-level free
+space increased by 2.12 and 3.56 GiB respectively; these changes are not the
+same quantity as the logical sizes of deleted files. D: remains 12.49 GiB
+below the next fresh release's 180 GiB guard. Failed-build diagnostics and
+all release evidence remain retained.
+
 This recipe retains `clang-cl`, Microsoft `link.exe` and `lib.exe`, with
 fresh PGO and **Rust-side cross-crate ThinLTO enabled**. Native LLVM ThinLTO
 stays off because its bitcode is not supported by Microsoft `/LTCG`.
