@@ -64,6 +64,10 @@ were reverified; source checkouts and all failed-build trees remain retained.
 The ordinary Arm64 inventory now reuses the bounded inspection workflow,
 including top-level setup directories and evidence/training subdirectories,
 without traversing redirected entries.
+The follow-up pass `38901491141` confirmed all six caches were already
+disposed of and made no further deletions. Its fresh D: reading was
+195,308,638,208 free bytes (**181.90 GiB**), now 1.90 GiB above the release
+guard. This is ordinary Arm64 storage, not the separately blocked GB300.
 
 This recipe retains `clang-cl`, Microsoft `link.exe` and `lib.exe`, with
 fresh PGO and **Rust-side cross-crate ThinLTO enabled**. Native LLVM ThinLTO
