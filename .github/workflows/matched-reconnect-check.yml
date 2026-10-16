@@ -32,6 +32,9 @@ jobs:
           if (!$cases.ContainsKey($env:MACHINE)) { throw 'Unexpected recovery machine' }
           $case = $cases[$env:MACHINE]
           if ($env:RUNNER_NAME -ne $case.Runner) { throw 'Unexpected recovery runner' }
+          $staging = Join-Path $env:RUNNER_TEMP "scaling-reconnection-$($env:GITHUB_RUN_ID)-$($env:MACHINE)"
+          New-Item -ItemType Directory -Path $staging | Out-Null
+          "RECONNECT_EVIDENCE=$staging" >> $env:GITHUB_ENV
           $headers = @{Authorization="Bearer $env:GH_TOKEN"; Accept='application/vnd.github+json'}
           $job = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/marcpems/IronRDP-ci-benchmark/actions/jobs/$($case.Job)"
           if ($job.status -ne 'completed' -or $job.conclusion -ne 'failure' -or "$($job.run_id)" -ne $case.Run) {
@@ -64,23 +67,31 @@ jobs:
             UTC=[DateTime]::UtcNow.ToString('o')
             LastBootUTC=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o')
             FreeBytes=$drive.AvailableFreeSpace; DriveFormat=$drive.DriveFormat
+            RetainedVolumeFreeBytes=([IO.DriveInfo]::new('C:\')).AvailableFreeSpace
             Processes=@($blockers | Select-Object Name,ProcessId,ParentProcessId,CreationDate)
           }
           $report | ConvertTo-Json -Depth 5 |
-            Set-Content -Encoding UTF8 -LiteralPath "$env:RUNNER_TEMP\scaling-reconnection.json"
+            Set-Content -Encoding UTF8 -LiteralPath "$staging\scaling-reconnection.json"
           $report | ConvertTo-Json -Depth 5
           if ($blockers.Count) {
             throw 'Surviving or concurrent work detected; no process was killed and no release was restarted'
           }
+      - name: Stage interrupted-release evidence under one physical upload root
+        if: always() && env.RECONNECT_EVIDENCE != ''
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = if ($env:MACHINE -eq 'x64') { 'E:\m16997224t4r1\e' } else { 'D:\m31573412t32r1\e' }
+          $destination = Join-Path $env:RECONNECT_EVIDENCE 'interrupted'
+          New-Item -ItemType Directory -Path $destination | Out-Null
+          Get-ChildItem -LiteralPath $source -File |
+            Where-Object Extension -in @('.json','.stdout','.stderr') |
+            ForEach-Object { Copy-Item -LiteralPath $_.FullName -Destination $destination }
       - name: Preserve reconnection diagnostics and interrupted-release evidence
-        if: always()
+        if: always() && env.RECONNECT_EVIDENCE != ''
         uses: actions/upload-artifact@v6
         with:
           name: reconnected-${{ inputs.machine }}-interrupted-evidence
-          path: |
-            ${{ runner.temp }}/scaling-reconnection.json
-            ${{ inputs.machine == 'x64' && 'E:\m16997224t4r1' || 'D:\m31573412t32r1' }}/e/*.json
-            ${{ inputs.machine == 'x64' && 'E:\m16997224t4r1' || 'D:\m31573412t32r1' }}/e/*.stdout
-            ${{ inputs.machine == 'x64' && 'E:\m16997224t4r1' || 'D:\m31573412t32r1' }}/e/*.stderr
+          path: ${{ env.RECONNECT_EVIDENCE }}
           retention-days: 30
           compression-level: 1

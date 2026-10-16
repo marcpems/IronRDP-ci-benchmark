@@ -1,0 +1,12 @@
+name: Recover x64 and finish fresh four-CPU scaling control
+on:
+  push:
+    branches: [experiment/msvc-rust-thin-scaling-x64-control]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  ready:
+    uses: ./.github/workflows/matched-reconnect-check.yml
+    with:
+      machine: x64
