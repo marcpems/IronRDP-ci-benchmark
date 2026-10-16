@@ -1,0 +1,11 @@
+name: Inspect x64 experiment disk usage
+on:
+  push:
+    branches: [experiment/matched-x64-space]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    uses: ./.github/workflows/matched-gb300-space.yml
+    with:
+      machine: x64

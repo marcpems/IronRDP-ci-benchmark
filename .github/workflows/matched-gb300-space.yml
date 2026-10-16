@@ -12,14 +12,15 @@ permissions:
 jobs:
   inspect:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    runs-on: ${{ fromJSON(inputs.machine == 'arm64' && '["self-hosted","Windows","ARM64","MatchedStandardArm64"]' || '["self-hosted","Windows","ARM64","HighCoreCount"]') }}
+    runs-on: ${{ fromJSON(inputs.machine == 'x64' && '["self-hosted","Windows","X64"]' || inputs.machine == 'arm64' && '["self-hosted","Windows","ARM64","MatchedStandardArm64"]' || '["self-hosted","Windows","ARM64","HighCoreCount"]') }}
     timeout-minutes: 30
     concurrency:
-      group: ${{ inputs.machine == 'arm64' && 'matched-arm64-selfhost' || 'matched-highcore-arm64-selfhost' }}
+      group: ${{ inputs.machine == 'x64' && 'matched-x64-selfhost' || inputs.machine == 'arm64' && 'matched-arm64-selfhost' || 'matched-highcore-arm64-selfhost' }}
       cancel-in-progress: false
     env:
-      INVENTORY_RUNNER: ${{ inputs.machine == 'arm64' && 'MARCPE-D4-Arm64' || 'GB300-Arm64' }}
-      INVENTORY_NAME: ${{ inputs.machine == 'arm64' && 'arm64-space-inventory' || 'gb300-space-inventory' }}
+      INVENTORY_RUNNER: ${{ inputs.machine == 'x64' && 'MARCPE-TEST01-X64' || inputs.machine == 'arm64' && 'MARCPE-D4-Arm64' || 'GB300-Arm64' }}
+      INVENTORY_NAME: ${{ inputs.machine == 'x64' && 'x64-space-inventory' || inputs.machine == 'arm64' && 'arm64-space-inventory' || 'gb300-space-inventory' }}
+      INVENTORY_VOLUME: ${{ inputs.machine == 'x64' && 'E:' || 'D:' }}
     steps:
       - name: Check for surviving work after the runner restart
         shell: powershell
@@ -61,7 +62,7 @@ jobs:
         if: always()
         with:
           python-version: "3.13"
-          architecture: arm64
+          architecture: ${{ inputs.machine == 'x64' && 'x64' || 'arm64' }}
       - name: Inventory experiment directories without following redirected entries
         if: always()
         shell: powershell
@@ -71,8 +72,9 @@ jobs:
           @'
           import json, os, re, shutil, stat, time
           from pathlib import Path
+          volume = os.environ["INVENTORY_VOLUME"] + "\\"
           report = {"volumes": {d: dict(zip(("total", "used", "free"), shutil.disk_usage(d)))
-                                for d in ("C:\\", "D:\\")}, "roots": []}
+                                for d in ("C:\\", volume)}, "roots": []}
           def redirected(path):
               return bool(path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
           def bounded_usage(path):
@@ -100,7 +102,7 @@ jobs:
           output = Path(os.environ["RUNNER_TEMP"]) / f"{os.environ['INVENTORY_NAME']}.json"
           output.write_text(json.dumps(report, indent=2), encoding="utf-8")
           print(json.dumps(report["volumes"]), flush=True)
-          for root in sorted(Path("D:\\").iterdir()):
+          for root in sorted(Path(volume).iterdir()):
               if not re.fullmatch(r"(?:m\d{8}(?:[bml]\d+|t\d+r\d+)|v(?:47351434|47985162))", root.name):
                   continue
               if redirected(root) or not root.is_dir():
