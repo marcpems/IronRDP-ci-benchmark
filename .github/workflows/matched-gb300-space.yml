@@ -93,7 +93,7 @@ jobs:
           output.write_text(json.dumps(report, indent=2), encoding="utf-8")
           print(json.dumps(report["volumes"]), flush=True)
           for root in sorted(Path("D:\\").iterdir()):
-              if not re.fullmatch(r"m\d{8}(?:[bml]\d+|t\d+r\d+)", root.name):
+              if not re.fullmatch(r"(?:m\d{8}(?:[bml]\d+|t\d+r\d+)|v(?:47351434|47985162))", root.name):
                   continue
               if redirected(root) or not root.is_dir():
                   raise RuntimeError(f"Unexpected experiment root: {root}")
@@ -115,8 +115,7 @@ jobs:
                   if path.exists():
                       if redirected(path):
                           raise RuntimeError(f"Redirected inventory path: {path}")
-                      row["usage"].append(bounded_usage(path) if relative == "r/build"
-                                          else {"path": str(path), "exists": True})
+                      row["usage"].append(bounded_usage(path))
               report["roots"].append(row)
               output.write_text(json.dumps(report, indent=2), encoding="utf-8")
               print(json.dumps(row), flush=True)
