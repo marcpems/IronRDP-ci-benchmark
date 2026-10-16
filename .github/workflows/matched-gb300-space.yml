@@ -1,0 +1,81 @@
+name: Inspect GB300 experiment disk usage
+on:
+  push:
+    branches: [experiment/matched-gb300-space]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, HighCoreCount]
+    timeout-minutes: 30
+    concurrency:
+      group: matched-highcore-arm64-selfhost
+      cancel-in-progress: false
+    steps:
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Inventory experiment directories without following redirected entries
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected inventory runner' }
+          @'
+          import json, os, re, shutil, stat
+          from pathlib import Path
+          report = {"volumes": {d: dict(zip(("total", "used", "free"), shutil.disk_usage(d)))
+                                for d in ("C:\\", "D:\\")}, "roots": []}
+          def redirected(path):
+              return bool(path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+          def usage(path):
+              if redirected(path):
+                  raise RuntimeError(f"Redirected inventory root: {path}")
+              size = count = skipped = 0
+              def fail(error):
+                  raise error
+              for parent, folders, names in os.walk(path, onerror=fail, followlinks=False):
+                  for name in folders[:]:
+                      if redirected(Path(parent) / name):
+                          folders.remove(name)
+                          skipped += 1
+                  for name in names:
+                      info = (Path(parent) / name).lstat()
+                      if info.st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+                          skipped += 1
+                          continue
+                      count += 1
+                      size += info.st_size
+              return {"path": str(path), "bytes": size, "files": count, "skipped_links": skipped}
+          for root in sorted(Path("D:\\").iterdir()):
+              if not re.fullmatch(r"m\d{8}(?:[bml]\d+|t\d+r\d+)", root.name):
+                  continue
+              if redirected(root) or not root.is_dir():
+                  raise RuntimeError(f"Unexpected experiment root: {root}")
+              row = {"path": str(root), "metadata": {}, "usage": []}
+              for name in ("provenance", "result", "active-stage", "space-recovery"):
+                  path = root / "e" / f"{name}.json"
+                  if path.is_file():
+                      data = json.loads(path.read_text(encoding="utf-8-sig"))
+                      row["metadata"][name] = {key: data[key] for key in (
+                          "run_id", "runner_name", "runner_class", "variant", "complete",
+                          "full_distribution", "rust_sha", "vm", "attempt", "build_jobs",
+                          "build_affinity_count", "stage", "retained_distribution")
+                          if key in data}
+              for relative in ("r", "r/build", "r/opt-artifacts", "e", "e/cargo-home", "retained-dist"):
+                  path = root / relative
+                  if path.exists():
+                      row["usage"].append(usage(path))
+              report["roots"].append(row)
+              print(json.dumps(row), flush=True)
+          output = Path(os.environ["RUNNER_TEMP"]) / "gb300-space-inventory.json"
+          output.write_text(json.dumps(report, indent=2), encoding="utf-8")
+          print(json.dumps(report["volumes"]), flush=True)
+          '@ | python -
+          if ($LASTEXITCODE) { throw 'GB300 inventory failed' }
+      - uses: actions/upload-artifact@v6
+        with:
+          name: gb300-space-inventory
+          path: ${{ runner.temp }}/gb300-space-inventory.json
+          retention-days: 30
