@@ -1,0 +1,86 @@
+name: Check reconnected scaling runner before fresh work
+on:
+  workflow_call:
+    inputs:
+      machine:
+        type: string
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  check:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: ${{ fromJSON(inputs.machine == 'x64' && '["self-hosted","Windows","X64"]' || '["self-hosted","Windows","ARM64","HighCoreCount"]') }}
+    concurrency:
+      group: ${{ inputs.machine == 'x64' && 'matched-x64-selfhost' || 'matched-highcore-arm64-selfhost' }}
+      cancel-in-progress: false
+    timeout-minutes: 10
+    env:
+      MACHINE: ${{ inputs.machine }}
+    steps:
+      - name: Check prior job, process isolation and available storage
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $cases = @{
+            x64 = @{Runner='MARCPE-TEST01-X64'; Root='E:\m16997224t4r1'; Run='38716997224'; Job='116693884027'; Cores=4}
+            'arm64-highcore' = @{Runner='GB300-Arm64'; Root='D:\m31573412t32r1'; Run='38731573412'; Job='116410369649'; Cores=32}
+          }
+          if (!$cases.ContainsKey($env:MACHINE)) { throw 'Unexpected recovery machine' }
+          $case = $cases[$env:MACHINE]
+          if ($env:RUNNER_NAME -ne $case.Runner) { throw 'Unexpected recovery runner' }
+          $headers = @{Authorization="Bearer $env:GH_TOKEN"; Accept='application/vnd.github+json'}
+          $job = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/marcpems/IronRDP-ci-benchmark/actions/jobs/$($case.Job)"
+          if ($job.status -ne 'completed' -or $job.conclusion -ne 'failure' -or "$($job.run_id)" -ne $case.Run) {
+            throw 'Prior release is not the expected failed job'
+          }
+          $provenance = Get-Content -LiteralPath "$($case.Root)\e\provenance.json" -Raw | ConvertFrom-Json
+          if ($provenance.run_id -ne $case.Run -or $provenance.runner_name -ne $case.Runner -or
+              $provenance.variant -ne 'msvc-pgo-rust-thin' -or $provenance.build_affinity_count -ne $case.Cores) {
+            throw 'Unexpected retained release provenance'
+          }
+          $processes = @(Get-CimInstance Win32_Process)
+          $ancestors = @()
+          $cursor = $PID
+          while ($cursor -ne 0 -and $cursor -notin $ancestors) {
+            $ancestors += $cursor
+            $parent = $processes | Where-Object ProcessId -eq $cursor
+            if (!$parent) { break }
+            $cursor = $parent.ParentProcessId
+          }
+          $blockers = @($processes | Where-Object {
+            $_.ProcessId -notin $ancestors -and
+            ($_.Name -eq 'Runner.Worker.exe' -or
+             $_.CommandLine -like "*$($case.Root)*" -or
+             $_.Name -in @('cmake.exe','ninja.exe','clang-cl.exe','cl.exe','link.exe',
+                          'rustc.exe','rustdoc.exe','cargo.exe','opt-dist.exe','bootstrap.exe'))
+          })
+          $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($case.Root))
+          $report = @{
+            Runner=$env:RUNNER_NAME; FailedJob=$case.Job; FailedRoot=$case.Root
+            UTC=[DateTime]::UtcNow.ToString('o')
+            LastBootUTC=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o')
+            FreeBytes=$drive.AvailableFreeSpace; DriveFormat=$drive.DriveFormat
+            Processes=@($blockers | Select-Object Name,ProcessId,ParentProcessId,CreationDate)
+          }
+          $report | ConvertTo-Json -Depth 5 |
+            Set-Content -Encoding UTF8 -LiteralPath "$env:RUNNER_TEMP\scaling-reconnection.json"
+          $report | ConvertTo-Json -Depth 5
+          if ($blockers.Count) {
+            throw 'Surviving or concurrent work detected; no process was killed and no release was restarted'
+          }
+      - name: Preserve reconnection diagnostics and interrupted-release evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: reconnected-${{ inputs.machine }}-interrupted-evidence
+          path: |
+            ${{ runner.temp }}/scaling-reconnection.json
+            ${{ inputs.machine == 'x64' && 'E:\m16997224t4r1' || 'D:\m31573412t32r1' }}/e/*.json
+            ${{ inputs.machine == 'x64' && 'E:\m16997224t4r1' || 'D:\m31573412t32r1' }}/e/*.stdout
+            ${{ inputs.machine == 'x64' && 'E:\m16997224t4r1' || 'D:\m31573412t32r1' }}/e/*.stderr
+          retention-days: 30
+          compression-level: 1

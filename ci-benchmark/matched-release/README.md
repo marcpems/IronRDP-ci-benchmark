@@ -130,6 +130,14 @@ The incomplete control is excluded; no x64 scaling ratio is reported.
 All these cells use the new Microsoft-retained PGO plus Rust
 cross-crate ThinLTO recipe; the older PGO-only pilots are not controls.
 
+`matched-remaining-scaling.yml` queues only the missing x64/4 and GB300/32/16/4
+cells. Independent readiness jobs wait for each runner to reconnect, verify
+the previously failed job and retained provenance, check for surviving work,
+and upload interrupted-run evidence before allowing fresh release roots.
+They do not kill processes or relax the disk guard. Existing qualified cells
+are not rebuilt. GitHub's 24-hour queue limit still applies; offline hosts
+cannot be restarted or repaired through an unassigned Actions job.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined
