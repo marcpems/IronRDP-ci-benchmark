@@ -29,9 +29,10 @@ jobs:
           }
           $blockers = @($processes | Where-Object {
             $_.ProcessId -notin $ancestors -and
-            $_.Name -in @('Runner.Worker.exe','python.exe','cmake.exe','ninja.exe',
+            ($_.Name -in @('Runner.Worker.exe','cmake.exe','ninja.exe',
                           'clang-cl.exe','cl.exe','link.exe','rustc.exe','rustdoc.exe',
-                          'cargo.exe','opt-dist.exe','bootstrap.exe')
+                          'cargo.exe','opt-dist.exe','bootstrap.exe') -or
+             ($_.Name -eq 'python.exe' -and $_.CommandLine -match 'matched_release\.py|build_arm_compilers\.py|m\d{8}(?:[bml]\d+|t\d+r\d+)|\s-\s*$'))
           })
           $blockers | ForEach-Object {
             $process = $_
@@ -60,12 +61,34 @@ jobs:
           $ErrorActionPreference = 'Stop'
           if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected inventory runner' }
           @'
-          import json, os, re, shutil, stat
+          import json, os, re, shutil, stat, time
           from pathlib import Path
           report = {"volumes": {d: dict(zip(("total", "used", "free"), shutil.disk_usage(d)))
                                 for d in ("C:\\", "D:\\")}, "roots": []}
           def redirected(path):
               return bool(path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+          def bounded_usage(path):
+              pending = [path]
+              size = count = skipped = 0
+              deadline = time.monotonic() + 45
+              while pending:
+                  with os.scandir(pending.pop()) as entries:
+                      for entry in entries:
+                          if time.monotonic() >= deadline:
+                              return {"path": str(path), "bytes_lower_bound": size,
+                                      "files": count, "complete": False, "skipped_links": skipped}
+                          info = entry.stat(follow_symlinks=False)
+                          if info.st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT:
+                              skipped += 1
+                          elif stat.S_ISDIR(info.st_mode):
+                              pending.append(entry.path)
+                          elif stat.S_ISREG(info.st_mode):
+                              count += 1
+                              size += info.st_size
+                          else:
+                              raise RuntimeError(f"Unknown filesystem entry: {entry.path}")
+              return {"path": str(path), "bytes": size, "files": count,
+                      "complete": True, "skipped_links": skipped}
           output = Path(os.environ["RUNNER_TEMP"]) / "gb300-space-inventory.json"
           output.write_text(json.dumps(report, indent=2), encoding="utf-8")
           print(json.dumps(report["volumes"]), flush=True)
@@ -92,7 +115,8 @@ jobs:
                   if path.exists():
                       if redirected(path):
                           raise RuntimeError(f"Redirected inventory path: {path}")
-                      row["usage"].append({"path": str(path), "exists": True})
+                      row["usage"].append(bounded_usage(path) if relative == "r/build"
+                                          else {"path": str(path), "exists": True})
               report["roots"].append(row)
               output.write_text(json.dumps(report, indent=2), encoding="utf-8")
               print(json.dumps(row), flush=True)
