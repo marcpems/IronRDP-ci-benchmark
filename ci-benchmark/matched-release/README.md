@@ -30,6 +30,18 @@ are retained inside the preserved tree, and external symlinks remain rejected.
 Cache maintenance has a separate 120-minute allowance; the release recipe,
 measurement boundaries and 180 GiB free-space guard are unchanged.
 
+On 16 October, removal of investigation data known to be obsolete was
+authorized. `matched-arm64-obsolete-cleanup.yml` waits for the ordinary Arm64
+release lock and refuses to run alongside surviving build processes. It
+revalidates the qualified 4/16-CPU results, full distribution checksums and
+merged profiles before deleting only their Cargo and rustc-perf training
+caches, including verified relocated copies. These caches are not reused by
+fresh-profile measurements. Sources, evidence, merged profiles, distributions
+and failed-build diagnostics remain untouched. Per-cache disposal receipts
+and a free-space report distinguish deletion from preservation, and subsequent
+space preparation skips caches deliberately disposed of. No experiment root
+or unqualified build is recursively removed by this cleanup.
+
 This recipe retains `clang-cl`, Microsoft `link.exe` and `lib.exe`, with
 fresh PGO and **Rust-side cross-crate ThinLTO enabled**. Native LLVM ThinLTO
 stays off because its bitcode is not supported by Microsoft `/LTCG`.

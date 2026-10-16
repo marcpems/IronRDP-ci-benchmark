@@ -1,0 +1,60 @@
+name: Reclaim obsolete qualified Arm64 investigation caches
+on:
+  push:
+    branches: [experiment/matched-arm64-obsolete-cleanup]
+permissions:
+  contents: read
+jobs:
+  cleanup:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, MatchedStandardArm64]
+    timeout-minutes: 120
+    concurrency:
+      group: matched-arm64-selfhost
+      cancel-in-progress: false
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - name: Refuse cleanup alongside surviving or concurrent build work
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-D4-Arm64') { throw 'Unexpected cleanup runner' }
+          $processes = @(Get-CimInstance Win32_Process)
+          $ancestors = @()
+          $cursor = $PID
+          while ($cursor -ne 0 -and $cursor -notin $ancestors) {
+            $ancestors += $cursor
+            $parent = $processes | Where-Object ProcessId -eq $cursor
+            if (!$parent) { break }
+            $cursor = $parent.ParentProcessId
+          }
+          $blockers = @($processes | Where-Object {
+            $_.ProcessId -notin $ancestors -and
+            ($_.Name -in @('Runner.Worker.exe','cmake.exe','ninja.exe','clang-cl.exe','cl.exe',
+                          'link.exe','rustc.exe','rustdoc.exe','cargo.exe','opt-dist.exe','bootstrap.exe') -or
+             $_.CommandLine -like '*m28610658t16r1*' -or
+             $_.CommandLine -like '*m56702383t4r1*')
+          })
+          if ($blockers.Count) {
+            $blockers | Select-Object Name,ProcessId,ParentProcessId | ConvertTo-Json
+            throw 'Surviving or concurrent work detected; nothing removed and no process killed'
+          }
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Verify completed releases and remove only their obsolete caches
+        shell: powershell
+        run: |
+          python .github\scripts\cleanup_arm64_investigations.py
+          if ($LASTEXITCODE) { throw 'Guarded obsolete-cache cleanup failed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: obsolete-arm64-cache-cleanup
+          path: ${{ runner.temp }}/obsolete-arm64-caches-${{ github.run_id }}.json
+          retention-days: 30

@@ -10,6 +10,22 @@ from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
 from recover_matched_build import verify_archives
 from relocate_failed_scaling_build import physical_directory, relocate, resume_relocation
 
+CACHE_PATHS = {"cargo": Path("e") / "cargo-home",
+               "training": Path("r") / "opt-artifacts" / "rustc-perf"}
+
+
+def cache_disposal_complete(root, label):
+    receipt = root / "e" / f"obsolete-{label}-cache.json"
+    if not receipt.exists():
+        return False
+    record = json.loads(receipt.read_text())
+    cache = root / CACHE_PATHS[label]
+    if (record.get("complete") is not True or record.get("source") != str(cache)
+            or record.get("result_sha256") != digest(root / "e/result.json")
+            or os.path.lexists(cache)):
+        raise RuntimeError("Cache disposal receipt is incomplete or no longer matches the release")
+    return True
+
 
 def verify_cell(root, run_id, cores):
     for path in (root, root / "r", root / "e", root / "retained-dist"):
@@ -72,9 +88,13 @@ def main():
         identity = verify_cell(root, run_id, cores)
         retained = Path(r"C:\matched-retained")
         physical_directory(retained)
-        for label, relative in (("cargo", "e/cargo-home"), ("training", "r/opt-artifacts/rustc-perf")):
+        for label, relative in CACHE_PATHS.items():
             if shutil.disk_usage("D:\\").free >= 180 * 1024 ** 3:
                 break
+            if cache_disposal_complete(root, label):
+                report.setdefault("already_disposed", []).append(str(root / relative))
+                save(output, report)
+                continue
             cache = root / relative
             for ancestor in cache.parents:
                 if ancestor == root.parent:

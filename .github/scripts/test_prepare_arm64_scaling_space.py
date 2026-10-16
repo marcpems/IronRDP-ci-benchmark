@@ -6,7 +6,8 @@ from unittest.mock import patch
 
 from build_arm_compilers import digest, save
 from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
-from prepare_arm64_scaling_space import preserve_cache, verify_cell
+from prepare_arm64_scaling_space import cache_disposal_complete, preserve_cache, verify_cell
+from cleanup_arm64_investigations import cleanup_cell
 import relocate_failed_scaling_build as recovery
 
 
@@ -92,6 +93,75 @@ class CompletedCacheGuardTests(unittest.TestCase):
             save(previous / "relocation.json", {})
         with self.assertRaisesRegex(RuntimeError, "Ambiguous"):
             preserve_cache(cache, retained, stem, "3")
+        self.assertTrue(cache.exists())
+
+    def test_cleanup_removes_only_qualified_caches_and_records_disposal(self):
+        cache = self.root / "e/cargo-home"
+        cache.mkdir()
+        (cache / "payload").write_bytes(b"obsolete")
+        training = self.root / "r/opt-artifacts/rustc-perf"
+        training.mkdir()
+        (training / "payload").write_bytes(b"obsolete training")
+        retained = Path(self.temp.name) / "retained"
+        retained.mkdir()
+        cleanup_cell(self.root, "38728610658", 16, retained)
+        self.assertFalse(cache.exists())
+        self.assertFalse(training.exists())
+        self.assertTrue(cache_disposal_complete(self.root, "cargo"))
+        self.assertTrue(cache_disposal_complete(self.root, "training"))
+        verify_cell(self.root, "38728610658", 16)
+        results = cleanup_cell(self.root, "38728610658", 16, retained)
+        self.assertEqual([row["status"] for row in results], ["already-disposed", "already-disposed"])
+        cache.mkdir()
+        with self.assertRaisesRegex(RuntimeError, "disposal receipt"):
+            cache_disposal_complete(self.root, "cargo")
+
+    def test_cleanup_validates_and_removes_relocated_cache_not_receipts(self):
+        cache = self.root / "e/cargo-home"
+        cache.mkdir()
+        (cache / "payload").write_bytes(b"obsolete")
+        retained = Path(self.temp.name) / "retained"
+        retained.mkdir()
+        destination = preserve_cache(cache, retained, f"{self.root.name}-cargo", "1")
+        cleanup_cell(self.root, "38728610658", 16, retained)
+        self.assertFalse((destination / "cache").exists())
+        self.assertTrue((destination / "relocation.json").is_file())
+        self.assertTrue(cache_disposal_complete(self.root, "cargo"))
+        verify_cell(self.root, "38728610658", 16)
+
+    def test_cleanup_rejects_unqualified_cell_before_removing_cache(self):
+        cache = self.root / "e/cargo-home"
+        cache.mkdir()
+        path = self.root / "e/result.json"
+        result = json.loads(path.read_text())
+        result["complete"] = False
+        save(path, result)
+        with self.assertRaisesRegex(RuntimeError, "completed"):
+            cleanup_cell(self.root, "38728610658", 16, Path(self.temp.name))
+        self.assertTrue(cache.exists())
+
+    def test_cleanup_rejects_changed_retained_cache(self):
+        cache = self.root / "e/cargo-home"
+        cache.mkdir()
+        (cache / "payload").write_bytes(b"obsolete")
+        retained = Path(self.temp.name) / "retained"
+        retained.mkdir()
+        destination = preserve_cache(cache, retained, f"{self.root.name}-cargo", "1")
+        (destination / "cache/payload").write_bytes(b"unexpected change")
+        with self.assertRaisesRegex(RuntimeError, "no longer matches"):
+            cleanup_cell(self.root, "38728610658", 16, retained)
+        self.assertTrue((destination / "cache/payload").exists())
+
+    def test_cleanup_rejects_external_symlink_without_deleting_its_target(self):
+        cache = self.root / "e/cargo-home"
+        cache.mkdir()
+        outside = self.root / "e/result.json"
+        (cache / "outside").symlink_to(outside)
+        retained = Path(self.temp.name) / "retained"
+        retained.mkdir()
+        with self.assertRaisesRegex(RuntimeError, "leaves retained tree"):
+            cleanup_cell(self.root, "38728610658", 16, retained)
+        self.assertTrue(outside.exists())
         self.assertTrue(cache.exists())
 
 
