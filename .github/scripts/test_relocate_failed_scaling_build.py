@@ -89,6 +89,18 @@ class RelocationTests(unittest.TestCase):
         self.assertEqual((self.build.parent / "source.txt").read_text(), "source remains")
         self.assertFalse((self.destination / "source.txt").exists())
 
+    def test_reconnection_requires_exact_current_run_and_no_surviving_work(self):
+        root = Path(r"E:\m16997224t4r1")
+        report = {"Runner": "MARCPE-TEST01-X64", "FailedRoot": str(root),
+                  "FailedJob": "116693884027", "RecoveryRun": "new-run", "Processes": []}
+        recovery.verify_reconnection(report, "MARCPE-TEST01-X64", root, "116693884027", "new-run")
+        for key, value in (("Runner", "another-runner"), ("FailedRoot", "another-root"),
+                           ("FailedJob", "another-job"), ("RecoveryRun", "old-run"),
+                           ("Processes", [{"ProcessId": 123}])):
+            with self.subTest(key=key), self.assertRaises(RuntimeError):
+                recovery.verify_reconnection({**report, key: value}, "MARCPE-TEST01-X64",
+                                             root, "116693884027", "new-run")
+
 
 if __name__ == "__main__":
     unittest.main()

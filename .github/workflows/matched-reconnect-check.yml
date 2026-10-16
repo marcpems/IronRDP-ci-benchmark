@@ -64,6 +64,7 @@ jobs:
           $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($case.Root))
           $report = @{
             Runner=$env:RUNNER_NAME; FailedJob=$case.Job; FailedRoot=$case.Root
+            RecoveryRun=$env:GITHUB_RUN_ID
             UTC=[DateTime]::UtcNow.ToString('o')
             LastBootUTC=(Get-CimInstance Win32_OperatingSystem).LastBootUpTime.ToUniversalTime().ToString('o')
             FreeBytes=$drive.AvailableFreeSpace; DriveFormat=$drive.DriveFormat

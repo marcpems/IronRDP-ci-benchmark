@@ -138,6 +138,16 @@ They do not kill processes or relax the disk guard. Existing qualified cells
 are not rebuilt. GitHub's 24-hour queue limit still applies; offline hosts
 cannot be restarted or repaired through an unassigned Actions job.
 
+On 16 October the x64 runner reconnected and its isolation check passed.
+The first reconnection artifact upload failed because its files spanned
+incompatible upload roots; staging the report and interrupted logs beneath
+one physical root fixed that failure (verified by 38869537727). E: had only
+about 169 GiB free. `matched-x64-scaling-control.yml` therefore preserves the
+interrupted build on C: using the same checksum/junction-checked relocation,
+then runs only the missing four-CPU control from fresh sources and profiles.
+This recovery requires a successful same-run reconnection report. The
+interrupted training logs are diagnostic evidence, not accepted timings.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined

@@ -1,5 +1,6 @@
 """Preserve the inspected failed build on another volume before reclaiming its cache."""
 
+import argparse
 import json
 import os
 from pathlib import Path
@@ -89,21 +90,46 @@ def relocate(build, destination):
     print(json.dumps({key: value for key, value in record.items() if key != "files"}), flush=True)
 
 
+def verify_reconnection(report, runner, root, job, run_id):
+    if (report.get("Runner") != runner or report.get("FailedRoot") != str(root)
+            or report.get("FailedJob") != job or report.get("RecoveryRun") != run_id
+            or report.get("Processes") != []):
+        raise RuntimeError("Expected current-run successful reconnection evidence without surviving work")
+
+
 def main():
-    if (os.name != "nt" or os.environ.get("RUNNER_NAME") != "MARCPE-D4-Arm64"
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--machine", choices=("arm64", "x64"), default="arm64")
+    parser.add_argument("--reconnection-report", type=Path)
+    args = parser.parse_args()
+    runner, root, cores = {
+        "arm64": ("MARCPE-D4-Arm64", Path(r"D:\m16997224t16r1"), 16),
+        "x64": ("MARCPE-TEST01-X64", Path(r"E:\m16997224t4r1"), 4),
+    }[args.machine]
+    if (os.name != "nt" or os.environ.get("RUNNER_NAME") != runner
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"):
-        raise RuntimeError("Expected the exact ordinary Arm64 runner")
-    root = Path(r"D:\m16997224t16r1")
+        raise RuntimeError("Expected the exact recovery runner")
     for path in (root, root / "r", root / "e", root / "r/build"):
         physical_directory(path)
     provenance = json.loads((root / "e/provenance.json").read_text())
-    failure = json.loads((root / "e/fresh-pgo-full-dist.json").read_text())
+    measurement = root / "e/fresh-pgo-full-dist.json"
+    if args.machine == "arm64":
+        if json.loads(measurement.read_text()).get("exit_code") != 1:
+            raise RuntimeError("Expected the failed Arm64 documentation build")
+    else:
+        if args.reconnection_report is None:
+            raise RuntimeError("Interrupted x64 recovery requires a fresh reconnection report")
+        report = json.loads(args.reconnection_report.read_text(encoding="utf-8-sig"))
+        verify_reconnection(report, runner, root, "116693884027", os.environ["GITHUB_RUN_ID"])
+        stage = json.loads((root / "e/active-stage.json").read_text())
+        if measurement.exists() or stage.get("stage") != "fresh-pgo-full-dist":
+            raise RuntimeError("Expected the interrupted, unfinished x64 production measurement")
     if (provenance.get("run_id") != "38716997224"
-            or provenance.get("runner_name") != "MARCPE-D4-Arm64"
+            or provenance.get("runner_name") != runner
             or provenance.get("variant") != "msvc-pgo-rust-thin"
-            or provenance.get("build_affinity_count") != 16
+            or provenance.get("build_affinity_count") != cores
             or provenance.get("paths", {}).get("source") != str(root / "r")
-            or failure.get("exit_code") != 1 or (root / "e/result.json").exists()
+            or (root / "e/result.json").exists()
             or (root / "r/build/dist").exists()):
         raise RuntimeError("Expected the inspected failed, unqualified build without distribution")
     retained = Path(r"C:\matched-retained")

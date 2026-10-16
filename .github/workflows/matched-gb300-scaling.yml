@@ -4,8 +4,14 @@ on:
     branches: [experiment/msvc-rust-thin-scaling-gb300]
 permissions:
   contents: read
+  actions: read
 jobs:
+  highcore-ready:
+    uses: ./.github/workflows/matched-reconnect-check.yml
+    with:
+      machine: arm64-highcore
   highcore-32:
+    needs: highcore-ready
     uses: ./.github/workflows/matched-scaling-cell.yml
     with:
       machine: arm64-highcore
