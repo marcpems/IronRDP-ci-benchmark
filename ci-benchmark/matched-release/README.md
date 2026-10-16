@@ -81,7 +81,7 @@ The fresh ordinary Arm64/16 release in 38728610658 completed and qualified:
 production 6721.889759 seconds (112.03 minutes), extracted-distribution tests
 3208.655321 seconds (53.48 minutes), and the whole successful job 11334 seconds
 (188.90 minutes). Its source/tool identity, full manifest and PGO/Rust ThinLTO
-audit passed. No four-to-sixteen scaling ratio is available yet.
+audit passed. The matching four-CPU control has now also completed, as below.
 
 The dependent four-CPU cell stopped before checkout because D: had less than
 180 GiB free, even after successful qualified-build cleanup. Read-only inventory
@@ -94,6 +94,38 @@ qualified archives remain untouched; the 180 GiB guard is not relaxed.
 GB300 run 38731573412 also lost runner communication, at 14:49:34 UTC during
 the build/qualification step. It is excluded and its dependent 16/4 cells
 were skipped. No completed GB300 scaling result is available from that run.
+
+### First qualified CPU-scaling comparison
+
+The fresh ordinary Arm64 four-CPU control
+[38756702383 / 116502060812](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38756702383/job/116502060812)
+completed successfully on 16 October at 01:18:34 UTC. Comparison with
+[the 16-CPU cell](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38728610658/job/116400524618)
+checks identical source/tool identities and bootstrap configuration except
+worker allocation, fresh profiles, actual CPU affinity, executed backend
+profile counters, full manifests, explicit Rust PGO/ThinLTO flags and passed
+extracted-distribution tests.
+
+| Machine / allocation | Full production minutes | Successful whole-job minutes |
+|---|---:|---:|
+| Ordinary Arm64 / 4 CPUs | 507.79 | 606.70 |
+| Ordinary Arm64 / 16 CPUs | 112.03 | 188.90 |
+| x64 / 16 logical CPUs | 610.70 | 720.22 |
+
+On this Arm64 machine, 4 to 16 CPUs reduced production time by **77.94%**
+(**4.53x** speedup), and successful whole-job time by **68.86%** (**3.21x**).
+The 16-CPU job fits both the 360-minute hosted ceiling and a 300-minute
+planning budget; the four-CPU job does not. These are self-hosted observations,
+not measurements of GitHub larger runners or guaranteed hosted performance.
+The production speedup exceeds the fourfold CPU-count increase: fixed-order,
+single-pass results need repetition before explaining or generalizing that
+effect. Whole-job figures exclude queue time, failed attempts and separate
+recovery jobs; they are not total experiment cost.
+
+The x64 16-logical-CPU release also qualified, but its job exceeded six hours.
+Its fresh four-CPU control is still running, so no x64 scaling ratio is
+reported. All these cells use the new Microsoft-retained PGO plus Rust
+cross-crate ThinLTO recipe; the older PGO-only pilots are not controls.
 
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
