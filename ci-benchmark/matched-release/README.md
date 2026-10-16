@@ -17,6 +17,19 @@ caches from the qualified 4/16 cells are relocated to C: with verified
 checksums; sources, merged profiles, results and distribution archives stay
 in place. That maintenance is separate from the eight-CPU release job.
 
+The first eight-CPU preparation (`38870164332`) rejected an internal Cargo
+checkout license symlink before copying or deleting anything. The replacement
+(`38870376305`) preserved and checksum-verified the Cargo cache, but source
+removal stopped on a read-only Git pack index. Neither attempt reached release
+production. Recovery now reuses the exact relocation receipt, rechecks the full
+retained copy and every remaining source entry, and resumes removal without
+recopying a partially removed source. Only Windows read-only regular-file
+deletion failures are retried after clearing that source file's read-only bit;
+other permission errors and redirected entries remain fatal. Internal symlinks
+are retained inside the preserved tree, and external symlinks remain rejected.
+Cache maintenance has a separate 120-minute allowance; the release recipe,
+measurement boundaries and 180 GiB free-space guard are unchanged.
+
 This recipe retains `clang-cl`, Microsoft `link.exe` and `lib.exe`, with
 fresh PGO and **Rust-side cross-crate ThinLTO enabled**. Native LLVM ThinLTO
 stays off because its bitcode is not supported by Microsoft `/LTCG`.

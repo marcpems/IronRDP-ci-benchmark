@@ -8,7 +8,7 @@ import shutil
 from build_arm_compilers import digest, save
 from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
 from recover_matched_build import verify_archives
-from relocate_failed_scaling_build import physical_directory, relocate
+from relocate_failed_scaling_build import physical_directory, relocate, resume_relocation
 
 
 def verify_cell(root, run_id, cores):
@@ -37,6 +37,27 @@ def verify_cell(root, run_id, cores):
     return digest(root / "e/result.json")
 
 
+def preserve_cache(cache, retained, stem, run_id):
+    physical_directory(retained)
+    previous = []
+    for directory in retained.glob(f"{stem}-*"):
+        if not directory.name.removeprefix(f"{stem}-").isdigit():
+            raise RuntimeError("Unexpected retained cache directory identity")
+        physical_directory(directory)
+        if (directory / "relocation.json").exists():
+            previous.append(directory)
+    if len(previous) > 1:
+        raise RuntimeError("Ambiguous previous cache relocation receipts")
+    if previous:
+        destination = previous[0]
+        resume_relocation(cache, destination / "cache")
+    else:
+        destination = retained / f"{stem}-{run_id}"
+        destination.mkdir(exist_ok=False)
+        relocate(cache, destination / "cache")
+    return destination
+
+
 def main():
     if (os.name != "nt" or os.environ.get("RUNNER_NAME") != "MARCPE-D4-Arm64"
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"):
@@ -55,13 +76,12 @@ def main():
             if shutil.disk_usage("D:\\").free >= 180 * 1024 ** 3:
                 break
             cache = root / relative
-            for ancestor in (cache, *cache.parents):
+            for ancestor in cache.parents:
                 if ancestor == root.parent:
                     break
                 physical_directory(ancestor)
-            destination = retained / f"{root.name}-{label}-{os.environ['GITHUB_RUN_ID']}"
-            destination.mkdir(exist_ok=False)
-            relocate(cache, destination / "cache")
+            destination = preserve_cache(cache, retained, f"{root.name}-{label}",
+                                         os.environ["GITHUB_RUN_ID"])
             receipt = json.loads((destination / "relocation.json").read_text())
             after_identity = verify_cell(root, run_id, cores)
             if after_identity != identity or receipt["complete"] is not True:

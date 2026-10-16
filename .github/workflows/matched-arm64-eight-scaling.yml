@@ -8,7 +8,7 @@ jobs:
   space:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     runs-on: [self-hosted, Windows, ARM64, MatchedStandardArm64]
-    timeout-minutes: 45
+    timeout-minutes: 120
     concurrency:
       group: matched-arm64-selfhost
       cancel-in-progress: false

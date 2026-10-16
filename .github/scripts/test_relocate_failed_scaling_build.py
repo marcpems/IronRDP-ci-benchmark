@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 import tempfile
+import stat
 import subprocess
 import unittest
 from unittest.mock import patch
@@ -121,6 +122,66 @@ class RelocationTests(unittest.TestCase):
             recovery.relocate(self.build, self.destination)
         self.assertTrue(self.build.exists())
         self.assertEqual(external.read_bytes(), b"outside")
+
+    @unittest.skipUnless(os.name == "nt", "Windows read-only files")
+    def test_readonly_git_pack_is_preserved_before_source_removal(self):
+        pack = self.build / "objects.idx"
+        pack.write_bytes(b"git pack index")
+        pack.chmod(stat.S_IREAD)
+        recovery.relocate(self.build, self.destination)
+        self.assertFalse(self.build.exists())
+        self.assertEqual((self.destination / pack.name).read_bytes(), b"git pack index")
+        self.assertTrue((self.destination / pack.name).stat().st_file_attributes
+                        & stat.FILE_ATTRIBUTE_READONLY)
+
+    def interrupt_removal(self):
+        (self.build / "docs/license").symlink_to(self.build / "rustbook.exe")
+        def interrupt(path, **kwargs):
+            (path / "rustbook.exe").unlink()
+            raise PermissionError("interrupted removal")
+        with patch.object(recovery.shutil, "rmtree", side_effect=interrupt):
+            with self.assertRaisesRegex(PermissionError, "interrupted removal"):
+                recovery.relocate(self.build, self.destination)
+
+    def test_resume_checks_retained_copy_and_remaining_source(self):
+        self.interrupt_removal()
+        recovery.resume_relocation(self.build, self.destination)
+        self.assertFalse(self.build.exists())
+        self.assertEqual((self.destination / "docs/license").read_bytes(), b"retained executable")
+        self.assertTrue(json.loads((self.destination.parent / "relocation.json").read_text())["complete"])
+        recovery.resume_relocation(self.build, self.destination)
+
+    def test_resume_rejects_corrupt_retained_copy(self):
+        self.interrupt_removal()
+        (self.destination / "rustbook.exe").write_bytes(b"changed")
+        with self.assertRaisesRegex(RuntimeError, "retained"):
+            recovery.resume_relocation(self.build, self.destination)
+        self.assertTrue((self.build / "docs/book.md").exists())
+
+    def test_resume_rejects_changed_remaining_source(self):
+        self.interrupt_removal()
+        (self.build / "docs/book.md").write_bytes(b"new work")
+        with self.assertRaisesRegex(RuntimeError, "source"):
+            recovery.resume_relocation(self.build, self.destination)
+        self.assertEqual((self.build / "docs/book.md").read_bytes(), b"new work")
+
+    def test_resume_rejects_wrong_receipt_identity(self):
+        self.interrupt_removal()
+        receipt = self.destination.parent / "relocation.json"
+        record = json.loads(receipt.read_text())
+        record["source"] = str(self.build.parent)
+        receipt.write_text(json.dumps(record))
+        with self.assertRaisesRegex(RuntimeError, "identity"):
+            recovery.resume_relocation(self.build, self.destination)
+        self.assertTrue(self.build.exists())
+
+    def test_permission_errors_other_than_readonly_are_not_suppressed(self):
+        path = self.build / "rustbook.exe"
+        error = PermissionError("file locked")
+        with patch.object(recovery.os, "chmod") as chmod:
+            with self.assertRaises(PermissionError):
+                recovery.retry_readonly(recovery.os.unlink, str(path), (PermissionError, error, None))
+            chmod.assert_not_called()
 
 
 if __name__ == "__main__":
