@@ -201,6 +201,23 @@ The incomplete control is excluded; no x64 scaling ratio is reported.
 All these cells use the new Microsoft-retained PGO plus Rust
 cross-crate ThinLTO recipe; the older PGO-only pilots are not controls.
 
+On 16 October the user requested another x64 16-CPU observation because the
+first production time (610.70 minutes) appeared unexpectedly high.
+`matched-x64-sixteen-repeat.yml` waits behind the current four-CPU job using
+the same machine lock, then requires that exact job and local matched result
+to have completed successfully before scheduling a fresh 16-CPU release.
+The repeat retains the same recipe, source pins, full qualification and disk
+guard, but uses a new workflow-run root and fresh profiles. Both 16-CPU results
+will be reported separately rather than replacing the first or selecting the
+faster one. The protocol's extra x64 repeat is conditional, not a claim that
+all cells have two repetitions; per-run VM/attempt identifiers remain unchanged.
+A linear extrapolation from the first 16-CPU production time gives about
+40h43m at four CPUs, but SMT, fixed-work stages and other nonlinear effects
+make that a hypothesis, not a prediction. The already-running four-CPU job
+retains its existing 24-hour job limit and 1430-minute harness deadline.
+A timeout is excluded, not treated as a completed scaling result, and prevents
+the conditional 16-CPU repeat from starting.
+
 `matched-remaining-scaling.yml` queues only the missing x64/4 and GB300/32/16/4
 cells. Independent readiness jobs wait for each runner to reconnect, verify
 the previously failed job and retained provenance, check for surviving work,

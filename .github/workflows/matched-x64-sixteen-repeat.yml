@@ -1,0 +1,73 @@
+name: Repeat x64 sixteen-CPU release after the qualified four-CPU control
+on:
+  push:
+    branches: [experiment/msvc-rust-thin-scaling-x64-sixteen-repeat]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualified-four:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    concurrency:
+      group: matched-x64-selfhost
+      cancel-in-progress: false
+    timeout-minutes: 5
+    steps:
+      - name: Require the current four-CPU control to finish and qualify
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64' -or
+              $env:RUNNER_ENVIRONMENT -ne 'self-hosted') { throw 'Unexpected repeat runner' }
+          $headers = @{Authorization="Bearer $env:GH_TOKEN"; Accept='application/vnd.github+json'}
+          for ($attempt = 0; $attempt -lt 6; $attempt++) {
+            $job = Invoke-RestMethod -Headers $headers -Uri 'https://api.github.com/repos/marcpems/IronRDP-ci-benchmark/actions/jobs/116880180878'
+            if ($job.status -eq 'completed') { break }
+            Start-Sleep -Seconds 10
+          }
+          if ($job.status -ne 'completed' -or $job.conclusion -ne 'success' -or
+              "$($job.run_id)" -ne '38869758791' -or $job.run_attempt -ne 1 -or
+              $job.runner_name -ne $env:RUNNER_NAME) {
+            throw 'The four-CPU control has not completed successfully; no sixteen-CPU repeat will start'
+          }
+          $root = 'E:\m69758791t4r1'
+          $result = Get-Content -LiteralPath "$root\e\result.json" -Raw | ConvertFrom-Json
+          if ($result.complete -ne $true -or $result.full_distribution -ne $true -or
+              $result.run_id -ne '38869758791' -or $result.attempt -ne '1' -or
+              $result.runner_name -ne $env:RUNNER_NAME -or $result.runner_class -ne 'self-hosted-x64' -or
+              $result.variant -ne 'msvc-pgo-rust-thin' -or $result.scaling_study -ne 'msvc-rust-thin-scaling-v1' -or
+              $result.build_jobs -ne 4 -or $result.build_affinity_count -ne 4 -or
+              $result.rust_sha -ne '7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238' -or
+              $result.paths.source -ne "$root\r") {
+            throw 'Four-CPU result is not the expected qualified matched control'
+          }
+          $processes = @(Get-CimInstance Win32_Process)
+          $ancestors = @()
+          $cursor = $PID
+          while ($cursor -ne 0 -and $cursor -notin $ancestors) {
+            $ancestors += $cursor
+            $parent = $processes | Where-Object ProcessId -eq $cursor
+            if (!$parent) { break }
+            $cursor = $parent.ParentProcessId
+          }
+          $blockers = @($processes | Where-Object {
+            $_.ProcessId -notin $ancestors -and
+            ($_.Name -in @('Runner.Worker.exe','cmake.exe','ninja.exe','clang-cl.exe','cl.exe','link.exe',
+                          'rustc.exe','rustdoc.exe','cargo.exe','opt-dist.exe','bootstrap.exe') -or
+             $_.CommandLine -like "*$root*" -or
+             ($_.Name -eq 'python.exe' -and $_.CommandLine -match 'matched_release\.py|build_arm_compilers\.py|\s-\s*$'))
+          })
+          if ($blockers.Count) {
+            $blockers | Select-Object Name,ProcessId,ParentProcessId | ConvertTo-Json
+            throw 'Surviving work detected; no processes killed and no repeat started'
+          }
+          Write-Output 'Four-CPU control qualified; allowing an independent fresh sixteen-CPU repeat'
+  x64-16-repeat:
+    needs: qualified-four
+    uses: ./.github/workflows/matched-scaling-cell.yml
+    with:
+      machine: x64
+      cores: 16
