@@ -12,7 +12,7 @@
   "scope": "Full Rust release only: fresh full-tool/frontend/backend PGO, tools, docs, MSI, applicable backends and Arm64EC; original extracted-distribution qualification. No IronRDP replay.",
   "cells_in_execution_order": {
     "MARCPE-TEST01-X64": [16, 4],
-    "MARCPE-D4-Arm64": [16, 4],
+    "MARCPE-D4-Arm64": [16, 4, 8],
     "GB300-Arm64": [32, 16, 4]
   },
   "replicates_per_cell": 1,

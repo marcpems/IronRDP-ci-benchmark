@@ -38,7 +38,7 @@ jobs:
           $machine = '${{ inputs.machine }}'
           if (!$names.ContainsKey($machine) -or $env:RUNNER_NAME -ne $names[$machine]) { throw 'Unexpected runner' }
           $cores = [int]$env:RELEASE_BUILD_CORES
-          $allowed = if ($machine -eq 'arm64-highcore') { @(4,16,32) } else { @(4,16) }
+          $allowed = if ($machine -eq 'arm64-highcore') { @(4,16,32) } elseif ($machine -eq 'arm64') { @(4,8,16) } else { @(4,16) }
           $processors = Get-CimInstance Win32_Processor
           $logical = ($processors | Measure-Object -Property NumberOfLogicalProcessors -Sum).Sum
           Write-Output "Requested CPUs: $cores; machine logical CPUs: $logical; PowerShell group count: $([Environment]::ProcessorCount)"

@@ -24,6 +24,11 @@ PERF = "208d929efe770996eb02cd3d2712623ea48b7646"
 VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
 SCALING_VARIANT = "msvc-pgo-rust-thin"
 SCALING_STUDY = "msvc-rust-thin-scaling-v1"
+SCALING_ALLOCATIONS = {
+    "self-hosted-arm64": (4, 8, 16),
+    "self-hosted-x64": (4, 16),
+    "self-hosted-arm64-highcore": (4, 16, 32),
+}
 
 
 def runner_class():
@@ -39,7 +44,7 @@ def build_cores():
     if study is not None or requested is not None:
         if study != SCALING_STUDY or runner_class() == "github-hosted":
             raise RuntimeError("CPU overrides require the explicit self-hosted scaling study")
-        allowed = ("4", "16", "32") if runner_class() == "self-hosted-arm64-highcore" else ("4", "16")
+        allowed = tuple(map(str, SCALING_ALLOCATIONS[runner_class()]))
         if requested not in allowed:
             raise RuntimeError("unsupported CPU allocation for the scaling study")
         return int(requested)

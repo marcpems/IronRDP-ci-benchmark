@@ -10,7 +10,7 @@ import matched_release as release
 
 class MatchedReleaseTests(unittest.TestCase):
     def test_scaling_keeps_microsoft_tools_and_enables_only_rust_thinlto(self):
-        for machine, allocations in (("x64", (4, 16)), ("arm64", (4, 16)),
+        for machine, allocations in (("x64", (4, 16)), ("arm64", (4, 8, 16)),
                                      ("arm64-highcore", (4, 16, 32))):
             host = "x86_64-pc-windows-msvc" if machine == "x64" else "aarch64-pc-windows-msvc"
             for cores in allocations:
@@ -36,6 +36,8 @@ class MatchedReleaseTests(unittest.TestCase):
             ("github-hosted", release.SCALING_STUDY, "16"),
             ("self-hosted-x64", "unknown", "16"),
             ("self-hosted-x64", release.SCALING_STUDY, "32"),
+            ("self-hosted-x64", release.SCALING_STUDY, "8"),
+            ("self-hosted-arm64-highcore", release.SCALING_STUDY, "8"),
             ("self-hosted-arm64", release.SCALING_STUDY, "0"),
             ("self-hosted-arm64-highcore", release.SCALING_STUDY, "64"),
         ):

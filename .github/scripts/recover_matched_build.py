@@ -9,7 +9,7 @@ import stat
 import time
 
 from build_arm_compilers import digest, save
-from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
+from matched_release import RUST, SCALING_ALLOCATIONS, SCALING_STUDY, SCALING_VARIANT
 
 RUNNERS = {
     "self-hosted-arm64-highcore": "GB300-Arm64",
@@ -39,7 +39,7 @@ def recover(root, machine, run_id, variant, vm, scaling_cores=None):
         raise RuntimeError("scaling recovery requires explicit CPU allocation and recipe")
     expected_name = f"m{run_id[-8:]}{CODES[variant]}{vm}"
     if scaling_cores is not None:
-        allowed = (4, 16, 32) if machine == "self-hosted-arm64-highcore" else (4, 16)
+        allowed = SCALING_ALLOCATIONS[machine]
         if scaling_cores not in allowed:
             raise RuntimeError("unexpected scaling CPU allocation")
         expected_name = f"m{run_id[-8:]}t{scaling_cores}r{vm}"

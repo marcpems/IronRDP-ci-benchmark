@@ -5,11 +5,11 @@ import unittest
 
 from build_arm_compilers import digest, save
 from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
-from recover_matched_build import recover
+from recover_matched_build import RUNNERS, recover
 
 
 class RecoveryTests(unittest.TestCase):
-    def fixture(self, parent, scaling_cores=None):
+    def fixture(self, parent, scaling_cores=None, machine="self-hosted-arm64-highcore"):
         root = Path(parent) / ("m82254692b1" if scaling_cores is None else f"m82254692t{scaling_cores}r1")
         dist = root / "r" / "build" / "dist"
         dist.mkdir(parents=True)
@@ -21,7 +21,7 @@ class RecoveryTests(unittest.TestCase):
         evidence.mkdir()
         save(evidence / "result.json", {
             "complete": True, "full_distribution": True, "rust_sha": RUST,
-            "runner_class": "self-hosted-arm64-highcore", "runner_name": "GB300-Arm64",
+            "runner_class": machine, "runner_name": RUNNERS[machine],
             "run_id": "38282254692", "variant": "baseline" if scaling_cores is None else SCALING_VARIANT,
             "vm": 1, "attempt": "1",
             "paths": {"source": str(root / "r")},
@@ -42,6 +42,19 @@ class RecoveryTests(unittest.TestCase):
                 self.assertTrue((root / "r" / "build" / "dist").is_dir())
             recover(root, "self-hosted-arm64-highcore", "38282254692", SCALING_VARIANT, 1, 32)
             self.assertTrue((root / "retained-dist" / "rustc.tar.xz").is_file())
+
+    def test_eight_cpu_recovery_is_only_enabled_for_ordinary_arm64(self):
+        for machine in RUNNERS:
+            with self.subTest(machine=machine), tempfile.TemporaryDirectory() as tmp:
+                root = self.fixture(tmp, scaling_cores=8, machine=machine)
+                if machine == "self-hosted-arm64":
+                    recover(root, machine, "38282254692", SCALING_VARIANT, 1, 8)
+                    self.assertTrue((root / "retained-dist/rustc.tar.xz").is_file())
+                    self.assertTrue((root / "r/opt-artifacts/rustc.profdata").is_file())
+                else:
+                    with self.assertRaisesRegex(RuntimeError, "CPU allocation"):
+                        recover(root, machine, "38282254692", SCALING_VARIANT, 1, 8)
+                    self.assertTrue((root / "r/build/dist").is_dir())
 
     def test_preserves_archives_evidence_profiles_and_supports_retry(self):
         with tempfile.TemporaryDirectory() as tmp:

@@ -1,0 +1,41 @@
+name: Ordinary Arm64 eight-CPU MSVC PGO Rust ThinLTO release
+on:
+  push:
+    branches: [experiment/msvc-rust-thin-scaling-arm64-eight]
+permissions:
+  contents: read
+jobs:
+  space:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, ARM64, MatchedStandardArm64]
+    timeout-minutes: 45
+    concurrency:
+      group: matched-arm64-selfhost
+      cancel-in-progress: false
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Preserve completed training and dependency caches if space is needed
+        shell: powershell
+        run: |
+          python .github\scripts\prepare_arm64_scaling_space.py
+          if ($LASTEXITCODE) { throw 'Arm64 space preparation failed' }
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: arm64-eight-space-preparation
+          path: ${{ runner.temp }}/arm64-eight-space-${{ github.run_id }}.json
+          retention-days: 30
+  arm64-8:
+    needs: space
+    uses: ./.github/workflows/matched-scaling-cell.yml
+    with:
+      machine: arm64
+      cores: 8

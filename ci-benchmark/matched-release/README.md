@@ -8,6 +8,14 @@ controls. A 16-CPU point on the high-core machine supplies a same-machine
 4/16/32 curve. Seven cold full-release cells run serially within each
 machine; independent machines may run concurrently. No IronRDP jobs are
 scheduled. GB300 was registered but offline when this batch was requested.
+An additional ordinary Arm64 eight-CPU cell was requested on 16 October,
+after the four/sixteen comparison completed. It uses the same recipe and
+qualification, extending that machine's curve to 4/8/16 without changing the
+x64 or GB300 allocations. `matched-arm64-eight-scaling.yml` runs this cell
+independently. If space is insufficient, only generated dependency/training
+caches from the qualified 4/16 cells are relocated to C: with verified
+checksums; sources, merged profiles, results and distribution archives stay
+in place. That maintenance is separate from the eight-CPU release job.
 
 This recipe retains `clang-cl`, Microsoft `link.exe` and `lib.exe`, with
 fresh PGO and **Rust-side cross-crate ThinLTO enabled**. Native LLVM ThinLTO
