@@ -59,12 +59,10 @@ jobs:
           } | ConvertTo-Json -Depth 5
           if ($blockers.Count) { throw 'Surviving work detected; no processes killed' }
       - uses: actions/setup-python@v6
-        if: always()
         with:
           python-version: "3.13"
           architecture: ${{ inputs.machine == 'x64' && 'x64' || 'arm64' }}
       - name: Inventory experiment directories without following redirected entries
-        if: always()
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'

@@ -171,6 +171,7 @@ extracted-distribution tests.
 | Ordinary Arm64 / 4 CPUs | 507.79 | 606.70 |
 | Ordinary Arm64 / 8 CPUs | 137.13 | 217.70 |
 | Ordinary Arm64 / 16 CPUs | 112.03 | 188.90 |
+| x64 / 4 logical CPUs | 726.81 | 851.18 |
 | x64 / 16 logical CPUs | 610.70 | 720.22 |
 
 The [eight-CPU cell, 38873093226 / 116882096128](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38873093226/job/116882096128)
@@ -197,7 +198,42 @@ The x64 16-logical-CPU release also qualified, but its job exceeded six hours.
 Its fresh four-CPU control (job 116693884027) lost runner communication at
 04:38:42 UTC on 16 October, during the combined build/qualification step.
 GitHub then reported the x64 runner offline, and the job log was unavailable.
-The incomplete control is excluded; no x64 scaling ratio is reported.
+That incomplete control remains excluded. Its fresh replacement,
+[38869758791 / 116880180878](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38869758791/job/116880180878),
+qualified with **43608.363620 seconds (12h06m48s)** of full production,
+3044.150801 seconds of extracted-distribution qualification and 51071 seconds
+(14h11m11s) for the successful whole job. Independent evidence checks confirm
+matching source/tools/runtime patches and configuration outside worker
+allocation, actual four-CPU affinity, fresh merged profiles including
+Cranelift, backend counters, Rust PGO/ThinLTO flags and full qualification.
+The maintenance receipt matches result SHA-256
+`fc1567aba2a396eacb9939be5479f1344995b22b930dd93721b97db37ee0d303`.
+
+Four to sixteen logical CPUs reduced x64 production by **15.97% (1.19x)**
+and whole-job time by **15.39% (1.18x)** in these initial observations.
+The measured four-CPU production time does not support the proposed 40-hour
+linear projection. Opt-dist timers show where the weak scaling arises:
+
+| Production phase | x64 / 4 CPUs, minutes | x64 / 16 CPUs, minutes |
+|---|---:|---:|
+| Build instrumented rustc and LLVM | 78.69 | 52.67 |
+| Gather rustc/rustdoc/clippy/Cranelift profiles | 209.99 | 207.30 |
+| Build optimized rustc | 39.42 | 30.19 |
+| Build instrumented LLVM | 76.95 | 49.48 |
+| Gather/merge LLVM profiles | 146.61 | 139.16 |
+| Final distribution build | 159.74 | 121.98 |
+| Helper construction and remaining production overhead | 15.41 | 9.92 |
+| **Total production** | **726.81** | **610.70** |
+
+Profile gathering/merging totals **5h56m36s at four CPUs versus 5h46m28s at
+sixteen**, only 2.92% longer. These phases retain four Cargo training jobs
+in both allocations; they are not raw compiler-build time and do not scale
+with the requested production worker count. This observation is consistent
+with that fixed training setting, not proof of a single bottleneck.
+All other production combined is 6h10m12s versus 4h24m14s, a 1.40x
+speedup. The sixteen-logical-CPU machine has eight physical cores, and these
+single-pass fixed-order results still need the requested repeat before
+attributing the unexpectedly weak scaling to a particular cause.
 All these cells use the new Microsoft-retained PGO plus Rust
 cross-crate ThinLTO recipe; the older PGO-only pilots are not controls.
 
@@ -213,10 +249,27 @@ faster one. The protocol's extra x64 repeat is conditional, not a claim that
 all cells have two repetitions; per-run VM/attempt identifiers remain unchanged.
 A linear extrapolation from the first 16-CPU production time gives about
 40h43m at four CPUs, but SMT, fixed-work stages and other nonlinear effects
-make that a hypothesis, not a prediction. The already-running four-CPU job
-retains its existing 24-hour job limit and 1430-minute harness deadline.
-A timeout is excluded, not treated as a completed scaling result, and prevents
-the conditional 16-CPU repeat from starting.
+made that a hypothesis, not a prediction; the completed control above disproves
+that extrapolation for this run. The control retained its existing 24-hour
+job limit and 1430-minute harness deadline.
+
+The first conditional repeat attempt,
+[38941287737](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38941287737),
+passed the qualified-four gate but its release job `117225327513` failed
+the unchanged 180 GiB free-space preflight before production. The four-CPU
+maintenance receipt recorded 176043859968 bytes (163.95 GiB) free on E: after
+retaining the full distribution and removing its build tree. This is a
+storage-blocked attempt, not a compiler failure or another timing sample.
+`matched-x64-space.yml` uses the bounded inventory under the same x64 machine
+lock to inspect experiment-owned caches before a fresh repeat.
+The repeat gate can now preserve only Cargo/training caches from the exact
+qualified x64 four-/sixteen-CPU cells and, if needed, the two completed
+optimized pilots in `38406317769`. It uses the shared lossless relocation
+helper, explicit x64 runner identity and all five x64 merged-profile checks
+(including Cranelift), before and after relocation. Source trees, evidence,
+full distributions, profiles and interrupted-build diagnostics remain in
+place. Copies on C: are checksum/link-verified before source-cache removal;
+the unchanged 180 GiB E: guard must pass before the fresh release starts.
 
 `matched-remaining-scaling.yml` queues only the missing x64/4 and GB300/32/16/4
 cells. Independent readiness jobs wait for each runner to reconnect, verify

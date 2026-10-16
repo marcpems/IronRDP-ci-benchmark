@@ -1,5 +1,6 @@
-"""Preserve completed release caches on C: if another Arm64 scaling cell needs space."""
+"""Preserve selected completed release caches on C: if another scaling cell needs space."""
 
+import argparse
 import json
 import os
 from pathlib import Path
@@ -7,7 +8,7 @@ import shutil
 
 from build_arm_compilers import digest, save
 from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
-from recover_matched_build import verify_archives
+from recover_matched_build import RUNNERS, verify_archives
 from relocate_failed_scaling_build import physical_directory, relocate, resume_relocation
 
 CACHE_PATHS = {"cargo": Path("e") / "cargo-home",
@@ -27,7 +28,9 @@ def cache_disposal_complete(root, label):
     return True
 
 
-def verify_cell(root, run_id, cores, variant=SCALING_VARIANT):
+def verify_cell(root, run_id, cores, variant=SCALING_VARIANT, *, machine="self-hosted-arm64"):
+    if machine not in ("self-hosted-arm64", "self-hosted-x64"):
+        raise RuntimeError("Unsupported completed-cache machine")
     if variant not in (SCALING_VARIANT, "msvc-pgo", "llvm-pgo-thin"):
         raise RuntimeError("Unsupported completed-cache recipe")
     suffix = (f"t{cores}r1" if variant == SCALING_VARIANT
@@ -39,7 +42,7 @@ def verify_cell(root, run_id, cores, variant=SCALING_VARIANT):
         "run_id": run_id, "variant": variant,
         "build_jobs": cores, "build_affinity_count": cores, "complete": True,
         "full_distribution": True, "rust_sha": RUST, "attempt": "1",
-        "runner_name": "MARCPE-D4-Arm64", "runner_class": "self-hosted-arm64",
+        "runner_name": RUNNERS[machine], "runner_class": machine,
     }
     if variant == SCALING_VARIANT:
         expected["scaling_study"] = SCALING_STUDY
@@ -52,8 +55,11 @@ def verify_cell(root, run_id, cores, variant=SCALING_VARIANT):
         raise RuntimeError("Expected the exact completed and already reclaimed release")
     verify_archives(root / "retained-dist", json.loads((root / "e/dist-manifest.json").read_text()))
     profiles = json.loads((root / "e/profiles.json").read_text())
-    if set(profiles) != {"rustc-pgo.profdata", "rustdoc-pgo.profdata",
-                         "clippy-pgo.profdata", "llvm-pgo.profdata"}:
+    expected_profiles = {"rustc-pgo.profdata", "rustdoc-pgo.profdata",
+                         "clippy-pgo.profdata", "llvm-pgo.profdata"}
+    if machine == "self-hosted-x64":
+        expected_profiles.add("cranelift-pgo.profdata")
+    if set(profiles) != expected_profiles:
         raise RuntimeError("Missing qualified profile manifest entries")
     for name, checksum in profiles.items():
         if Path(name).name != name or digest(root / "r/opt-artifacts" / name) != checksum:
@@ -83,21 +89,36 @@ def preserve_cache(cache, retained, stem, run_id):
 
 
 def main():
-    if (os.name != "nt" or os.environ.get("RUNNER_NAME") != "MARCPE-D4-Arm64"
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--machine", choices=("arm64", "x64"), default="arm64")
+    args = parser.parse_args()
+    machine = f"self-hosted-{args.machine}"
+    if (os.name != "nt" or os.environ.get("RUNNER_NAME") != RUNNERS[machine]
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"):
-        raise RuntimeError("Expected the ordinary Arm64 self-hosted runner")
-    output = Path(os.environ["RUNNER_TEMP"]) / f"arm64-eight-space-{os.environ['GITHUB_RUN_ID']}.json"
-    report = {"free_bytes_before": shutil.disk_usage("D:\\").free, "relocations": [], "complete": False}
+        raise RuntimeError("Expected the selected self-hosted scaling runner")
+    volume = "E:\\" if args.machine == "x64" else "D:\\"
+    prefix = "x64-repeat-space" if args.machine == "x64" else "arm64-eight-space"
+    output = Path(os.environ["RUNNER_TEMP"]) / f"{prefix}-{os.environ['GITHUB_RUN_ID']}.json"
+    report = {"free_bytes_before": shutil.disk_usage(volume).free, "relocations": [], "complete": False}
     save(output, report)
-    for run_id, cores in (("38728610658", 16), ("38756702383", 4)):
-        if shutil.disk_usage("D:\\").free >= 180 * 1024 ** 3:
+    cases = ([
+        ("m69758791t4r1", "38869758791", 4, SCALING_VARIANT),
+        ("m16997224t16r1", "38716997224", 16, SCALING_VARIANT),
+        ("m06317769l1", "38406317769", 4, "llvm-pgo-thin"),
+        ("m06317769m1", "38406317769", 4, "msvc-pgo"),
+    ] if args.machine == "x64" else [
+        ("m28610658t16r1", "38728610658", 16, SCALING_VARIANT),
+        ("m56702383t4r1", "38756702383", 4, SCALING_VARIANT),
+    ])
+    for name, run_id, cores, variant in cases:
+        if shutil.disk_usage(volume).free >= 180 * 1024 ** 3:
             break
-        root = Path(f"D:\\m{run_id[-8:]}t{cores}r1")
-        identity = verify_cell(root, run_id, cores)
+        root = Path(volume) / name
+        identity = verify_cell(root, run_id, cores, variant, machine=machine)
         retained = Path(r"C:\matched-retained")
         physical_directory(retained)
         for label, relative in CACHE_PATHS.items():
-            if shutil.disk_usage("D:\\").free >= 180 * 1024 ** 3:
+            if shutil.disk_usage(volume).free >= 180 * 1024 ** 3:
                 break
             if cache_disposal_complete(root, label):
                 report.setdefault("already_disposed", []).append(str(root / relative))
@@ -111,7 +132,7 @@ def main():
             destination = preserve_cache(cache, retained, f"{root.name}-{label}",
                                          os.environ["GITHUB_RUN_ID"])
             receipt = json.loads((destination / "relocation.json").read_text())
-            after_identity = verify_cell(root, run_id, cores)
+            after_identity = verify_cell(root, run_id, cores, variant, machine=machine)
             if after_identity != identity or receipt["complete"] is not True:
                 raise RuntimeError("Completed release identity changed during cache relocation")
             report["relocations"].append({
@@ -120,7 +141,7 @@ def main():
                 "bytes": receipt["bytes"],
             })
             save(output, report)
-    report["free_bytes_after"] = shutil.disk_usage("D:\\").free
+    report["free_bytes_after"] = shutil.disk_usage(volume).free
     report["complete"] = report["free_bytes_after"] >= 180 * 1024 ** 3
     save(output, report)
     print(json.dumps(report), flush=True)

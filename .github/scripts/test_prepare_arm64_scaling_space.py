@@ -1,6 +1,8 @@
 import json
+import os
 from pathlib import Path
 import tempfile
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -8,6 +10,7 @@ from build_arm_compilers import digest, save
 from matched_release import RUST, SCALING_STUDY, SCALING_VARIANT
 from prepare_arm64_scaling_space import cache_disposal_complete, preserve_cache, verify_cell
 from cleanup_arm64_investigations import cleanup_cell
+import prepare_arm64_scaling_space as space
 import relocate_failed_scaling_build as recovery
 
 
@@ -41,6 +44,51 @@ class CompletedCacheGuardTests(unittest.TestCase):
         before = digest(self.root / "e/result.json")
         self.assertEqual(verify_cell(self.root, "38728610658", 16), before)
         self.assertTrue((self.root / "retained-dist/rustc.tar.xz").is_file())
+
+    def test_x64_requires_explicit_machine_identity_and_cranelift_profile(self):
+        path = self.root / "e/result.json"
+        result = json.loads(path.read_text())
+        result.update(runner_name="MARCPE-TEST01-X64", runner_class="self-hosted-x64")
+        save(path, result)
+        with self.assertRaisesRegex(RuntimeError, "completed"):
+            verify_cell(self.root, "38728610658", 16)
+        with self.assertRaisesRegex(RuntimeError, "profile manifest"):
+            verify_cell(self.root, "38728610658", 16, machine="self-hosted-x64")
+        profile = self.root / "r/opt-artifacts/cranelift-pgo.profdata"
+        profile.write_bytes(b"cranelift profile")
+        manifest = self.root / "e/profiles.json"
+        profiles = json.loads(manifest.read_text())
+        profiles[profile.name] = digest(profile)
+        save(manifest, profiles)
+        self.assertEqual(verify_cell(self.root, "38728610658", 16,
+                                     machine="self-hosted-x64"), digest(path))
+        profile.write_bytes(b"changed")
+        with self.assertRaisesRegex(RuntimeError, "profile identity"):
+            verify_cell(self.root, "38728610658", 16, machine="self-hosted-x64")
+
+    def test_machine_mismatch_or_unsupported_machine_blocks_verification(self):
+        with self.assertRaisesRegex(RuntimeError, "completed"):
+            verify_cell(self.root, "38728610658", 16, machine="self-hosted-x64")
+        with self.assertRaisesRegex(RuntimeError, "Unsupported"):
+            verify_cell(self.root, "38728610658", 16, machine="self-hosted-arm64-highcore")
+
+    @unittest.skipUnless(os.name == "nt", "Native Windows runner selection")
+    def test_space_preparation_selects_only_the_explicit_machine_and_control(self):
+        for machine, runner, root, run_id, cores in (
+                ("arm64", "MARCPE-D4-Arm64", r"D:\m28610658t16r1", "38728610658", 16),
+                ("x64", "MARCPE-TEST01-X64", r"E:\m69758791t4r1", "38869758791", 4)):
+            with self.subTest(machine=machine), \
+                    patch("sys.argv", ["prepare", "--machine", machine]), \
+                    patch.dict(os.environ, RUNNER_NAME=runner, RUNNER_ENVIRONMENT="self-hosted",
+                               RUNNER_TEMP=self.temp.name, GITHUB_RUN_ID="123"), \
+                    patch.object(space.shutil, "disk_usage", return_value=SimpleNamespace(free=0)), \
+                    patch.object(space, "verify_cell", side_effect=RuntimeError("guard reached")) as verify, \
+                    patch.object(space, "preserve_cache") as preserve:
+                with self.assertRaisesRegex(RuntimeError, "guard reached"):
+                    space.main()
+                verify.assert_called_once_with(Path(root), run_id, cores, SCALING_VARIANT,
+                                               machine=f"self-hosted-{machine}")
+                preserve.assert_not_called()
 
     def test_incomplete_result_blocks_cache_relocation(self):
         path = self.root / "e/result.json"
