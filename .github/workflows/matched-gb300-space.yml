@@ -100,13 +100,17 @@ jobs:
           output = Path(os.environ["RUNNER_TEMP"]) / f"{os.environ['INVENTORY_NAME']}.json"
           output.write_text(json.dumps(report, indent=2), encoding="utf-8")
           print(json.dumps(report["volumes"]), flush=True)
+          x64_roots = ({"m69758791t4r1", "m16997224t16r1", "m06317769l1", "m06317769m1"}
+                       if os.environ["INVENTORY_RUNNER"] == "MARCPE-TEST01-X64" else None)
           for root in sorted(Path(volume).iterdir()):
+              if x64_roots is not None and root.name not in x64_roots:
+                  continue
               if not re.fullmatch(r"(?:m\d{8}(?:[bml]\d+|t\d+r\d+)|v(?:47351434|47985162))", root.name):
                   continue
               if redirected(root) or not root.is_dir():
                   raise RuntimeError(f"Unexpected experiment root: {root}")
               row = {"path": str(root), "metadata": {}, "usage": []}
-              for part in ("e", "r"):
+              for part in ("e", "r", "r/opt-artifacts"):
                   if (root / part).exists() and redirected(root / part):
                       raise RuntimeError(f"Redirected experiment metadata/source: {root / part}")
               for name in ("provenance", "result", "active-stage", "space-recovery"):
@@ -119,8 +123,9 @@ jobs:
                           "build_affinity_count", "stage", "retained_distribution")
                           if key in data}
               parts = {root / relative for relative in (
-                  "r", "r/build", "r/opt-artifacts", "e", "e/cargo-home", "retained-dist")}
-              for parent in (root, root / "e", root / "r/opt-artifacts"):
+                  ("e/cargo-home", "r/opt-artifacts/rustc-perf") if x64_roots is not None else
+                  ("r", "r/build", "r/opt-artifacts", "e", "e/cargo-home", "retained-dist"))}
+              for parent in (() if x64_roots is not None else (root, root / "e", root / "r/opt-artifacts")):
                   if parent.is_dir():
                       if redirected(parent):
                           raise RuntimeError(f"Redirected inventory parent: {parent}")

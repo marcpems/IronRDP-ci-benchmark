@@ -57,8 +57,6 @@ def verify_cell(root, run_id, cores, variant=SCALING_VARIANT, *, machine="self-h
     profiles = json.loads((root / "e/profiles.json").read_text())
     expected_profiles = {"rustc-pgo.profdata", "rustdoc-pgo.profdata",
                          "clippy-pgo.profdata", "llvm-pgo.profdata"}
-    if machine == "self-hosted-x64":
-        expected_profiles.add("cranelift-pgo.profdata")
     if set(profiles) != expected_profiles:
         raise RuntimeError("Missing qualified profile manifest entries")
     for name, checksum in profiles.items():

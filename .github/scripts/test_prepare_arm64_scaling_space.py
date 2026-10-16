@@ -45,23 +45,24 @@ class CompletedCacheGuardTests(unittest.TestCase):
         self.assertEqual(verify_cell(self.root, "38728610658", 16), before)
         self.assertTrue((self.root / "retained-dist/rustc.tar.xz").is_file())
 
-    def test_x64_requires_explicit_machine_identity_and_cranelift_profile(self):
+    def test_x64_requires_explicit_machine_identity_and_four_merged_profiles(self):
         path = self.root / "e/result.json"
         result = json.loads(path.read_text())
         result.update(runner_name="MARCPE-TEST01-X64", runner_class="self-hosted-x64")
         save(path, result)
         with self.assertRaisesRegex(RuntimeError, "completed"):
             verify_cell(self.root, "38728610658", 16)
-        with self.assertRaisesRegex(RuntimeError, "profile manifest"):
-            verify_cell(self.root, "38728610658", 16, machine="self-hosted-x64")
-        profile = self.root / "r/opt-artifacts/cranelift-pgo.profdata"
-        profile.write_bytes(b"cranelift profile")
-        manifest = self.root / "e/profiles.json"
-        profiles = json.loads(manifest.read_text())
-        profiles[profile.name] = digest(profile)
-        save(manifest, profiles)
         self.assertEqual(verify_cell(self.root, "38728610658", 16,
                                      machine="self-hosted-x64"), digest(path))
+        profile = self.root / "r/opt-artifacts/rustc-pgo.profdata"
+        manifest = self.root / "e/profiles.json"
+        profiles = json.loads(manifest.read_text())
+        checksum = profiles.pop(profile.name)
+        save(manifest, profiles)
+        with self.assertRaisesRegex(RuntimeError, "profile manifest"):
+            verify_cell(self.root, "38728610658", 16, machine="self-hosted-x64")
+        profiles[profile.name] = checksum
+        save(manifest, profiles)
         profile.write_bytes(b"changed")
         with self.assertRaisesRegex(RuntimeError, "profile identity"):
             verify_cell(self.root, "38728610658", 16, machine="self-hosted-x64")

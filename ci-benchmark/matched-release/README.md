@@ -204,8 +204,8 @@ qualified with **43608.363620 seconds (12h06m48s)** of full production,
 3044.150801 seconds of extracted-distribution qualification and 51071 seconds
 (14h11m11s) for the successful whole job. Independent evidence checks confirm
 matching source/tools/runtime patches and configuration outside worker
-allocation, actual four-CPU affinity, fresh merged profiles including
-Cranelift, backend counters, Rust PGO/ThinLTO flags and full qualification.
+allocation, actual four-CPU affinity, fresh merged profiles,
+backend counters including Cranelift, Rust PGO/ThinLTO flags and full qualification.
 The maintenance receipt matches result SHA-256
 `fc1567aba2a396eacb9939be5479f1344995b22b930dd93721b97db37ee0d303`.
 
@@ -265,11 +265,22 @@ lock to inspect experiment-owned caches before a fresh repeat.
 The repeat gate can now preserve only Cargo/training caches from the exact
 qualified x64 four-/sixteen-CPU cells and, if needed, the two completed
 optimized pilots in `38406317769`. It uses the shared lossless relocation
-helper, explicit x64 runner identity and all five x64 merged-profile checks
-(including Cranelift), before and after relocation. Source trees, evidence,
+helper, explicit x64 runner identity and all four merged-profile checks
+(rustc, rustdoc, Clippy and LLVM), before and after relocation. Rust/runtime sources, evidence,
 full distributions, profiles and interrupted-build diagnostics remain in
 place. Copies on C: are checksum/link-verified before source-cache removal;
 the unchanged 180 GiB E: guard must pass before the fresh release starts.
+The broad x64 inventory `38976448853` exceeded its 30-minute job limit
+without uploading its incremental report. The next repeat gate,
+`38977555520`, passed process isolation but rejected the profile manifest
+before any relocation: the new guard incorrectly expected a separate fifth
+Cranelift profile. The actual producer and downloaded qualified evidence
+both contain four merged profiles. The corrected guard requires exactly those
+four hashes; independently checked Cranelift backend evidence remains unchanged.
+Neither failed maintenance attempt contributes a production timing sample.
+Future x64 inventories are restricted to the two cache directories in those
+four exact qualified releases, rather than recursively scanning every legacy
+experiment and repeatedly counting overlapping parent trees.
 
 `matched-remaining-scaling.yml` queues only the missing x64/4 and GB300/32/16/4
 cells. Independent readiness jobs wait for each runner to reconnect, verify
