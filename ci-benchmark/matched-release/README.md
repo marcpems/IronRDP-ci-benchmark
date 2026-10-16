@@ -52,6 +52,19 @@ same quantity as the logical sizes of deleted files. D: remains 12.49 GiB
 below the next fresh release's 180 GiB guard. Failed-build diagnostics and
 all release evidence remain retained.
 
+The additional cleanup pass
+[38900486448](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38900486448)
+removed another 12,536,036,749 file bytes from six Cargo/training caches:
+the qualified Microsoft-PGO pilot `38532798400`, LLVM-PGO pilot `38542164879`,
+and eight-CPU scaling release `38873093226`. `--additional` selects only these
+three inspected roots, with each pilot's own exact recipe and allocation
+checked before deletion. It does not treat the older PGO-only recipe as a
+scaling control. Full release archives, profile hashes and result identities
+were reverified; source checkouts and all failed-build trees remain retained.
+The ordinary Arm64 inventory now reuses the bounded inspection workflow,
+including top-level setup directories and evidence/training subdirectories,
+without traversing redirected entries.
+
 This recipe retains `clang-cl`, Microsoft `link.exe` and `lib.exe`, with
 fresh PGO and **Rust-side cross-crate ThinLTO enabled**. Native LLVM ThinLTO
 stays off because its bitcode is not supported by Microsoft `/LTCG`.
