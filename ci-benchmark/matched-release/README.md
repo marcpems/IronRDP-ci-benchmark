@@ -234,6 +234,19 @@ enable a release. No GB300 data was removed, and no replacement 32-CPU
 production run was started without sufficient storage. Additional space is
 required before the 32-first scaling chain can resume.
 
+After the user's subsequent GB300 disk cleanup, the old failed run's local
+provenance was missing, so readiness attempt `38902759407` stopped without
+starting production. The GB300 workflow now explicitly retrieves its
+previously preserved evidence from `38869810910`, verifies that historical
+receipt/provenance, and still performs fresh live process and storage checks.
+The corrected chain
+[38903042998](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38903042998)
+passed readiness with 226,830,721,024 bytes free on D: (about 211.3 GiB)
+and no surviving experiment processes. Its 32-CPU job `116979807783` passed
+the unchanged capacity, 180 GiB and fresh-root guards and started setup.
+The order remains 32, then 16, then 4 CPUs; no timings from this new chain
+are accepted until full production and qualification finish.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined
