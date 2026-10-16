@@ -33,13 +33,28 @@ jobs:
                           'clang-cl.exe','cl.exe','link.exe','rustc.exe','rustdoc.exe',
                           'cargo.exe','opt-dist.exe','bootstrap.exe')
           })
-          $blockers | Select-Object Name,ProcessId,ParentProcessId,CreationDate | ConvertTo-Json
+          $blockers | ForEach-Object {
+            $process = $_
+            @{
+              Name=$process.Name; ProcessId=$process.ProcessId; ParentProcessId=$process.ParentProcessId
+              CreatedUTC=$process.CreationDate.ToUniversalTime().ToString('o')
+              ExecutablePath=$process.ExecutablePath
+              ScriptNames=@([regex]::Matches($process.CommandLine, '[\w.-]+\.py\b') | ForEach-Object Value)
+              Modules=@([regex]::Matches($process.CommandLine, '(?<=-m )[\w.]+') | ForEach-Object Value)
+              ExperimentRoots=@([regex]::Matches($process.CommandLine, 'm\d{8}(?:[bml]\d+|t\d+r\d+)') | ForEach-Object Value)
+              ParentName=($processes | Where-Object ProcessId -eq $process.ParentProcessId | Select-Object -ExpandProperty Name)
+              KernelTime=$process.KernelModeTime; UserTime=$process.UserModeTime
+              ReadBytes=$process.ReadTransferCount; WriteBytes=$process.WriteTransferCount
+            }
+          } | ConvertTo-Json -Depth 5
           if ($blockers.Count) { throw 'Surviving work detected; no processes killed' }
       - uses: actions/setup-python@v6
+        if: always()
         with:
           python-version: "3.13"
           architecture: arm64
       - name: Inventory experiment directories without following redirected entries
+        if: always()
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
