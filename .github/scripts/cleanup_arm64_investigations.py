@@ -1,5 +1,6 @@
-"""Remove only disposable caches from the two qualified Arm64 scaling controls."""
+"""Remove only disposable caches from explicitly selected qualified Arm64 experiments."""
 
+import argparse
 import json
 import os
 from pathlib import Path
@@ -9,10 +10,11 @@ import time
 from build_arm_compilers import save
 from prepare_arm64_scaling_space import CACHE_PATHS, cache_disposal_complete, verify_cell
 from relocate_failed_scaling_build import manifest, physical_directory, retry_readonly
+from matched_release import SCALING_VARIANT
 
 
-def cleanup_cell(root, run_id, cores, retained):
-    identity = verify_cell(root, run_id, cores)
+def cleanup_cell(root, run_id, cores, retained, variant=SCALING_VARIANT):
+    identity = verify_cell(root, run_id, cores, variant)
     physical_directory(retained)
     results = []
     plans = []
@@ -68,7 +70,7 @@ def cleanup_cell(root, run_id, cores, retained):
                 raise RuntimeError("Disposable cache remains after removal")
             entry.update(removed=True, free_bytes_after=shutil.disk_usage(target.parent).free)
             save(receipt, record)
-        if verify_cell(root, run_id, cores) != identity:
+        if verify_cell(root, run_id, cores, variant) != identity:
             raise RuntimeError("Qualified release identity changed during cache cleanup")
         record.update(complete=True, finished_unix=time.time())
         save(receipt, record)
@@ -78,6 +80,9 @@ def cleanup_cell(root, run_id, cores, retained):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--additional", action="store_true")
+    args = parser.parse_args()
     if (os.name != "nt" or os.environ.get("RUNNER_NAME") != "MARCPE-D4-Arm64"
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"):
         raise RuntimeError("Expected the ordinary Arm64 self-hosted runner")
@@ -86,10 +91,18 @@ def main():
               "free_bytes_before": {drive: shutil.disk_usage(drive).free for drive in ("C:\\", "D:\\")},
               "preserved": "All sources, profiles, results, archives, failed-build diagnostics and active cells"}
     save(output, report)
-    for run_id, cores in (("38728610658", 16), ("38756702383", 4)):
-        root = Path(f"D:\\m{run_id[-8:]}t{cores}r1")
+    cases = ([
+        (r"D:\m32798400m1", "38532798400", 4, "msvc-pgo"),
+        (r"D:\m42164879l1", "38542164879", 4, "llvm-pgo-thin"),
+        (r"D:\m73093226t8r1", "38873093226", 8, SCALING_VARIANT),
+    ] if args.additional else [
+        (r"D:\m28610658t16r1", "38728610658", 16, SCALING_VARIANT),
+        (r"D:\m56702383t4r1", "38756702383", 4, SCALING_VARIANT),
+    ])
+    for name, run_id, cores, variant in cases:
+        root = Path(name)
         report["cells"].append({"root": str(root), "caches": cleanup_cell(
-            root, run_id, cores, Path(r"C:\matched-retained"))})
+            root, run_id, cores, Path(r"C:\matched-retained"), variant)})
         save(output, report)
     report.update(complete=True, free_bytes_after={
         drive: shutil.disk_usage(drive).free for drive in ("C:\\", "D:\\")})

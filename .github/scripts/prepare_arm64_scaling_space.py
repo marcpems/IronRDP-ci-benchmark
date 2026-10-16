@@ -27,17 +27,25 @@ def cache_disposal_complete(root, label):
     return True
 
 
-def verify_cell(root, run_id, cores):
+def verify_cell(root, run_id, cores, variant=SCALING_VARIANT):
+    if variant not in (SCALING_VARIANT, "msvc-pgo", "llvm-pgo-thin"):
+        raise RuntimeError("Unsupported completed-cache recipe")
+    suffix = (f"t{cores}r1" if variant == SCALING_VARIANT
+              else ("m1" if variant == "msvc-pgo" else "l1"))
     for path in (root, root / "r", root / "e", root / "retained-dist"):
         physical_directory(path)
     result = json.loads((root / "e/result.json").read_text())
     expected = {
-        "run_id": run_id, "variant": SCALING_VARIANT, "scaling_study": SCALING_STUDY,
+        "run_id": run_id, "variant": variant,
         "build_jobs": cores, "build_affinity_count": cores, "complete": True,
         "full_distribution": True, "rust_sha": RUST, "attempt": "1",
         "runner_name": "MARCPE-D4-Arm64", "runner_class": "self-hosted-arm64",
     }
-    if (root.name != f"m{run_id[-8:]}t{cores}r1"
+    if variant == SCALING_VARIANT:
+        expected["scaling_study"] = SCALING_STUDY
+    else:
+        expected["vm"] = 1
+    if (root.name != f"m{run_id[-8:]}{suffix}"
             or any(result.get(key) != value for key, value in expected.items())
             or result.get("paths", {}).get("source") != str(root / "r")
             or (root / "r/build").exists()):

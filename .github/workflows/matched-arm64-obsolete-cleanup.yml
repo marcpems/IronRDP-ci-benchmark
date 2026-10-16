@@ -1,7 +1,7 @@
 name: Reclaim obsolete qualified Arm64 investigation caches
 on:
   push:
-    branches: [experiment/matched-arm64-obsolete-cleanup]
+    branches: [experiment/matched-arm64-obsolete-cleanup, experiment/matched-arm64-additional-cleanup]
 permissions:
   contents: read
 jobs:
@@ -34,7 +34,10 @@ jobs:
             ($_.Name -in @('Runner.Worker.exe','cmake.exe','ninja.exe','clang-cl.exe','cl.exe',
                           'link.exe','rustc.exe','rustdoc.exe','cargo.exe','opt-dist.exe','bootstrap.exe') -or
              $_.CommandLine -like '*m28610658t16r1*' -or
-             $_.CommandLine -like '*m56702383t4r1*')
+             $_.CommandLine -like '*m56702383t4r1*' -or
+             $_.CommandLine -like '*m32798400m1*' -or
+             $_.CommandLine -like '*m42164879l1*' -or
+             $_.CommandLine -like '*m73093226t8r1*')
           })
           if ($blockers.Count) {
             $blockers | Select-Object Name,ProcessId,ParentProcessId | ConvertTo-Json
@@ -49,8 +52,14 @@ jobs:
           architecture: arm64
       - name: Verify completed releases and remove only their obsolete caches
         shell: powershell
+        env:
+          ADDITIONAL_CLEANUP: ${{ github.ref_name == 'experiment/matched-arm64-additional-cleanup' }}
         run: |
-          python .github\scripts\cleanup_arm64_investigations.py
+          if ($env:ADDITIONAL_CLEANUP -eq 'true') {
+            python .github\scripts\cleanup_arm64_investigations.py --additional
+          } else {
+            python .github\scripts\cleanup_arm64_investigations.py
+          }
           if ($LASTEXITCODE) { throw 'Guarded obsolete-cache cleanup failed' }
       - uses: actions/upload-artifact@v6
         if: always()

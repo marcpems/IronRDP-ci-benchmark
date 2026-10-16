@@ -164,6 +164,48 @@ class CompletedCacheGuardTests(unittest.TestCase):
         self.assertTrue(outside.exists())
         self.assertTrue(cache.exists())
 
+    def configure_additional_cell(self, name, run_id, cores, variant):
+        renamed = self.root.parent / name
+        self.root.rename(renamed)
+        self.root = renamed
+        path = self.root / "e/result.json"
+        result = json.loads(path.read_text())
+        result.update(run_id=run_id, variant=variant, build_jobs=cores,
+                      build_affinity_count=cores, vm=1, paths={"source": str(self.root / "r")})
+        if variant != SCALING_VARIANT:
+            result.pop("scaling_study")
+        save(path, result)
+        cache = self.root / "e/cargo-home"
+        cache.mkdir()
+        (cache / "payload").write_bytes(b"obsolete")
+        retained = Path(self.temp.name) / "retained"
+        retained.mkdir()
+        return cache, retained
+
+    def test_additional_microsoft_pilot_cache_requires_its_exact_recipe(self):
+        cache, retained = self.configure_additional_cell(
+            "m32798400m1", "38532798400", 4, "msvc-pgo")
+        with self.assertRaisesRegex(RuntimeError, "completed"):
+            cleanup_cell(self.root, "38532798400", 4, retained)
+        self.assertTrue(cache.exists())
+        cleanup_cell(self.root, "38532798400", 4, retained, "msvc-pgo")
+        self.assertFalse(cache.exists())
+        verify_cell(self.root, "38532798400", 4, "msvc-pgo")
+
+    def test_additional_llvm_pilot_cache_preserves_qualified_evidence(self):
+        cache, retained = self.configure_additional_cell(
+            "m42164879l1", "38542164879", 4, "llvm-pgo-thin")
+        cleanup_cell(self.root, "38542164879", 4, retained, "llvm-pgo-thin")
+        self.assertFalse(cache.exists())
+        verify_cell(self.root, "38542164879", 4, "llvm-pgo-thin")
+
+    def test_additional_eight_cpu_cache_preserves_qualified_evidence(self):
+        cache, retained = self.configure_additional_cell(
+            "m73093226t8r1", "38873093226", 8, SCALING_VARIANT)
+        cleanup_cell(self.root, "38873093226", 8, retained)
+        self.assertFalse(cache.exists())
+        verify_cell(self.root, "38873093226", 8)
+
 
 if __name__ == "__main__":
     unittest.main()
