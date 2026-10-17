@@ -172,7 +172,8 @@ extracted-distribution tests.
 | Ordinary Arm64 / 8 CPUs | 137.13 | 217.70 |
 | Ordinary Arm64 / 16 CPUs | 112.03 | 188.90 |
 | x64 / 4 logical CPUs | 726.81 | 851.18 |
-| x64 / 16 logical CPUs | 610.70 | 720.22 |
+| x64 / 16 logical CPUs, original | 610.70 | 720.22 |
+| x64 / 16 logical CPUs, repeat | 916.98 | 1057.37 |
 
 The [eight-CPU cell, 38873093226 / 116882096128](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38873093226/job/116882096128)
 also passed the same provenance, configuration, profile, actual-affinity,
@@ -205,37 +206,70 @@ qualified with **43608.363620 seconds (12h06m48s)** of full production,
 (14h11m11s) for the successful whole job. Independent evidence checks confirm
 matching source/tools/runtime patches and configuration outside worker
 allocation, actual four-CPU affinity, fresh merged profiles,
-backend counters including Cranelift, Rust PGO/ThinLTO flags and full qualification.
+backend profile counters, Cranelift training, Rust PGO/ThinLTO flags and full qualification.
 The maintenance receipt matches result SHA-256
 `fc1567aba2a396eacb9939be5479f1344995b22b930dd93721b97db37ee0d303`.
 
 Four to sixteen logical CPUs reduced x64 production by **15.97% (1.19x)**
 and whole-job time by **15.39% (1.18x)** in these initial observations.
+These are descriptive ratios, not a stable CPU-scaling estimate: the
+matched sixteen-CPU repeat below reverses the ordering.
 The measured four-CPU production time does not support the proposed 40-hour
-linear projection. Opt-dist timers show where the weak scaling arises:
+linear projection. Opt-dist timers separate the production phases:
 
-| Production phase | x64 / 4 CPUs, minutes | x64 / 16 CPUs, minutes |
-|---|---:|---:|
-| Build instrumented rustc and LLVM | 78.69 | 52.67 |
-| Gather rustc/rustdoc/clippy/Cranelift profiles | 209.99 | 207.30 |
-| Build optimized rustc | 39.42 | 30.19 |
-| Build instrumented LLVM | 76.95 | 49.48 |
-| Gather/merge LLVM profiles | 146.61 | 139.16 |
-| Final distribution build | 159.74 | 121.98 |
-| Helper construction and remaining production overhead | 15.41 | 9.92 |
-| **Total production** | **726.81** | **610.70** |
+| Production phase | x64 / 4 CPUs, minutes | x64 / 16 CPUs, original minutes | x64 / 16 CPUs, repeat minutes |
+|---|---:|---:|---:|
+| Build instrumented rustc and LLVM | 78.69 | 52.67 | 77.58 |
+| Gather rustc/rustdoc/clippy/Cranelift profiles | 209.99 | 207.30 | 359.39 |
+| Build optimized rustc | 39.42 | 30.19 | 29.62 |
+| Build instrumented LLVM | 76.95 | 49.48 | 74.00 |
+| Gather/merge LLVM profiles | 146.61 | 139.16 | 197.56 |
+| Final distribution build | 159.74 | 121.98 | 159.89 |
+| Helper construction and remaining production overhead | 15.41 | 9.92 | 18.95 |
+| **Total production** | **726.81** | **610.70** | **916.98** |
 
 Profile gathering/merging totals **5h56m36s at four CPUs versus 5h46m28s at
-sixteen**, only 2.92% longer. These phases retain four Cargo training jobs
-in both allocations; they are not raw compiler-build time and do not scale
-with the requested production worker count. This observation is consistent
-with that fixed training setting, not proof of a single bottleneck.
+the original sixteen-CPU run**, only 2.92% longer. These phases retain four
+Cargo training jobs in both allocations; they are not raw compiler-build
+time and do not receive a proportional increase in configured Cargo workers.
+That does not imply constant wall time, as the repeat demonstrates.
 All other production combined is 6h10m12s versus 4h24m14s, a 1.40x
-speedup. The sixteen-logical-CPU machine has eight physical cores, and these
-single-pass fixed-order results still need the requested repeat before
-attributing the unexpectedly weak scaling to a particular cause.
+speedup in the initial pair only. The sixteen-logical-CPU machine has eight
+physical cores. These fixed-order observations cannot establish the cause
+of the weak or reversed scaling.
 All these cells use the new Microsoft-retained PGO plus Rust
 cross-crate ThinLTO recipe; the older PGO-only pilots are not controls.
+
+The requested [sixteen-CPU repeat, 38980060732 / 117263372781](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/38980060732/job/117263372781)
+completed and independently qualified. Production took **55019.005912 seconds
+(15h16m59s)**, extracted qualification 3906.326522 seconds, and the successful
+release job 63442 seconds (17h37m22s). Source pins, native tool identities,
+normalized bootstrap configuration, runtime patch sources, actual sixteen-CPU
+affinity and Rust PGO/ThinLTO flags match the original. Fresh profile hashes
+and executed backend counters were checked again.
+Its independent root is `E:\m80060732t16r1`; retained-distribution
+maintenance matches result SHA-256
+`67c0d5cac865040e4c5419707b8b3a09075283a5845192dec41e2317919a2cc9`.
+Both sixteen-CPU observations are retained, not averaged into a replacement.
+
+**The repeat took 50.15% longer than the original sixteen-CPU production run,
+and 26.17% longer than the four-CPU control.** Gathering/merging increased
+from 5h46m28s to **9h16m57s**, accounting for **68.72% of the additional
+production time**. Rustc profile gathering alone increased from 5980.20 to
+12218.10 seconds. Other production increased from 4h24m14s to 6h00m02s;
+the slowdown is not confined to training. Fixed training jobs therefore
+cannot be treated as fixed training duration. Qualification also took longer.
+These are qualified release results, but the same-allocation variation is
+larger than the initial apparent CPU benefit, so they do not support a
+reliable x64 CPU-scaling curve or hosted-runner projection.
+
+The cause is not established: matching recipe and affinity do not demonstrate
+matching background load, CPU frequency/power, storage latency or cache
+conditions. Before another expensive scaling pair, prioritize phase-aligned
+CPU/frequency, memory and disk-I/O observations and isolated fresh rustc/LLVM
+training replays. Then use counterbalanced full-release allocations under
+stable conditions. No additional full x64 release was dispatched after this
+requested repeat.
 
 On 16 October the user requested another x64 16-CPU observation because the
 first production time (610.70 minutes) appeared unexpectedly high.
@@ -244,7 +278,7 @@ the same machine lock, then requires that exact job and local matched result
 to have completed successfully before scheduling a fresh 16-CPU release.
 The repeat retains the same recipe, source pins, full qualification and disk
 guard, but uses a new workflow-run root and fresh profiles. Both 16-CPU results
-will be reported separately rather than replacing the first or selecting the
+are reported separately rather than replacing the first or selecting the
 faster one. The protocol's extra x64 repeat is conditional, not a claim that
 all cells have two repetitions; per-run VM/attempt identifiers remain unchanged.
 A linear extrapolation from the first 16-CPU production time gives about
@@ -281,6 +315,13 @@ Neither failed maintenance attempt contributes a production timing sample.
 Future x64 inventories are restricted to the two cache directories in those
 four exact qualified releases, rather than recursively scanning every legacy
 experiment and repeatedly counting overlapping parent trees.
+The corrected gate in `38980060732` succeeded after preserving seven cache
+trees (14745376698 logical file bytes) on C:, with all four completed-result
+hashes matching the independently retained evidence. It moved both caches
+from each initial scaling cell and the LLVM pilot, plus the Microsoft pilot's
+Cargo cache; all data was retained, not discarded. E: then had
+194796802048 bytes (181.42 GiB) free. This separate maintenance job is
+excluded from the repeat's production and successful release-job timings.
 
 `matched-remaining-scaling.yml` queues only the missing x64/4 and GB300/32/16/4
 cells. Independent readiness jobs wait for each runner to reconnect, verify
