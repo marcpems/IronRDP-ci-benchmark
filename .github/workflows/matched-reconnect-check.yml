@@ -75,6 +75,29 @@ jobs:
               $provenance.paths.source -ne "$($case.Root)\r") {
             throw 'Unexpected retained release provenance'
           }
+          $historicalCase = $case
+          $historicalEvidenceOrigin = $evidenceOrigin
+          if ($env:MACHINE -eq 'arm64-highcore') {
+            $case = @{Runner='GB300-Arm64'; Root='D:\m03042998t32r1'; Run='38903042998'; Job='116979807783'; Cores=32}
+            $latestJob = Invoke-RestMethod -Headers $headers -Uri "https://api.github.com/repos/marcpems/IronRDP-ci-benchmark/actions/jobs/$($case.Job)"
+            if ($latestJob.status -ne 'completed' -or $latestJob.conclusion -ne 'failure' -or
+                "$($latestJob.run_id)" -ne $case.Run -or $latestJob.run_attempt -ne 1 -or
+                $latestJob.runner_name -ne $case.Runner) {
+              throw 'Latest GB300 interruption is not the expected failed release'
+            }
+            $evidence = "$($case.Root)\e"
+            $evidenceOrigin = 'retained-local-latest-interruption'
+            "RECONNECT_SOURCE=$evidence" >> $env:GITHUB_ENV
+            $latest = Get-Content -LiteralPath "$evidence\provenance.json" -Raw | ConvertFrom-Json
+            if ($latest.run_id -ne $case.Run -or $latest.attempt -ne '1' -or
+                $latest.runner_name -ne $case.Runner -or $latest.runner_class -ne 'self-hosted-arm64-highcore' -or
+                $latest.variant -ne 'msvc-pgo-rust-thin' -or $latest.scaling_study -ne 'msvc-rust-thin-scaling-v1' -or
+                $latest.build_jobs -ne $case.Cores -or $latest.build_affinity_count -ne $case.Cores -or
+                $latest.rust_sha -ne '7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238' -or
+                $latest.paths.source -ne "$($case.Root)\r") {
+              throw 'Latest GB300 local provenance mismatch; historical archive cannot replace it'
+            }
+          }
           $processes = @(Get-CimInstance Win32_Process)
           $ancestors = @()
           $cursor = $PID
@@ -88,6 +111,7 @@ jobs:
             $_.ProcessId -notin $ancestors -and
             ($_.Name -eq 'Runner.Worker.exe' -or
              $_.CommandLine -like "*$($case.Root)*" -or
+             $_.CommandLine -like "*$($historicalCase.Root)*" -or
              ($_.Name -eq 'python.exe' -and $_.CommandLine -match 'matched_release\.py|build_arm_compilers\.py|\s-\s*$') -or
              $_.Name -in @('cmake.exe','ninja.exe','clang-cl.exe','cl.exe','link.exe',
                           'rustc.exe','rustdoc.exe','cargo.exe','opt-dist.exe','bootstrap.exe'))
@@ -95,6 +119,8 @@ jobs:
           $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot($case.Root))
           $report = @{
             Runner=$env:RUNNER_NAME; FailedJob=$case.Job; FailedRoot=$case.Root
+            HistoricalFailedJob=$historicalCase.Job; HistoricalFailedRoot=$historicalCase.Root
+            HistoricalEvidenceOrigin=$historicalEvidenceOrigin
             RecoveryRun=$env:GITHUB_RUN_ID
             EvidenceOrigin=$evidenceOrigin; FailedRootPresent=(Test-Path -LiteralPath $case.Root)
             UTC=[DateTime]::UtcNow.ToString('o')

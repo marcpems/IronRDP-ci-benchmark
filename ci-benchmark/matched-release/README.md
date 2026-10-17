@@ -376,6 +376,18 @@ This attempt is excluded from scaling results. The disconnect cause remains
 unproven, and the new interrupted root `D:\m03042998t32r1` must be inspected
 for surviving work and retained evidence before any further restart.
 
+On 17 October, after the requested x64 repeat qualified, GB300 was still
+offline. The reconnection gate now additionally verifies failed job
+`116979807783` / run `38903042998`, requires the latest root's local matching
+provenance, and checks for surviving processes referencing either interrupted
+root. The older archived receipt is historical evidence only and cannot
+substitute for inspecting this latest interruption. The uploaded reconnection
+report identifies both failures and stages the latest local logs. Missing or
+mismatched latest evidence blocks the chain rather than silently falling back.
+Only the remaining GB300 32/16/4 cells are queued; no completed x64 or ordinary
+Arm64 cells are repeated. An offline runner cannot execute even the readiness
+check, and GitHub's 24-hour queue-expiry limit still applies.
+
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,
 and an adoption proposal. It separates observed PGO benefits from the combined
