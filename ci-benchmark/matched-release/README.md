@@ -271,6 +271,28 @@ training replays. Then use counterbalanced full-release allocations under
 stable conditions. No additional full x64 release was dispatched after this
 requested repeat.
 
+On 18 October, investigation of the stored Windows Job Object accounting
+showed that the timed opt-dist process trees averaged only **1.78 occupied
+logical CPUs in the original sixteen-CPU run, 1.16 in the four-CPU control,
+and 1.12 in the sixteen-CPU repeat**. These are CPU-seconds divided by wall
+seconds for opt-dist and its descendants, not the separately timed helper
+or whole machine. The two sixteen-CPU runs each launched 47382 accounted
+processes; aggregate CPU time was 64673.56 and 60968.52 seconds respectively,
+despite the repeat's much longer wall time. This establishes low average
+build CPU utilization, not its cause: serial work, blocking and unrelated
+machine contention still need separating.
+
+`matched-x64-performance-diagnostic.yml` collects read-only hardware, power,
+Defender scan/exclusion-match and bounded event information, then samples
+CPU/frequency, memory, paging, disk latency/queues and busiest processes.
+It runs short CPU-only accounting calibrations in 4/16/16/4 order and
+bounded create/write/fsync/stat/warm-read probes on C:/E:/E:/C:, with an
+explicit phase timeline. Physical-core masks identify the SMT topology of
+the original logical-CPU allocations. These synthetic diagnostics are not
+Rust compile timings. They change no system settings, leave all release
+evidence untouched, remove only their own temporary payload directories,
+and share the release machine lock so they cannot overlap timed releases.
+
 On 16 October the user requested another x64 16-CPU observation because the
 first production time (610.70 minutes) appeared unexpectedly high.
 `matched-x64-sixteen-repeat.yml` waits behind the current four-CPU job using
