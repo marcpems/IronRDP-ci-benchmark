@@ -4,10 +4,12 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from process_metrics import measure
 from x64_runner_diagnostic import filesystem_probe, topology
 from x64_instrumented_compiler_probe import RELATIVE_BIN, verify_retained_compiler
+import x64_instrumented_compiler_probe as compiler_probe
 from build_arm_compilers import digest, save
 
 
@@ -23,20 +25,21 @@ class X64DiagnosticTests(unittest.TestCase):
             compiler.write_bytes(b"compiler")
             driver.write_bytes(b"driver")
             record = {
-                "complete": True, "copy_verified": True,
+                "complete": True,
                 "source": r"E:\m16997224t4r1\r\build", "destination": str(build),
                 "files": [{"path": str(path.relative_to(build)), "bytes": path.stat().st_size,
                            "sha256": digest(path)} for path in (compiler, driver)],
             }
             save(retained / "relocation.json", record)
-            self.assertEqual(verify_retained_compiler(retained), compiler)
-            driver.write_bytes(b"changed")
-            with self.assertRaisesRegex(RuntimeError, "no longer matches"):
-                verify_retained_compiler(retained)
-            record["source"] = r"E:\another-build"
-            save(retained / "relocation.json", record)
-            with self.assertRaisesRegex(RuntimeError, "exact preserved"):
-                verify_retained_compiler(retained)
+            with patch.object(compiler_probe, "RECEIPT_SHA256", digest(retained / "relocation.json")):
+                self.assertEqual(verify_retained_compiler(retained), compiler)
+                driver.write_bytes(b"changed")
+                with self.assertRaisesRegex(RuntimeError, "no longer matches"):
+                    verify_retained_compiler(retained)
+                record["source"] = r"E:\another-build"
+                save(retained / "relocation.json", record)
+                with self.assertRaisesRegex(RuntimeError, "receipt differs"):
+                    verify_retained_compiler(retained)
 
     def test_topology_masks_are_disjoint_and_nonempty(self):
         cores = topology()

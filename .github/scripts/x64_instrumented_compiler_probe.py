@@ -15,12 +15,16 @@ from relocate_failed_scaling_build import physical_directory
 
 RETAINED = Path(r"C:\matched-retained\m16997224t4r1-38869758791")
 RELATIVE_BIN = Path(r"x86_64-pc-windows-msvc\stage2\bin")
+RECEIPT_SHA256 = "e19f16ede889522d59bc9eb9366d3d0c66293a868c3c98427e1fe34a75ee8281"
 
 
 def verify_retained_compiler(retained):
-    receipt = json.loads((retained / "relocation.json").read_text())
+    receipt_path = retained / "relocation.json"
+    if digest(receipt_path) != RECEIPT_SHA256:
+        raise RuntimeError("Preservation receipt differs from the archived verified copy")
+    receipt = json.loads(receipt_path.read_text())
     build = retained / "build"
-    if (receipt.get("complete") is not True or receipt.get("copy_verified") is not True
+    if (receipt.get("complete") is not True
             or receipt.get("source") != r"E:\m16997224t4r1\r\build"
             or receipt.get("destination") != str(build)):
         raise RuntimeError("Expected the exact preserved interrupted x64 build")

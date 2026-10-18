@@ -293,6 +293,65 @@ Rust compile timings. They change no system settings, leave all release
 evidence untouched, remove only their own temporary payload directories,
 and share the release machine lock so they cannot overlap timed releases.
 
+The first diagnostic (`39110082639`) completed. CPU-only throughput increased
+approximately **2.6-3.2x** from four to sixteen logical CPUs; Job Object
+accounting captured roughly 3.9 versus 15.7 occupied logical CPUs. Thus the
+runner can actually schedule and account for all sixteen CPUs. Topology
+confirmed that the previous `[0,1,2,3]` affinity uses **two physical cores
+with SMT**, while sixteen logical CPUs use eight physical cores. Sustained
+all-core load also lowered the processor-performance counter from roughly
+199% to 130% of nominal frequency; this is not evidence of a disabled CPU
+allocation or proof of the cause of the release variability.
+
+The follow-up (`39110915472`) identified a major storage distinction:
+**E:, where all release builds ran, is on a TOSHIBA MQ04ABF100 HDD; C: is on
+a WDC PC SN810 NVMe SSD.** This is a media difference, not an isolated
+ReFS-versus-NTFS test. Writing and flushing 1024 small files took about
+13.1 seconds on E: versus 0.54-0.55 seconds on C:. Buffered writes and warm
+reads did not show the same penalty, so those small cached probes cannot
+stand in for a complete build. E: currently has a reported Defender
+whole-volume exclusion; the snapshot showed ample free RAM, no recorded
+memory-exhaustion/disk-retry events in the sampled historical window and a
+high-performance power plan. None of these current observations proves
+conditions were identical throughout the earlier builds.
+
+Historical logs show why working-set size matters: rustc profile merging
+read about 40-42 GiB and took 19.5-25.0 minutes; LLVM merging read 53-55 GiB
+and took 27.7-31.9 minutes. Smaller 15-18 GiB rustdoc/Clippy/Cranelift sets
+merged in roughly 12-50 seconds. Large sets exceed this machine's 32 GiB
+installed RAM and can expose the HDD rather than just its cache. However,
+all merge-time increases together explain only about six minutes of the
+five-hour repeat slowdown: benchmark execution and other production still
+need separating from merge time.
+
+The same opt-dist logs also contain 1296 Cargo `Downloaded` messages in each
+observation. These full-production observations are therefore **not offline
+compile-only measurements**; network duration was not separately measured.
+This does not alter the earlier, separate IronRDP offline-Cargo study.
+Before interpreting another CPU curve, prioritize a distinct fresh NVMe
+experiment, prefetch/enforce offline dependency use outside the timed scope,
+and retain phase-aligned CPU/I/O telemetry. Keep the HDD observations as
+historical end-to-end production costs rather than silently replacing them.
+
+The follow-up's CPU/storage sections completed, but its optional retained
+instrumented-compiler probe stopped before execution because the historical
+relocation receipt predates the `copy_verified` field. The corrected probe
+pins the exact previously archived receipt SHA-256 and rechecks the compiler
+and DLL hashes. It performs only tiny metadata compilations with the same
+`default_%m_%p.profraw` pattern as opt-dist, in separate disposable C:/E:
+directories; it is not a new full-release observation.
+
+In parallel, `matched-hosted-x64-baseline.yml` starts the same pinned
+Microsoft-PGO/Rust-ThinLTO production recipe using an explicit hosted-only
+opt-in, separate from the self-hosted scaling study. Public run
+`39110448524` has four visible logical CPUs, 16 GiB RAM and a 150 GiB D:
+volume. GitHub assigned an **AMD EPYC 7763**, with two guest cores/four
+threads, not an Intel processor; the standard label does not guarantee a
+CPU vendor. The job has a six-hour ceiling and an absolute 350-minute
+attempt deadline. Completed phases and raw logs are preserved on timeout,
+but an unfinished production total is censored, never reported as a
+completed release. It is a public x64 reference, not a matched Intel result.
+
 On 16 October the user requested another x64 16-CPU observation because the
 first production time (610.70 minutes) appeared unexpectedly high.
 `matched-x64-sixteen-repeat.yml` waits behind the current four-CPU job using
