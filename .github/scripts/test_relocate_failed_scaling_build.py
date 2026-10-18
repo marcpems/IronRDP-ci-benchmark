@@ -102,6 +102,20 @@ class RelocationTests(unittest.TestCase):
                 recovery.verify_reconnection({**report, key: value}, "MARCPE-TEST01-X64",
                                              root, "116693884027", "new-run")
 
+    def test_gb300_relocation_requires_latest_interruption_not_historical_archive(self):
+        runner, root, cores, run_id, job = recovery.CASES["arm64-highcore"]
+        self.assertEqual((runner, str(root), cores, run_id, job),
+                         ("GB300-Arm64", str(Path(r"D:\m03042998t32r1")), 32,
+                          "38903042998", "116979807783"))
+        report = {"Runner": runner, "FailedRoot": str(root), "FailedJob": job,
+                  "RecoveryRun": "new-run", "Processes": []}
+        recovery.verify_reconnection(report, runner, root, job, "new-run")
+        for key, value in (("FailedRoot", str(Path(r"D:\m31573412t32r1"))),
+                           ("FailedJob", "116410369649"), ("RecoveryRun", "39058453384"),
+                           ("Processes", [{"ProcessId": 123}])):
+            with self.subTest(key=key), self.assertRaises(RuntimeError):
+                recovery.verify_reconnection({**report, key: value}, runner, root, job, "new-run")
+
     def test_internal_file_symlink_is_preserved_without_following_external_links(self):
         link = self.build / "docs/license"
         link.symlink_to(self.build / "rustbook.exe")

@@ -387,6 +387,25 @@ mismatched latest evidence blocks the chain rather than silently falling back.
 Only the remaining GB300 32/16/4 cells are queued; no completed x64 or ordinary
 Arm64 cells are repeated. An offline runner cannot execute even the readiness
 check, and GitHub's 24-hour queue-expiry limit still applies.
+GB300 subsequently reconnected. Readiness in
+`39058453384` passed with matching latest local evidence and no surviving
+experiment processes, but its 32-CPU job `117571399224` failed the disk
+preflight on 18 October at 03:04 UTC, before source checkout or production.
+D: had 152981409792 bytes free (142.48 GiB), while C: had
+182256275456 bytes free (169.74 GiB). The dependent 16/4 jobs were skipped;
+this was a storage failure, not another lost-communication event.
+
+The GB300 caller now explicitly enables lossless preservation of only
+`D:\m03042998t32r1\r\build` under the same machine lock and after the
+current-run reconnection check. It requires an unfinished measurement with
+no result or distribution, inventories and checksums the entire build, and
+requires C: free space exceeding its size by 50 GiB. The copy is retained
+under `C:\matched-retained` with verified internal/source junctions and links;
+only after both source and destination checksums match is the original
+build subdirectory removed. Rust sources, logs, profiles and other experiments
+remain untouched. The unchanged 180 GiB D: guard must then pass before a
+fresh 32/16/4 chain can start; the separate preservation job is not a release
+timing sample.
 
 The [maintainer-focused optimization brief](Rust-Compiler-Optimization-Maintainer-Brief.docx)
 adds a short goal and TL;DR, the same measured comparison without runner names,

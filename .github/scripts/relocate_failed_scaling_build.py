@@ -10,6 +10,12 @@ import subprocess
 
 from build_arm_compilers import digest, save
 
+CASES = {
+    "arm64": ("MARCPE-D4-Arm64", Path(r"D:\m16997224t16r1"), 16, "38716997224", None),
+    "x64": ("MARCPE-TEST01-X64", Path(r"E:\m16997224t4r1"), 4, "38716997224", "116693884027"),
+    "arm64-highcore": ("GB300-Arm64", Path(r"D:\m03042998t32r1"), 32, "38903042998", "116979807783"),
+}
+
 
 def is_junction(path):
     return getattr(path.lstat(), "st_reparse_tag", None) == stat.IO_REPARSE_TAG_MOUNT_POINT
@@ -157,13 +163,10 @@ def verify_reconnection(report, runner, root, job, run_id):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--machine", choices=("arm64", "x64"), default="arm64")
+    parser.add_argument("--machine", choices=CASES, default="arm64")
     parser.add_argument("--reconnection-report", type=Path)
     args = parser.parse_args()
-    runner, root, cores = {
-        "arm64": ("MARCPE-D4-Arm64", Path(r"D:\m16997224t16r1"), 16),
-        "x64": ("MARCPE-TEST01-X64", Path(r"E:\m16997224t4r1"), 4),
-    }[args.machine]
+    runner, root, cores, failed_run, failed_job = CASES[args.machine]
     if (os.name != "nt" or os.environ.get("RUNNER_NAME") != runner
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"):
         raise RuntimeError("Expected the exact recovery runner")
@@ -176,13 +179,13 @@ def main():
             raise RuntimeError("Expected the failed Arm64 documentation build")
     else:
         if args.reconnection_report is None:
-            raise RuntimeError("Interrupted x64 recovery requires a fresh reconnection report")
+            raise RuntimeError("Interrupted recovery requires a fresh reconnection report")
         report = json.loads(args.reconnection_report.read_text(encoding="utf-8-sig"))
-        verify_reconnection(report, runner, root, "116693884027", os.environ["GITHUB_RUN_ID"])
+        verify_reconnection(report, runner, root, failed_job, os.environ["GITHUB_RUN_ID"])
         stage = json.loads((root / "e/active-stage.json").read_text())
         if measurement.exists() or stage.get("stage") != "fresh-pgo-full-dist":
-            raise RuntimeError("Expected the interrupted, unfinished x64 production measurement")
-    if (provenance.get("run_id") != "38716997224"
+            raise RuntimeError("Expected the interrupted, unfinished production measurement")
+    if (provenance.get("run_id") != failed_run
             or provenance.get("runner_name") != runner
             or provenance.get("variant") != "msvc-pgo-rust-thin"
             or provenance.get("build_affinity_count") != cores

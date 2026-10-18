@@ -9,6 +9,10 @@ on:
         description: Use the preserved GB300 failed-run evidence after local disk cleanup
         type: boolean
         default: false
+      preserve_gb300_failed_build:
+        description: Preserve the latest interrupted GB300 build on C if D needs release space
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -19,11 +23,15 @@ jobs:
     concurrency:
       group: ${{ inputs.machine == 'x64' && 'matched-x64-selfhost' || 'matched-highcore-arm64-selfhost' }}
       cancel-in-progress: false
-    timeout-minutes: 10
+    timeout-minutes: ${{ inputs.preserve_gb300_failed_build && 240 || 10 }}
     env:
       MACHINE: ${{ inputs.machine }}
       ARCHIVED_GB300_EVIDENCE: ${{ inputs.archived_gb300_evidence }}
     steps:
+      - name: Restrict optional failed-build preservation to GB300
+        if: inputs.preserve_gb300_failed_build && inputs.machine != 'arm64-highcore'
+        shell: powershell
+        run: throw 'Failed-build preservation is restricted to the inspected GB300 interruption'
       - name: Retrieve preserved GB300 interrupted-run evidence
         if: inputs.archived_gb300_evidence
         uses: actions/download-artifact@v6
@@ -154,3 +162,35 @@ jobs:
           path: ${{ env.RECONNECT_EVIDENCE }}
           retention-days: 30
           compression-level: 1
+      - uses: actions/checkout@v6
+        if: inputs.preserve_gb300_failed_build
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        if: inputs.preserve_gb300_failed_build
+        with:
+          python-version: "3.13"
+          architecture: arm64
+      - name: Preserve the interrupted GB300 build before reclaiming D
+        if: inputs.preserve_gb300_failed_build
+        shell: powershell
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected preservation runner' }
+          if (([IO.DriveInfo]::new('D:\')).AvailableFreeSpace -lt 180GB) {
+            python .github\scripts\relocate_failed_scaling_build.py --machine arm64-highcore --reconnection-report "$env:RECONNECT_EVIDENCE\scaling-reconnection.json"
+            if ($LASTEXITCODE) { throw 'Verified GB300 interrupted-build preservation failed' }
+          }
+          if (([IO.DriveInfo]::new('D:\')).AvailableFreeSpace -lt 180GB) {
+            throw 'Interrupted build preserved but D remains below the unchanged 180 GiB guard'
+          }
+          Write-Output 'GB300 storage meets the unchanged release guard'
+      - name: Preserve failed-build relocation accounting
+        if: always() && inputs.preserve_gb300_failed_build
+        uses: actions/upload-artifact@v6
+        with:
+          name: gb300-interrupted-build-relocation
+          path: C:\matched-retained\m03042998t32r1-${{ github.run_id }}\relocation.json
+          retention-days: 30
