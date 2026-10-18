@@ -372,6 +372,53 @@ attempt deadline. Completed phases and raw logs are preserved on timeout,
 but an unfinished production total is censored, never reported as a
 completed release. It is a public x64 reference, not a matched Intel result.
 
+Public run `39110448524` reached its declared deadline at **14:00:53 UTC
+on 18 October**, during `Stage 5 (final build)`, after both PGO stages
+completed successfully. The failure evidence records `TimeoutExpired`,
+not a compiler failure or storage exhaustion. The production interval was
+**20658.36 seconds (5h44m18s), unfinished**; the 350-minute budget also
+included setup. Final-build elapsed time was approximately 45m49s when
+stopped, with `rustc_driver` compilation/linking last in the log.
+Full packaging and extracted-distribution qualification did not complete.
+The evidence artifact was uploaded and independently downloaded; no full
+release time or extrapolated completion estimate is assigned.
+
+Completed phase wall times in minutes:
+
+| Phase | Public x64 /4 | Self-hosted x64 /4 | Self-hosted x64 /16 original | Self-hosted x64 /16 repeat |
+| --- | ---: | ---: | ---: | ---: |
+| Build instrumented rustc and LLVM | 117.3 | 78.7 | 52.7 | 77.6 |
+| Gather rustc/rustdoc/Clippy/Cranelift profiles, including merges | 35.7 | 210.0 | 207.3 | 359.4 |
+| Build PGO-optimized rustc | 54.3 | 39.4 | 30.2 | 29.6 |
+| Build instrumented LLVM | 69.0 | 76.9 | 49.5 | 74.0 |
+| Gather LLVM profiles, including merge | 17.0 | 146.6 | 139.2 | 197.6 |
+
+These are disjoint completed sections, not final-release totals; small
+between-section cleanup costs are outside these rows. All five gathering
+sections together took **52.72 minutes publicly versus 356.60, 346.47 and
+556.94 minutes** on the self-hosted four/original-sixteen/repeated-sixteen
+observations. Conversely, the public initial instrumented build was slower
+than even the self-hosted four-CPU build. This localizes a substantial
+cross-machine difference to PGO gathering rather than demonstrating that
+the public CPU is universally faster.
+
+Source pins, recipe, four training jobs, MSVC `14.44.35207`, Windows SDK
+`10.0.26100.0` and the multiset of all 65 logged training scenario records
+match across these observations. Raw profile volumes do not: public rustc
+generated 28.72 GiB/1564 files and LLVM 39.78 GiB/729 files, compared with
+roughly 40-42 GiB and 53-55 GiB on the self-hosted machine. Public merges
+took approximately 75.78 and 103.86 seconds respectively. Thus these are
+useful same-recipe phase references, not a byte-identical storage experiment
+or proof that HDD latency alone explains the gaps.
+
+The public outer process tree averaged **3.17 occupied logical CPUs** over
+its 345.19-minute bounded attempt, including runtime preparation and the
+helper as well as unfinished production. This is a different interval from
+the self-hosted opt-dist-only utilization figures above. All 346 D: storage
+samples retained at least **60.89 GiB free**, with 112.35 GiB free in the
+last sample. The timeout therefore supplies useful partial phase evidence,
+but not a qualified full-release baseline.
+
 On 16 October the user requested another x64 16-CPU observation because the
 first production time (610.70 minutes) appeared unexpectedly high.
 `matched-x64-sixteen-repeat.yml` waits behind the current four-CPU job using
