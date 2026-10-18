@@ -25,7 +25,7 @@ def timer_sections(path):
     active, completed = {}, []
     pattern = re.compile(
         r"^\[([^ ]+) INFO\s+opt_dist::timer\] Section `(.+)` "
-        r"(starts|ended: (OK|ERROR) \(([0-9.]+)s\))")
+        r"(starts|ended: (OK|FAIL|ERROR) \(([0-9.]+)s\))")
     if path.is_file():
         with path.open(encoding="utf-8", errors="replace") as lines:
             for number, line in enumerate(lines, 1):

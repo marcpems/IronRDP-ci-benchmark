@@ -3,10 +3,15 @@ on:
   push:
     branches: [experiment/matched-hosted-x64-baseline]
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      segment:
+        type: string
+        required: true
 permissions:
   contents: read
 concurrency:
-  group: matched-public-hosted-x64-baseline
+  group: matched-public-hosted-x64-baseline-${{ inputs.segment || 'continuous' }}
   cancel-in-progress: false
 jobs:
   baseline:
@@ -28,6 +33,7 @@ jobs:
         timeout-minutes: 5
         run: |
           $ErrorActionPreference = 'Stop'
+          if ('${{ inputs.segment }}' -notin @('', 'train', 'finish')) { throw 'Unknown hosted segment' }
           $started = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
           "RELEASE_JOB_STARTED=$started" >> $env:GITHUB_ENV
           "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
@@ -66,7 +72,7 @@ jobs:
         if: always() && env.MATCHED_ROOT != ''
         uses: actions/upload-artifact@v6
         with:
-          name: public-hosted-x64-allocation-${{ github.run_id }}-${{ github.run_attempt }}
+          name: public-hosted-x64-allocation-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.segment || 'continuous' }}
           path: ${{ env.MATCHED_ROOT }}/e/hardware.json
           retention-days: 30
       - uses: actions/checkout@v6
@@ -75,6 +81,7 @@ jobs:
           path: harness
           persist-credentials: false
       - uses: actions/checkout@v6
+        if: inputs.segment != 'finish'
         timeout-minutes: 15
         with:
           repository: marcpems/rust-arm64-compiler-ab
@@ -82,6 +89,7 @@ jobs:
           path: rust-source
           persist-credentials: false
       - uses: actions/checkout@v6
+        if: inputs.segment != 'finish'
         timeout-minutes: 15
         with:
           repository: llvm/llvm-project
@@ -94,6 +102,7 @@ jobs:
           python-version: "3.13"
           architecture: x64
       - name: Prepare exact native sources and tools without caches
+        if: inputs.segment != 'finish'
         timeout-minutes: 30
         run: |
           $ErrorActionPreference = 'Stop'
@@ -122,10 +131,55 @@ jobs:
           python harness\.github\scripts\windows_job_affinity.py 4 > "$env:MATCHED_ROOT\e\visible-cpu-probe.json"
           if ($LASTEXITCODE) { throw 'Four-CPU execution probe failed' }
       - name: Attempt fresh matched full production and qualification within 350 minutes
+        if: inputs.segment == ''
         run: |
           harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\hosted_x64_baseline.py --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e"
+      - name: Complete fresh PGO training with an explicit final-build handoff
+        if: inputs.segment == 'train'
+        timeout-minutes: 320
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\hosted_segmented_release.py train --root "$env:MATCHED_ROOT"
+      - name: Archive the complete training workspace outside production timing
+        if: inputs.segment == 'train'
+        timeout-minutes: 20
+        run: |
+          python harness\.github\scripts\hosted_segmented_release.py pack --root "$env:MATCHED_ROOT" --transfer "$env:RUNNER_TEMP\hosted-state"
+          if ($LASTEXITCODE) { throw 'Training checkpoint archive failed' }
+      - name: Upload the same-run continuation checkpoint
+        if: inputs.segment == 'train'
+        uses: actions/upload-artifact@v6
+        timeout-minutes: 12
+        with:
+          name: public-hosted-state-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/hosted-state/workspace.7z
+            ${{ runner.temp }}/hosted-state/manifest.json
+          compression-level: 0
+          retention-days: 2
+          if-no-files-found: error
+      - name: Download only this run's training checkpoint
+        if: inputs.segment == 'finish'
+        uses: actions/download-artifact@v6
+        timeout-minutes: 20
+        with:
+          name: public-hosted-state-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/hosted-state
+      - name: Restore and hash-verify the exact training workspace
+        if: inputs.segment == 'finish'
+        timeout-minutes: 30
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Move-Item -LiteralPath "$env:MATCHED_ROOT\e\hardware.json" -Destination "$env:RUNNER_TEMP\continuation-hardware.json"
+          [IO.Directory]::Delete("$env:MATCHED_ROOT\e")
+          python harness\.github\scripts\hosted_segmented_release.py unpack --root "$env:MATCHED_ROOT" --transfer "$env:RUNNER_TEMP\hosted-state"
+          if ($LASTEXITCODE) { throw 'Training checkpoint restoration failed' }
+          Copy-Item -LiteralPath "$env:RUNNER_TEMP\continuation-hardware.json" -Destination "$env:MATCHED_ROOT\e\continuation-hardware.json"
+      - name: Finish full distribution and independently qualify extracted archives
+        if: inputs.segment == 'finish'
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\hosted_segmented_release.py finish --root "$env:MATCHED_ROOT"
       - name: Summarize completed phases without relabeling partial production
-        if: always() && env.MATCHED_ROOT != ''
+        if: always() && env.MATCHED_ROOT != '' && inputs.segment == ''
         timeout-minutes: 2
         run: |
           $script = 'harness\.github\scripts\hosted_x64_baseline.py'
@@ -139,7 +193,7 @@ jobs:
         uses: actions/upload-artifact@v6
         timeout-minutes: 7
         with:
-          name: public-hosted-x64-matched-production-${{ github.run_id }}-${{ github.run_attempt }}-evidence
+          name: public-hosted-x64-matched-production-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.segment || 'continuous' }}-evidence
           path: |
             ${{ env.MATCHED_ROOT }}/e/*.json
             ${{ env.MATCHED_ROOT }}/e/*.jsonl

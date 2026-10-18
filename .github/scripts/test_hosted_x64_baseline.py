@@ -43,6 +43,17 @@ class HostedBaselineTests(unittest.TestCase):
         self.assertIsNone(summary["full_release_wall_seconds"])
         self.assertEqual(summary["censored_production_elapsed_seconds"], 900)
 
+    def test_pinned_opt_dist_fail_marker_is_not_reported_as_unfinished(self):
+        path = self.root / "fresh-pgo-full-dist.stderr"
+        path.write_text(
+            "[2026-10-18T10:00:00Z INFO  opt_dist::timer] Section `Stage 5` starts\n"
+            "[2026-10-18T10:00:01Z INFO  opt_dist::timer] Section `Stage 5` ended: FAIL (1.0s)`\n",
+            encoding="utf-8",
+        )
+        sections = hosted.timer_sections(path)
+        self.assertEqual(sections["unfinished"], [])
+        self.assertEqual(sections["completed"][0]["status"], "FAIL")
+
     def test_qualification_failure_is_not_censored_or_full_even_if_distribution_finished(self):
         self.write("distribution-timing.json", {"wall_seconds": 123})
         self.write("failure.json", {"error_type": "RuntimeError", "complete": False})

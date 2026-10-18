@@ -419,6 +419,28 @@ samples retained at least **60.89 GiB free**, with 112.35 GiB free in the
 last sample. The timeout therefore supplies useful partial phase evidence,
 but not a qualified full-release baseline.
 
+To finish the reference without using a paid larger runner or pretending
+the hosted limit can be extended, `matched-hosted-x64-segmented.yml` uses
+two sequential standard `windows-2022` jobs. The first starts fresh,
+completes all PGO training and explicitly defers the final command with a
+recorded exit-75 checkpoint; that is not a successful final build.
+Only the expected final-stage failure after both successful PGO stages is
+accepted as a handoff. The complete workspace is archived with file hashes,
+timestamps and link targets, then restored at the same path in the second
+job. Source/cache/profile contents, native tool binaries and Python path
+must match before the exact captured final-build flags are used.
+
+The second job completes the full distribution and calls the same manifest,
+profile, toolchain, Rust ThinLTO and extracted-distribution qualification
+checks as the continuous recipe. Both hardware allocations are retained.
+`segmented-production.json` reports the two active production intervals
+and their sum, excluding setup, transfer, restoration and qualification;
+`continuous_full_release_seconds` remains null. Only successful full
+qualification creates `segmented-result.json`, never the continuous
+`result.json`. Cold OS caches and a different VM are explicit limitations,
+so this segmented reference does not replace the censored continuous run
+or the self-hosted observations. Transfer artifacts expire after two days.
+
 GB300 recovery `39092612711` reconnected at 11:19 UTC on 18 October but
 lost communication at 11:35 UTC during preservation, before any scaling
 build started. The recovery chain now resumes only the exact interrupted

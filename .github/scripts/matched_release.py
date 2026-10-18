@@ -343,6 +343,19 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
     return env, clang, identity, librarian, provenance
 
 
+def prepare_opt_dist(source, output, host, env):
+    run([sys.executable, "x.py", "build", "--host", host, "--target", host,
+         "--set", "rust.debug=true", "opt-dist"], source, env, output, "build-opt-dist")
+    fixture = source / "src/tools/rustc-perf/collector/compile-benchmarks/token-stream-stress"
+    lock = fixture / "Cargo.lock"
+    before = tomllib.loads(lock.read_text())
+    cargo = source / "build" / host / "stage0/bin/cargo.exe"
+    run([cargo, "generate-lockfile", "--offline"], fixture, env, output, "training-lockfile")
+    if before["package"] != tomllib.loads(lock.read_text())["package"]:
+        raise RuntimeError("training lock migration changed package graph")
+    return source / "build" / host / "stage1-tools-bin/opt-dist.exe"
+
+
 def build(source, runtime_source, output, host, variant):
     env, clang, identity, librarian, provenance = prepare(
         source, runtime_source, output, host, variant)
@@ -353,16 +366,7 @@ def build(source, runtime_source, output, host, variant):
     if variant == "baseline":
         run(dist, source, env, output, "full-dist")
     else:
-        run([sys.executable, "x.py", "build", "--host", host, "--target", host,
-             "--set", "rust.debug=true", "opt-dist"], source, env, output, "build-opt-dist")
-        fixture = source / "src/tools/rustc-perf/collector/compile-benchmarks/token-stream-stress"
-        lock = fixture / "Cargo.lock"
-        before = tomllib.loads(lock.read_text())
-        cargo = source / "build" / host / "stage0/bin/cargo.exe"
-        run([cargo, "generate-lockfile", "--offline"], fixture, env, output, "training-lockfile")
-        if before["package"] != tomllib.loads(lock.read_text())["package"]:
-            raise RuntimeError("training lock migration changed package graph")
-        helper = source / "build" / host / "stage1-tools-bin/opt-dist.exe"
+        helper = prepare_opt_dist(source, output, host, env)
         run([helper, "local", "--target-triple", host, "--checkout-dir", source,
              "--llvm-dir", clang.parent, "--python", sys.executable, "--llvm-shared", "false",
              "--", *dist], source, env, output, "fresh-pgo-full-dist")
@@ -371,6 +375,12 @@ def build(source, runtime_source, output, host, variant):
         "wall_seconds": time.time() - start, "includes": "helper, fresh full-tool PGO training, full dist",
         "excludes": "source/tool preparation, post-build verification, uploads",
     })
+    save(output / "result.json",
+         validate_distribution(source, output, host, env, clang, identity, librarian, provenance))
+
+
+def validate_distribution(source, output, host, env, clang, identity, librarian, provenance):
+    variant = provenance["variant"]
     files = [p for p in (source / "build/dist").iterdir() if p.is_file()]
     check_manifest(files, host)
     save(output / "dist-manifest.json", [
@@ -405,10 +415,10 @@ def build(source, runtime_source, output, host, variant):
         save(output / "rust-optimization-audit.json", audit)
     qualify_distribution(source, output, host, env)
     # The retained archives are the actual distribution outputs used by downstream checks.
-    save(output / "result.json", {
+    return {
         **provenance, "complete": True, "completed_unix": time.time(),
         "qualification": "full manifest, profile validation and common extracted-distribution test suite passed",
-    })
+    }
 
 
 if __name__ == "__main__":

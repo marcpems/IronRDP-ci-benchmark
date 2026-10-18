@@ -1,0 +1,20 @@
+name: Public Windows x64 segmented full release reference
+on:
+  push:
+    branches: [experiment/matched-hosted-x64-segmented]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: matched-public-hosted-x64-segmented
+  cancel-in-progress: false
+jobs:
+  training:
+    uses: ./.github/workflows/matched-hosted-x64-baseline.yml
+    with:
+      segment: train
+  distribution:
+    needs: training
+    uses: ./.github/workflows/matched-hosted-x64-baseline.yml
+    with:
+      segment: finish
