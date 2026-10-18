@@ -8,6 +8,7 @@ import json
 import multiprocessing as mp
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -70,8 +71,11 @@ def cpu_load(cores, seconds):
 def filesystem_probe(volume, output):
     if not Path(volume).is_dir():
         raise RuntimeError(f"Expected local volume {volume}")
+    if shutil.disk_usage(volume).free < 2 * 1024 ** 3:
+        raise RuntimeError("Filesystem diagnostic requires 2 GiB free")
     records = []
-    for file_count, size in ((1024, 4096), (16, 4 * 1024 * 1024)):
+    for file_count, size, durable in ((1024, 4096, False), (1024, 4096, True),
+                                      (16, 4 * 1024 * 1024, False), (16, 4 * 1024 * 1024, True)):
         payload = os.urandom(size)
         with tempfile.TemporaryDirectory(prefix="matched-x64-diagnostic-", dir=volume) as name:
             root = Path(name)
@@ -80,7 +84,8 @@ def filesystem_probe(volume, output):
                 with (root / str(index)).open("xb") as stream:
                     stream.write(payload)
                     stream.flush()
-                    os.fsync(stream.fileno())
+                    if durable:
+                        os.fsync(stream.fileno())
             written = time.perf_counter()
             total = sum(path.stat().st_size for path in root.iterdir())
             stat_end = time.perf_counter()
@@ -89,7 +94,7 @@ def filesystem_probe(volume, output):
                     raise RuntimeError("Filesystem diagnostic payload mismatch")
             read_end = time.perf_counter()
             records.append({"volume": volume, "files": file_count, "bytes": total,
-                            "create_write_fsync_seconds": written - start,
+                            "fsync_per_file": durable, "create_write_close_seconds": written - start,
                             "stat_seconds": stat_end - written, "warm_read_verify_seconds": read_end - stat_end})
     save(output, records)
 
@@ -99,6 +104,7 @@ def main():
     parser.add_argument("--output", type=Path)
     parser.add_argument("--load", type=int, choices=(4, 16))
     parser.add_argument("--seconds", type=int, default=20)
+    parser.add_argument("--compiler-probe", action="store_true")
     args = parser.parse_args()
     if not 0 < args.seconds <= 60:
         raise ValueError("Diagnostic CPU duration must be between 1 and 60 seconds")
@@ -150,6 +156,16 @@ def main():
                 filesystem_probe(volume, args.output / f"{name}.json")
                 phase["finished_unix"] = time.time()
                 save(args.output / "phase-timeline.json", phases)
+            if args.compiler_probe:
+                if sampler.poll() is not None:
+                    raise RuntimeError("Telemetry sampler exited before instrumented compiler probe")
+                from x64_instrumented_compiler_probe import run_probe
+                phase = {"phase": "instrumented-rustc", "started_unix": time.time()}
+                phases.append(phase)
+                save(args.output / "phase-timeline.json", phases)
+                run_probe(args.output)
+                phase["finished_unix"] = time.time()
+                save(args.output / "phase-timeline.json", phases)
         finally:
             (args.output / "telemetry-stop").touch()
             try:
@@ -161,7 +177,7 @@ def main():
         if sampler.returncode:
             raise RuntimeError("Telemetry sampler failed; inspect telemetry.stderr")
     save(args.output / "complete.json", {"complete": True, "run_id": os.environ["GITHUB_RUN_ID"],
-         "boundary": "Synthetic CPU-accounting and small filesystem diagnostic only; not Rust compilation",
+         "boundary": "Bounded CPU/filesystem and optional tiny instrumented-compiler diagnostics; not a full release",
          "system_settings_changed": False})
 
 

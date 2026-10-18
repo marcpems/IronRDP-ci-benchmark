@@ -7,10 +7,37 @@ import unittest
 
 from process_metrics import measure
 from x64_runner_diagnostic import filesystem_probe, topology
+from x64_instrumented_compiler_probe import RELATIVE_BIN, verify_retained_compiler
+from build_arm_compilers import digest, save
 
 
 @unittest.skipUnless(os.name == "nt", "Native Windows diagnostics")
 class X64DiagnosticTests(unittest.TestCase):
+    def test_retained_compiler_requires_exact_receipt_and_unchanged_driver(self):
+        with tempfile.TemporaryDirectory() as name:
+            retained = Path(name)
+            build = retained / "build"
+            binary = build / RELATIVE_BIN
+            binary.mkdir(parents=True)
+            compiler, driver = binary / "rustc.exe", binary / "rustc_driver-test.dll"
+            compiler.write_bytes(b"compiler")
+            driver.write_bytes(b"driver")
+            record = {
+                "complete": True, "copy_verified": True,
+                "source": r"E:\m16997224t4r1\r\build", "destination": str(build),
+                "files": [{"path": str(path.relative_to(build)), "bytes": path.stat().st_size,
+                           "sha256": digest(path)} for path in (compiler, driver)],
+            }
+            save(retained / "relocation.json", record)
+            self.assertEqual(verify_retained_compiler(retained), compiler)
+            driver.write_bytes(b"changed")
+            with self.assertRaisesRegex(RuntimeError, "no longer matches"):
+                verify_retained_compiler(retained)
+            record["source"] = r"E:\another-build"
+            save(retained / "relocation.json", record)
+            with self.assertRaisesRegex(RuntimeError, "exact preserved"):
+                verify_retained_compiler(retained)
+
     def test_topology_masks_are_disjoint_and_nonempty(self):
         cores = topology()
         self.assertTrue(cores)
@@ -41,7 +68,9 @@ class X64DiagnosticTests(unittest.TestCase):
             output = root / "report.json"
             filesystem_probe(str(root), output)
             rows = json.loads(output.read_text())
-            self.assertEqual([row["bytes"] for row in rows], [1024 * 4096, 16 * 4 * 1024 * 1024])
+            self.assertEqual([row["bytes"] for row in rows],
+                             [1024 * 4096] * 2 + [16 * 4 * 1024 * 1024] * 2)
+            self.assertEqual([row["fsync_per_file"] for row in rows], [False, True, False, True])
             self.assertEqual(unrelated.read_text(), "unchanged")
             self.assertEqual({path.name for path in root.iterdir()}, {"keep", "report.json"})
 

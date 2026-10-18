@@ -49,7 +49,7 @@ jobs:
       - name: Sample system state and calibrate four versus sixteen CPUs and C versus E
         shell: powershell
         run: |
-          python .github\scripts\x64_runner_diagnostic.py --output "$env:RUNNER_TEMP\x64-performance-$env:GITHUB_RUN_ID"
+          python .github\scripts\x64_runner_diagnostic.py --compiler-probe --output "$env:RUNNER_TEMP\x64-performance-$env:GITHUB_RUN_ID"
           if ($LASTEXITCODE) { throw 'X64 performance diagnostics failed; partial evidence retained' }
       - uses: actions/upload-artifact@v6
         if: always()

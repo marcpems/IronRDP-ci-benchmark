@@ -42,6 +42,19 @@ $snapshot = @{
         Select-Object DeviceID,FileSystem,Size,FreeSpace)
 }
 $snapshot.PowerMinimum = Read-Optional 'processor-minimum' { Read-PowerSetting PROCTHROTTLEMIN }
+$snapshot.StorageDevices = Read-Optional 'storage-device-mapping' {
+    foreach ($letter in @('C','E')) {
+        $partition = Get-Partition -DriveLetter $letter
+        $disk = Get-Disk -Number $partition.DiskNumber
+        $volume = Get-Volume -DriveLetter $letter
+        @{Drive=$letter; DiskNumber=$disk.Number; Model=$disk.FriendlyName
+          BusType=$disk.BusType.ToString(); Size=$disk.Size; LogicalSectorSize=$disk.LogicalSectorSize
+          PhysicalSectorSize=$disk.PhysicalSectorSize; AllocationUnitSize=$volume.AllocationUnitSize}
+    }
+}
+$snapshot.PhysicalDisks = Read-Optional 'physical-disk-media' {
+    Get-PhysicalDisk | Select-Object FriendlyName,MediaType,BusType,Size,HealthStatus
+}
 $snapshot.PowerMaximum = Read-Optional 'processor-maximum' { Read-PowerSetting PROCTHROTTLEMAX }
 $snapshot.ActivePowerScheme = Read-Optional 'active-power-scheme' {
     $text = & powercfg /getactivescheme
