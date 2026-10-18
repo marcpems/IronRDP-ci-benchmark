@@ -53,6 +53,52 @@ class RelocationTests(unittest.TestCase):
             recovery.relocate(self.build, self.destination)
         self.assertTrue(self.build.exists())
 
+    def interrupt_copy(self):
+        def partial(source, target, **kwargs):
+            target.mkdir()
+            (target / "rustbook.exe").write_bytes(b"partial")
+            raise OSError("copy interrupted")
+        with patch.object(recovery.shutil, "copytree", side_effect=partial):
+            with self.assertRaisesRegex(OSError, "interrupted"):
+                recovery.relocate(self.build, self.destination)
+
+    def test_resume_partial_copy_preserves_all_original_files(self):
+        expected = recovery.manifest(self.build)
+        self.interrupt_copy()
+        recovery.resume_copy(self.build, self.destination)
+        self.assertFalse(self.build.exists())
+        self.assertEqual(recovery.manifest(self.destination), expected)
+        recovery.resume_copy(self.build, self.destination)
+
+    def test_resume_partial_copy_rejects_changed_source(self):
+        self.interrupt_copy()
+        (self.build / "rustbook.exe").write_bytes(b"new work")
+        with self.assertRaisesRegex(RuntimeError, "original contents changed"):
+            recovery.resume_copy(self.build, self.destination)
+        self.assertTrue(self.build.exists())
+
+    def test_resume_partial_copy_rejects_unknown_destination_entries(self):
+        self.interrupt_copy()
+        (self.destination / "unrelated").write_bytes(b"other work")
+        with self.assertRaisesRegex(RuntimeError, "Unexpected entry"):
+            recovery.resume_copy(self.build, self.destination)
+        self.assertTrue(self.build.exists())
+
+    def test_resume_before_receipt_starts_only_from_empty_destination_parent(self):
+        recovery.resume_copy(self.build, self.destination)
+        self.assertFalse(self.build.exists())
+
+    def test_resume_missing_receipt_rejects_existing_data(self):
+        self.destination.mkdir()
+        with self.assertRaisesRegex(RuntimeError, "no receipt"):
+            recovery.resume_copy(self.build, self.destination)
+        self.assertTrue(self.build.exists())
+
+    def test_resume_copy_handles_verified_interrupted_removal(self):
+        self.interrupt_removal()
+        recovery.resume_copy(self.build, self.destination)
+        self.assertFalse(self.build.exists())
+
     def test_insufficient_space_keeps_original(self):
         with patch.object(recovery.shutil, "disk_usage",
                           return_value=type("Usage", (), {"free": 1})()):

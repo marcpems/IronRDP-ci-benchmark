@@ -12,6 +12,7 @@ jobs:
       machine: arm64-highcore
       archived_gb300_evidence: true
       preserve_gb300_failed_build: true
+      resume_gb300_preservation: true
   highcore-32:
     needs: highcore-ready
     uses: ./.github/workflows/matched-scaling-cell.yml

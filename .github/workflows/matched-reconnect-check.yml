@@ -13,6 +13,10 @@ on:
         description: Preserve the latest interrupted GB300 build on C if D needs release space
         type: boolean
         default: false
+      resume_gb300_preservation:
+        description: Resume only the inspected preservation interrupted in run 39092612711
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -120,7 +124,7 @@ jobs:
             ($_.Name -eq 'Runner.Worker.exe' -or
              $_.CommandLine -like "*$($case.Root)*" -or
              $_.CommandLine -like "*$($historicalCase.Root)*" -or
-             ($_.Name -eq 'python.exe' -and $_.CommandLine -match 'matched_release\.py|build_arm_compilers\.py|\s-\s*$') -or
+             ($_.Name -eq 'python.exe' -and $_.CommandLine -match 'matched_release\.py|build_arm_compilers\.py|relocate_failed_scaling_build\.py|\s-\s*$') -or
              $_.Name -in @('cmake.exe','ninja.exe','clang-cl.exe','cl.exe','link.exe',
                           'rustc.exe','rustdoc.exe','cargo.exe','opt-dist.exe','bootstrap.exe'))
           })
@@ -176,10 +180,14 @@ jobs:
         shell: powershell
         env:
           PYTHONDONTWRITEBYTECODE: "1"
+          RESUME_GB300_PRESERVATION: ${{ inputs.resume_gb300_preservation }}
         run: |
           $ErrorActionPreference = 'Stop'
           if ($env:RUNNER_NAME -ne 'GB300-Arm64') { throw 'Unexpected preservation runner' }
-          if (([IO.DriveInfo]::new('D:\')).AvailableFreeSpace -lt 180GB) {
+          if ($env:RESUME_GB300_PRESERVATION -eq 'true') {
+            python .github\scripts\relocate_failed_scaling_build.py --machine arm64-highcore --resume-run 39092612711 --reconnection-report "$env:RECONNECT_EVIDENCE\scaling-reconnection.json"
+            if ($LASTEXITCODE) { throw 'Verified interrupted GB300 preservation resume failed' }
+          } elseif (([IO.DriveInfo]::new('D:\')).AvailableFreeSpace -lt 180GB) {
             python .github\scripts\relocate_failed_scaling_build.py --machine arm64-highcore --reconnection-report "$env:RECONNECT_EVIDENCE\scaling-reconnection.json"
             if ($LASTEXITCODE) { throw 'Verified GB300 interrupted-build preservation failed' }
           }
@@ -192,5 +200,5 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: gb300-interrupted-build-relocation
-          path: C:\matched-retained\m03042998t32r1-${{ github.run_id }}\relocation.json
+          path: C:\matched-retained\m03042998t32r1-${{ inputs.resume_gb300_preservation && '39092612711' || github.run_id }}\relocation.json
           retention-days: 30

@@ -119,6 +119,57 @@ def resume_relocation(build, destination):
     finish_relocation(build, destination, record)
 
 
+def resume_copy(build, destination):
+    physical_directory(destination.parent)
+    receipt = destination.parent / "relocation.json"
+    if not receipt.exists():
+        if list(destination.parent.iterdir()):
+            raise RuntimeError("Interrupted preservation has entries but no receipt; source preserved")
+        return relocate(build, destination)
+    record = json.loads(receipt.read_text())
+    if record.get("copy_verified") or record.get("complete"):
+        return resume_relocation(build, destination)
+    if (record.get("source") != str(build) or record.get("destination") != str(destination)
+            or not record.get("files")
+            or record.get("bytes") != sum(row.get("bytes", 0) for row in record["files"])
+            or manifest(build, source_root=build.parent) != record["files"]):
+        raise RuntimeError("Interrupted copy identity or original contents changed; source preserved")
+    expected = {row["path"]: row for row in record["files"]}
+    existing = {}
+    if destination.exists() or destination.is_symlink():
+        existing = {row["path"]: row for row in manifest(
+            destination, source_root=build.parent, allow_missing_targets=True)}
+    for name, row in existing.items():
+        if name not in expected or (row != expected[name] and
+                                   ("bytes" not in row or "bytes" not in expected[name])):
+            raise RuntimeError("Unexpected entry in interrupted retained copy; source preserved")
+    pending = [row for row in record["files"] if existing.get(row["path"]) != row]
+    if shutil.disk_usage(destination.parent).free < sum(
+            row.get("bytes", 0) for row in pending) + 50 * 1024 ** 3:
+        raise RuntimeError("Retained volume needs remaining copy size plus 50 GiB free")
+    destination.mkdir(exist_ok=True)
+    for row in pending:
+        if "bytes" in row:
+            target = destination / row["path"]
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(build / row["path"], target)
+    for row in pending:
+        target = destination / row["path"]
+        if "symlink" in row:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            os.symlink(destination / row["symlink"], target, target_is_directory=row["directory"])
+        elif "junction" in row or "source_junction" in row:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            link_to = (destination / row["junction"] if "junction" in row
+                       else Path(row["source_junction"]))
+            subprocess.run([os.environ["COMSPEC"], "/c", "mklink", "/J", str(target), str(link_to)],
+                           check=True, capture_output=True)
+    if (manifest(destination, source_root=build.parent) != record["files"]
+            or manifest(build, source_root=build.parent) != record["files"]):
+        raise RuntimeError("Resumed copy failed checksum verification; source preserved")
+    finish_relocation(build, destination, record)
+
+
 def relocate(build, destination):
     physical_directory(build.parent)
     physical_directory(destination.parent)
@@ -165,13 +216,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--machine", choices=CASES, default="arm64")
     parser.add_argument("--reconnection-report", type=Path)
+    parser.add_argument("--resume-run", choices=("39092612711",))
     args = parser.parse_args()
     runner, root, cores, failed_run, failed_job = CASES[args.machine]
     if (os.name != "nt" or os.environ.get("RUNNER_NAME") != runner
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"):
         raise RuntimeError("Expected the exact recovery runner")
-    for path in (root, root / "r", root / "e", root / "r/build"):
+    if args.resume_run and args.machine != "arm64-highcore":
+        raise RuntimeError("Only the inspected GB300 preservation can be resumed")
+    for path in (root, root / "r", root / "e"):
         physical_directory(path)
+    if not args.resume_run:
+        physical_directory(root / "r/build")
     provenance = json.loads((root / "e/provenance.json").read_text())
     measurement = root / "e/fresh-pgo-full-dist.json"
     if args.machine == "arm64":
@@ -198,7 +254,12 @@ def main():
         physical_directory(retained)
     else:
         retained.mkdir()
-    destination = retained / (root.name + "-" + os.environ["GITHUB_RUN_ID"])
+    destination = retained / (root.name + "-" + (args.resume_run or os.environ["GITHUB_RUN_ID"]))
+    if args.resume_run:
+        if not destination.exists():
+            destination.mkdir()
+        resume_copy(root / "r/build", destination / "build")
+        return
     destination.mkdir(exist_ok=False)
     relocate(root / "r/build", destination / "build")
 

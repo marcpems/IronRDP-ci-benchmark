@@ -419,6 +419,17 @@ samples retained at least **60.89 GiB free**, with 112.35 GiB free in the
 last sample. The timeout therefore supplies useful partial phase evidence,
 but not a qualified full-release baseline.
 
+GB300 recovery `39092612711` reconnected at 11:19 UTC on 18 October but
+lost communication at 11:35 UTC during preservation, before any scaling
+build started. The recovery chain now resumes only the exact interrupted
+destination `C:\matched-retained\m03042998t32r1-39092612711`. Before copying,
+it requires fresh idle-process evidence, the original source manifest and
+no unknown retained entries; source removal still requires complete
+source/destination hash agreement. A verified copy interrupted during
+source removal follows the existing guarded removal-resume path. A
+surviving relocation process now also blocks readiness. No space reclamation
+is claimed until the completed receipt is recovered.
+
 On 16 October the user requested another x64 16-CPU observation because the
 first production time (610.70 minutes) appeared unexpectedly high.
 `matched-x64-sixteen-repeat.yml` waits behind the current four-CPU job using
