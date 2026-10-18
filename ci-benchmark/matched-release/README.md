@@ -341,6 +341,26 @@ and DLL hashes. It performs only tiny metadata compilations with the same
 `default_%m_%p.profraw` pattern as opt-dist, in separate disposable C:/E:
 directories; it is not a new full-release observation.
 
+The corrected diagnostic (`39111363172`) completed all eight compiler cells,
+verifying the retained compiler's pinned Rust commit and actual profile
+emission. Each cell compiled the same tiny `no_std` library to metadata
+16 times, producing 32 raw profile files totaling approximately 623 MiB.
+The following are both observations, not selected best times:
+
+| Scratch volume | Logical CPUs / concurrent compiler limit | Batch wall seconds |
+| --- | ---: | --- |
+| C: NVMe | 4 | 0.647, 0.419 |
+| C: NVMe | 16 | 0.307, 0.302 |
+| E: HDD | 4 | 0.607, 1.213 |
+| E: HDD | 16 | 2.795, 0.456 |
+
+The compiler executable remained on C: in every cell; only affinity,
+concurrency and scratch/output/profile volume changed. This probe includes
+process startup and buffered profile emission, not durable-write throughput,
+linking or the full training working set. Its variable E: results support
+investigating storage/cache effects but do not quantify their contribution
+to the multi-hour release slowdown. No system settings were changed.
+
 In parallel, `matched-hosted-x64-baseline.yml` starts the same pinned
 Microsoft-PGO/Rust-ThinLTO production recipe using an explicit hosted-only
 opt-in, separate from the self-hosted scaling study. Public run
