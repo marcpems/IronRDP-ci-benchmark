@@ -9,6 +9,70 @@ import matched_release as release
 
 
 class MatchedReleaseTests(unittest.TestCase):
+    def test_hosted_opt_in_preserves_exact_four_cpu_matched_configuration(self):
+        host = "x86_64-pc-windows-msvc"
+        with patch.dict(release.os.environ, {
+            "RELEASE_MACHINE_CLASS": "self-hosted-x64",
+            "RELEASE_SCALING_STUDY": release.SCALING_STUDY, "RELEASE_BUILD_CORES": "4",
+        }, clear=True):
+            expected = release.configuration(host, Path("C:/clang/bin"), Path("C:/VS/lib.exe"),
+                                             release.SCALING_VARIANT)
+        with patch.dict(release.os.environ, {
+            "RELEASE_MACHINE_CLASS": "github-hosted", "RUNNER_ENVIRONMENT": "github-hosted",
+            "RELEASE_HOSTED_BASELINE": release.HOSTED_BASELINE,
+        }, clear=True):
+            self.assertTrue(release.hosted_baseline())
+            self.assertEqual(release.build_cores(), 4)
+            release.validate_recipe(host, release.SCALING_VARIANT)
+            self.assertEqual(release.configuration(
+                host, Path("C:/clang/bin"), Path("C:/VS/lib.exe"), release.SCALING_VARIANT), expected)
+            for other_host, variant in ((host, "msvc-pgo"), (host, "baseline"),
+                                        ("aarch64-pc-windows-msvc", release.SCALING_VARIANT)):
+                with self.assertRaisesRegex(RuntimeError, "hosted baseline requires"):
+                    release.validate_recipe(other_host, variant)
+
+    def test_hosted_opt_in_cannot_enable_selfhost_or_scaling_overrides(self):
+        base = {
+            "RELEASE_MACHINE_CLASS": "github-hosted", "RUNNER_ENVIRONMENT": "github-hosted",
+            "RELEASE_HOSTED_BASELINE": release.HOSTED_BASELINE,
+        }
+        for override in (
+            {"RELEASE_HOSTED_BASELINE": ""}, {"RELEASE_HOSTED_BASELINE": "unknown"},
+            {"RELEASE_MACHINE_CLASS": "self-hosted-x64"},
+            {"RUNNER_ENVIRONMENT": "self-hosted"}, {"RUNNER_ENVIRONMENT": ""},
+            {"RELEASE_BUILD_CORES": "4"}, {"RELEASE_BUILD_CORES": "16"},
+            {"RELEASE_SCALING_STUDY": release.SCALING_STUDY},
+            {"RELEASE_SCALING_STUDY": ""},
+        ):
+            with self.subTest(override=override), patch.dict(release.os.environ, {**base, **override}, clear=True):
+                with self.assertRaisesRegex(RuntimeError, "hosted-only"):
+                    release.build_cores()
+        with patch.dict(release.os.environ, base, clear=True), \
+                patch.object(release.os, "name", "nt"), \
+                patch.object(release.platform, "machine", return_value="AMD64"):
+            for count in (2, 8, 16):
+                with patch.object(release.os, "cpu_count", return_value=count):
+                    with self.assertRaisesRegex(RuntimeError, "four-logical"):
+                        release.validate_runner("x86_64-pc-windows-msvc")
+            with patch.object(release.os, "cpu_count", return_value=4):
+                release.validate_runner("x86_64-pc-windows-msvc")
+        with patch.dict(release.os.environ, base, clear=True), patch.object(release, "validate_runner"):
+            for kwargs in ({"full_distribution": False}, {"rust_revision": "diagnostic-parent"}):
+                with self.assertRaisesRegex(RuntimeError, "pinned full-production"):
+                    release.prepare(Path("C:/mr/r"), Path("C:/mr/l"), Path("C:/mr/e"),
+                                    "x86_64-pc-windows-msvc", release.SCALING_VARIANT, **kwargs)
+
+    def test_hosted_deadline_keeps_ten_minutes_for_evidence(self):
+        with patch.dict(release.os.environ, {
+            "RELEASE_MACHINE_CLASS": "github-hosted", "RELEASE_JOB_STARTED": "100",
+        }, clear=True), patch.object(release.time, "time", return_value=100 + 340 * 60), \
+                patch.object(release, "execute") as execute, patch.object(release, "save"):
+            release.run(["build"], Path("."), {}, Path("."), "full-dist")
+            self.assertEqual(execute.call_args.kwargs["timeout"], 10 * 60)
+            with patch.object(release.time, "time", return_value=100 + 350 * 60):
+                with self.assertRaisesRegex(TimeoutError, "350-minute"):
+                    release.run(["build"], Path("."), {}, Path("."), "full-dist")
+
     def test_scaling_keeps_microsoft_tools_and_enables_only_rust_thinlto(self):
         for machine, allocations in (("x64", (4, 16)), ("arm64", (4, 8, 16)),
                                      ("arm64-highcore", (4, 16, 32))):

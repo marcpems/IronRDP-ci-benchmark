@@ -24,6 +24,7 @@ PERF = "208d929efe770996eb02cd3d2712623ea48b7646"
 VARIANTS = ("baseline", "msvc-pgo", "llvm-pgo-thin")
 SCALING_VARIANT = "msvc-pgo-rust-thin"
 SCALING_STUDY = "msvc-rust-thin-scaling-v1"
+HOSTED_BASELINE = "public-x64-msvc-rust-thin-v1"
 SCALING_ALLOCATIONS = {
     "self-hosted-arm64": (4, 8, 16),
     "self-hosted-x64": (4, 16),
@@ -39,6 +40,7 @@ def runner_class():
 
 
 def build_cores():
+    hosted_baseline()
     study = os.environ.get("RELEASE_SCALING_STUDY")
     requested = os.environ.get("RELEASE_BUILD_CORES")
     if study is not None or requested is not None:
@@ -49,6 +51,26 @@ def build_cores():
             raise RuntimeError("unsupported CPU allocation for the scaling study")
         return int(requested)
     return 64 if runner_class() == "self-hosted-arm64-highcore" else 4
+
+
+def hosted_baseline():
+    requested = os.environ.get("RELEASE_HOSTED_BASELINE")
+    if requested is None:
+        return False
+    if (requested != HOSTED_BASELINE or runner_class() != "github-hosted"
+            or os.environ.get("RUNNER_ENVIRONMENT") != "github-hosted"
+            or os.environ.get("RELEASE_SCALING_STUDY") is not None
+            or os.environ.get("RELEASE_BUILD_CORES") is not None):
+        raise RuntimeError("hosted baseline requires its explicit hosted-only opt-in without scaling overrides")
+    return True
+
+
+def validate_recipe(host, variant):
+    if hosted_baseline():
+        if host != "x86_64-pc-windows-msvc" or variant != SCALING_VARIANT:
+            raise RuntimeError("hosted baseline requires the native x64 Microsoft-PGO/Rust-ThinLTO recipe")
+    elif (variant == SCALING_VARIANT) != (os.environ.get("RELEASE_SCALING_STUDY") == SCALING_STUDY):
+        raise RuntimeError("scaling allocations require the distinct Microsoft-PGO/Rust-ThinLTO recipe")
 
 
 def validate_runner(host):
@@ -234,15 +256,18 @@ def main():
     try:
         build(source, args.runtime_source.resolve(), output, args.host, args.variant)
     except Exception as error:
-        save(output / "failure.json", {"error": str(error), "unix": time.time(), "complete": False})
+        save(output / "failure.json", {
+            "error": str(error), "error_type": type(error).__name__, "unix": time.time(), "complete": False,
+        })
         raise
 
 
 def prepare(source, runtime_source, output, host, variant, full_distribution=True,
             rust_revision=RUST):
     validate_runner(host)
-    if (variant == SCALING_VARIANT) != (os.environ.get("RELEASE_SCALING_STUDY") == SCALING_STUDY):
-        raise RuntimeError("scaling allocations require the distinct Microsoft-PGO/Rust-ThinLTO recipe")
+    validate_recipe(host, variant)
+    if hosted_baseline() and (not full_distribution or rust_revision != RUST):
+        raise RuntimeError("hosted baseline requires the pinned full-production scope")
     check_build_paths(source, runtime_source, output)
     for path, revision in ((source, rust_revision), (source / "src/llvm-project", LLVM),
                            (source / "src/tools/rustc-perf", PERF)):
@@ -286,9 +311,12 @@ def prepare(source, runtime_source, output, host, variant, full_distribution=Tru
     }
     if variant == SCALING_VARIANT:
         provenance.update(
-            scaling_study=SCALING_STUDY,
             rust_lto="thin", llvm_thin_lto=False, native_linker="link.exe", native_librarian="lib.exe",
         )
+        if hosted_baseline():
+            provenance["hosted_baseline"] = HOSTED_BASELINE
+        else:
+            provenance["scaling_study"] = SCALING_STUDY
     save(output / "provenance.json", provenance)
     preparation = time.time()
     if variant == SCALING_VARIANT and runner_class() == "self-hosted-arm64-highcore":
@@ -319,6 +347,8 @@ def build(source, runtime_source, output, host, variant):
     env, clang, identity, librarian, provenance = prepare(
         source, runtime_source, output, host, variant)
     start = time.time()
+    if hosted_baseline():
+        save(output / "production-start.json", {"started_unix": start})
     dist = [sys.executable, "x.py", "dist", "bootstrap", "--include-default-paths"]
     if variant == "baseline":
         run(dist, source, env, output, "full-dist")

@@ -1,0 +1,155 @@
+name: Public Windows x64 bounded matched production baseline
+on:
+  push:
+    branches: [experiment/matched-hosted-x64-baseline]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: matched-public-hosted-x64-baseline
+  cancel-in-progress: false
+jobs:
+  baseline:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark' && github.event.repository.visibility == 'public'
+    runs-on: windows-2022
+    timeout-minutes: 360
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      RELEASE_MACHINE_CLASS: github-hosted
+      RELEASE_HOSTED_BASELINE: public-x64-msvc-rust-thin-v1
+      RELEASE_PILOT: "true"
+      RELEASE_REPLICATE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - name: Start absolute clock and record actual public runner hardware
+        timeout-minutes: 5
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $started = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds()
+          "RELEASE_JOB_STARTED=$started" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=false" >> $env:GITHUB_ENV
+          $root = Join-Path ([System.IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) 'mhx'
+          if (Test-Path $root) { throw "Expected a fresh unused build root: $root" }
+          New-Item -ItemType Directory "$root\e" | Out-Null
+          "MATCHED_ROOT=$root" >> $env:GITHUB_ENV
+          $cpu = @(Get-CimInstance Win32_Processor | Select-Object Name,Manufacturer,NumberOfCores,NumberOfLogicalProcessors,MaxClockSpeed)
+          $system = Get-CimInstance Win32_ComputerSystem
+          $os = Get-CimInstance Win32_OperatingSystem
+          $drive = [System.IO.DriveInfo]::new([System.IO.Path]::GetPathRoot($root))
+          $hardware = @{
+            RecordedUnix=$started; Cpu=$cpu; GuestLogicalProcessors=$system.NumberOfLogicalProcessors
+            PhysicalMemoryBytes=$system.TotalPhysicalMemory; FreePhysicalMemoryKiB=$os.FreePhysicalMemory
+            Drive=$drive.Name; AvailableBytes=$drive.AvailableFreeSpace; TotalBytes=$drive.TotalSize
+            ProcessAffinityMask=(Get-Process -Id $PID).ProcessorAffinity.ToInt64()
+            RunnerName=$env:RUNNER_NAME; RunnerEnvironment=$env:RUNNER_ENVIRONMENT
+            RunnerOS=$env:RUNNER_OS; RunnerArch=$env:RUNNER_ARCH
+            ImageOS=$env:ImageOS; ImageVersion=$env:ImageVersion; RequestedLabel='windows-2022'
+            RunId=$env:GITHUB_RUN_ID; Attempt=$env:GITHUB_RUN_ATTEMPT
+            HarnessSha=$env:GITHUB_SHA; CpuVendorIsNotGuaranteed=$true
+          }
+          $hardware | ConvertTo-Json -Depth 5 | Tee-Object -FilePath "$root\e\hardware.json"
+          if ($env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:RUNNER_OS -ne 'Windows' -or $env:RUNNER_ARCH -ne 'X64') {
+            throw 'This baseline is restricted to a standard public GitHub-hosted Windows x64 runner'
+          }
+          if ($system.NumberOfLogicalProcessors -ne 4 -or ($cpu | Measure-Object NumberOfLogicalProcessors -Sum).Sum -ne 4) {
+            throw 'Exactly four visible logical CPUs are required'
+          }
+          if ($drive.AvailableFreeSpace -lt 14GB) { throw 'Less than 14 GiB free; preserve hardware evidence without starting production' }
+      - name: Preserve allocation evidence before source preparation
+        if: always() && env.MATCHED_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: public-hosted-x64-allocation-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.MATCHED_ROOT }}/e/hardware.json
+          retention-days: 30
+      - uses: actions/checkout@v6
+        timeout-minutes: 10
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        timeout-minutes: 15
+        with:
+          repository: marcpems/rust-arm64-compiler-ab
+          ref: 7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        timeout-minutes: 15
+        with:
+          repository: llvm/llvm-project
+          ref: ca7933e47d3a3451d81e72ac174dcb5aa28b59d1
+          path: clang-runtime-source
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        timeout-minutes: 10
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Prepare exact native sources and tools without caches
+        timeout-minutes: 30
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = "$env:MATCHED_ROOT\r"
+          [System.IO.Directory]::Move((Resolve-Path rust-source).Path, $source)
+          [System.IO.Directory]::Move((Resolve-Path clang-runtime-source).Path, "$env:MATCHED_ROOT\l")
+          git -C $source submodule update --init --recursive --depth 1 --jobs 4
+          if ($LASTEXITCODE) { throw 'Submodule checkout failed' }
+          New-Item -ItemType Directory -Force "$source\citools\clang-rust","$source\wix\bin" | Out-Null
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-win64.exe -o "$source\citools\clang.exe"
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          7z x -y -bd -bso0 "-o$source\citools\clang-rust" "$source\citools\clang.exe"
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip -o "$source\wix\wix.zip"
+          if ($LASTEXITCODE) { throw 'WIX download failed' }
+          7z x -y -bd -bso0 "-o$source\wix\bin" "$source\wix\wix.zip"
+          if ($LASTEXITCODE) { throw 'WIX extraction failed' }
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $version = & $vswhere -latest -products '*' -property installationVersion
+          if ($version -notlike '17.*') { throw "Expected VS2022, got $version" }
+          $key = 'HKLM:\Software\Policies\Microsoft\VisualStudio\SQM'
+          New-Item -Path $key -Force | Out-Null
+          New-ItemProperty -Path $key -Name OptIn -PropertyType DWord -Value 0 -Force | Out-Null
+          python -c "import os; assert os.cpu_count() == 4, os.cpu_count()"
+          if ($LASTEXITCODE) { throw 'Python does not see exactly four logical CPUs' }
+          python harness\.github\scripts\windows_job_affinity.py 4 > "$env:MATCHED_ROOT\e\visible-cpu-probe.json"
+          if ($LASTEXITCODE) { throw 'Four-CPU execution probe failed' }
+      - name: Attempt fresh matched full production and qualification within 350 minutes
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\hosted_x64_baseline.py --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e"
+      - name: Summarize completed phases without relabeling partial production
+        if: always() && env.MATCHED_ROOT != ''
+        timeout-minutes: 2
+        run: |
+          $script = 'harness\.github\scripts\hosted_x64_baseline.py'
+          if (Test-Path $script) {
+            python $script --source "$env:MATCHED_ROOT\r" --output "$env:MATCHED_ROOT\e" --summarize-only
+            if ($LASTEXITCODE) { throw 'Hosted evidence summary failed' }
+            Get-Content "$env:MATCHED_ROOT\e\hosted-summary.json" >> $env:GITHUB_STEP_SUMMARY
+          }
+      - name: Preserve hardware, completed phases, censored status and raw logs
+        if: always() && env.MATCHED_ROOT != ''
+        uses: actions/upload-artifact@v6
+        timeout-minutes: 7
+        with:
+          name: public-hosted-x64-matched-production-${{ github.run_id }}-${{ github.run_attempt }}-evidence
+          path: |
+            ${{ env.MATCHED_ROOT }}/e/*.json
+            ${{ env.MATCHED_ROOT }}/e/*.jsonl
+            ${{ env.MATCHED_ROOT }}/e/*.stdout
+            ${{ env.MATCHED_ROOT }}/e/*.stderr
+            ${{ env.MATCHED_ROOT }}/e/*.txt
+            ${{ env.MATCHED_ROOT }}/e/*.toml
+            ${{ env.MATCHED_ROOT }}/e/*.cmake
+            ${{ env.MATCHED_ROOT }}/r/build/metrics.json
+            ${{ env.MATCHED_ROOT }}/r/build/x86_64-pc-windows-msvc/llvm/**/CMakeCache.txt
+            ${{ env.MATCHED_ROOT }}/r/build/x86_64-pc-windows-msvc/lld/**/CMakeCache.txt
+          compression-level: 1
+          retention-days: 30
