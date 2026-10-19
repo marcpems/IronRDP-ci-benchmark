@@ -1,24 +1,65 @@
-name: Diagnose x64 runner connectivity without changing machine settings
+name: Diagnose self-hosted runner connectivity without changing machine settings
 on:
   push:
-    branches: [experiment/matched-x64-runner-diagnostics]
+    branches: [experiment/matched-x64-runner-diagnostics, experiment/matched-gb300-runner-diagnostics]
 permissions:
   contents: read
 concurrency:
-  group: matched-x64-selfhost
+  group: ${{ github.ref_name == 'experiment/matched-gb300-runner-diagnostics' && 'matched-highcore-arm64-selfhost' || 'matched-x64-selfhost' }}
   cancel-in-progress: false
 jobs:
   diagnose:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    runs-on: [self-hosted, Windows, X64]
+    runs-on: ${{ fromJSON(github.ref_name == 'experiment/matched-gb300-runner-diagnostics' && '["self-hosted","Windows","ARM64","HighCoreCount"]' || '["self-hosted","Windows","X64"]') }}
     timeout-minutes: 15
+    env:
+      EXPECTED_RUNNER: ${{ github.ref_name == 'experiment/matched-gb300-runner-diagnostics' && 'GB300-Arm64' || 'MARCPE-TEST01-X64' }}
     steps:
+      - name: Require the exact diagnostic runner
+        shell: powershell
+        run: |
+          if ($env:RUNNER_NAME -ne $env:EXPECTED_RUNNER) { throw 'Unexpected diagnostic runner' }
+      - name: Preserve the existing GB300 relocation receipt before connectivity probes
+        if: env.EXPECTED_RUNNER == 'GB300-Arm64'
+        uses: actions/upload-artifact@v6
+        with:
+          name: gb300-existing-preservation-receipt
+          path: C:\matched-retained\m03042998t32r1-39092612711\relocation.json
+          retention-days: 30
+          if-no-files-found: error
       - name: Inspect sanitized runner events and HTTPS connectivity
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Unexpected diagnostic runner' }
-          $root = 'E:\actions-runner'
+          if ($env:RUNNER_NAME -ne $env:EXPECTED_RUNNER) { throw 'Unexpected diagnostic runner' }
+          $root = if ($env:EXPECTED_RUNNER -eq 'GB300-Arm64') { 'D:\action-runners' } else { 'E:\actions-runner' }
+          $os = Get-CimInstance Win32_OperatingSystem
+          @{Kind='boot'; LastBootUTC=$os.LastBootUpTime.ToUniversalTime().ToString('o');
+            FreeMemoryKiB=$os.FreePhysicalMemory} | ConvertTo-Json -Compress
+          & powercfg /getactivescheme
+          if ($LASTEXITCODE) { throw 'Cannot read active power scheme' }
+          & powercfg /query SCHEME_CURRENT SUB_SLEEP STANDBYIDLE
+          if ($LASTEXITCODE) { throw 'Cannot read configured idle sleep timeout' }
+          @(Get-CimInstance Win32_LogicalDisk | Where-Object DeviceID -in @('C:','D:','E:') |
+            Select-Object DeviceID,FileSystem,Size,FreeSpace) | ConvertTo-Json -Compress
+          foreach ($query in @(
+            @{ProviderName='Microsoft-Windows-Kernel-Power'; Id=@(41,42,107,109)},
+            @{ProviderName='Microsoft-Windows-Power-Troubleshooter'; Id=@(1)},
+            @{ProviderName='Microsoft-Windows-Kernel-General'; Id=@(1)},
+            @{ProviderName='disk'; Id=@(7,51,153)}
+          )) {
+            try {
+              $events = @(Get-WinEvent -FilterHashtable @{
+                LogName='System'; ProviderName=$query.ProviderName; Id=$query.Id
+                StartTime=[datetime]::Now.AddDays(-2)
+              } -MaxEvents 100 | Select-Object Id,@{Name='UTC';Expression={$_.TimeCreated.ToUniversalTime().ToString('o')}})
+              @{Kind='system-events'; Provider=$query.ProviderName; Events=$events} | ConvertTo-Json -Depth 4 -Compress
+            } catch {
+              @{Kind='system-events'; Provider=$query.ProviderName;
+                NoMatchingEvents=($_.FullyQualifiedErrorId -like 'NoMatchingEventsFound*');
+                ErrorId=$_.FullyQualifiedErrorId} | ConvertTo-Json -Compress
+            }
+          }
           & "$root\bin\Runner.Listener.exe" --version
           if ($LASTEXITCODE) { throw 'Cannot identify installed runner version' }
           @{Kind='clock'; Utc=[DateTime]::UtcNow.ToString('o')} | ConvertTo-Json -Compress
@@ -37,8 +78,9 @@ jobs:
           $hosts = [System.Collections.Generic.HashSet[string]]::new()
           [void]$hosts.Add('github.com')
           [void]$hosts.Add('api.github.com')
+          $hours = if ($env:EXPECTED_RUNNER -eq 'GB300-Arm64') { 48 } else { 8 }
           $logs = @(Get-ChildItem -LiteralPath "$root\_diag" -Filter 'Runner_*.log' -File |
-            Where-Object LastWriteTimeUtc -GT ([DateTime]::UtcNow.AddHours(-8)) |
+            Where-Object LastWriteTimeUtc -GT ([DateTime]::UtcNow.AddHours(-$hours)) |
             Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 120 |
             Sort-Object LastWriteTimeUtc)
           if (!$logs.Count) { throw 'No recent listener diagnostic logs found' }

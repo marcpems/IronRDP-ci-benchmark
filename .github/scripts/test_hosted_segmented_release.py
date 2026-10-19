@@ -71,6 +71,9 @@ class SegmentedReleaseTests(unittest.TestCase):
         source = self.root / "r"
         payload = source / "file.txt"
         payload.write_bytes(b"complete checkpoint payload")
+        with (source / "streamed-payload.bin").open("wb") as stream:
+            for _ in range(64):
+                stream.write(b"x" * (1024 * 1024))
         (source / "empty").mkdir()
         deep = source
         for index in range(5):
@@ -83,6 +86,13 @@ class SegmentedReleaseTests(unittest.TestCase):
         subprocess.run([os.environ["COMSPEC"], "/c", "mklink", "/J",
                         str(self.root / "e/source-link"), str(source)], check=True, capture_output=True)
         staged.pack(self.root, self.transfer)
+        checkpoint = staged.read(self.transfer / "manifest.json")
+        self.assertTrue(checkpoint["complete"])
+        self.assertEqual(checkpoint["archive_method"], "Copy")
+        self.assertGreaterEqual(checkpoint["archive_bytes"], 64 * 1024 * 1024)
+        info = subprocess.check_output(["7z", "l", "-slt", str(self.transfer / "workspace.7z")],
+                                       text=True)
+        self.assertIn("Method = Copy", info)
         self.root.rename(self.directory / "old-workspace")
         with patch.object(staged.shutil, "disk_usage",
                           return_value=type("Usage", (), {"free": 100 * 1024 ** 3})()):
@@ -93,6 +103,19 @@ class SegmentedReleaseTests(unittest.TestCase):
         self.assertEqual((source / "file-link").resolve(), payload)
         self.assertEqual((self.root / "e/source-link").resolve(), source)
         self.assertTrue(staged.read(self.root / "e/continuation-restore.json")["verified"])
+
+    def test_archive_space_failure_preserves_incomplete_inventory_and_source(self):
+        (self.root / "r/payload").write_bytes(b"data")
+        with patch.object(staged.shutil, "disk_usage",
+                          return_value=type("Usage", (), {"free": 0})()):
+            with self.assertRaisesRegex(RuntimeError, "Insufficient free space"):
+                staged.pack(self.root, self.transfer)
+        record = staged.read(self.transfer / "manifest.json")
+        self.assertFalse(record["complete"])
+        self.assertIsNone(record["archive_sha256"])
+        self.assertEqual((self.root / "r/payload").read_bytes(), b"data")
+        with self.assertRaisesRegex(RuntimeError, "identity"):
+            staged.unpack(self.root, self.transfer)
 
     def test_bad_archive_identity_is_rejected_before_extracting(self):
         self.transfer.mkdir()
@@ -141,6 +164,8 @@ class SegmentedReleaseTests(unittest.TestCase):
         self.assertIn("runs-on: windows-2022", reusable)
         self.assertNotIn("continue-on-error:", reusable)
         self.assertIn("retention-days: 2", reusable)
+        self.assertLess(reusable.index("Preserve completed training profiles"),
+                        reusable.index("Archive the complete training workspace"))
 
 
 if __name__ == "__main__":

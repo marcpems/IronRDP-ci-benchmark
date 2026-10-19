@@ -89,7 +89,7 @@ def train(root):
     command = [helper, "local", "--target-triple", HOST, "--checkout-dir", source,
                "--llvm-dir", clang.parent, "--python", sys.executable, "--llvm-shared", "false",
                "--", sys.executable, Path(__file__).resolve(), "--checkpoint-final", root]
-    remaining = float(os.environ["RELEASE_JOB_STARTED"]) + 320 * 60 - time.time()
+    remaining = float(os.environ["RELEASE_JOB_STARTED"]) + 310 * 60 - time.time()
     if remaining <= 0:
         raise TimeoutError("No training budget remains before checkpoint transfer")
     result = execute(command, source, env, output, "fresh-pgo-full-dist",
@@ -107,6 +107,8 @@ def train(root):
 def pack(root, transfer):
     physical_directory(root)
     transfer.mkdir(parents=True, exist_ok=False)
+    started = time.monotonic()
+    print("Checkpoint: hashing the training workspace", flush=True)
     rows = manifest(root, source_root=root / "r")
     directories = []
     for parent, folders, _ in os.walk(root, followlinks=False):
@@ -119,30 +121,50 @@ def pack(root, transfer):
     archive = transfer / "workspace.7z"
     # Enumerate regular files explicitly; links are recreated from the verified manifest.
     mtimes = {name: (root / name).stat().st_mtime_ns for name in paths}
+    record = {
+        "study": STUDY, "root": str(root), "run_id": os.environ["GITHUB_RUN_ID"],
+        "attempt": os.environ["GITHUB_RUN_ATTEMPT"], "harness_sha": os.environ["GITHUB_SHA"],
+        "complete": False, "archive_sha256": None, "archive_method": "Copy",
+        "files": rows, "directories": directories, "mtime_ns": mtimes,
+        "bytes": sum(row.get("bytes", 0) for row in rows),
+        "inventory_seconds": time.monotonic() - started,
+    }
+    save(transfer / "manifest.json", record)
+    print(f"Checkpoint: {len(rows)} entries, {record['bytes']} logical bytes; using uncompressed storage",
+          flush=True)
+    if shutil.disk_usage(transfer).free < record["bytes"] + len(paths) * 4096 + 5 * 1024 ** 3:
+        raise RuntimeError("Insufficient free space for the uncompressed workspace checkpoint")
+    last_report = time.monotonic()
     with (transfer / "compress.stdout").open("wb") as stdout, \
             (transfer / "compress.stderr").open("wb") as stderr:
         compressor = subprocess.Popen(
-            ["7z", "a", "-t7z", "-mx=1", "-mmt=4", "-siworkspace.tar", str(archive)],
+            ["7z", "a", "-t7z", "-mx=0", "-m0=Copy", "-siworkspace.tar", str(archive)],
             stdin=subprocess.PIPE, stdout=stdout, stderr=stderr)
         try:
-            with tarfile.open(fileobj=compressor.stdin, mode="w|", format=tarfile.PAX_FORMAT) as archive_tar:
-                for name in paths:
+            with tarfile.open(fileobj=compressor.stdin, mode="w|", format=tarfile.PAX_FORMAT,
+                              bufsize=1024 * 1024, copybufsize=1024 * 1024) as archive_tar:
+                for index, name in enumerate(paths, 1):
                     archive_tar.add(root / name, arcname=Path(name).as_posix(), recursive=False)
+                    if time.monotonic() - last_report >= 30:
+                        progress = {"entries": index, "total_entries": len(paths),
+                                    "elapsed_seconds": time.monotonic() - started}
+                        save(transfer / "progress.json", progress)
+                        print(f"Checkpoint: {json.dumps(progress)}", flush=True)
+                        last_report = time.monotonic()
         finally:
-            compressor.stdin.close()
-            code = compressor.wait()
+            try:
+                compressor.stdin.close()
+            finally:
+                code = compressor.wait()
     if code:
         raise RuntimeError(
             f"Workspace checkpoint archive failed: 7z={code}; "
             + (transfer / "compress.stderr").read_text(errors="replace")[-2000:])
-    save(transfer / "manifest.json", {
-        "study": STUDY, "root": str(root), "run_id": os.environ["GITHUB_RUN_ID"],
-        "attempt": os.environ["GITHUB_RUN_ATTEMPT"], "harness_sha": os.environ["GITHUB_SHA"],
-        "archive_sha256": digest(archive), "files": rows,
-        "directories": directories,
-        "mtime_ns": mtimes,
-        "bytes": sum(row.get("bytes", 0) for row in rows),
-    })
+    record.update(complete=True, archive_sha256=digest(archive),
+                  archive_bytes=archive.stat().st_size, pack_seconds=time.monotonic() - started)
+    save(transfer / "manifest.json", record)
+    print(f"Checkpoint complete: {record['archive_bytes']} bytes in {record['pack_seconds']:.1f}s",
+          flush=True)
 
 
 def validate_members(record, root):
@@ -168,6 +190,7 @@ def unpack(root, transfer):
     record = read(transfer / "manifest.json")
     archive = transfer / "workspace.7z"
     if (record.get("study") != STUDY or record.get("root") != str(root)
+            or record.get("complete") is not True
             or record.get("run_id") != os.environ["GITHUB_RUN_ID"]
             or record.get("attempt") != os.environ["GITHUB_RUN_ATTEMPT"]
             or record.get("harness_sha") != os.environ["GITHUB_SHA"]
@@ -183,7 +206,8 @@ def unpack(root, transfer):
     with (transfer / "extract.stderr").open("wb") as errors:
         extract = subprocess.Popen(["7z", "e", "-so", str(archive)], stdout=subprocess.PIPE, stderr=errors)
         try:
-            with tarfile.open(fileobj=extract.stdout, mode="r|") as archive_tar:
+            with tarfile.open(fileobj=extract.stdout, mode="r|", bufsize=1024 * 1024,
+                              copybufsize=1024 * 1024) as archive_tar:
                 archive_tar.extractall(root, filter="data")
             # Drain archive padding before collecting the decompressor's exit status.
             while extract.stdout.read(1024 * 1024):

@@ -441,6 +441,21 @@ qualification creates `segmented-result.json`, never the continuous
 so this segmented reference does not replace the censored continuous run
 or the self-hosted observations. Transfer artifacts expire after two days.
 
+The first segmented attempt (`39135351977`) completed its fresh training
+segment in **16776.84 seconds (4h39m37s)** and reached the intended handoff.
+It then exceeded the separate 20-minute archive-step limit while streaming
+workspace files; no continuation workspace was uploaded, so the final job
+was skipped. This is not a training/compiler failure. The replacement uses
+uncompressed 7-Zip Copy storage and 1 MiB streaming buffers to remove LZMA
+compression work, retains the inventory before packing and emits progress.
+It also uploads all five merged profiles and their provenance before the
+large transfer, preserving the expensive training output independently.
+Incomplete archives remain explicitly ineligible for restoration; free-space
+checks account for the larger uncompressed checkpoint.
+Training has an absolute 310-minute cutoff from the first workflow step,
+reserving time for profile preservation, workspace transfer and diagnostics
+inside the unchanged six-hour job limit.
+
 GB300 recovery `39092612711` reconnected at 11:19 UTC on 18 October but
 lost communication at 11:35 UTC during preservation, before any scaling
 build started. The recovery chain now resumes only the exact interrupted
@@ -451,6 +466,16 @@ source/destination hash agreement. A verified copy interrupted during
 source removal follows the existing guarded removal-resume path. A
 surviving relocation process now also blocks readiness. No space reclamation
 is claimed until the completed receipt is recovered.
+
+The subsequent resume (`39134671002`) reconnected on 19 October at
+03:03 UTC, but GitHub declared another communication loss at 03:14 UTC.
+The eventual runner log shows cancellation at 05:33 UTC during source
+hashing, before resumed copying; the late receipt upload was rejected
+because the job had already ended. Another full recovery is not being
+blindly dispatched. The existing sanitized connectivity diagnostic now
+supports the exact GB300 runner and shared machine lock, captures its
+receipt before probing, and reports boot/sleep/clock/disk event timestamps,
+power settings and HTTPS behavior without changing machine settings.
 
 On 16 October the user requested another x64 16-CPU observation because the
 first production time (610.70 minutes) appeared unexpectedly high.

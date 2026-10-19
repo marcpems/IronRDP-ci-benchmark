@@ -136,9 +136,23 @@ jobs:
           harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\hosted_x64_baseline.py --source "$env:MATCHED_ROOT\r" --runtime-source "$env:MATCHED_ROOT\l" --output "$env:MATCHED_ROOT\e"
       - name: Complete fresh PGO training with an explicit final-build handoff
         if: inputs.segment == 'train'
-        timeout-minutes: 320
+        timeout-minutes: 310
         run: |
           harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\hosted_segmented_release.py train --root "$env:MATCHED_ROOT"
+      - name: Preserve completed training profiles before the large workspace transfer
+        if: inputs.segment == 'train'
+        uses: actions/upload-artifact@v6
+        timeout-minutes: 5
+        with:
+          name: public-hosted-training-profiles-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ env.MATCHED_ROOT }}/r/opt-artifacts/*.profdata
+            ${{ env.MATCHED_ROOT }}/e/final-command.json
+            ${{ env.MATCHED_ROOT }}/e/training-production.json
+            ${{ env.MATCHED_ROOT }}/e/training-hardware.json
+          compression-level: 0
+          retention-days: 30
+          if-no-files-found: error
       - name: Archive the complete training workspace outside production timing
         if: inputs.segment == 'train'
         timeout-minutes: 20
@@ -207,3 +221,17 @@ jobs:
             ${{ env.MATCHED_ROOT }}/r/build/x86_64-pc-windows-msvc/lld/**/CMakeCache.txt
           compression-level: 1
           retention-days: 30
+      - name: Preserve checkpoint inventory and transfer diagnostics even on timeout
+        if: always() && inputs.segment != ''
+        uses: actions/upload-artifact@v6
+        timeout-minutes: 3
+        with:
+          name: public-hosted-checkpoint-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}-${{ inputs.segment }}
+          path: |
+            ${{ runner.temp }}/hosted-state/manifest.json
+            ${{ runner.temp }}/hosted-state/progress.json
+            ${{ runner.temp }}/hosted-state/*.stdout
+            ${{ runner.temp }}/hosted-state/*.stderr
+          compression-level: 1
+          retention-days: 30
+          if-no-files-found: warn
