@@ -1,5 +1,10 @@
 # IronRDP / Rust compiler performance: combined findings
 
+For the end-to-end problem statement, investigation stages, compiler benefits,
+release costs, scaling results and final status, start with the
+[investigation summary](INVESTIGATION-SUMMARY.md). This report retains the
+detailed compiler-performance experiments and their original evidence.
+
 ## Answer
 
 **Windows x64 is now validated too:** original offline native compilation falls

@@ -1,5 +1,9 @@
 # Matched Rust release cost and IronRDP benefit
 
+For one end-to-end account of the problem, investigation stages and results,
+see the [Windows Rust investigation summary](../INVESTIGATION-SUMMARY.md).
+This page retains the detailed release, scaling and recovery evidence.
+
 ## Release-only Microsoft-retained PGO + Rust ThinLTO scaling
 
 The separate [scaling protocol](msvc-scaling-protocol.json) schedules x64/16,
