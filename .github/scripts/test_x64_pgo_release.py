@@ -1,13 +1,45 @@
 import copy
 from pathlib import Path
+import subprocess
+import tempfile
 import tomllib
 import unittest
 from unittest.mock import patch
 
-from x64_pgo_release import HOST, check_distribution, configuration, validate_reference
+from x64_pgo_release import (
+    HOST, check_distribution, configuration, preserve_literal_release_batch, validate_reference,
+)
 
 
 class X64PgoReleaseTests(unittest.TestCase):
+    def test_literal_crlf_blob_is_accepted_without_changing_source(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            relative = "llvm/utils/release/build_llvm_release.bat"
+            batch = root / relative
+            batch.parent.mkdir(parents=True)
+            original = b"@echo off\r\necho pinned\r\n"
+            batch.write_bytes(original)
+            (root / ".gitattributes").write_text("*.bat text eol=crlf\n")
+            subprocess.run(["git", "init", "--quiet", root], check=True)
+            subprocess.run(["git", "-C", root, "add", ".gitattributes"], check=True, capture_output=True)
+            blob = subprocess.check_output(
+                ["git", "-C", root, "hash-object", "-w", "--stdin", "--no-filters"], input=original,
+            ).decode().strip()
+            subprocess.run(["git", "-C", root, "update-index", "--add", "--cacheinfo",
+                            "100644", blob, relative], check=True)
+            subprocess.run(["git", "-C", root, "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                            "commit", "--quiet", "-m", "fixture"], check=True)
+            before = subprocess.run(["git", "-C", root, "diff", "--quiet", "HEAD"])
+            self.assertEqual(before.returncode, 1)
+            result = preserve_literal_release_batch(root)
+            self.assertTrue(result["raw_blob_identity_verified"])
+            self.assertEqual(batch.read_bytes(), original)
+            subprocess.run(["git", "-C", root, "diff", "--exit-code", "HEAD"], check=True)
+            batch.write_bytes(original + b"echo changed\r\n")
+            with self.assertRaisesRegex(RuntimeError, "differs from its pinned raw Git blob"):
+                preserve_literal_release_batch(root)
+
     def config(self, variant):
         with patch("x64_pgo_release.shutil.which", side_effect=lambda name: f"C:/MSVC/{name}"):
             return configuration(Path("C:/clang"), variant)

@@ -21,6 +21,27 @@ VARIANTS = ("upstream", "local")
 CORES = 16
 
 
+def preserve_literal_release_batch(llvm):
+    relative = "llvm/utils/release/build_llvm_release.bat"
+    original = subprocess.check_output(["git", "-C", llvm, "show", f"HEAD:{relative}"])
+    path = llvm / relative
+    if path.read_bytes() != original:
+        raise RuntimeError("LLVM release batch file differs from its pinned raw Git blob")
+    # This pinned blob contains CRLF despite its text attribute. Disable only
+    # its Git clean filter after verifying exact bytes; compiler inputs stay untouched.
+    attributes = Path(subprocess.check_output(
+        ["git", "-C", llvm, "rev-parse", "--path-format=absolute", "--git-path", "info/attributes"],
+        text=True,
+    ).strip())
+    attributes.parent.mkdir(parents=True, exist_ok=True)
+    rule = f"{relative} -text"
+    existing = attributes.read_text() if attributes.exists() else ""
+    if rule not in existing.splitlines():
+        attributes.write_text(existing.rstrip("\n") + "\n" + rule + "\n", encoding="utf-8")
+    return {"path": relative, "raw_blob_identity_verified": True, "sha256": digest(path),
+            "git_metadata_only": "Disable this file's clean filter; do not change tracked bytes"}
+
+
 @contextmanager
 def telemetry(output):
     if os.environ.get("RUNNER_NAME") != "MARCPE-TEST01-X64":
@@ -154,6 +175,8 @@ def run_release(root, variant, reference_dir=None):
         actual = subprocess.check_output(["git", "-C", directory, "rev-parse", "HEAD"], text=True).strip()
         if actual != revision:
             raise RuntimeError(f"Wrong source revision: {directory}")
+    checkout_evidence = preserve_literal_release_batch(source / "src/llvm-project")
+    save(output / "checkout-validation.json", checkout_evidence)
     subprocess.run(["git", "-C", source, "diff", "--exit-code", "HEAD"], check=True)
     clang = source / "citools/clang-rust/bin"
     tools = tool_identity(clang)

@@ -1,7 +1,7 @@
 name: Qualify x64 upstream versus local PGO comparison
 on:
   push:
-    branches: [experiment/x64-pgo-comparison, experiment/x64-pgo-comparison-pilot, experiment/x64-pgo-checkout-diagnostic]
+    branches: [experiment/x64-pgo-comparison, experiment/x64-pgo-comparison-pilot]
   workflow_dispatch:
     inputs:
       run_releases:
@@ -34,24 +34,6 @@ jobs:
           path: ${{ runner.temp }}/x64-pgo-preflight-${{ github.run_id }}.json
           if-no-files-found: error
           retention-days: 30
-      - name: Diagnose the exact failed LLVM checkout without modifying it
-        if: github.ref_name == 'experiment/x64-pgo-checkout-diagnostic'
-        shell: powershell
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $root = 'C:\q48837696u'
-          if ((Get-Content -LiteralPath "$root\owner-run.txt").Trim() -ne '39448837696') { throw 'Unexpected checkout owner' }
-          $source = "$root\r\src\llvm-project"
-          git -C $source status --short --untracked-files=no
-          if ($LASTEXITCODE) { throw 'Cannot inspect failed checkout' }
-          git -C $source diff --stat
-          if ($LASTEXITCODE) { throw 'Cannot inspect checkout diff' }
-          git -C $source diff --numstat
-          if ($LASTEXITCODE) { throw 'Cannot inspect changed line counts' }
-          git -C $source diff --summary
-          if ($LASTEXITCODE) { throw 'Cannot inspect changed file modes' }
-          git -C $source diff --ignore-space-at-eol --stat
-          if ($LASTEXITCODE) { throw 'Cannot inspect line-ending differences' }
   upstream:
     if: inputs.run_releases || github.ref_name == 'experiment/x64-pgo-comparison-pilot'
     needs: preflight

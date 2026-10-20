@@ -133,6 +133,16 @@ runner's E: checkout to C: NVMe. No compiler production or qualification ran;
 there is no accepted timing sample. Source checkout now occurs directly on C:
 for both variants, avoiding the cross-volume move and the HDD checkout.
 
+The next attempt
+([39448837696](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39448837696))
+also stopped before compilation: the clean-source gate detected a dirty LLVM
+submodule. A read-only follow-up
+([39451464062](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39451464062))
+isolated the change to line-ending handling of LLVM's release batch script.
+The harness now requires that file to match its raw pinned Git blob exactly,
+then disables only its Git clean filter through local Git metadata. No compiler
+source bytes are changed, and the complete clean-source gate remains enforced.
+
 | Native wall-time interval (s) | Linux stock | Windows stock | PGO control | PGO + ThinLTO |
 |---|---:|---:|---:|---:|
 | Compiler units active alone | 377.68 | 734.69 | 572.82 | 524.18 |
