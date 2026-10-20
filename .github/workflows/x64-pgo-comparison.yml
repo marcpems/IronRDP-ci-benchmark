@@ -1,8 +1,13 @@
 name: Qualify x64 upstream versus local PGO comparison
 on:
   push:
-    branches: [experiment/x64-pgo-comparison]
+    branches: [experiment/x64-pgo-comparison, experiment/x64-pgo-comparison-pilot]
   workflow_dispatch:
+    inputs:
+      run_releases:
+        description: Run the sequential full-release pilot after readiness checks
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -29,3 +34,14 @@ jobs:
           path: ${{ runner.temp }}/x64-pgo-preflight-${{ github.run_id }}.json
           if-no-files-found: error
           retention-days: 30
+  upstream:
+    if: inputs.run_releases || github.ref_name == 'experiment/x64-pgo-comparison-pilot'
+    needs: preflight
+    uses: ./.github/workflows/x64-pgo-release-cell.yml
+    with:
+      variant: upstream
+  local:
+    needs: upstream
+    uses: ./.github/workflows/x64-pgo-release-cell.yml
+    with:
+      variant: local

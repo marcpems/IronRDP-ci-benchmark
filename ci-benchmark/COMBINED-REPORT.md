@@ -116,6 +116,16 @@ fresh training and comparable CPU/storage. A split-pipeline study must report
 production execution, repeated setup, transfer/qualification overhead, and
 end-to-end wall clock separately rather than claim continuous-job equivalence.
 
+The [x64 full-release qualification pilot](x64-pgo-release-protocol.json) now
+specifies a sequential upstream-PGO/local-PGO pair on `MARCPE-TEST01-X64` with
+16 Logical Processors and fresh C: NVMe builds. The readiness inventory
+([run 39444464535](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39444464535))
+confirmed approximately 265 GiB free on the NVMe device, no conflicting compiler
+processes, and that D:/E: share a separate HDD. This is readiness evidence only.
+The pilot retains full distributions and upstream qualification tests; it does
+not establish a CI timing effect until both cells pass. Reverse-order repeats
+are required before claiming a stable production-cost difference.
+
 | Native wall-time interval (s) | Linux stock | Windows stock | PGO control | PGO + ThinLTO |
 |---|---:|---:|---:|---:|
 | Compiler units active alone | 377.68 | 734.69 | 572.82 | 524.18 |
