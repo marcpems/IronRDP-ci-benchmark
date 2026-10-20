@@ -1,7 +1,7 @@
 name: Qualify x64 upstream versus local PGO comparison
 on:
   push:
-    branches: [experiment/x64-pgo-comparison, experiment/x64-pgo-comparison-pilot, experiment/x64-pgo-checkout-validation]
+    branches: [experiment/x64-pgo-comparison, experiment/x64-pgo-comparison-pilot]
   workflow_dispatch:
     inputs:
       run_releases:
@@ -34,33 +34,6 @@ jobs:
           path: ${{ runner.temp }}/x64-pgo-preflight-${{ github.run_id }}.json
           if-no-files-found: error
           retention-days: 30
-      - uses: actions/setup-python@v6
-        if: github.ref_name == 'experiment/x64-pgo-checkout-validation'
-        with:
-          python-version: "3.13"
-          architecture: x64
-      - name: Validate exact restoration against retained never-built checkout
-        if: github.ref_name == 'experiment/x64-pgo-checkout-validation'
-        shell: powershell
-        run: |
-          @'
-          import json
-          from pathlib import Path
-          import subprocess
-          import sys
-          sys.path.insert(0, str(Path(".github/scripts").resolve()))
-          from x64_pgo_release import preserve_literal_release_batch, RUST_SHA
-          root = Path(r"C:\q51941785u")
-          assert (root / "owner-run.txt").read_text().strip() == "39451941785"
-          source = root / "r"
-          assert not (source / "build").exists()
-          assert not (source / "bootstrap.toml").exists()
-          assert subprocess.check_output(["git", "-C", source, "rev-parse", "HEAD"], text=True).strip() == RUST_SHA
-          print(json.dumps(preserve_literal_release_batch(source / "src/llvm-project"), indent=2))
-          subprocess.run(["git", "-C", source, "diff", "--exit-code", "HEAD"], check=True)
-          print("Complete source-integrity gate passed. No compiler build was started.")
-          '@ | python -
-          if ($LASTEXITCODE) { throw 'Retained-checkout validation failed' }
   upstream:
     if: inputs.run_releases || github.ref_name == 'experiment/x64-pgo-comparison-pilot'
     needs: preflight

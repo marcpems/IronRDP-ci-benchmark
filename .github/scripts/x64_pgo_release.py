@@ -44,7 +44,7 @@ def preserve_literal_release_batch(llvm):
         attributes.write_text(existing.rstrip("\n") + "\n" + rule + "\n", encoding="utf-8")
     return {"path": relative, "raw_blob_identity_verified": path.read_bytes() == original,
             "checkout_line_endings_restored": restored, "sha256": digest(path),
-            "git_metadata_only": "Disable this file's clean filter; do not change tracked bytes"}
+            "git_filter_override": "Disable this file's clean filter after restoring exact pinned bytes"}
 
 
 @contextmanager

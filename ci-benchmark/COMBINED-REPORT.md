@@ -139,9 +139,16 @@ also stopped before compilation: the clean-source gate detected a dirty LLVM
 submodule. A read-only follow-up
 ([39451464062](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39451464062))
 isolated the change to line-ending handling of LLVM's release batch script.
-The harness now requires that file to match its raw pinned Git blob exactly,
-then disables only its Git clean filter through local Git metadata. No compiler
-source bytes are changed, and the complete clean-source gate remains enforced.
+A strict raw-byte check in
+[39451941785](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39451941785)
+also stopped before compilation because checkout had converted the blob's
+line endings. The harness now accepts only CRLF/LF conversion for that one
+release script, restores its exact pinned Git bytes, then disables only its
+Git clean filter through local Git metadata. Any other content change fails.
+The complete clean-source gate passed on the retained, never-built source in
+[39454259451](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39454259451).
+No compiler implementation changes are made. None of these preparation failures
+or diagnostic runs contributes a compiler-production timing result.
 
 | Native wall-time interval (s) | Linux stock | Windows stock | PGO control | PGO + ThinLTO |
 |---|---:|---:|---:|---:|
