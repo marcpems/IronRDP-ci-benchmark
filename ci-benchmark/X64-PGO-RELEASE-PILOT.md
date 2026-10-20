@@ -129,6 +129,25 @@ only to validate the local-first cell's recipe and tool identities; it is not
 reused as that pair's production timing. The new upstream cell supplies its
 own fresh timing, profiles and qualification.
 
+Fresh replay run:
+[39506872211](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39506872211).
+Reverse-order release run:
+[39506380543](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39506380543).
+Both were started after the first pair qualified; neither is included in the
+table above. Once all five replay jobs complete, download their
+`x64-pgo-fresh-replay-*` artifacts into separate folders beneath one evidence
+directory and run:
+
+```powershell
+python ci-benchmark\analyze_x64_pgo_replay.py <evidence-directory> --output <results.json>
+```
+
+The analyzer rejects incomplete matrices, changed provenance/common inputs,
+compiler or command substitutions, reused targets, CPU-accounting violations,
+missing correctness checks and mixed workflow attempts. It computes three
+paired contrasts using whole-VM resampling; measured rounds are not treated as
+independent VMs.
+
 ## Evidence
 
 - [Structured results and evidence hashes](X64-PGO-RELEASE-PILOT.json).
