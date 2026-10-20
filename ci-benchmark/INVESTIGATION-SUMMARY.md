@@ -3,8 +3,9 @@
 Updated 20 October 2026. This is the end-to-end summary of the problem,
 investigation stages, measured results and remaining limitations. Detailed
 reports and reproducible evidence are linked throughout. All experiments were
-conducted in forks; no upstream rollout is claimed. Testing stopped at the
-user's request on 19 October and has not been restarted.
+conducted in forks; no upstream rollout is claimed. The broad campaign stopped
+at the user's request on 19 October. Only the requested x64 upstream/local-PGO
+comparison resumed on 20 October; Arm64 and GB300 work remain stopped.
 
 Presentation and document versions:
 [technical PowerPoint with linked report index](matched-release/Rust-Optimization-Summary-Published.pptx)
@@ -29,8 +30,15 @@ an earlier consolidation.
   reanalysis of the accepted paired trials gives **957.41 to 791.12 seconds**,
   or **17.4% less IronRDP native compilation wall time (95% interval 15.2-19.1%)**.
   This is a toolchain-replacement result, not proof of better PGO profiles alone:
-  compiler-build/linker differences remain. The corresponding full-release CI
-  cost versus upstream PGO has not been measured on a matched basis.
+  compiler-build/linker differences remain.
+- **The first matched x64 full-release PGO pair qualified:** local production
+  took **2h17m28s versus 2h14m19s (+2.34%)**; whole CI jobs took
+  **2h54m00s versus 2h49m44s (+2.51%, 4m16s extra)**. This is one fresh
+  NVMe/16-LP pair, not a stable repeated estimate. The upstream-recipe rebuild
+  had no active LLVM counters in two checked backend areas; the local build did.
+  This does not prove a gap in official shipping profiles. Fresh downstream
+  replay and reverse-order production repetitions remain outstanding.
+  See the [qualified pilot report](X64-PGO-RELEASE-PILOT.md).
 - **Keeping Microsoft linking tools captures much of the benefit.** Nine
   qualified full-release pilots measured **21.5-24.6% less IronRDP compilation
   time with PGO alone**, versus controlled no-PGO builds. Their LLVM/PGO/ThinLTO

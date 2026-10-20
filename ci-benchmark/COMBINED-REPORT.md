@@ -105,26 +105,36 @@ contents have not been audited. The direct contrast was added after the
 original experiment, not preregistered as its primary comparison.
 Exact estimates and intervals are in [the native results](X64-NATIVE-RESULTS.md).
 
-**Compiler-production CI wall-clock impact versus upstream PGO remains
-unmeasured on a matched basis.** The original local x64 compiler-only build
+**A first matched compiler-production CI pair has now qualified:** local
+production took 8,248.00 versus 8,059.20 seconds (**+2.34%**), while whole
+jobs took 10,440 versus 10,184 seconds (**+2.51%, 4m16s extra**).
+This is a single fresh pair, not a repeated estimate; its new compiler artifacts
+have not yet been replayed on IronRDP. See the
+[full pilot report](X64-PGO-RELEASE-PILOT.md) for phase accounting, profile coverage
+and qualifications. The following explains why earlier production experiments
+could not supply this comparison.
+
+The original local x64 compiler-only build
 cannot be compared to upstream's full distribution; later full-release pilots
 use a no-PGO baseline and different source/infrastructure. Standard-hosted
 upstream full releases also required continuations beyond the job deadline.
-None supplies a defensible upstream-PGO-to-local-PGO CI percentage. Resolving
+None of those earlier runs supplies an upstream-PGO-to-local-PGO CI percentage. Resolving
 this requires both full release recipes, identical required outputs/tests,
 fresh training and comparable CPU/storage. A split-pipeline study must report
 production execution, repeated setup, transfer/qualification overhead, and
 end-to-end wall clock separately rather than claim continuous-job equivalence.
 
-The [x64 full-release qualification pilot](x64-pgo-release-protocol.json) now
+The [x64 full-release qualification protocol](x64-pgo-release-protocol.json)
 specifies a sequential upstream-PGO/local-PGO pair on `MARCPE-TEST01-X64` with
 16 Logical Processors and fresh C: NVMe builds. The readiness inventory
 ([run 39444464535](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39444464535))
 confirmed approximately 265 GiB free on the NVMe device, no conflicting compiler
 processes, and that D:/E: share a separate HDD. This is readiness evidence only.
-The pilot retains full distributions and upstream qualification tests; it does
-not establish a CI timing effect until both cells pass. Reverse-order repeats
-are required before claiming a stable production-cost difference.
+Both cells passed in
+[39456859889](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39456859889),
+with full distributions and upstream qualification tests retained.
+Reverse-order repeats are required before claiming a stable production-cost
+difference. The failed preparation history below is excluded from that pair.
 
 The first full-release attempt
 ([39446235255](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39446235255))
