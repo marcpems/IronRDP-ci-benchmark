@@ -4,6 +4,11 @@ For one end-to-end account of the problem, investigation stages and results,
 see the [Windows Rust investigation summary](../INVESTIGATION-SUMMARY.md).
 This page retains the detailed release, scaling and recovery evidence.
 
+Download the [technical PowerPoint with linked report index](Rust-Optimization-Summary-Published.pptx)
+or the [combined Word report](Rust-Optimization-Combined-Report-Revised.docx).
+The Word report is an earlier consolidation; use the investigation summary
+above for the complete end-to-end account.
+
 ## Release-only Microsoft-retained PGO + Rust ThinLTO scaling
 
 The separate [scaling protocol](msvc-scaling-protocol.json) schedules x64/16,

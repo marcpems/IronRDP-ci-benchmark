@@ -6,6 +6,12 @@ reports and reproducible evidence are linked throughout. All experiments were
 conducted in forks; no upstream rollout is claimed. Testing stopped at the
 user's request on 19 October and has not been restarted.
 
+Presentation and document versions:
+[technical PowerPoint with linked report index](matched-release/Rust-Optimization-Summary-Published.pptx)
+and [combined Word report](matched-release/Rust-Optimization-Combined-Report-Revised.docx).
+This Markdown summary remains the full end-to-end account; the Word report is
+an earlier consolidation.
+
 ## TL;DR
 
 - **The reported Windows compilation penalty was reproduced with IronRDP:**
