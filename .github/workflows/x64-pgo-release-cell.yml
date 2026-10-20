@@ -5,8 +5,13 @@ on:
       variant:
         type: string
         required: true
+      reference_run:
+        type: string
+        default: ""
+        description: Qualified upstream evidence for a reverse-order local-first pair
 permissions:
   contents: read
+  actions: read
 jobs:
   release:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
@@ -87,6 +92,8 @@ jobs:
         with:
           name: x64-pgo-upstream-evidence
           path: ${{ env.PGO_ROOT }}/reference
+          run-id: ${{ inputs.reference_run || github.run_id }}
+          github-token: ${{ github.token }}
       - name: Build and qualify complete PGO distribution
         shell: powershell
         run: |
