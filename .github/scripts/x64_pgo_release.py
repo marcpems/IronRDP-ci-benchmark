@@ -120,7 +120,7 @@ llvm-bitcode-linker = true
 lto = "thin-local"
 verbose-tests = true
 [target.{HOST}]
-linker = "{linker.as_posix()}"
+linker = "{linker.name}"
 ar = "{librarian.as_posix()}"
 [dist]
 src-tarball = false
@@ -234,7 +234,8 @@ def run_release(root, variant, reference_dir=None):
     native_tools = output / "native-tools.cmake"
     native_tools.write_text(
         "".join(f'set({key} "{value}" CACHE FILEPATH "" FORCE)\n' for key, value in (
-            ("CMAKE_LINKER", tomllib.loads(config)["target"][HOST]["linker"]),
+            ("CMAKE_LINKER", (clang / "lld-link.exe").as_posix() if variant == "local"
+             else Path(tools["files"]["link.exe"]["path"]).as_posix()),
             ("CMAKE_AR", tomllib.loads(config)["target"][HOST]["ar"]),
         )), encoding="utf-8",
     )

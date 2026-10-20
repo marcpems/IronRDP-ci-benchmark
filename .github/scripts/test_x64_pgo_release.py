@@ -44,8 +44,14 @@ class X64PgoReleaseTests(unittest.TestCase):
                 preserve_literal_release_batch(root)
 
     def config(self, variant):
-        with patch("x64_pgo_release.shutil.which", side_effect=lambda name: f"C:/MSVC/{name}"):
+        with patch("x64_pgo_release.shutil.which", side_effect=lambda name: f"C:/Program Files/MSVC/{name}"):
             return configuration(Path("C:/clang"), variant)
+
+    def test_bootstrap_linker_flags_do_not_split_spaced_msvc_path(self):
+        for variant, linker in (("upstream", "link.exe"), ("local", "lld-link.exe")):
+            config = tomllib.loads(self.config(variant))
+            flags = f'-C linker={config["target"][HOST]["linker"]}'
+            self.assertEqual(flags.split(), ["-C", f"linker={linker}"])
 
     def test_full_distribution_retains_upstream_optimization_defaults(self):
         for variant in ("upstream", "local"):

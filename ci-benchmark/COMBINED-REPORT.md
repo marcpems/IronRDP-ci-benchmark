@@ -150,6 +150,15 @@ The complete clean-source gate passed on the retained, never-built source in
 No compiler implementation changes are made. None of these preparation failures
 or diagnostic runs contributes a compiler-production timing result.
 
+The next fresh attempt,
+[39454520191](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39454520191),
+passed source validation and downloaded stage0, but failed while constructing
+bootstrap: its whitespace-split `RUSTFLAGS` broke the absolute Microsoft linker
+path at `Program Files`. The configuration now follows the existing release
+harness's executable-name convention (`link.exe` / `lld-link.exe`) with the
+initialized, pinned tool PATH; CMake retains the full quoted native-tool paths.
+This failed preparation attempt supplies no qualified release timing.
+
 | Native wall-time interval (s) | Linux stock | Windows stock | PGO control | PGO + ThinLTO |
 |---|---:|---:|---:|---:|
 | Compiler units active alone | 377.68 | 734.69 | 572.82 | 524.18 |
