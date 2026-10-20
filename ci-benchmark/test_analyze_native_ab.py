@@ -98,11 +98,17 @@ class NativeAnalysisTests(unittest.TestCase):
             result = analyze(matrix, protocol, draws=100)
             total = next(r for r in result["results"] if r["component"] == "native-total" and r["metric"] == "wall_seconds")
             self.assertAlmostEqual(total["pgo_control_windows"], 9)
+            self.assertAlmostEqual(total["pgo_vs_official_saved_seconds"], 1)
+            self.assertAlmostEqual(total["pgo_vs_official_reduction_fraction"], 0.1)
+            self.assertEqual(total["ci95"]["pgo_vs_official_saved_seconds"], [1, 1])
+            self.assertEqual(total["ci95"]["pgo_vs_official_reduction_fraction"], [0.1, 0.1])
             self.assertAlmostEqual(total["thinlto_saved_seconds"], 1)
             self.assertAlmostEqual(total["thinlto_reduction_fraction"], 1 / 9)
             self.assertEqual(len(partitions), 60)
             self.assertIn("Windows x64", markdown(result))
             self.assertIn("11.1%", markdown(result))
+            self.assertIn("Upstream shipping PGO versus local PGO", markdown(result))
+            self.assertIn("10.0% (10.0% to 10.0%)", markdown(result))
             index_path = root / "windows-x64-1" / "index.json"
             index = json.loads(index_path.read_text())
             index["identical_windows_stdlibs_verified"] = False
@@ -159,6 +165,22 @@ class NativeAnalysisTests(unittest.TestCase):
             matrix["native-total"]["linux-arm64"][vm] = {"official": {m: 50 for m in METRICS}}
         result = analyze(matrix, PROTOCOL, draws=100)
         self.assertEqual(result["results"][0]["ci95"]["saved_seconds"], [20, 20])
+
+    def test_upstream_pgo_contrast_preserves_pairing_and_regressions(self):
+        protocol = dict(PROTOCOL, windows_variants=["official", "pgo-control", "optimized"])
+        matrix = {"native-total": {p: {} for p in PLATFORMS}}
+        for vm in range(1, 6):
+            matrix["native-total"]["windows-arm64"][vm] = {
+                "official": {m: 100 + vm * 10 for m in METRICS},
+                "pgo-control": {m: 120 + vm * 10 for m in METRICS},
+                "optimized": {m: 80 + vm * 10 for m in METRICS},
+            }
+            matrix["native-total"]["linux-arm64"][vm] = {"official": {m: 50 for m in METRICS}}
+        result = analyze(matrix, protocol, draws=100)
+        row = result["results"][0]
+        self.assertEqual(row["pgo_vs_official_saved_seconds"], -20)
+        self.assertEqual(row["ci95"]["pgo_vs_official_saved_seconds"], [-20, -20])
+        self.assertLess(row["ci95"]["pgo_vs_official_reduction_fraction"][1], 0)
 
 
 if __name__ == "__main__":

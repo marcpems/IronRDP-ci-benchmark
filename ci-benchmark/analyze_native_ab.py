@@ -180,6 +180,8 @@ def analyze(matrix, protocol, draws=10000):
                 if "pgo-control" in win:
                     control = win["pgo-control"]
                     result.update({"pgo_control_windows": control,
+                                   "pgo_vs_official_saved_seconds": win["official"] - control,
+                                   "pgo_vs_official_reduction_fraction": (win["official"] - control) / win["official"],
                                    "thinlto_saved_seconds": control - win["optimized"],
                                    "thinlto_reduction_fraction": (control - win["optimized"]) / control})
                 return result
@@ -188,7 +190,8 @@ def analyze(matrix, protocol, draws=10000):
             intervals = {}
             keys = ["saved_seconds", "reduction_fraction", "windows_linux_gap_seconds", "gap_closed_fraction"]
             if "pgo-control" in protocol["windows_variants"]:
-                keys += ["thinlto_saved_seconds", "thinlto_reduction_fraction"]
+                keys += ["pgo_vs_official_saved_seconds", "pgo_vs_official_reduction_fraction",
+                         "thinlto_saved_seconds", "thinlto_reduction_fraction"]
             for key in keys:
                 values = [b[key] for b in bootstrap]
                 intervals[key] = None if any(v is None for v in values) else interval(values)
@@ -212,6 +215,23 @@ def markdown(data):
                      f"{row['official_windows']:.2f} | {row['optimized_windows']:.2f} | "
                      f"{row['reduction_fraction']:.1%} ({lo:.1%} to {hi:.1%}) |")
     if "pgo-control" in data["protocol"]["windows_variants"]:
+        lines += ["", "## Upstream shipping PGO versus local PGO, without added ThinLTO", "",
+                  "Retrospective contrast requested on 20 October 2026, using the original accepted",
+                  "paired measurements and the same whole-VM bootstrap. Upstream Windows x64",
+                  "already configures rustc and LLVM PGO; it is not a no-PGO baseline.",
+                  "The local PGO control has no added LLVM/cross-crate Rust ThinLTO.",
+                  "This is a toolchain-replacement effect, not an isolated profile-quality effect:",
+                  "the local compiler also differs in its build/linker environment.",
+                  "It does not measure compiler-production or whole-CI wall time.", "",
+                  "| Component | Metric | Upstream shipping PGO | Local PGO | Saved seconds (95% interval) | Reduction (95% interval) |",
+                  "|---|---|---:|---:|---|---|"]
+        for row in data["results"]:
+            seconds_lo, seconds_hi = row["ci95"]["pgo_vs_official_saved_seconds"]
+            lo, hi = row["ci95"]["pgo_vs_official_reduction_fraction"]
+            lines.append(f"| {row['component']} | {row['metric']} | {row['official_windows']:.2f} | "
+                         f"{row['pgo_control_windows']:.2f} | "
+                         f"{row['pgo_vs_official_saved_seconds']:.2f} ({seconds_lo:.2f} to {seconds_hi:.2f}) | "
+                         f"{row['pgo_vs_official_reduction_fraction']:.1%} ({lo:.1%} to {hi:.1%}) |")
         lines += ["", "## Additional ThinLTO versus matched effective-PGO control", "",
                   "| Component | Metric | PGO control | PGO + ThinLTO | Reduction (95% interval) |",
                   "|---|---|---:|---:|---|"]

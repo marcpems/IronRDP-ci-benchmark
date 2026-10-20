@@ -1,0 +1,31 @@
+name: Qualify x64 upstream versus local PGO comparison
+on:
+  push:
+    branches: [experiment/x64-pgo-comparison]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Inspect runner CPU, storage and idle state without changing settings
+        shell: powershell
+        run: |
+          .github\scripts\x64_pgo_preflight.ps1 -Output "$env:RUNNER_TEMP\x64-pgo-preflight-$env:GITHUB_RUN_ID.json"
+      - name: Preserve readiness evidence
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: x64-pgo-preflight
+          path: ${{ runner.temp }}/x64-pgo-preflight-${{ github.run_id }}.json
+          if-no-files-found: error
+          retention-days: 30

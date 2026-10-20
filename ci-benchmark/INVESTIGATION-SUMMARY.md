@@ -25,6 +25,12 @@ an earlier consolidation.
   These compilers used rustc/LLVM PGO, Rust/LLVM ThinLTO and LLVM linking tools.
   A matched x64 comparison with identical profiles isolated a **7.6% wall-time
   reduction from adding both ThinLTO modes**.
+- **Direct x64 upstream-PGO versus local-PGO comparison, without added ThinLTO:**
+  reanalysis of the accepted paired trials gives **957.41 to 791.12 seconds**,
+  or **17.4% less IronRDP native compilation wall time (95% interval 15.2-19.1%)**.
+  This is a toolchain-replacement result, not proof of better PGO profiles alone:
+  compiler-build/linker differences remain. The corresponding full-release CI
+  cost versus upstream PGO has not been measured on a matched basis.
 - **Keeping Microsoft linking tools captures much of the benefit.** Nine
   qualified full-release pilots measured **21.5-24.6% less IronRDP compilation
   time with PGO alone**, versus controlled no-PGO builds. Their LLVM/PGO/ThinLTO

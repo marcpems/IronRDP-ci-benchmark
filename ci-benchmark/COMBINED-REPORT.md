@@ -75,6 +75,47 @@ native SDK/linker environment; retain x64 compiler codegen-units=1.
 Official-to-custom results also include build/linker differences and cannot be
 called pure PGO effects or evidence that official x64 LLVM PGO is ineffective.
 
+### Direct upstream-PGO versus local-PGO comparison
+
+A retrospective contrast requested on 20 October reuses the complete accepted
+native matrix from run 37001433534, attempt 1. The baseline is **shipping
+Windows x64 Rust 1.94.1, whose release pipeline configures both rustc and LLVM
+PGO**, not a no-PGO compiler. The local comparator is `pgo-control`: rustc/LLVM
+PGO with no added LLVM or cross-crate Rust ThinLTO.
+
+| Native compilation wall time | Upstream shipping PGO | Local PGO | Reduction |
+|---|---:|---:|---:|
+| Five-command IronRDP total | 957.41 s | 791.12 s | **166.29 s / 17.4%** |
+| Workspace test compilation alone | 746.67 s | 615.66 s | 131.01 s / 17.5% |
+
+The total's **95% paired whole-VM bootstrap interval is 121.86-207.52 seconds
+saved, or 15.2-19.1% less wall time**. There are five independent four-CPU Windows
+VMs and three measured rounds per compiler/VM after one excluded warmup. The
+analysis averages rounds within VM and weights VMs equally; rounds are not
+treated as independent machines. Compiler provenance, active backend counters,
+source/stdlib/Cargo identity, cold targets, counterbalanced ordering and the
+untimed original correctness checks are revalidated from the original artifacts.
+The intervals are conditional on these compiler/profile artifacts; they do not
+measure variation between independent PGO-training runs.
+
+This qualifies the **toolchain replacement**, not a PGO-only causal effect.
+Both builds have the same Rust revision, but the local compiler uses LLVM
+linking tools and a different compiler-build environment. The official profile
+contents have not been audited. The direct contrast was added after the
+original experiment, not preregistered as its primary comparison.
+Exact estimates and intervals are in [the native results](X64-NATIVE-RESULTS.md).
+
+**Compiler-production CI wall-clock impact versus upstream PGO remains
+unmeasured on a matched basis.** The original local x64 compiler-only build
+cannot be compared to upstream's full distribution; later full-release pilots
+use a no-PGO baseline and different source/infrastructure. Standard-hosted
+upstream full releases also required continuations beyond the job deadline.
+None supplies a defensible upstream-PGO-to-local-PGO CI percentage. Resolving
+this requires both full release recipes, identical required outputs/tests,
+fresh training and comparable CPU/storage. A split-pipeline study must report
+production execution, repeated setup, transfer/qualification overhead, and
+end-to-end wall clock separately rather than claim continuous-job equivalence.
+
 | Native wall-time interval (s) | Linux stock | Windows stock | PGO control | PGO + ThinLTO |
 |---|---:|---:|---:|---:|
 | Compiler units active alone | 377.68 | 734.69 | 572.82 | 524.18 |
