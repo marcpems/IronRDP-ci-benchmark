@@ -115,6 +115,20 @@ Therefore the 17.4% downstream benefit and 2.51% CI increase answer different
 endpoints using different artifact sets; they are not a jointly measured
 cost/benefit pair or a break-even estimate.
 
+The follow-up [replay protocol](x64-pgo-replay-protocol.json) pins these two
+compiler archive hashes before measurement. Five independent standard four-CPU
+Windows VMs compare official shipping Rust, rebuilt upstream and local PGO with
+the same official Cargo and native standard libraries. The established native
+meter executes one excluded warmup and three measured rounds, counterbalancing
+compiler order and running all four original correctness commands outside the
+clock. `x64-pgo-replay.yml` implements this comparison.
+
+A separate `x64-pgo-reverse.yml` repeats production local-first, then upstream,
+with fresh source, profiles and caches. The earlier upstream result is downloaded
+only to validate the local-first cell's recipe and tool identities; it is not
+reused as that pair's production timing. The new upstream cell supplies its
+own fresh timing, profiles and qualification.
+
 ## Evidence
 
 - [Structured results and evidence hashes](X64-PGO-RELEASE-PILOT.json).

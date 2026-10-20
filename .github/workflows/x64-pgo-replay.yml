@@ -1,0 +1,106 @@
+name: Replay fresh x64 PGO releases against official Rust
+on:
+  push:
+    branches: [experiment/x64-pgo-fresh-replay]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  stage:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: windows-2025
+    timeout-minutes: 45
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: x64-pgo-*-dist
+          path: ${{ runner.temp }}/pgo-input
+          run-id: "39456859889"
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: x64-pgo-*-evidence
+          path: ${{ runner.temp }}/pgo-input
+          run-id: "39456859889"
+          github-token: ${{ github.token }}
+      - uses: actions/upload-artifact@v6
+        with:
+          name: fresh-compiler-inputs
+          path: |
+            ${{ runner.temp }}/pgo-input/x64-pgo-upstream-dist/rustc-1.94.1-x86_64-pc-windows-msvc.tar.xz
+            ${{ runner.temp }}/pgo-input/x64-pgo-local-dist/rustc-1.94.1-x86_64-pc-windows-msvc.tar.xz
+            ${{ runner.temp }}/pgo-input/x64-pgo-upstream-evidence/result.json
+            ${{ runner.temp }}/pgo-input/x64-pgo-local-evidence/result.json
+            ${{ runner.temp }}/pgo-input/x64-pgo-upstream-evidence/dist-manifest.json
+            ${{ runner.temp }}/pgo-input/x64-pgo-local-evidence/dist-manifest.json
+          compression-level: 0
+          if-no-files-found: error
+          retention-days: 30
+  benchmark:
+    needs: stage
+    runs-on: windows-2025
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      matrix:
+        vm: [1, 2, 3, 4, 5]
+    env:
+      BENCHMARK_REPLICATE: ${{ matrix.vm }}
+      BENCHMARK_HOST: x86_64-pc-windows-msvc
+      BENCHMARK_PLATFORM: windows-x64
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Reserve short isolated benchmark paths
+        run: |
+          $root = Join-Path ([IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)) 'xp'
+          if (Test-Path -LiteralPath $root) { throw 'Expected fresh benchmark root' }
+          New-Item -ItemType Directory "$root\t","$root\cargo" | Out-Null
+          "BENCHMARK_ROOT=$root" >> $env:GITHUB_ENV
+          "CARGO_HOME=$root\cargo" >> $env:GITHUB_ENV
+          "RUSTUP_HOME=$root\rustup" >> $env:GITHUB_ENV
+          "TEMP=$root\t" >> $env:GITHUB_ENV
+          "TMP=$root\t" >> $env:GITHUB_ENV
+      - name: Fetch pinned IronRDP directly into its short build path
+        run: |
+          git init --quiet "$env:BENCHMARK_ROOT\s"
+          if ($LASTEXITCODE) { throw 'Cannot initialize workload source' }
+          git -C "$env:BENCHMARK_ROOT\s" remote add origin https://github.com/Devolutions/IronRDP.git
+          if ($LASTEXITCODE) { throw 'Cannot add workload remote' }
+          git -C "$env:BENCHMARK_ROOT\s" fetch --quiet --depth 1 origin 0c5419eca6bf53563056ed252f537bca67862705
+          if ($LASTEXITCODE) { throw 'Workload fetch failed' }
+          git -C "$env:BENCHMARK_ROOT\s" checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Workload checkout failed' }
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - uses: ./.github/actions/install-build-deps
+      - name: Install official Rust into the isolated benchmark home
+        run: |
+          rustup toolchain install 1.94.1 --profile minimal
+          if ($LASTEXITCODE) { throw 'Official toolchain installation failed' }
+      - uses: actions/download-artifact@v6
+        with:
+          name: fresh-compiler-inputs
+          path: ${{ env.BENCHMARK_ROOT }}/a
+      - name: Run counterbalanced cold offline IronRDP measurements
+        run: |
+          $env:RUNNER_TEMP = "$env:BENCHMARK_ROOT\t"
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\x64_pgo_replay.py --source "$env:BENCHMARK_ROOT\s" --artifacts "$env:BENCHMARK_ROOT\a" --output "$env:BENCHMARK_ROOT\e" --protocol ci-benchmark\x64-pgo-replay-protocol.json
+      - uses: actions/upload-artifact@v6
+        if: always() && env.BENCHMARK_ROOT != ''
+        with:
+          name: x64-pgo-fresh-replay-${{ matrix.vm }}
+          path: |
+            ${{ env.BENCHMARK_ROOT }}/e/index.json
+            ${{ env.BENCHMARK_ROOT }}/e/round-*
+            ${{ env.BENCHMARK_ROOT }}/e/meter-validation
+          retention-days: 30
+          if-no-files-found: error

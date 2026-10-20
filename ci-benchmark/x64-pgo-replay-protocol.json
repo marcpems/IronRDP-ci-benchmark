@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "study": "fresh-x64-pgo-full-release-ironrdp-replay",
+  "release_run": "39456859889",
+  "release_attempt": "1",
+  "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+  "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+  "rust_version": "1.94.1",
+  "host": "x86_64-pc-windows-msvc",
+  "variants": ["official", "upstream", "local"],
+  "compiler_archive_sha256": {
+    "upstream": "79c91d962715caaa06b5b2c1ccdcc96e3e183b27a971cb6ccee1763e3dd547b8",
+    "local": "80b69e1d1580402909f620705edac0aea3dbbd3f54335f3a766528a730dfb4e8"
+  },
+  "compiler_metadata_sha256": {
+    "upstream": "166d2b1a223585c8f4994052fd255644207ff479adca1409803872a4fab3a303",
+    "local": "87c9b4b4053b7a1d9e79174e5a59365330d8cfd167db260e2451056f3c2b96a9"
+  },
+  "cores": 4,
+  "independent_vms": 5,
+  "runner": "windows-2025",
+  "warmup_rounds": 1,
+  "measured_rounds": 3,
+  "primary_endpoint": "Sum of five original offline native Cargo compilation commands per block",
+  "primary_contrast": "Official shipping Rust to fresh local PGO: practical adoption",
+  "secondary_contrasts": ["Rebuilt upstream recipe to local PGO", "Official shipping Rust to rebuilt upstream recipe"],
+  "shared_inputs": "Official Rust 1.94.1 Cargo and byte-identical official native target libraries for all compilers",
+  "cold_artifacts": "Fresh target per compiler/round; five commands share the initially empty native target",
+  "order": "Existing counterbalanced three-variant rotation by VM and round, reversing alternate rounds",
+  "correctness": "Four original native cargo test commands for every compiler/VM after excluded round zero; no filters or ignores",
+  "aggregation": "Average three measured totals per VM, then equal-weight five VM means",
+  "uncertainty": "10000 paired whole-VM bootstrap draws, seed 1012026, 95% percentile intervals; conditional on fixed compiler artifacts",
+  "exclusions": "Fixed warmup only; reject incomplete or failed matrices, mixed attempts, changed inputs; never trim slow samples",
+  "scope": "No added ThinLTO; recipe comparison also changes native compiler-build linking tools; not isolated profile quality",
+  "ci_endpoint": "Compiler production cost is measured separately on the dedicated NVMe runner"
+}
