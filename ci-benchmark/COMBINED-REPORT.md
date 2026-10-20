@@ -126,6 +126,13 @@ The pilot retains full distributions and upstream qualification tests; it does
 not establish a CI timing effect until both cells pass. Reverse-order repeats
 are required before claiming a stable production-cost difference.
 
+The first full-release attempt
+([39446235255](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39446235255))
+failed during setup: the harness tried a same-volume directory move from the
+runner's E: checkout to C: NVMe. No compiler production or qualification ran;
+there is no accepted timing sample. Source checkout now occurs directly on C:
+for both variants, avoiding the cross-volume move and the HDD checkout.
+
 | Native wall-time interval (s) | Linux stock | Windows stock | PGO control | PGO + ThinLTO |
 |---|---:|---:|---:|---:|
 | Compiler units active alone | 377.68 | 734.69 | 572.82 | 524.18 |

@@ -47,13 +47,22 @@ jobs:
         shell: powershell
         run: |
           harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:PGO_ROOT\e\readiness.json"
-      - uses: actions/checkout@v6
-        with:
-          repository: rust-lang/rust
-          ref: e408947bfd200af42db322daf0fadfe7e26d3bd1
-          path: rust-source
-          submodules: recursive
-          persist-credentials: false
+      - name: Check out pinned Rust directly on NVMe
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = "$env:PGO_ROOT\r"
+          if (Test-Path -LiteralPath $source) { throw 'Expected a fresh source directory' }
+          git init --quiet $source
+          if ($LASTEXITCODE) { throw 'Cannot initialize isolated source checkout' }
+          git -C $source remote add origin https://github.com/rust-lang/rust.git
+          if ($LASTEXITCODE) { throw 'Cannot configure public source remote' }
+          git -C $source fetch --quiet --depth 1 origin e408947bfd200af42db322daf0fadfe7e26d3bd1
+          if ($LASTEXITCODE) { throw 'Pinned source fetch failed' }
+          git -C $source checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Pinned source checkout failed' }
+          git -C $source submodule update --init --recursive --depth 1 --jobs 4
+          if ($LASTEXITCODE) { throw 'Pinned submodule checkout failed' }
       - uses: actions/setup-python@v6
         with:
           python-version: "3.13"
@@ -62,7 +71,6 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          [IO.Directory]::Move((Resolve-Path rust-source).Path, "$env:PGO_ROOT\r")
           $tools = "$env:PGO_ROOT\r\citools"
           New-Item -ItemType Directory "$tools\clang-rust","$env:PGO_ROOT\r\wix\bin" | Out-Null
           curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-win64.exe --output "$tools\LLVM-20.1.3-win64.exe"
