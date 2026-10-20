@@ -25,8 +25,12 @@ def preserve_literal_release_batch(llvm):
     relative = "llvm/utils/release/build_llvm_release.bat"
     original = subprocess.check_output(["git", "-C", llvm, "show", f"HEAD:{relative}"])
     path = llvm / relative
-    if path.read_bytes() != original:
-        raise RuntimeError("LLVM release batch file differs from its pinned raw Git blob")
+    checkout = path.read_bytes()
+    restored = checkout != original
+    if restored:
+        if checkout.replace(b"\r\n", b"\n") != original.replace(b"\r\n", b"\n"):
+            raise RuntimeError("LLVM release batch file differs beyond CRLF conversion from its pinned raw Git blob")
+        path.write_bytes(original)
     # This pinned blob contains CRLF despite its text attribute. Disable only
     # its Git clean filter after verifying exact bytes; compiler inputs stay untouched.
     attributes = Path(subprocess.check_output(
@@ -38,7 +42,8 @@ def preserve_literal_release_batch(llvm):
     existing = attributes.read_text() if attributes.exists() else ""
     if rule not in existing.splitlines():
         attributes.write_text(existing.rstrip("\n") + "\n" + rule + "\n", encoding="utf-8")
-    return {"path": relative, "raw_blob_identity_verified": True, "sha256": digest(path),
+    return {"path": relative, "raw_blob_identity_verified": path.read_bytes() == original,
+            "checkout_line_endings_restored": restored, "sha256": digest(path),
             "git_metadata_only": "Disable this file's clean filter; do not change tracked bytes"}
 
 

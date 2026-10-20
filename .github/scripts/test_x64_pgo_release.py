@@ -18,7 +18,7 @@ class X64PgoReleaseTests(unittest.TestCase):
             relative = "llvm/utils/release/build_llvm_release.bat"
             batch = root / relative
             batch.parent.mkdir(parents=True)
-            original = b"@echo off\r\necho pinned\r\n"
+            original = b"@echo off\r\necho pinned\n"
             batch.write_bytes(original)
             (root / ".gitattributes").write_text("*.bat text eol=crlf\n")
             subprocess.run(["git", "init", "--quiet", root], check=True)
@@ -30,14 +30,17 @@ class X64PgoReleaseTests(unittest.TestCase):
                             "100644", blob, relative], check=True)
             subprocess.run(["git", "-C", root, "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
                             "commit", "--quiet", "-m", "fixture"], check=True)
+            batch.write_bytes(original.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n"))
             before = subprocess.run(["git", "-C", root, "diff", "--quiet", "HEAD"])
             self.assertEqual(before.returncode, 1)
             result = preserve_literal_release_batch(root)
             self.assertTrue(result["raw_blob_identity_verified"])
+            self.assertTrue(result["checkout_line_endings_restored"])
             self.assertEqual(batch.read_bytes(), original)
             subprocess.run(["git", "-C", root, "diff", "--exit-code", "HEAD"], check=True)
+            self.assertFalse(preserve_literal_release_batch(root)["checkout_line_endings_restored"])
             batch.write_bytes(original + b"echo changed\r\n")
-            with self.assertRaisesRegex(RuntimeError, "differs from its pinned raw Git blob"):
+            with self.assertRaisesRegex(RuntimeError, "differs beyond CRLF conversion"):
                 preserve_literal_release_batch(root)
 
     def config(self, variant):
