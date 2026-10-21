@@ -138,24 +138,26 @@ jobs:
         \ = @(\n    foreach ($i in 1..3) {\n        $t = [Diagnostics.Stopwatch]::StartNew()\n        $version = & choco --version\n\
         \        $code = $LASTEXITCODE\n        $t.Stop()\n        if ($code -ne 0) { throw \"Chocolatey version probe failed:\
         \ $code\" }\n        @{ attempt = $i; seconds = $t.Elapsed.TotalSeconds; version = $version }\n    }\n)\n$configPath\
-        \ = Join-Path $env:ChocolateyInstall 'config\\chocolatey.config'\n[xml]$config = Get-Content -Raw $configPath\n$exeConfigPath\
-        \ = Join-Path $env:ChocolateyInstall 'choco.exe.config'\n[xml]$exeConfig = Get-Content -Raw $exeConfigPath\n$framework\
-        \ = Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full'\n$os = Get-ItemProperty 'HKLM:\\\
-        SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion'\n$data = @{\n    image = $env:ImageVersion\n    label = $env:LABEL\n\
-        \    storage = $env:STORAGE\n    cpu = @(Get-CimInstance Win32_Processor | Select-Object Name, NumberOfLogicalProcessors)\n\
-        \    install_seconds = $timer.Elapsed.TotalSeconds\n    install_exit = $installExit\n    warm_version_timings = $versionTimings\n\
-        \    powershell = $PSVersionTable.PSVersion.ToString()\n    os_build = \"$($os.CurrentBuild).$($os.UBR)\"\n    framework\
-        \ = @{ release = $framework.Release; version = $framework.Version }\n    choco_sha256 = (Get-FileHash (Join-Path $env:ChocolateyInstall\
-        \ 'choco.exe')).Hash\n    choco_config = @{\n        features = @($config.chocolatey.features.feature | Select-Object\
-        \ name, enabled)\n        cache_location = @($config.chocolatey.config.add | Where-Object key -eq 'cacheLocation'\
-        \ | Select-Object key, value)\n        exe_startup = $exeConfig.configuration.startup.OuterXml\n        exe_runtime\
-        \ = $exeConfig.configuration.runtime.OuterXml\n    }\n    defender = Get-MpComputerStatus | Select-Object AMProductVersion,\
-        \ AMEngineVersion, AntivirusSignatureVersion, RealTimeProtectionEnabled, IsTamperProtected\n    ngen_services = @(Get-Service\
-        \ | Where-Object Name -like 'clr_optimization*' | Select-Object Name, Status, StartType)\n    temp = $env:TEMP\n \
-        \   tmp = $env:TMP\n    runtime_environment = @(Get-ChildItem Env: | Where-Object Name -in @(\n        'COMPLUS_ReadyToRun',\
-        \ 'COMPLUS_ZapDisable', 'COMPLUS_TieredCompilation',\n        'DOTNET_ReadyToRun', 'DOTNET_TieredCompilation'\n  \
-        \  ) | Select-Object Name, Value)\n}\n$data | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $out 'configuration.json')\n\
-        Get-Content (Join-Path $env:ChocolateyInstall 'logs\\chocolatey.log') | ForEach-Object {\n    if ($_ -match '(?i)password|token|apikey|api_key|secret|authorization|credential')\
+        \ = Join-Path $env:ChocolateyInstall 'config\\chocolatey.config'\n[xml]$config = Get-Content -Raw $configPath\n$chocoPath\
+        \ = (Get-Command choco -CommandType Application).Source\n$exeConfigPath = \"$chocoPath.config\"\n$exeConfig = $null\n\
+        if (Test-Path -LiteralPath $exeConfigPath) {\n    [xml]$exeConfig = Get-Content -Raw $exeConfigPath\n} else {\n  \
+        \  Write-Host \"No executable configuration file at $exeConfigPath\"\n}\n$framework = Get-ItemProperty 'HKLM:\\SOFTWARE\\\
+        Microsoft\\NET Framework Setup\\NDP\\v4\\Full'\n$os = Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion'\n\
+        $data = @{\n    image = $env:ImageVersion\n    label = $env:LABEL\n    storage = $env:STORAGE\n    cpu = @(Get-CimInstance\
+        \ Win32_Processor | Select-Object Name, NumberOfLogicalProcessors)\n    install_seconds = $timer.Elapsed.TotalSeconds\n\
+        \    install_exit = $installExit\n    warm_version_timings = $versionTimings\n    powershell = $PSVersionTable.PSVersion.ToString()\n\
+        \    os_build = \"$($os.CurrentBuild).$($os.UBR)\"\n    framework = @{ release = $framework.Release; version = $framework.Version\
+        \ }\n    choco_path = $chocoPath\n    choco_sha256 = (Get-FileHash $chocoPath).Hash\n    choco_config = @{\n     \
+        \   features = @($config.chocolatey.features.feature | Select-Object name, enabled)\n        cache_location = @($config.chocolatey.config.add\
+        \ | Where-Object key -eq 'cacheLocation' | Select-Object key, value)\n        executable_config_present = $null -ne\
+        \ $exeConfig\n        exe_startup = $exeConfig.configuration.startup.OuterXml\n        exe_runtime = $exeConfig.configuration.runtime.OuterXml\n\
+        \    }\n    defender = Get-MpComputerStatus | Select-Object AMProductVersion, AMEngineVersion, AntivirusSignatureVersion,\
+        \ RealTimeProtectionEnabled, IsTamperProtected\n    ngen_services = @(Get-Service | Where-Object Name -like 'clr_optimization*'\
+        \ | Select-Object Name, Status, StartType)\n    temp = $env:TEMP\n    tmp = $env:TMP\n    runtime_environment = @(Get-ChildItem\
+        \ Env: | Where-Object Name -in @(\n        'COMPLUS_ReadyToRun', 'COMPLUS_ZapDisable', 'COMPLUS_TieredCompilation',\n\
+        \        'DOTNET_ReadyToRun', 'DOTNET_TieredCompilation'\n    ) | Select-Object Name, Value)\n}\n$data | ConvertTo-Json\
+        \ -Depth 10 | Set-Content (Join-Path $out 'configuration.json')\nGet-Content (Join-Path $env:ChocolateyInstall 'logs\\\
+        chocolatey.log') | ForEach-Object {\n    if ($_ -match '(?i)password|token|apikey|api_key|secret|authorization|credential')\
         \ {\n        '[credential-related diagnostic line redacted]'\n    } else { $_ }\n} | Set-Content (Join-Path $out 'chocolatey-sanitized.log')\n\
         if ($installExit -ne 0) { throw \"NASM installation failed: $installExit\" }\n"
     - name: Upload measurement
