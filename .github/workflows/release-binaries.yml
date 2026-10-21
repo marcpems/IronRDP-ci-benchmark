@@ -87,6 +87,86 @@ jobs:
             macos_deployment_target: '11.0'
 
     steps:
+      # Keep the runner's logical paths intact for checkout, caching, artifacts and post steps.
+      # Never repurpose an existing volume or initialize storage on a self-hosted machine.
+      - name: Prepare Windows ARM build storage
+        if: runner.os == 'Windows' && runner.arch == 'ARM64' && runner.environment == 'github-hosted'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'Arm64') {
+            throw 'runner architecture does not match the operating system'
+          }
+
+          $partitions = @(Get-Partition)
+          $volumes = @(Get-Volume)
+          $drives = @(Get-PSDrive -PSProvider FileSystem)
+          if (($partitions | Where-Object DriveLetter -eq 'D') -or
+              ($volumes | Where-Object DriveLetter -eq 'D') -or
+              ($drives | Where-Object Name -eq 'D')) {
+            Write-Host 'D: is already assigned; leaving storage and workspace unchanged'
+            return
+          }
+
+          $disks = @(Get-Disk | Where-Object {
+            $_.BusType -eq 'NVMe' -and $_.PartitionStyle -eq 'RAW' -and
+            -not $_.IsBoot -and -not $_.IsSystem -and
+            -not $_.IsOffline -and -not $_.IsReadOnly -and
+            $_.NumberOfPartitions -eq 0 -and $_.Size -ge 50GB -and
+            $_.Number -notin $partitions.DiskNumber
+          })
+          if ($disks.Count -ne 1) {
+            Write-Host "Found $($disks.Count) eligible raw NVMe disks; leaving storage and workspace unchanged"
+            return
+          }
+
+          $workspace = Get-Item -LiteralPath $env:GITHUB_WORKSPACE -Force
+          if (-not $workspace.PSIsContainer -or
+              ($workspace.Attributes -band [IO.FileAttributes]::ReparsePoint) -or
+              @(Get-ChildItem -LiteralPath $workspace.FullName -Force).Count -ne 0) {
+            Write-Host 'Workspace is not an empty ordinary directory; leaving storage unchanged'
+            return
+          }
+
+          # Dev Drive is ReFS with Windows' developer-workload defaults. Do not disable antivirus
+          # or change filter/trust policy. Any provisioning failure must fail the job visibly.
+          $disk = $disks[0]
+          Write-Host "Initializing unused NVMe disk $($disk.Number) ($($disk.Size) bytes)"
+          $partition = Initialize-Disk -InputObject $disk -PartitionStyle GPT -PassThru |
+            New-Partition -UseMaximumSize -DriveLetter D
+          $volume = $partition | Format-Volume -DevDrive -FileSystem ReFS -NewFileSystemLabel 'Build' -Confirm:$false
+          if ($volume.FileSystem -ne 'ReFS' -or $volume.DriveLetter -ne 'D') {
+            throw 'new build volume is not ReFS on D:'
+          }
+
+          # Run before checkout so there is no source tree to copy. The agent itself and its
+          # control files stay where GitHub placed them; only build data moves.
+          Set-Location -LiteralPath $env:RUNNER_TEMP
+          [Environment]::CurrentDirectory = $env:RUNNER_TEMP
+          Move-Item -LiteralPath $workspace.FullName -Destination 'D:\workspace'
+          New-Item -ItemType Junction -Path $workspace.FullName -Target 'D:\workspace' | Out-Null
+
+          $cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }
+          New-Item -ItemType Directory -Path $cargoHome -Force | Out-Null
+          New-Item -ItemType Directory -Path 'D:\cargo-cache', 'D:\build-temp' | Out-Null
+          foreach ($name in @('registry', 'git')) {
+            $source = Join-Path $cargoHome $name
+            $destination = Join-Path 'D:\cargo-cache' $name
+            if (Test-Path -LiteralPath $source) {
+              $item = Get-Item -LiteralPath $source -Force
+              if (-not $item.PSIsContainer -or ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                throw "refusing to relocate non-directory or linked Cargo cache: $source"
+              }
+              Move-Item -LiteralPath $source -Destination $destination
+            } else {
+              New-Item -ItemType Directory -Path $destination | Out-Null
+            }
+            New-Item -ItemType Junction -Path $source -Target $destination | Out-Null
+          }
+          "TEMP=D:\build-temp" >> $env:GITHUB_ENV
+          "TMP=D:\build-temp" >> $env:GITHUB_ENV
+          Write-Host 'Workspace, Cargo source caches and compiler temporary files now use D: (ReFS)'
+
       - name: Checkout release tag
         uses: actions/checkout@v6
         with:
