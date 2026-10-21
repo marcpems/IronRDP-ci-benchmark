@@ -1,0 +1,260 @@
+name: Chocolatey TEMP-path confirmation
+'on':
+  push:
+    branches:
+    - perf/chocolatey-temp-confirmation
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  measure:
+    name: ${{ matrix.label }} / ${{ matrix.mode }} / ${{ matrix.block }}
+    runs-on: ${{ matrix.label }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 16
+      matrix:
+        include:
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs
+          block: 3
+        - label: windows-11-arm
+          storage: refs
+          mode: refs
+          block: 5
+        - label: windows-11-arm
+          storage: refs
+          mode: refs
+          block: 8
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs
+          block: 4
+        - label: windows-11-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 6
+        - label: windows-11-arm
+          storage: refs
+          mode: refs
+          block: 6
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 8
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 6
+        - label: windows-11-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 4
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 5
+        - label: windows-11-arm
+          storage: refs
+          mode: refs
+          block: 3
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs
+          block: 1
+        - label: windows-11-arm
+          storage: refs
+          mode: refs
+          block: 4
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 4
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 3
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 1
+        - label: windows-11-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 8
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs
+          block: 8
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs
+          block: 2
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs
+          block: 7
+        - label: windows-11-arm
+          storage: refs
+          mode: refs
+          block: 2
+        - label: windows-11-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 5
+        - label: windows-11-arm
+          storage: refs
+          mode: refs
+          block: 1
+        - label: windows-11-arm
+          storage: refs
+          mode: refs
+          block: 7
+        - label: windows-11-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 7
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 2
+        - label: windows-11-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 1
+        - label: windows-11-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 2
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 7
+        - label: windows-11-arm
+          storage: refs
+          mode: refs-temp-c
+          block: 3
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs
+          block: 5
+        - label: windows-11-vs2026-arm
+          storage: refs
+          mode: refs
+          block: 6
+    env:
+      LABEL: ${{ matrix.label }}
+      STORAGE: ${{ matrix.storage }}
+      BLOCK: ${{ matrix.block }}
+      MODE: ${{ matrix.mode }}
+    steps:
+    - name: Record actual runner image
+      id: runner
+      shell: pwsh
+      run: "\n$ErrorActionPreference = 'Stop'\n$eligible = $env:ImageVersion -in @('20261013.183.4', '20261018.189.1')\n$cpu\
+        \ = Get-CimInstance Win32_Processor\n$data = [ordered]@{\n  run_id = $env:GITHUB_RUN_ID\n  run_attempt = $env:GITHUB_RUN_ATTEMPT\n\
+        \  label = $env:LABEL\n  storage = $env:STORAGE\n  block = [int]$env:BLOCK\n  image = $env:ImageOS\n  image_version\
+        \ = $env:ImageVersion\n  eligible = $eligible\n  outcome = if ($eligible) { 'not-measured' } else { 'excluded-image'\
+        \ }\n  cpu_name = @($cpu.Name)\n  logical_processors = ($cpu.NumberOfLogicalProcessors | Measure-Object -Sum).Sum\n\
+        \  recorded_at = [DateTime]::UtcNow.ToString('o')\n}\n$data | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $env:RUNNER_TEMP\
+        \ 'nasm-statistics.json')\n\"eligible=$($eligible.ToString().ToLowerInvariant())\" >> $env:GITHUB_OUTPUT\n$data |\
+        \ ConvertTo-Json -Depth 8\nif (-not $eligible) { Write-Host 'Image is outside the requested comparison; no installation\
+        \ or storage modification will run' }\n\n\"ORIGINAL_TEMP=$env:TEMP\" >> $env:GITHUB_ENV\n\"ORIGINAL_TMP=$env:TMP\"\
+        \ >> $env:GITHUB_ENV\n"
+    - name: Prepare Windows Arm build storage
+      if: runner.os == 'Windows' && runner.arch == 'ARM64' && runner.environment == 'github-hosted' && matrix.storage == 'refs'
+        && steps.runner.outputs.eligible == 'true'
+      shell: pwsh
+      run: "$ErrorActionPreference = 'Stop'\nif ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'Arm64')\
+        \ {\n  throw 'runner architecture does not match the operating system'\n}\n\n$partitions = @(Get-Partition)\n$volumes\
+        \ = @(Get-Volume)\n$drives = @(Get-PSDrive -PSProvider FileSystem)\nif (($partitions | Where-Object DriveLetter -eq\
+        \ 'D') -or\n    ($volumes | Where-Object DriveLetter -eq 'D') -or\n    ($drives | Where-Object Name -eq 'D')) {\n\
+        \  Write-Host 'D: is already assigned; leaving storage and workspace unchanged'\n  return\n}\n\n$disks = @(Get-Disk\
+        \ | Where-Object {\n  $_.BusType -eq 'NVMe' -and $_.PartitionStyle -eq 'RAW' -and\n  -not $_.IsBoot -and -not $_.IsSystem\
+        \ -and\n  -not $_.IsOffline -and -not $_.IsReadOnly -and\n  $_.NumberOfPartitions -eq 0 -and $_.Size -ge 50GB -and\n\
+        \  $_.Number -notin $partitions.DiskNumber\n})\nif ($disks.Count -ne 1) {\n  Write-Host \"Found $($disks.Count) eligible\
+        \ raw NVMe disks; leaving storage and workspace unchanged\"\n  return\n}\n\n$workspace = Get-Item -LiteralPath $env:GITHUB_WORKSPACE\
+        \ -Force\nif (-not $workspace.PSIsContainer -or\n    ($workspace.Attributes -band [IO.FileAttributes]::ReparsePoint)\
+        \ -or\n    @(Get-ChildItem -LiteralPath $workspace.FullName -Force).Count -ne 0) {\n  Write-Host 'Workspace is not\
+        \ an empty ordinary directory; leaving storage unchanged'\n  return\n}\n$cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME\
+        \ } else { Join-Path $HOME '.cargo' }\nif (Test-Path -LiteralPath $cargoHome) {\n  $cargoDirectory = Get-Item -LiteralPath\
+        \ $cargoHome -Force\n  if (-not $cargoDirectory.PSIsContainer -or\n      ($cargoDirectory.Attributes -band [IO.FileAttributes]::ReparsePoint))\
+        \ {\n    Write-Host 'Cargo home is not an ordinary directory; leaving storage unchanged'\n    return\n  }\n}\n\n#\
+        \ Dev Drive is ReFS with Windows' developer-workload defaults. Do not disable antivirus\n# or change filter/trust\
+        \ policy. Any provisioning failure must fail the job visibly.\n$disk = $disks[0]\nWrite-Host \"Initializing unused\
+        \ NVMe disk $($disk.Number) ($($disk.Size) bytes)\"\n$partition = Initialize-Disk -InputObject $disk -PartitionStyle\
+        \ GPT -PassThru |\n  New-Partition -UseMaximumSize -DriveLetter D\n$volume = $partition | Format-Volume -DevDrive\
+        \ -FileSystem ReFS -NewFileSystemLabel 'Build' -Confirm:$false\nif ($volume.FileSystem -ne 'ReFS' -or $volume.DriveLetter\
+        \ -ne 'D') {\n  throw 'new build volume is not ReFS on D:'\n}\n\n# Run before checkout so there is no source tree\
+        \ to copy. The agent itself and its\n# control files stay where GitHub placed them; only build data moves.\nSet-Location\
+        \ -LiteralPath $env:RUNNER_TEMP\n[Environment]::CurrentDirectory = $env:RUNNER_TEMP\nMove-Item -LiteralPath $workspace.FullName\
+        \ -Destination 'D:\\workspace'\nNew-Item -ItemType Junction -Path $workspace.FullName -Target 'D:\\workspace' | Out-Null\n\
+        \n# Give rust-cache the physical Cargo path: paths relative to the old C: workspace\n# would otherwise traverse the\
+        \ junction's parents on D: when GNU tar saves/restores.\nif (Test-Path -LiteralPath $cargoHome) {\n  Move-Item -LiteralPath\
+        \ $cargoHome -Destination 'D:\\cargo-home'\n} else {\n  New-Item -ItemType Directory -Path 'D:\\cargo-home' | Out-Null\n\
+        }\nNew-Item -ItemType Junction -Path $cargoHome -Target 'D:\\cargo-home' | Out-Null\nNew-Item -ItemType Directory\
+        \ -Path 'D:\\build-temp' | Out-Null\n\"CARGO_HOME=D:\\cargo-home\" >> $env:GITHUB_ENV\n\"TEMP=D:\\build-temp\" >>\
+        \ $env:GITHUB_ENV\n\"TMP=D:\\build-temp\" >> $env:GITHUB_ENV\nWrite-Host 'Workspace, Cargo source caches and compiler\
+        \ temporary files now use D: (ReFS)'\n"
+    - name: Keep Chocolatey temporary files on the original volume
+      if: matrix.mode == 'refs-temp-c' && steps.runner.outputs.eligible == 'true'
+      shell: pwsh
+      run: '"TEMP=$env:ORIGINAL_TEMP" >> $env:GITHUB_ENV
+
+        "TMP=$env:ORIGINAL_TMP" >> $env:GITHUB_ENV'
+    - name: Measure NASM installation
+      if: steps.runner.outputs.eligible == 'true'
+      shell: pwsh
+      run: "\n$chocoCommand = if ($env:MODE -eq 'refs-direct') { Join-Path $env:ChocolateyInstall 'choco.exe' } else { 'choco'\
+        \ }\n$expectedTemp = if ($env:MODE -eq 'refs-temp-c') { $env:ORIGINAL_TEMP } else { 'D:\\build-temp' }\n\n$ErrorActionPreference\
+        \ = 'Stop'\n$resultPath = Join-Path $env:RUNNER_TEMP 'nasm-statistics.json'\n$data = Get-Content -Raw $resultPath\
+        \ | ConvertFrom-Json -AsHashtable\n\nAdd-Type -TypeDefinition @'\nusing System;\nusing System.ComponentModel;\nusing\
+        \ System.Runtime.InteropServices;\npublic static class NasmMachineCpu {\n    [DllImport(\"kernel32.dll\", SetLastError\
+        \ = true)]\n    private static extern bool GetSystemTimes(out long idle, out long kernel, out long user);\n    public\
+        \ static long[] Read() {\n        long idle, kernel, user;\n        if (!GetSystemTimes(out idle, out kernel, out\
+        \ user))\n            throw new Win32Exception(Marshal.GetLastWin32Error());\n        return new long[] {idle, kernel,\
+        \ user};\n    }\n}\n'@\n\nfunction Get-MachineSnapshot {\n  $cpu = [NasmMachineCpu]::Read()\n  $disk = Get-CimInstance\
+        \ Win32_PerfRawData_PerfDisk_PhysicalDisk -Filter \"Name='_Total'\"\n  if ($null -eq $disk) { throw 'whole-machine\
+        \ disk counters are unavailable' }\n  $received = [long]0\n  $sent = [long]0\n  foreach ($nic in [Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces())\
+        \ {\n    if ($nic.OperationalStatus -eq 'Up' -and $nic.NetworkInterfaceType -notin @('Loopback', 'Tunnel')) {\n  \
+        \    $stats = $nic.GetIPStatistics()\n      $received += $stats.BytesReceived\n      $sent += $stats.BytesSent\n \
+        \   }\n  }\n  @{\n    cpu = $cpu\n    disk_read = [long]$disk.DiskReadBytesPersec\n    disk_write = [long]$disk.DiskWriteBytesPersec\n\
+        \    net_received = $received\n    net_sent = $sent\n    timestamp = [DateTime]::UtcNow.ToString('o')\n  }\n}\n\n\
+        $before = Get-MachineSnapshot\n$phases = [ordered]@{}\n$versions = [ordered]@{}\n$started = [DateTime]::UtcNow\n$timer\
+        \ = [Diagnostics.Stopwatch]::StartNew()\n& $chocoCommand install nasm 2>&1 | ForEach-Object {\n  $line = $_.ToString()\n\
+        \  $elapsed = $timer.Elapsed.TotalSeconds\n  if ($line -match 'Chocolatey v([0-9.]+)') {\n    $phases['chocolatey_banner']\
+        \ = $elapsed\n    $versions['chocolatey'] = $Matches[1]\n  }\n  if ($line -match 'Downloading package from source')\
+        \ { $phases['package_download_started'] = $elapsed }\n  if ($line -match 'nasm v([0-9.]+)') { $versions['nasm'] =\
+        \ $Matches[1] }\n  if ($line -match 'nasm package files install completed') { $phases['package_ready'] = $elapsed\
+        \ }\n  if ($line -match 'Installing 64-bit nasm') { $phases['installer_started'] = $elapsed }\n  if ($line -match\
+        \ 'nasm has been installed') { $phases['installer_completed'] = $elapsed }\n  if ($line -notmatch 'Progress:') { Write-Host\
+        \ $line }\n}\n$exitCode = $LASTEXITCODE\n$timer.Stop()\n$ended = [DateTime]::UtcNow\n$after = Get-MachineSnapshot\n\
+        $data['mode'] = $env:MODE\n$data['tmp'] = $env:TMP\n$data['started_at'] = $started.ToString('o')\n$data['completed_at']\
+        \ = $ended.ToString('o')\n$data['command_seconds'] = $timer.Elapsed.TotalSeconds\n$data['exit_code'] = $exitCode\n\
+        $data['outcome'] = if ($exitCode -eq 0) { 'success' } else { 'install-failed' }\n$data['phases'] = $phases\n$data['versions']\
+        \ = $versions\n$cpuTotal = ($after.cpu[1] + $after.cpu[2]) - ($before.cpu[1] + $before.cpu[2])\n$cpuBusy = $cpuTotal\
+        \ - ($after.cpu[0] - $before.cpu[0])\nif ($cpuTotal -le 0 -or $cpuBusy -lt 0 -or $cpuBusy -gt $cpuTotal) { throw 'invalid\
+        \ machine CPU counter delta' }\n$data['whole_machine'] = @{\n  cpu_busy_seconds = $cpuBusy / 1e7\n  cpu_utilization_percent\
+        \ = 100.0 * $cpuBusy / $cpuTotal\n  disk_read_bytes = $after.disk_read - $before.disk_read\n  disk_write_bytes = $after.disk_write\
+        \ - $before.disk_write\n  network_received_bytes = $after.net_received - $before.net_received\n  network_sent_bytes\
+        \ = $after.net_sent - $before.net_sent\n  before = $before.timestamp\n  after = $after.timestamp\n}\n$data['workspace']\
+        \ = $env:GITHUB_WORKSPACE\n$data['workspace_target'] = (Get-Item -Force $env:GITHUB_WORKSPACE).Target\n$data['cargo_home']\
+        \ = $env:CARGO_HOME\n$data['temp'] = $env:TEMP\n$data['volumes'] = @(Get-Volume | Where-Object DriveLetter -in @('C',\
+        \ 'D') |\n  Select-Object DriveLetter, FileSystem, Size, SizeRemaining)\n$data | ConvertTo-Json -Depth 10 | Set-Content\
+        \ $resultPath\n$data | ConvertTo-Json -Depth 10\nif ($exitCode -ne 0) { throw \"NASM installation failed with exit\
+        \ code $exitCode\" }\nforeach ($phase in @('chocolatey_banner', 'package_download_started', 'package_ready', 'installer_started',\
+        \ 'installer_completed')) {\n  if (-not $phases.Contains($phase)) { throw \"missing installation phase: $phase\" }\n\
+        }\nif ($env:STORAGE -eq 'refs') {\n  if ((Get-Volume -DriveLetter D).FileSystem -ne 'ReFS' -or\n      $data.workspace_target\
+        \ -ne 'D:\\workspace' -or\n      $env:CARGO_HOME -ne 'D:\\cargo-home' -or $env:TEMP -ne $expectedTemp) {\n    throw\
+        \ 'ReFS storage configuration did not match the candidate'\n  }\n}\n$env:PATH += \";$env:ProgramFiles\\NASM\"\nnasm\
+        \ -v\nif ($LASTEXITCODE -ne 0) { throw 'installed NASM executable failed' }\n"
+    - name: Upload measurement
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: temp-confirmation-${{ matrix.label }}-${{ matrix.mode }}-${{ matrix.block }}
+        path: ${{ runner.temp }}\nasm-statistics.json
+        if-no-files-found: error
+        retention-days: 30

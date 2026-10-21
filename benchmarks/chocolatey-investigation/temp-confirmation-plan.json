@@ -1,0 +1,18 @@
+{
+  "purpose": "Independent fixed-size follow-up of the exploratory TEMP-path signal",
+  "jobs": 32,
+  "nominal_blocks": 8,
+  "jobs_per_block": "Two labels times two randomly ordered TEMP/TMP configurations",
+  "max_parallel": 16,
+  "shuffle_seed": 20261022,
+  "eligible_images": ["20261013.183.4", "20261018.189.1"],
+  "primary": "New-image median NASM command duration: original C: TEMP/TMP minus candidate D: TEMP/TMP",
+  "secondary": "Same comparison on old image",
+  "analysis": "10000 nominal-block bootstrap resamples; 95% percentile interval; retain all eligible successful command timings; report failures separately",
+  "minimum_cell_size": 8,
+  "small_cells": "Report descriptively if either primary comparison cell has fewer than eight observations",
+  "stopping": "Exactly 32 scheduled jobs, no significance-driven or count-driven top-ups",
+  "exclusions": "Other image versions excluded by workflow before provisioning/install; no elapsed-time outlier exclusion",
+  "limitations": "Image and CPU assignment are observational; labels do not pin either; scheduling blocks are not simultaneous starts; this isolates NASM TEMP/TMP, not full build performance",
+  "security": "No Defender, trust, certificate, checksum, or other security-policy changes"
+}
