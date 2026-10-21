@@ -32,22 +32,36 @@ jobs:
           target: aarch64-pc-windows-msvc
           os_arch: windows-arm64
           package: ironrdp-agent
-          variant: refs
-          sample: 1
-          macos_deployment_target: '11.0'
-        - runner: windows-11-arm
-          target: aarch64-pc-windows-msvc
-          os_arch: windows-arm64
-          package: ironrdp-viewer
           variant: baseline
+          sample: 2
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 3
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: refs
           sample: 1
           macos_deployment_target: '11.0'
         - runner: windows-11-arm
           target: aarch64-pc-windows-msvc
           os_arch: windows-arm64
-          package: ironrdp-viewer
+          package: ironrdp-agent
           variant: refs
-          sample: 1
+          sample: 2
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: refs
+          sample: 3
           macos_deployment_target: '11.0'
         - runner: windows-11-vs2026-arm
           target: aarch64-pc-windows-msvc
@@ -60,22 +74,36 @@ jobs:
           target: aarch64-pc-windows-msvc
           os_arch: windows-arm64
           package: ironrdp-agent
-          variant: refs
-          sample: 1
-          macos_deployment_target: '11.0'
-        - runner: windows-11-vs2026-arm
-          target: aarch64-pc-windows-msvc
-          os_arch: windows-arm64
-          package: ironrdp-viewer
           variant: baseline
+          sample: 2
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 3
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: refs
           sample: 1
           macos_deployment_target: '11.0'
         - runner: windows-11-vs2026-arm
           target: aarch64-pc-windows-msvc
           os_arch: windows-arm64
-          package: ironrdp-viewer
+          package: ironrdp-agent
           variant: refs
-          sample: 1
+          sample: 2
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: refs
+          sample: 3
           macos_deployment_target: '11.0'
     steps:
     - name: Record runner
@@ -84,7 +112,7 @@ jobs:
         \ RunnerTemp: $env:RUNNER_TEMP\"\nif ($IsWindows) {\n  Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors\
         \ | ConvertTo-Json\n  Get-Disk | Select-Object Number,FriendlyName,BusType,PartitionStyle,IsBoot,IsSystem,IsOffline,IsReadOnly,NumberOfPartitions,Size\
         \ | ConvertTo-Json\n}\n"
-    - name: Prepare Windows ARM build storage
+    - name: Prepare Windows Arm build storage
       if: runner.os == 'Windows' && runner.arch == 'ARM64' && runner.environment == 'github-hosted' && matrix.variant == 'refs'
       shell: pwsh
       run: "$ErrorActionPreference = 'Stop'\nif ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'Arm64')\
@@ -98,25 +126,26 @@ jobs:
         \ raw NVMe disks; leaving storage and workspace unchanged\"\n  return\n}\n\n$workspace = Get-Item -LiteralPath $env:GITHUB_WORKSPACE\
         \ -Force\nif (-not $workspace.PSIsContainer -or\n    ($workspace.Attributes -band [IO.FileAttributes]::ReparsePoint)\
         \ -or\n    @(Get-ChildItem -LiteralPath $workspace.FullName -Force).Count -ne 0) {\n  Write-Host 'Workspace is not\
-        \ an empty ordinary directory; leaving storage unchanged'\n  return\n}\n\n# Dev Drive is ReFS with Windows' developer-workload\
-        \ defaults. Do not disable antivirus\n# or change filter/trust policy. Any provisioning failure must fail the job\
-        \ visibly.\n$disk = $disks[0]\nWrite-Host \"Initializing unused NVMe disk $($disk.Number) ($($disk.Size) bytes)\"\n\
-        $partition = Initialize-Disk -InputObject $disk -PartitionStyle GPT -PassThru |\n  New-Partition -UseMaximumSize -DriveLetter\
-        \ D\n$volume = $partition | Format-Volume -DevDrive -FileSystem ReFS -NewFileSystemLabel 'Build' -Confirm:$false\n\
-        if ($volume.FileSystem -ne 'ReFS' -or $volume.DriveLetter -ne 'D') {\n  throw 'new build volume is not ReFS on D:'\n\
-        }\n\n# Run before checkout so there is no source tree to copy. The agent itself and its\n# control files stay where\
-        \ GitHub placed them; only build data moves.\nSet-Location -LiteralPath $env:RUNNER_TEMP\n[Environment]::CurrentDirectory\
-        \ = $env:RUNNER_TEMP\nMove-Item -LiteralPath $workspace.FullName -Destination 'D:\\workspace'\nNew-Item -ItemType\
-        \ Junction -Path $workspace.FullName -Target 'D:\\workspace' | Out-Null\n\n$cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME\
-        \ } else { Join-Path $HOME '.cargo' }\nNew-Item -ItemType Directory -Path $cargoHome -Force | Out-Null\nNew-Item -ItemType\
-        \ Directory -Path 'D:\\cargo-cache', 'D:\\build-temp' | Out-Null\nforeach ($name in @('registry', 'git')) {\n  $source\
-        \ = Join-Path $cargoHome $name\n  $destination = Join-Path 'D:\\cargo-cache' $name\n  if (Test-Path -LiteralPath $source)\
-        \ {\n    $item = Get-Item -LiteralPath $source -Force\n    if (-not $item.PSIsContainer -or ($item.Attributes -band\
-        \ [IO.FileAttributes]::ReparsePoint)) {\n      throw \"refusing to relocate non-directory or linked Cargo cache: $source\"\
-        \n    }\n    Move-Item -LiteralPath $source -Destination $destination\n  } else {\n    New-Item -ItemType Directory\
-        \ -Path $destination | Out-Null\n  }\n  New-Item -ItemType Junction -Path $source -Target $destination | Out-Null\n\
-        }\n\"TEMP=D:\\build-temp\" >> $env:GITHUB_ENV\n\"TMP=D:\\build-temp\" >> $env:GITHUB_ENV\nWrite-Host 'Workspace, Cargo\
-        \ source caches and compiler temporary files now use D: (ReFS)'\n"
+        \ an empty ordinary directory; leaving storage unchanged'\n  return\n}\n$cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME\
+        \ } else { Join-Path $HOME '.cargo' }\nif (Test-Path -LiteralPath $cargoHome) {\n  $cargoDirectory = Get-Item -LiteralPath\
+        \ $cargoHome -Force\n  if (-not $cargoDirectory.PSIsContainer -or\n      ($cargoDirectory.Attributes -band [IO.FileAttributes]::ReparsePoint))\
+        \ {\n    Write-Host 'Cargo home is not an ordinary directory; leaving storage unchanged'\n    return\n  }\n}\n\n#\
+        \ Dev Drive is ReFS with Windows' developer-workload defaults. Do not disable antivirus\n# or change filter/trust\
+        \ policy. Any provisioning failure must fail the job visibly.\n$disk = $disks[0]\nWrite-Host \"Initializing unused\
+        \ NVMe disk $($disk.Number) ($($disk.Size) bytes)\"\n$partition = Initialize-Disk -InputObject $disk -PartitionStyle\
+        \ GPT -PassThru |\n  New-Partition -UseMaximumSize -DriveLetter D\n$volume = $partition | Format-Volume -DevDrive\
+        \ -FileSystem ReFS -NewFileSystemLabel 'Build' -Confirm:$false\nif ($volume.FileSystem -ne 'ReFS' -or $volume.DriveLetter\
+        \ -ne 'D') {\n  throw 'new build volume is not ReFS on D:'\n}\n\n# Run before checkout so there is no source tree\
+        \ to copy. The agent itself and its\n# control files stay where GitHub placed them; only build data moves.\nSet-Location\
+        \ -LiteralPath $env:RUNNER_TEMP\n[Environment]::CurrentDirectory = $env:RUNNER_TEMP\nMove-Item -LiteralPath $workspace.FullName\
+        \ -Destination 'D:\\workspace'\nNew-Item -ItemType Junction -Path $workspace.FullName -Target 'D:\\workspace' | Out-Null\n\
+        \n# Give rust-cache the physical Cargo path: paths relative to the old C: workspace\n# would otherwise traverse the\
+        \ junction's parents on D: when GNU tar saves/restores.\nif (Test-Path -LiteralPath $cargoHome) {\n  Move-Item -LiteralPath\
+        \ $cargoHome -Destination 'D:\\cargo-home'\n} else {\n  New-Item -ItemType Directory -Path 'D:\\cargo-home' | Out-Null\n\
+        }\nNew-Item -ItemType Junction -Path $cargoHome -Target 'D:\\cargo-home' | Out-Null\nNew-Item -ItemType Directory\
+        \ -Path 'D:\\build-temp' | Out-Null\n\"CARGO_HOME=D:\\cargo-home\" >> $env:GITHUB_ENV\n\"TEMP=D:\\build-temp\" >>\
+        \ $env:GITHUB_ENV\n\"TMP=D:\\build-temp\" >> $env:GITHUB_ENV\nWrite-Host 'Workspace, Cargo source caches and compiler\
+        \ temporary files now use D: (ReFS)'\n"
     - name: Checkout release tag
       uses: actions/checkout@v6
       with:
@@ -195,9 +224,7 @@ jobs:
         \ | Select-Object FullName,LinkType,Target | ConvertTo-Json\n  if ($env:VARIANT -eq 'refs' -and $env:RUNNER_ARCH -eq\
         \ 'ARM64') {\n    if ((Get-Volume -DriveLetter D).FileSystem -ne 'ReFS') { throw 'expected ReFS volume' }\n    if\
         \ ((Get-Item -Force $env:GITHUB_WORKSPACE).Target -ne 'D:\\workspace') { throw 'workspace not redirected' }\n    if\
-        \ ($env:TEMP -ne 'D:\\build-temp' -or $env:TMP -ne 'D:\\build-temp') { throw 'temp not redirected' }\n    $cargoHome\
-        \ = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }\n    foreach ($name in @('registry',\
-        \ 'git')) {\n      if ((Get-Item -Force (Join-Path $cargoHome $name)).Target -ne \"D:\\cargo-cache\\$name\") { throw\
-        \ 'cache not redirected' }\n    }\n    fsutil devdrv query D:\n    if ($LASTEXITCODE -ne 0) { throw 'Dev Drive query\
-        \ failed' }\n    if (-not (Test-Path \"D:\\workspace\\target\\$env:TARGET\\release\\$env:PACKAGE.exe\")) { throw 'binary\
-        \ is not on D:' }\n  }\n}\n"
+        \ ($env:TEMP -ne 'D:\\build-temp' -or $env:TMP -ne 'D:\\build-temp') { throw 'temp not redirected' }\n    if ($env:CARGO_HOME\
+        \ -ne 'D:\\cargo-home') { throw 'Cargo home not redirected' }\n    fsutil devdrv query D:\n    if ($LASTEXITCODE -ne\
+        \ 0) { throw 'Dev Drive query failed' }\n    if (-not (Test-Path \"D:\\workspace\\target\\$env:TARGET\\release\\$env:PACKAGE.exe\"\
+        )) { throw 'binary is not on D:' }\n  }\n}\n"
