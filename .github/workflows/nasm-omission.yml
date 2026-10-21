@@ -1,0 +1,234 @@
+name: Native Arm NASM omission validation
+'on':
+  push:
+    branches:
+    - perf/windows-arm-without-nasm
+  workflow_dispatch: {}
+permissions:
+  contents: read
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+  RUST_BACKTRACE: short
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+jobs:
+  build:
+    name: ${{ matrix.runner }} / ${{ matrix.package }} / ${{ matrix.variant }} / ${{ matrix.sample }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: without-nasm
+          sample: 3
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 3
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: without-nasm
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 2
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-viewer
+          variant: without-nasm
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 3
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-viewer
+          variant: without-nasm
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-viewer
+          variant: baseline
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: without-nasm
+          sample: 2
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-viewer
+          variant: baseline
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: without-nasm
+          sample: 3
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: without-nasm
+          sample: 2
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 2
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: without-nasm
+          sample: 1
+          macos_deployment_target: '11.0'
+      max-parallel: 8
+    steps:
+    - name: Record runner
+      shell: pwsh
+      run: "\nWrite-Host \"Image: $env:ImageOS $env:ImageVersion\"\nWrite-Host \"Workspace: $env:GITHUB_WORKSPACE Temp: $env:TEMP\
+        \ RunnerTemp: $env:RUNNER_TEMP\"\nif ($IsWindows) {\n  Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors\
+        \ | ConvertTo-Json\n  Get-Disk | Select-Object Number,FriendlyName,BusType,PartitionStyle,IsBoot,IsSystem,IsOffline,IsReadOnly,NumberOfPartitions,Size\
+        \ | ConvertTo-Json\n}\n"
+    - name: Checkout release tag
+      uses: actions/checkout@v6
+      with:
+        repository: Devolutions/IronRDP
+        ref: 860cf6ccb1359e15034cfbf402a308e3ad21b341
+    - name: Confirm NASM is absent in omission variant
+      if: matrix.variant == 'without-nasm'
+      shell: pwsh
+      run: "\n$ErrorActionPreference = 'Stop'\n$nasm = @(Get-Command nasm -CommandType Application -ErrorAction SilentlyContinue)\n\
+        if ($nasm.Count -ne 0) { throw \"NASM unexpectedly exists on PATH: $($nasm.Source)\" }\nforeach ($directory in @(\"\
+        $env:ProgramFiles\\NASM\", \"${env:ProgramFiles(x86)}\\NASM\", \"$env:ChocolateyInstall\\lib\\nasm\")) {\n    if (Test-Path\
+        \ -LiteralPath $directory) { throw \"NASM unexpectedly preinstalled at $directory\" }\n}\nWrite-Host 'NASM is absent;\
+        \ native Arm release build must succeed without it.'\n"
+    - name: Install build dependencies
+      uses: ./.github/actions/install-build-deps
+      if: matrix.variant == 'baseline'
+    - name: Rust cache
+      uses: Swatinem/rust-cache@v2.9.1
+      id: cache
+      with:
+        prefix-key: nasm-omission-${{ github.run_id }}-${{ matrix.runner }}-${{ matrix.package }}-${{ matrix.variant }}-${{
+          matrix.sample }}
+    - name: Build release binary
+      shell: pwsh
+      run: "if ($env:RUNNER_OS -eq 'Windows') {\n  $env:RUSTFLAGS = '-C target-feature=+crt-static'\n}\n\nif ($env:RUNNER_OS\
+        \ -eq 'macOS') {\n  $env:MACOSX_DEPLOYMENT_TARGET = '${{ matrix.macos_deployment_target }}'\n}\n\nrustup target add\
+        \ '${{ matrix.target }}'\ncargo build --locked --release --target '${{ matrix.target }}' --package '${{ matrix.package\
+        \ }}'\n"
+    - name: Package binary
+      shell: pwsh
+      env:
+        PACKAGE: ${{ matrix.package }}
+        VERSION: storage-benchmark
+        TARGET: ${{ matrix.target }}
+        OS_ARCH: ${{ matrix.os_arch }}
+      run: '$extension = if ($env:RUNNER_OS -eq ''Windows'') { ''.exe'' } else { '''' }
+
+        $binary = Join-Path (Join-Path (Join-Path ''target'' $env:TARGET) ''release'') "$env:PACKAGE$extension"
+
+        $assetName = "$env:PACKAGE-$env:VERSION-$env:OS_ARCH.tar.gz"
+
+        $assetDirectory = ''release-assets''
+
+
+        New-Item -ItemType Directory -Force -Path $assetDirectory | Out-Null
+
+        Copy-Item $binary (Join-Path $assetDirectory "$env:PACKAGE$extension")
+
+
+        Push-Location $assetDirectory
+
+        tar -czf $assetName "$env:PACKAGE$extension"
+
+        $hash = (Get-FileHash -Algorithm SHA256 $assetName).Hash.ToLowerInvariant()
+
+        "$hash  $assetName" | Set-Content -NoNewline -Encoding ascii "$assetName.sha256"
+
+        Remove-Item "$env:PACKAGE$extension"
+
+        Pop-Location
+
+        '
+    - name: Upload release asset
+      uses: actions/upload-artifact@v7
+      with:
+        name: release-${{ matrix.runner }}-${{ matrix.package }}-${{ matrix.variant }}-${{ matrix.sample }}
+        path: release-assets/*
+        if-no-files-found: error
+        retention-days: 30
+        overwrite: true
+    - name: Verify archive and storage
+      shell: pwsh
+      env:
+        VARIANT: ${{ matrix.variant }}
+        PACKAGE: ${{ matrix.package }}
+        TARGET: ${{ matrix.target }}
+        CACHE_HIT: ${{ steps.cache.outputs.cache-hit }}
+      run: "\n$ErrorActionPreference = 'Stop'\nWrite-Host \"Cache hit: $env:CACHE_HIT\"\nforeach ($sidecar in Get-ChildItem\
+        \ release-assets -Filter '*.sha256') {\n  $archive = $sidecar.FullName.Substring(0, $sidecar.FullName.Length - 7)\n\
+        \  if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne (Get-Content $sidecar.FullName).Split('\
+        \ ')[0]) {\n    throw 'archive checksum mismatch'\n  }\n  tar -tzf $archive\n  if ($LASTEXITCODE -ne 0) { throw 'archive\
+        \ verification failed' }\n}\n$extension = if ($IsWindows) { '.exe' } else { '' }\n& \".\\target\\$env:TARGET\\release\\\
+        $env:PACKAGE$extension\" --help\nif ($LASTEXITCODE -ne 0) { throw 'binary smoke test failed' }\nif ($IsWindows) {\n\
+        \  Get-Volume | Select-Object DriveLetter,FileSystem,Size,SizeRemaining | ConvertTo-Json\n  Get-Item -Force $env:GITHUB_WORKSPACE\
+        \ | Select-Object FullName,LinkType,Target | ConvertTo-Json\n  if ($env:VARIANT -eq 'refs' -and $env:RUNNER_ARCH -eq\
+        \ 'ARM64') {\n    if ((Get-Volume -DriveLetter D).FileSystem -ne 'ReFS') { throw 'expected ReFS volume' }\n    if\
+        \ ((Get-Item -Force $env:GITHUB_WORKSPACE).Target -ne 'D:\\workspace') { throw 'workspace not redirected' }\n    if\
+        \ ($env:TEMP -ne 'D:\\build-temp' -or $env:TMP -ne 'D:\\build-temp') { throw 'temp not redirected' }\n    if ($env:CARGO_HOME\
+        \ -ne 'D:\\cargo-home') { throw 'Cargo home not redirected' }\n    fsutil devdrv query D:\n    if ($LASTEXITCODE -ne\
+        \ 0) { throw 'Dev Drive query failed' }\n    if (-not (Test-Path \"D:\\workspace\\target\\$env:TARGET\\release\\$env:PACKAGE.exe\"\
+        )) { throw 'binary is not on D:' }\n  }\n}\n"
