@@ -4,6 +4,7 @@ from pathlib import Path
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from build_arm_compilers import digest, save
 from native_ci_probe import PROFILE_ENV, paired_order
@@ -11,10 +12,48 @@ from offline_benchmark import NATIVE_COMMANDS
 from qualify_x64_profile_existing import verify_retained_evidence
 from preserve_x64_profile_control import recovered_result
 from x64_profile_only import audit_profile_use, load_profiles, tests_only_helper, verify_pair
-from x64_profile_replay import summarize
+from x64_profile_replay import checked_compiler, summarize
 
 
 class ProfileOnlyTests(unittest.TestCase):
+    def test_replay_from_prior_run_requires_pinned_metadata_and_archive(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = root / "a/x64-profile-official-evidence"
+            dist = root / "a/x64-profile-official-dist"
+            evidence.mkdir(parents=True)
+            dist.mkdir()
+            protocol = {"rust_version": "1.94.1", "host": "x86_64-pc-windows-msvc",
+                        "llvm_profile_sha256": {"official": "profile"}}
+            name = "rustc-1.94.1-x86_64-pc-windows-msvc"
+            fixture = root / "rustc.exe"
+            fixture.write_bytes(b"compiler fixture")
+            archive = dist / f"{name}.tar.xz"
+            with tarfile.open(archive, "w:xz") as bundle:
+                bundle.add(fixture, arcname=f"{name}/rustc/bin/rustc.exe")
+            save(evidence / "result.json", {
+                "complete": True, "protocol": protocol, "variant": "official",
+                "run_id": "release", "attempt": "1", "llvm_profile_sha256": "profile"})
+            save(evidence / "dist-manifest.json", [{
+                "name": archive.name, "bytes": archive.stat().st_size, "sha256": digest(archive)}])
+            inputs = {"release_run": "release", "release_attempt": "1",
+                      "compiler_metadata_sha256": {"official": digest(evidence / "result.json")},
+                      "compiler_archive_sha256": {"official": digest(archive)},
+                      "compiler_archive_bytes": {"official": archive.stat().st_size}}
+            with patch.dict("os.environ", {"GITHUB_RUN_ID": "replay", "GITHUB_RUN_ATTEMPT": "1"}):
+                with self.assertRaisesRegex(RuntimeError, "Unqualified or wrong"):
+                    checked_compiler(root, root / "e", "official", protocol)
+                changed = copy.deepcopy(inputs)
+                changed["compiler_metadata_sha256"]["official"] = "changed"
+                with self.assertRaisesRegex(RuntimeError, "metadata differs"):
+                    checked_compiler(root, root / "e", "official", protocol, changed)
+                changed = copy.deepcopy(inputs)
+                changed["compiler_archive_sha256"]["official"] = "changed"
+                with self.assertRaisesRegex(RuntimeError, "archive differs"):
+                    checked_compiler(root, root / "e", "official", protocol, changed)
+                _, compiler, _ = checked_compiler(root, root / "e", "official", protocol, inputs)
+                self.assertEqual(compiler.read_bytes(), fixture.read_bytes())
+
     def test_preserved_control_keeps_production_and_qualification_identities(self):
         expected = {"run_id": "production", "attempt": "1"}
         protocol = {"scope": "one profile-only pair"}

@@ -34,11 +34,23 @@ ineffective or that this gap alone explains the earlier 18% toolchain benefit.
 
 ## Preregistered causal experiment
 
-**Status: control correctness passed; preserving artifacts and continuing the
-repaired build/replay. No profile-only performance result yet.** Continuation
+**Status: both compilers built, qualified and preserved; restarting only the
+downstream replay. No IronRDP performance result yet.** Continuation
 [39611328907](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39611328907)
-uses harness `599cf40bdfcaec3aca1cec43e1027630357a1ccf`; preservation checks
-passed and artifact upload started.
+used harness `599cf40bdfcaec3aca1cec43e1027630357a1ccf`. The preserved control
+and fresh repaired build both passed their common-input gates and upstream
+correctness tests. Production took 4506.154 seconds for the official-profile
+control and 4337.160 seconds for repaired-profile production. These are
+compiler-production timings, **not** IronRDP compile times.
+
+The replay never reached measurements: downloading both complete distribution
+bundles (about 3 GB) to the self-hosted runner failed after five retries.
+The replay-only workflow now uses a standard hosted Windows runner to stage
+just the two compiler archives and result/manifest files, about 165 MiB total.
+Their exact hashes and original release run are pinned in
+[`x64-profile-replay-input.json`](x64-profile-replay-input.json).
+The self-hosted runner then measures those unchanged compilers; neither
+production nor compiler qualification is repeated.
 
 Replacement production run
 [39595776289](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39595776289)

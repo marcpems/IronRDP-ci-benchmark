@@ -1,0 +1,16 @@
+{
+  "release_run": "39611328907",
+  "release_attempt": "1",
+  "compiler_metadata_sha256": {
+    "official": "c0f4b385e9ef5a62a1de2f365162cf8de22e60919edcbe4729d4e98cc8d2d498",
+    "repaired": "ca45c016dba69ddbe97c6d0edc116d4a2c3bb4d3503aba42bbaaa8b03199f921"
+  },
+  "compiler_archive_sha256": {
+    "official": "3b1af4eaf94454b6df069827a01bd7682204f57e1d7437e338f91f794f9d79c0",
+    "repaired": "8ae14b5512436b41c40df77cb41b2de34068ff9f21e9f1ef4c57945da3662f2e"
+  },
+  "compiler_archive_bytes": {
+    "official": 85061032,
+    "repaired": 88197276
+  }
+}

@@ -42,12 +42,17 @@ def install_official(output, protocol):
     return compiler, cargo
 
 
-def checked_compiler(root, output, variant, protocol):
+def checked_compiler(root, output, variant, protocol, release_inputs=None):
     evidence = root / "a" / f"x64-profile-{variant}-evidence"
-    result = json.loads((evidence / "result.json").read_text())
+    result_path = evidence / "result.json"
+    result = json.loads(result_path.read_text())
+    release_run = release_inputs["release_run"] if release_inputs else os.environ["GITHUB_RUN_ID"]
+    release_attempt = release_inputs["release_attempt"] if release_inputs else os.environ["GITHUB_RUN_ATTEMPT"]
+    if release_inputs and digest(result_path) != release_inputs["compiler_metadata_sha256"][variant]:
+        raise RuntimeError(f"Compiler metadata differs from the pinned qualified release: {variant}")
     if (not result.get("complete") or result["protocol"] != protocol
-            or result["variant"] != variant or result["run_id"] != os.environ["GITHUB_RUN_ID"]
-            or result["attempt"] != os.environ["GITHUB_RUN_ATTEMPT"]
+            or result["variant"] != variant or result["run_id"] != release_run
+            or result["attempt"] != release_attempt
             or result["llvm_profile_sha256"] != protocol["llvm_profile_sha256"][variant]):
         raise RuntimeError(f"Unqualified or wrong build artifact: {variant}")
     name = f"rustc-{protocol['rust_version']}-{protocol['host']}.tar.xz"
@@ -56,6 +61,10 @@ def checked_compiler(root, output, variant, protocol):
     archive = root / "a" / f"x64-profile-{variant}-dist" / name
     if len(rows) != 1 or digest(archive) != rows[0]["sha256"] or archive.stat().st_size != rows[0]["bytes"]:
         raise RuntimeError(f"Compiler archive does not match its qualified manifest: {variant}")
+    if release_inputs and (
+            rows[0]["sha256"] != release_inputs["compiler_archive_sha256"][variant]
+            or rows[0]["bytes"] != release_inputs["compiler_archive_bytes"][variant]):
+        raise RuntimeError(f"Compiler archive differs from the pinned qualified release: {variant}")
     folder = output / "compilers" / variant
     folder.mkdir(parents=True)
     with tarfile.open(archive, "r:xz") as bundle:
@@ -136,10 +145,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--correctness-temp", type=Path, required=True)
+    parser.add_argument("--release-inputs", type=Path)
     args = parser.parse_args()
     root, correctness = args.root.resolve(), args.correctness_temp.resolve()
     output, source = root / "e", root / "s"
     protocol = json.loads(PROTOCOL.read_text())
+    release_inputs = json.loads(args.release_inputs.read_text()) if args.release_inputs else None
     if (os.name != "nt" or os.cpu_count() != protocol["build_cores"]
             or os.environ.get("RUNNER_NAME") != protocol["runner"]
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"
@@ -152,7 +163,8 @@ def main():
     official, cargo = install_official(output, protocol)
     compilers, metadata, artifacts, standard = {}, {}, {}, None
     for variant in protocol["variants"]:
-        metadata[variant], compilers[variant], artifacts[variant] = checked_compiler(root, output, variant, protocol)
+        metadata[variant], compilers[variant], artifacts[variant] = checked_compiler(
+            root, output, variant, protocol, release_inputs)
         libraries = share_native_libraries(official, compilers[variant], protocol["host"])
         if standard is not None and standard != libraries:
             raise RuntimeError("Official shared libraries changed")
@@ -175,6 +187,7 @@ def main():
                    env={**os.environ, "RUSTC": str(official)}, check=True)
     validate_meter(output / "meter-validation")
     index = {"complete": False, "protocol": protocol, "compiler_metadata": metadata,
+             "release_inputs": release_inputs,
              "artifact_evidence": artifacts, "stdlib": standard, "cargo_sha256": digest(cargo),
              "run_id": os.environ["GITHUB_RUN_ID"], "attempt": os.environ["GITHUB_RUN_ATTEMPT"], "runs": [],
              "versions": versions, "correctness_environment": {"TEMP": str(correctness), "TMP": str(correctness)}}

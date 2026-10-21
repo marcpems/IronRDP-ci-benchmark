@@ -1,6 +1,13 @@
 name: Replay a qualified x64 profile-only pair
 on:
   workflow_call:
+    inputs:
+      compiler_bundle:
+        type: string
+        default: ""
+      release_inputs:
+        type: string
+        default: ""
 permissions:
   contents: read
   actions: read
@@ -15,6 +22,7 @@ jobs:
       BENCHMARK_REPLICATE: "1"
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
+      RELEASE_INPUTS: ${{ inputs.release_inputs }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -59,18 +67,27 @@ jobs:
         shell: powershell
         run: .github\scripts\x64_pgo_preflight.ps1 -Output "$env:REPLAY_ROOT\readiness.json"
       - uses: actions/download-artifact@v6
+        if: inputs.compiler_bundle == ''
         with:
           pattern: x64-profile-*-evidence
           path: ${{ env.REPLAY_ROOT }}/a
       - uses: actions/download-artifact@v6
+        if: inputs.compiler_bundle == ''
         with:
           pattern: x64-profile-*-dist
+          path: ${{ env.REPLAY_ROOT }}/a
+      - uses: actions/download-artifact@v6
+        if: inputs.compiler_bundle != ''
+        with:
+          name: ${{ inputs.compiler_bundle }}
           path: ${{ env.REPLAY_ROOT }}/a
       - name: Measure the isolated LLVM profile difference
         shell: powershell
         run: |
           $env:RUNNER_TEMP = "$env:REPLAY_ROOT\t"
-          .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\x64_profile_replay.py --root $env:REPLAY_ROOT --correctness-temp $env:CORRECTNESS_TEMP
+          $arguments = @('--root', $env:REPLAY_ROOT, '--correctness-temp', $env:CORRECTNESS_TEMP)
+          if ($env:RELEASE_INPUTS) { $arguments += @('--release-inputs', $env:RELEASE_INPUTS) }
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\x64_profile_replay.py @arguments
       - uses: actions/upload-artifact@v6
         if: always() && env.REPLAY_ROOT != ''
         with:
