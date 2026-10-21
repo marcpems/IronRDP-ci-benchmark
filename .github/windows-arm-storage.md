@@ -11,6 +11,7 @@ Before checkout, the workflow requires all of the following:
 - Exactly one online, writable NVMe disk is reported as completely raw, with no
   partitions and at least 50 GiB capacity. It must not be a boot or system disk.
 - The initial workspace is an empty directory, not a link.
+- Cargo home, if present, is an ordinary directory rather than a file or link.
 
 If these conditions are not met, it logs the reason and leaves storage and
 build paths unchanged. It never clears a disk, resizes an existing partition or
