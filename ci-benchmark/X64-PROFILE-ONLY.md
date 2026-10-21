@@ -51,6 +51,9 @@ Their exact hashes and original release run are pinned in
 [`x64-profile-replay-input.json`](x64-profile-replay-input.json).
 The self-hosted runner then measures those unchanged compilers; neither
 production nor compiler qualification is repeated.
+Replay-only run
+[39635843303](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39635843303)
+uses harness `32d5658dd4508b17519aff38a3306fdba3e50366`.
 
 Replacement production run
 [39595776289](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39595776289)
