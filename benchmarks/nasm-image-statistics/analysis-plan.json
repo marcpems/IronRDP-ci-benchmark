@@ -1,0 +1,20 @@
+{
+  "images": ["20261013.183.4", "20261018.189.1"],
+  "primary_comparison": "New-minus-old NASM command wall-time median with default storage",
+  "secondary_comparison": "The same image comparison with ReFS storage; per-label and resource summaries",
+  "initial_jobs": 128,
+  "max_parallel": 16,
+  "assignment": "32 shuffled balanced blocks, each with both labels and both storage modes",
+  "minimum_successful_samples_per_image_storage_cell": 25,
+  "top_up": "At most one additional balanced 128-job batch if an image/storage cell has fewer than 25 successes and both image versions are still appearing. This is a sample-count rule, not a significance rule.",
+  "interval": "95% percentile bootstrap intervals, 10000 resamples of complete scheduling blocks identified by run ID and block number",
+  "report": "All exclusions and failures, image/storage/label counts, medians, p10/p90, absolute and relative image effects, phase decomposition, whole-machine resource deltas",
+  "limitations": [
+    "Runner images cannot be pinned by label and are not randomly assigned by the experiment",
+    "Image associations are not causal proof of a specific image component or bottleneck",
+    "Whole-machine counters include background Windows activity",
+    "Instrumentation and output filtering differ from the uninstrumented production step",
+    "Do not pool cache-hit and cache-miss release-build timings into this NASM-only experiment",
+    "Eight instrumentation canaries are excluded from the confirmatory comparison"
+  ]
+}

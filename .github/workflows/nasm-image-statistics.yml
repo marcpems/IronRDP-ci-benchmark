@@ -467,43 +467,35 @@ jobs:
         \ {\n    if ($nic.OperationalStatus -eq 'Up' -and $nic.NetworkInterfaceType -notin @('Loopback', 'Tunnel')) {\n  \
         \    $stats = $nic.GetIPStatistics()\n      $received += $stats.BytesReceived\n      $sent += $stats.BytesSent\n \
         \   }\n  }\n  @{\n    cpu = $cpu\n    disk_read = [long]$disk.DiskReadBytesPersec\n    disk_write = [long]$disk.DiskWriteBytesPersec\n\
-        \    read_latency_counter = [long]$disk.AvgDisksecPerRead\n    read_latency_base = [long]$disk.AvgDisksecPerRead_Base\n\
-        \    write_latency_counter = [long]$disk.AvgDisksecPerWrite\n    write_latency_base = [long]$disk.AvgDisksecPerWrite_Base\n\
-        \    disk_timer_frequency = [long]$disk.Frequency_PerfTime\n    net_received = $received\n    net_sent = $sent\n \
-        \   timestamp = [DateTime]::UtcNow.ToString('o')\n  }\n}\n\n$before = Get-MachineSnapshot\n$phases = [ordered]@{}\n\
-        $versions = [ordered]@{}\n$started = [DateTime]::UtcNow\n$timer = [Diagnostics.Stopwatch]::StartNew()\n& choco install\
-        \ nasm 2>&1 | ForEach-Object {\n  $line = $_.ToString()\n  $elapsed = $timer.Elapsed.TotalSeconds\n  if ($line -match\
-        \ 'Chocolatey v([0-9.]+)') {\n    $phases['chocolatey_banner'] = $elapsed\n    $versions['chocolatey'] = $Matches[1]\n\
-        \  }\n  if ($line -match 'Downloading package from source') { $phases['package_download_started'] = $elapsed }\n \
-        \ if ($line -match 'nasm v([0-9.]+)') { $versions['nasm'] = $Matches[1] }\n  if ($line -match 'nasm package files\
-        \ install completed') { $phases['package_ready'] = $elapsed }\n  if ($line -match 'Installing 64-bit nasm') { $phases['installer_started']\
-        \ = $elapsed }\n  if ($line -match 'nasm has been installed') { $phases['installer_completed'] = $elapsed }\n  if\
-        \ ($line -notmatch 'Progress:') { Write-Host $line }\n}\n$exitCode = $LASTEXITCODE\n$timer.Stop()\n$ended = [DateTime]::UtcNow\n\
-        $after = Get-MachineSnapshot\n$data['started_at'] = $started.ToString('o')\n$data['completed_at'] = $ended.ToString('o')\n\
-        $data['command_seconds'] = $timer.Elapsed.TotalSeconds\n$data['exit_code'] = $exitCode\n$data['outcome'] = if ($exitCode\
-        \ -eq 0) { 'success' } else { 'install-failed' }\n$data['phases'] = $phases\n$data['versions'] = $versions\n$cpuTotal\
-        \ = ($after.cpu[1] + $after.cpu[2]) - ($before.cpu[1] + $before.cpu[2])\n$cpuBusy = $cpuTotal - ($after.cpu[0] - $before.cpu[0])\n\
+        \    net_received = $received\n    net_sent = $sent\n    timestamp = [DateTime]::UtcNow.ToString('o')\n  }\n}\n\n\
+        $before = Get-MachineSnapshot\n$phases = [ordered]@{}\n$versions = [ordered]@{}\n$started = [DateTime]::UtcNow\n$timer\
+        \ = [Diagnostics.Stopwatch]::StartNew()\n& choco install nasm 2>&1 | ForEach-Object {\n  $line = $_.ToString()\n \
+        \ $elapsed = $timer.Elapsed.TotalSeconds\n  if ($line -match 'Chocolatey v([0-9.]+)') {\n    $phases['chocolatey_banner']\
+        \ = $elapsed\n    $versions['chocolatey'] = $Matches[1]\n  }\n  if ($line -match 'Downloading package from source')\
+        \ { $phases['package_download_started'] = $elapsed }\n  if ($line -match 'nasm v([0-9.]+)') { $versions['nasm'] =\
+        \ $Matches[1] }\n  if ($line -match 'nasm package files install completed') { $phases['package_ready'] = $elapsed\
+        \ }\n  if ($line -match 'Installing 64-bit nasm') { $phases['installer_started'] = $elapsed }\n  if ($line -match\
+        \ 'nasm has been installed') { $phases['installer_completed'] = $elapsed }\n  if ($line -notmatch 'Progress:') { Write-Host\
+        \ $line }\n}\n$exitCode = $LASTEXITCODE\n$timer.Stop()\n$ended = [DateTime]::UtcNow\n$after = Get-MachineSnapshot\n\
+        $data['started_at'] = $started.ToString('o')\n$data['completed_at'] = $ended.ToString('o')\n$data['command_seconds']\
+        \ = $timer.Elapsed.TotalSeconds\n$data['exit_code'] = $exitCode\n$data['outcome'] = if ($exitCode -eq 0) { 'success'\
+        \ } else { 'install-failed' }\n$data['phases'] = $phases\n$data['versions'] = $versions\n$cpuTotal = ($after.cpu[1]\
+        \ + $after.cpu[2]) - ($before.cpu[1] + $before.cpu[2])\n$cpuBusy = $cpuTotal - ($after.cpu[0] - $before.cpu[0])\n\
         if ($cpuTotal -le 0 -or $cpuBusy -lt 0 -or $cpuBusy -gt $cpuTotal) { throw 'invalid machine CPU counter delta' }\n\
-        if ($after.disk_timer_frequency -le 0 -or $after.disk_timer_frequency -ne $before.disk_timer_frequency) {\n  throw\
-        \ 'invalid disk performance timer frequency'\n}\n$readCount = $after.read_latency_base - $before.read_latency_base\n\
-        $writeCount = $after.write_latency_base - $before.write_latency_base\n$data['whole_machine'] = @{\n  cpu_busy_seconds\
-        \ = $cpuBusy / 1e7\n  cpu_utilization_percent = 100.0 * $cpuBusy / $cpuTotal\n  disk_read_bytes = $after.disk_read\
-        \ - $before.disk_read\n  disk_write_bytes = $after.disk_write - $before.disk_write\n  disk_reads = $readCount\n  disk_writes\
-        \ = $writeCount\n  disk_mean_read_ms = if ($readCount -gt 0) {\n    1000.0 * ($after.read_latency_counter - $before.read_latency_counter)\
-        \ / $after.disk_timer_frequency / $readCount\n  } else { $null }\n  disk_mean_write_ms = if ($writeCount -gt 0) {\n\
-        \    1000.0 * ($after.write_latency_counter - $before.write_latency_counter) / $after.disk_timer_frequency / $writeCount\n\
-        \  } else { $null }\n  network_received_bytes = $after.net_received - $before.net_received\n  network_sent_bytes =\
-        \ $after.net_sent - $before.net_sent\n  before = $before.timestamp\n  after = $after.timestamp\n}\n$data['workspace']\
-        \ = $env:GITHUB_WORKSPACE\n$data['workspace_target'] = (Get-Item -Force $env:GITHUB_WORKSPACE).Target\n$data['cargo_home']\
-        \ = $env:CARGO_HOME\n$data['temp'] = $env:TEMP\n$data['volumes'] = @(Get-Volume | Where-Object DriveLetter -in @('C',\
-        \ 'D') |\n  Select-Object DriveLetter, FileSystem, Size, SizeRemaining)\n$data | ConvertTo-Json -Depth 10 | Set-Content\
-        \ $resultPath\n$data | ConvertTo-Json -Depth 10\nif ($exitCode -ne 0) { throw \"NASM installation failed with exit\
-        \ code $exitCode\" }\nforeach ($phase in @('chocolatey_banner', 'package_download_started', 'package_ready', 'installer_started',\
-        \ 'installer_completed')) {\n  if (-not $phases.Contains($phase)) { throw \"missing installation phase: $phase\" }\n\
-        }\nif ($env:STORAGE -eq 'refs') {\n  if ((Get-Volume -DriveLetter D).FileSystem -ne 'ReFS' -or\n      $data.workspace_target\
-        \ -ne 'D:\\workspace' -or\n      $env:CARGO_HOME -ne 'D:\\cargo-home' -or $env:TEMP -ne 'D:\\build-temp') {\n    throw\
-        \ 'ReFS storage configuration did not match the candidate'\n  }\n}\n$env:PATH += \";$env:ProgramFiles\\NASM\"\nnasm\
-        \ -v\nif ($LASTEXITCODE -ne 0) { throw 'installed NASM executable failed' }\n"
+        $data['whole_machine'] = @{\n  cpu_busy_seconds = $cpuBusy / 1e7\n  cpu_utilization_percent = 100.0 * $cpuBusy / $cpuTotal\n\
+        \  disk_read_bytes = $after.disk_read - $before.disk_read\n  disk_write_bytes = $after.disk_write - $before.disk_write\n\
+        \  network_received_bytes = $after.net_received - $before.net_received\n  network_sent_bytes = $after.net_sent - $before.net_sent\n\
+        \  before = $before.timestamp\n  after = $after.timestamp\n}\n$data['workspace'] = $env:GITHUB_WORKSPACE\n$data['workspace_target']\
+        \ = (Get-Item -Force $env:GITHUB_WORKSPACE).Target\n$data['cargo_home'] = $env:CARGO_HOME\n$data['temp'] = $env:TEMP\n\
+        $data['volumes'] = @(Get-Volume | Where-Object DriveLetter -in @('C', 'D') |\n  Select-Object DriveLetter, FileSystem,\
+        \ Size, SizeRemaining)\n$data | ConvertTo-Json -Depth 10 | Set-Content $resultPath\n$data | ConvertTo-Json -Depth\
+        \ 10\nif ($exitCode -ne 0) { throw \"NASM installation failed with exit code $exitCode\" }\nforeach ($phase in @('chocolatey_banner',\
+        \ 'package_download_started', 'package_ready', 'installer_started', 'installer_completed')) {\n  if (-not $phases.Contains($phase))\
+        \ { throw \"missing installation phase: $phase\" }\n}\nif ($env:STORAGE -eq 'refs') {\n  if ((Get-Volume -DriveLetter\
+        \ D).FileSystem -ne 'ReFS' -or\n      $data.workspace_target -ne 'D:\\workspace' -or\n      $env:CARGO_HOME -ne 'D:\\\
+        cargo-home' -or $env:TEMP -ne 'D:\\build-temp') {\n    throw 'ReFS storage configuration did not match the candidate'\n\
+        \  }\n}\n$env:PATH += \";$env:ProgramFiles\\NASM\"\nnasm -v\nif ($LASTEXITCODE -ne 0) { throw 'installed NASM executable\
+        \ failed' }\n"
     - name: Upload measurement
       if: always()
       uses: actions/upload-artifact@v7

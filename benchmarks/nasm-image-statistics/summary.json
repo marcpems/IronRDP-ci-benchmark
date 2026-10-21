@@ -1,0 +1,359 @@
+{
+  "runs": [
+    {
+      "id": "39579652894",
+      "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894",
+      "head_sha": "b58cae7a16eae4d767c54bd0eaa86710a5b09310",
+      "jobs": 128
+    }
+  ],
+  "total_jobs": 128,
+  "valid_jobs": 128,
+  "outcomes": {
+    "success/success": 128
+  },
+  "cells": [
+    {
+      "image": "20261013.183.4",
+      "storage": "default",
+      "n": 37,
+      "median": 28.701767,
+      "mean": 33.118046705405405,
+      "p10": 24.50077946,
+      "p90": 38.79367612,
+      "minimum": 22.5090409,
+      "maximum": 146.8821194,
+      "labels": {
+        "windows-11-vs2026-arm": 19,
+        "windows-11-arm": 18
+      },
+      "nasm_versions": {
+        "3.2.0": 37
+      },
+      "chocolatey_versions": {
+        "2.7.4": 37
+      },
+      "phase_medians": {
+        "startup_to_banner": 11.5578154,
+        "resolution_and_package": 7.317115299999999,
+        "logged_package_download": 1.0978557000000002,
+        "package_script_setup": 6.2868463000000006,
+        "installer": 2.2211968999999954,
+        "finish": 0.7996411000000023
+      },
+      "machine_medians": {
+        "cpu_busy_seconds": 19.46875,
+        "cpu_utilization_percent": 16.802507836990596,
+        "disk_read_bytes": 152409088,
+        "disk_write_bytes": 54128640,
+        "network_received_bytes": 13476610,
+        "network_sent_bytes": 301345,
+        "disk_reads": 7987,
+        "disk_writes": 983
+      }
+    },
+    {
+      "image": "20261013.183.4",
+      "storage": "refs",
+      "n": 32,
+      "median": 27.7327077,
+      "mean": 27.853499303125,
+      "p10": 25.58735301,
+      "p90": 29.80347215,
+      "minimum": 25.1096825,
+      "maximum": 30.7632723,
+      "labels": {
+        "windows-11-arm": 16,
+        "windows-11-vs2026-arm": 16
+      },
+      "nasm_versions": {
+        "3.2.0": 32
+      },
+      "chocolatey_versions": {
+        "2.7.4": 32
+      },
+      "phase_medians": {
+        "startup_to_banner": 11.20899255,
+        "resolution_and_package": 7.162961000000001,
+        "logged_package_download": 1.012572800000001,
+        "package_script_setup": 6.245691849999998,
+        "installer": 2.1634506999999985,
+        "finish": 0.8007080000000002
+      },
+      "machine_medians": {
+        "cpu_busy_seconds": 18.2890625,
+        "cpu_utilization_percent": 15.751713910697486,
+        "disk_read_bytes": 151800576.0,
+        "disk_write_bytes": 146876672.0,
+        "network_received_bytes": 12673537.5,
+        "network_sent_bytes": 203265.5,
+        "disk_reads": 7949.5,
+        "disk_writes": 821.5
+      }
+    },
+    {
+      "image": "20261018.189.1",
+      "storage": "default",
+      "n": 27,
+      "median": 31.0242482,
+      "mean": 40.37965902962963,
+      "p10": 25.50971788,
+      "p90": 63.383419640000014,
+      "minimum": 23.268934,
+      "maximum": 129.910387,
+      "labels": {
+        "windows-11-vs2026-arm": 13,
+        "windows-11-arm": 14
+      },
+      "nasm_versions": {
+        "3.2.0": 27
+      },
+      "chocolatey_versions": {
+        "2.7.4": 27
+      },
+      "phase_medians": {
+        "startup_to_banner": 11.1295938,
+        "resolution_and_package": 7.259633599999999,
+        "logged_package_download": 1.114864899999997,
+        "package_script_setup": 6.900132900000003,
+        "installer": 2.578289999999999,
+        "finish": 0.9623261999999997
+      },
+      "machine_medians": {
+        "cpu_busy_seconds": 22.1875,
+        "cpu_utilization_percent": 15.65816678152998,
+        "disk_read_bytes": 159541760,
+        "disk_write_bytes": 75087360,
+        "network_received_bytes": 13353060,
+        "network_sent_bytes": 314965,
+        "disk_reads": 8212,
+        "disk_writes": 1114
+      }
+    },
+    {
+      "image": "20261018.189.1",
+      "storage": "refs",
+      "n": 32,
+      "median": 53.2651524,
+      "mean": 54.28852985,
+      "p10": 26.04995936,
+      "p90": 98.25522371000001,
+      "minimum": 25.1574146,
+      "maximum": 122.7060565,
+      "labels": {
+        "windows-11-arm": 16,
+        "windows-11-vs2026-arm": 16
+      },
+      "nasm_versions": {
+        "3.2.0": 32
+      },
+      "chocolatey_versions": {
+        "2.7.4": 32
+      },
+      "phase_medians": {
+        "startup_to_banner": 21.842694549999997,
+        "resolution_and_package": 11.441160450000002,
+        "logged_package_download": 1.4340648999999992,
+        "package_script_setup": 12.592651700000001,
+        "installer": 4.001226150000001,
+        "finish": 1.0666372499999959
+      },
+      "machine_medians": {
+        "cpu_busy_seconds": 23.40625,
+        "cpu_utilization_percent": 11.834611283214038,
+        "disk_read_bytes": 165925376.0,
+        "disk_write_bytes": 160584448.0,
+        "network_received_bytes": 20028425.0,
+        "network_sent_bytes": 541029.5,
+        "disk_reads": 8441.5,
+        "disk_writes": 1682.0
+      }
+    }
+  ],
+  "image_effects": [
+    {
+      "storage": "default",
+      "new_minus_old_seconds": 2.3224811999999986,
+      "new_vs_old_percent": 8.091770795853792,
+      "absolute_ci95": [
+        -2.8209285850000003,
+        12.900959699999998
+      ],
+      "relative_ci95": [
+        -9.250024618045813,
+        43.954490507466446
+      ],
+      "bootstrap_replicates": 10000
+    },
+    {
+      "storage": "refs",
+      "new_minus_old_seconds": 25.5324447,
+      "new_vs_old_percent": 92.06618039680272,
+      "absolute_ci95": [
+        1.5135651375000023,
+        33.0022671
+      ],
+      "relative_ci95": [
+        5.398584314774307,
+        118.26038966068917
+      ],
+      "bootstrap_replicates": 10000
+    }
+  ],
+  "analysis_cohort": "All successful requested-image jobs (primary)",
+  "hardware_counts": {
+    "Cobalt 200": 1,
+    "Cobalt 100": 127
+  },
+  "telemetry_quality": {
+    "disk_latency_used": false,
+    "reason": "Raw average-timer deltas can wrap or reset; original snapshots were not retained. Do not infer latency from these fields.",
+    "jobs_with_negative_latency": [
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153810195",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153810300",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153810412",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153812089",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153813880",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153814170",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153816393",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153816463",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153818241",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153818357",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153820236",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153822126",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153824158",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153828039",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153830668",
+      "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39579652894/job/119153832496"
+    ]
+  },
+  "exploratory_storage_effects": [
+    {
+      "image": "20261013.183.4",
+      "refs_minus_default_seconds": -0.9690593000000014,
+      "absolute_ci95": [
+        -3.6221403999999993,
+        0.42641379999999884
+      ]
+    },
+    {
+      "image": "20261018.189.1",
+      "refs_minus_default_seconds": 22.2409042,
+      "absolute_ci95": [
+        -1.254558407499999,
+        31.290328900000002
+      ]
+    }
+  ],
+  "exploratory_interaction": {
+    "difference_of_median_differences_seconds": 23.2099635,
+    "absolute_ci95": [
+      -0.044445978749998366,
+      32.55037109375
+    ]
+  },
+  "per_label_medians": [
+    {
+      "label": "windows-11-arm",
+      "image": "20261013.183.4",
+      "storage": "default",
+      "n": 18,
+      "median": 31.0440049,
+      "mean": 30.427824483333335,
+      "p10": 24.580731580000002,
+      "p90": 36.52644867,
+      "minimum": 22.5090409,
+      "maximum": 38.5302006
+    },
+    {
+      "label": "windows-11-arm",
+      "image": "20261013.183.4",
+      "storage": "refs",
+      "n": 16,
+      "median": 27.925468549999998,
+      "mean": 27.77271009375,
+      "p10": 25.60674145,
+      "p90": 29.55215015,
+      "minimum": 25.5148863,
+      "maximum": 30.6884091
+    },
+    {
+      "label": "windows-11-arm",
+      "image": "20261018.189.1",
+      "storage": "default",
+      "n": 14,
+      "median": 31.16134885,
+      "mean": 42.68147319285714,
+      "p10": 26.27703494,
+      "p90": 74.13995401000003,
+      "minimum": 24.7197307,
+      "maximum": 129.910387
+    },
+    {
+      "label": "windows-11-arm",
+      "image": "20261018.189.1",
+      "storage": "refs",
+      "n": 16,
+      "median": 39.34831565,
+      "mean": 51.38936879375,
+      "p10": 25.7061937,
+      "p90": 97.80891815000001,
+      "minimum": 25.1574146,
+      "maximum": 122.7060565
+    },
+    {
+      "label": "windows-11-vs2026-arm",
+      "image": "20261013.183.4",
+      "storage": "default",
+      "n": 19,
+      "median": 28.3715743,
+      "mean": 35.666678284210526,
+      "p10": 24.566765619999998,
+      "p90": 40.7415938,
+      "minimum": 23.7568743,
+      "maximum": 146.8821194
+    },
+    {
+      "label": "windows-11-vs2026-arm",
+      "image": "20261013.183.4",
+      "storage": "refs",
+      "n": 16,
+      "median": 27.5887837,
+      "mean": 27.9342885125,
+      "p10": 25.8008802,
+      "p90": 30.136453799999998,
+      "minimum": 25.1096825,
+      "maximum": 30.7632723
+    },
+    {
+      "label": "windows-11-vs2026-arm",
+      "image": "20261018.189.1",
+      "storage": "default",
+      "n": 13,
+      "median": 29.6282045,
+      "mean": 37.90078223846154,
+      "p10": 24.85853312,
+      "p90": 57.32589936000001,
+      "minimum": 23.268934,
+      "maximum": 66.9876125
+    },
+    {
+      "label": "windows-11-vs2026-arm",
+      "image": "20261018.189.1",
+      "storage": "refs",
+      "n": 16,
+      "median": 55.8149508,
+      "mean": 57.18769090625,
+      "p10": 26.42413155,
+      "p90": 101.82725124999999,
+      "minimum": 26.0191111,
+      "maximum": 122.4848567
+    }
+  ],
+  "sampling": {
+    "blocks": 32,
+    "seed": 20261021,
+    "bootstrap_unit": "run ID and balanced scheduling block",
+    "needs_count_driven_top_up": false
+  }
+}
