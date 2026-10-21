@@ -1,0 +1,121 @@
+name: Windows Arm populated workspace validation
+'on':
+  push:
+    branches:
+    - perf/windows-arm-workspace-preservation
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  verify:
+    name: ${{ matrix.case }} workspace
+    runs-on: windows-11-arm
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        case:
+        - empty
+        - populated
+    env:
+      CASE: ${{ matrix.case }}
+    steps:
+    - name: Create pre-job fixture
+      shell: pwsh
+      run: "\n$ErrorActionPreference = 'Stop'\nif (@(Get-ChildItem -LiteralPath $env:GITHUB_WORKSPACE -Force).Count -ne 0)\
+        \ {\n    throw 'expected a fresh workspace for the test fixture'\n}\nif ($env:CASE -eq 'populated') {\n    New-Item\
+        \ -ItemType Directory -Path \"$env:GITHUB_WORKSPACE\\nested\\empty\", \"$env:GITHUB_WORKSPACE\\.git\" | Out-Null\n\
+        \    Set-Content -LiteralPath \"$env:GITHUB_WORKSPACE\\.pre-job\" -Value 'pre-job state'\n    [IO.File]::SetAttributes(\"\
+        $env:GITHUB_WORKSPACE\\.pre-job\", [IO.FileAttributes]::Hidden -bor [IO.FileAttributes]::System)\n    Set-Content\
+        \ -LiteralPath \"$env:GITHUB_WORKSPACE\\nested\\payload [1].txt\" -Value 'nested payload'\n    [IO.File]::SetAttributes(\"\
+        $env:GITHUB_WORKSPACE\\nested\\payload [1].txt\", [IO.FileAttributes]::ReadOnly)\n    Set-Content -LiteralPath \"\
+        $env:GITHUB_WORKSPACE\\.git\\pre-job-state\" -Value 'git metadata'\n    New-Item -ItemType Directory -Path \"$env:RUNNER_TEMP\\\
+        external-source\" | Out-Null\n    Set-Content -LiteralPath \"$env:RUNNER_TEMP\\external-source\\keep.txt\" -Value\
+        \ 'outside workspace'\n    New-Item -ItemType Junction -Path \"$env:GITHUB_WORKSPACE\\external-link\" -Target \"$env:RUNNER_TEMP\\\
+        external-source\" | Out-Null\n    New-Item -ItemType SymbolicLink -Path \"$env:GITHUB_WORKSPACE\\file-link\" -Target\
+        \ 'nested\\payload [1].txt' | Out-Null\n}\n"
+    - name: Prepare Windows Arm build storage
+      if: runner.os == 'Windows' && runner.arch == 'ARM64' && runner.environment == 'github-hosted'
+      shell: pwsh
+      run: "$ErrorActionPreference = 'Stop'\nif ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'Arm64')\
+        \ {\n  throw 'runner architecture does not match the operating system'\n}\n\n$partitions = @(Get-Partition)\n$volumes\
+        \ = @(Get-Volume)\n$drives = @(Get-PSDrive -PSProvider FileSystem)\nif (($partitions | Where-Object DriveLetter -eq\
+        \ 'D') -or\n    ($volumes | Where-Object DriveLetter -eq 'D') -or\n    ($drives | Where-Object Name -eq 'D')) {\n\
+        \  Write-Host 'D: is already assigned; leaving storage and workspace unchanged'\n  return\n}\n\n$disks = @(Get-Disk\
+        \ | Where-Object {\n  $_.BusType -eq 'NVMe' -and $_.PartitionStyle -eq 'RAW' -and\n  -not $_.IsBoot -and -not $_.IsSystem\
+        \ -and\n  -not $_.IsOffline -and -not $_.IsReadOnly -and\n  $_.NumberOfPartitions -eq 0 -and $_.Size -ge 50GB -and\n\
+        \  $_.Number -notin $partitions.DiskNumber\n})\nif ($disks.Count -ne 1) {\n  Write-Host \"Found $($disks.Count) eligible\
+        \ raw NVMe disks; leaving storage and workspace unchanged\"\n  return\n}\n\n$workspace = Get-Item -LiteralPath $env:GITHUB_WORKSPACE\
+        \ -Force\nif (-not $workspace.PSIsContainer -or\n    ($workspace.Attributes -band [IO.FileAttributes]::ReparsePoint))\
+        \ {\n  Write-Host 'Workspace is not an ordinary directory; leaving storage unchanged'\n  return\n}\n$cargoHome = if\
+        \ ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }\nif (Test-Path -LiteralPath $cargoHome)\
+        \ {\n  $cargoDirectory = Get-Item -LiteralPath $cargoHome -Force\n  if (-not $cargoDirectory.PSIsContainer -or\n \
+        \     ($cargoDirectory.Attributes -band [IO.FileAttributes]::ReparsePoint)) {\n    Write-Host 'Cargo home is not an\
+        \ ordinary directory; leaving storage unchanged'\n    return\n  }\n}\n\n# Dev Drive is ReFS with Windows' developer-workload\
+        \ defaults. Do not disable antivirus\n# or change filter/trust policy. Any provisioning failure must fail the job\
+        \ visibly.\n$disk = $disks[0]\nWrite-Host \"Initializing unused NVMe disk $($disk.Number) ($($disk.Size) bytes)\"\n\
+        $partition = Initialize-Disk -InputObject $disk -PartitionStyle GPT -PassThru |\n  New-Partition -UseMaximumSize -DriveLetter\
+        \ D\n$volume = $partition | Format-Volume -DevDrive -FileSystem ReFS -NewFileSystemLabel 'Build' -Confirm:$false\n\
+        if ($volume.FileSystem -ne 'ReFS' -or $volume.DriveLetter -ne 'D') {\n  throw 'new build volume is not ReFS on D:'\n\
+        }\n\n# Preserve files left by pre-job hooks, including hidden entries and links.\n# Keep the original populated directory\
+        \ as a job-lifetime backup after copying.\nSet-Location -LiteralPath $env:RUNNER_TEMP\n[Environment]::CurrentDirectory\
+        \ = $env:RUNNER_TEMP\nif (@(Get-ChildItem -LiteralPath $workspace.FullName -Force).Count -eq 0) {\n  Move-Item -LiteralPath\
+        \ $workspace.FullName -Destination 'D:\\workspace'\n} else {\n  robocopy $workspace.FullName 'D:\\workspace' /E /COPY:DAT\
+        \ /DCOPY:DAT /SL /SJ /R:2 /W:1 /NP\n  if ($LASTEXITCODE -ge 8) { throw \"workspace copy failed with robocopy exit\
+        \ code $LASTEXITCODE\" }\n  $LASTEXITCODE = 0\n  Move-Item -LiteralPath $workspace.FullName -Destination \"$($workspace.FullName).before-refs-$([guid]::NewGuid())\"\
+        \n}\nNew-Item -ItemType Junction -Path $workspace.FullName -Target 'D:\\workspace' | Out-Null\n\n# Give rust-cache\
+        \ the physical Cargo path: paths relative to the old C: workspace\n# would otherwise traverse the junction's parents\
+        \ on D: when GNU tar saves/restores.\nif (Test-Path -LiteralPath $cargoHome) {\n  Move-Item -LiteralPath $cargoHome\
+        \ -Destination 'D:\\cargo-home'\n} else {\n  New-Item -ItemType Directory -Path 'D:\\cargo-home' | Out-Null\n}\nNew-Item\
+        \ -ItemType Junction -Path $cargoHome -Target 'D:\\cargo-home' | Out-Null\nNew-Item -ItemType Directory -Path 'D:\\\
+        build-temp' | Out-Null\n\"CARGO_HOME=D:\\cargo-home\" >> $env:GITHUB_ENV\n\"TEMP=D:\\build-temp\" >> $env:GITHUB_ENV\n\
+        \"TMP=D:\\build-temp\" >> $env:GITHUB_ENV\nWrite-Host 'Workspace, Cargo source caches and compiler temporary files\
+        \ now use D: (ReFS)'\n"
+    - name: Verify contents, attributes, links, and backup
+      shell: pwsh
+      run: "\n$ErrorActionPreference = 'Stop'\nif ((Get-Volume -DriveLetter D).FileSystem -ne 'ReFS') { throw 'expected ReFS'\
+        \ }\n$workspace = Get-Item -LiteralPath $env:GITHUB_WORKSPACE -Force\nif ($workspace.LinkType -ne 'Junction' -or $workspace.Target\
+        \ -ne 'D:\\workspace') { throw 'workspace was not redirected' }\n$backupPrefix = \"$($workspace.Name).before-refs-\"\
+        \n$backups = @(Get-ChildItem -LiteralPath $workspace.Parent.FullName -Directory -Force | Where-Object Name -like \"\
+        $backupPrefix*\")\nif ($env:CASE -eq 'populated') {\n    if ($backups.Count -ne 1) { throw 'original backup not retained'\
+        \ }\n    $files = @{\n        '.pre-job' = 'pre-job state'\n        'nested\\payload [1].txt' = 'nested payload'\n\
+        \        '.git\\pre-job-state' = 'git metadata'\n    }\n    foreach ($root in @($env:GITHUB_WORKSPACE, 'D:\\workspace',\
+        \ $backups[0].FullName)) {\n        foreach ($file in $files.GetEnumerator()) {\n            if ((Get-Content -LiteralPath\
+        \ (Join-Path $root $file.Key)) -ne $file.Value) { throw \"content mismatch: $($file.Key)\" }\n        }\n    }\n \
+        \   $hidden = Get-Item -LiteralPath \"$env:GITHUB_WORKSPACE\\.pre-job\" -Force\n    if (-not ($hidden.Attributes -band\
+        \ [IO.FileAttributes]::Hidden) -or\n        -not ($hidden.Attributes -band [IO.FileAttributes]::System)) { throw 'hidden/system\
+        \ attributes lost' }\n    if (-not ((Get-Item -LiteralPath \"$env:GITHUB_WORKSPACE\\nested\\payload [1].txt\").Attributes\
+        \ -band [IO.FileAttributes]::ReadOnly)) { throw 'read-only attribute lost' }\n    if (-not (Test-Path -LiteralPath\
+        \ \"$env:GITHUB_WORKSPACE\\nested\\empty\" -PathType Container)) { throw 'empty directory lost' }\n    if ((Get-Item\
+        \ -LiteralPath 'D:\\workspace\\external-link').LinkType -ne 'Junction') { throw 'nested junction was expanded' }\n\
+        \    if ((Get-Item -LiteralPath 'D:\\workspace\\file-link').LinkType -ne 'SymbolicLink') { throw 'file symlink was\
+        \ expanded' }\n    if ((Get-Content -LiteralPath \"$env:GITHUB_WORKSPACE\\file-link\") -ne 'nested payload') { throw\
+        \ 'relative symlink does not resolve' }\n    if ((Get-Content -LiteralPath \"$env:RUNNER_TEMP\\external-source\\keep.txt\"\
+        ) -ne 'outside workspace') { throw 'external file changed' }\n} elseif ($backups.Count -ne 0) { throw 'empty workspace\
+        \ unnecessarily retained' }\nSet-Content -LiteralPath \"$env:GITHUB_WORKSPACE\\through-junction\" -Value 'written\
+        \ on ReFS'\nif ((Get-Content -LiteralPath 'D:\\workspace\\through-junction') -ne 'written on ReFS') { throw 'junction\
+        \ write failed' }\nif ($env:CASE -eq 'populated' -and (Test-Path -LiteralPath (Join-Path $backups[0].FullName 'through-junction')))\
+        \ {\n    throw 'writes went to the original backup'\n}\n@{\n    case = $env:CASE\n    image = $env:ImageVersion\n\
+        \    cpu = @(Get-CimInstance Win32_Processor | Select-Object Name, NumberOfLogicalProcessors)\n    workspace_preserved\
+        \ = $true\n    backup_count = $backups.Count\n    copied_attributes_and_links = $env:CASE -eq 'populated'\n} | ConvertTo-Json\
+        \ -Depth 5 | Set-Content \"$env:RUNNER_TEMP\\workspace-preservation.json\"\n"
+    - name: Check normal checkout compatibility
+      uses: actions/checkout@v6
+      with:
+        repository: Devolutions/IronRDP
+        ref: 0784fceca8d1c29cdceda2c74339e13311f0b857
+        persist-credentials: false
+    - name: Verify checkout remains on ReFS
+      shell: pwsh
+      run: "\n$ErrorActionPreference = 'Stop'\nif ((Get-Item -LiteralPath $env:GITHUB_WORKSPACE).Target -ne 'D:\\workspace'\
+        \ -or\n    -not (Test-Path -LiteralPath 'D:\\workspace\\.git\\HEAD')) { throw 'checkout did not preserve the workspace\
+        \ junction' }\n$data = Get-Content -Raw \"$env:RUNNER_TEMP\\workspace-preservation.json\" | ConvertFrom-Json -AsHashtable\n\
+        $data['checkout_passed'] = $true\n$data | ConvertTo-Json -Depth 5 | Set-Content \"$env:RUNNER_TEMP\\workspace-preservation.json\"\
+        \n"
+    - name: Upload verification
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: workspace-${{ matrix.case }}
+        path: ${{ runner.temp }}\workspace-preservation.json
+        if-no-files-found: error
