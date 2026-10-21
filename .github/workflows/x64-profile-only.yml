@@ -1,0 +1,43 @@
+name: Isolate official versus repaired x64 LLVM profiles
+on:
+  push:
+    branches: [experiment/x64-profile-only]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  preflight:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Inspect reset runner without changing machine settings
+        shell: powershell
+        run: |
+          .github\scripts\x64_pgo_preflight.ps1 -Output "$env:RUNNER_TEMP\profile-readiness-$env:GITHUB_RUN_ID.json"
+          $tools = @(
+            foreach ($name in @('git.exe','curl.exe','7z.exe','cmake.exe','ninja.exe','python.exe')) {
+              $command = Get-Command $name -ErrorAction SilentlyContinue
+              @{Name=$name; Available=[bool]$command; Path=$command.Source}
+            }
+          )
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vs = if (Test-Path -LiteralPath $vswhere) { & $vswhere -latest -products '*' -format json } else { '[]' }
+          @{Tools=$tools; VisualStudio=($vs | ConvertFrom-Json)} |
+            ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 "$env:RUNNER_TEMP\profile-tools-$env:GITHUB_RUN_ID.json"
+          Get-Content "$env:RUNNER_TEMP\profile-tools-$env:GITHUB_RUN_ID.json"
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: x64-profile-readiness
+          path: |
+            ${{ runner.temp }}/profile-readiness-${{ github.run_id }}.json
+            ${{ runner.temp }}/profile-tools-${{ github.run_id }}.json
+          if-no-files-found: error
+          retention-days: 30
