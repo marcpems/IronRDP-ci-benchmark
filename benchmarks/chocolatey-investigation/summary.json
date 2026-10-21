@@ -1,0 +1,3131 @@
+{
+  "diagnostics": [
+    {
+      "configuration": {
+        "os_build": "26200.9711",
+        "runtime_environment": [],
+        "image": "20261018.189.1",
+        "cpu": [
+          {
+            "Name": "Cobalt 100",
+            "NumberOfLogicalProcessors": 4
+          }
+        ],
+        "choco_sha256": "A158CA956434A4C4CFA696A7DC3711B60B63BAB60B5E1A3401CCBD6E28C875BA",
+        "choco_path": "C:\\ProgramData\\Chocolatey\\bin\\choco.exe",
+        "label": "windows-11-arm",
+        "tmp": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp",
+        "ngen_services": [],
+        "choco_config": {
+          "executable_config_present": false,
+          "features": [
+            {
+              "name": "checksumFiles",
+              "enabled": "true"
+            },
+            {
+              "name": "autoUninstaller",
+              "enabled": "true"
+            },
+            {
+              "name": "allowGlobalConfirmation",
+              "enabled": "true"
+            },
+            {
+              "name": "failOnAutoUninstaller",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnStandardError",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksumsSecure",
+              "enabled": "true"
+            },
+            {
+              "name": "powershellHost",
+              "enabled": "true"
+            },
+            {
+              "name": "logEnvironmentValues",
+              "enabled": "false"
+            },
+            {
+              "name": "virusCheck",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnInvalidOrMissingLicense",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreInvalidOptionsSwitches",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageExitCodes",
+              "enabled": "true"
+            },
+            {
+              "name": "useEnhancedExitCodes",
+              "enabled": "false"
+            },
+            {
+              "name": "exitOnRebootDetected",
+              "enabled": "false"
+            },
+            {
+              "name": "useFipsCompliantChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "showNonElevatedWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "showDownloadProgress",
+              "enabled": "true"
+            },
+            {
+              "name": "stopOnFirstPackageFailure",
+              "enabled": "false"
+            },
+            {
+              "name": "useRememberedArgumentsForUpgrades",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreUnfoundPackagesOnUpgradeOutdated",
+              "enabled": "false"
+            },
+            {
+              "name": "skipPackageUpgradesWhenNotInstalled",
+              "enabled": "false"
+            },
+            {
+              "name": "removePackageInformationOnUninstall",
+              "enabled": "false"
+            },
+            {
+              "name": "logWithoutColor",
+              "enabled": "false"
+            },
+            {
+              "name": "logValidationResultsOnWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageRepositoryOptimizations",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageHashValidation",
+              "enabled": "false"
+            },
+            {
+              "name": "disableCompatibilityChecks",
+              "enabled": "false"
+            },
+            {
+              "name": "alwaysIncludeHeaders",
+              "enabled": "false"
+            },
+            {
+              "name": "useHttpCache",
+              "enabled": "true"
+            }
+          ],
+          "exe_runtime": null,
+          "cache_location": [
+            {
+              "key": "cacheLocation",
+              "value": ""
+            }
+          ],
+          "exe_startup": null
+        },
+        "storage": "default",
+        "temp": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp",
+        "framework": {
+          "version": "4.8.09221",
+          "release": 533509
+        },
+        "install_seconds": 63.7543334,
+        "install_exit": 0,
+        "warm_version_timings": [
+          {
+            "version": "2.7.4",
+            "attempt": 1,
+            "seconds": 2.2036798
+          },
+          {
+            "version": "2.7.4",
+            "attempt": 2,
+            "seconds": 2.2480981
+          },
+          {
+            "version": "2.7.4",
+            "attempt": 3,
+            "seconds": 2.1872831
+          }
+        ],
+        "powershell": "7.6.7",
+        "defender": {
+          "AMProductVersion": "4.18.26090.9",
+          "AMEngineVersion": "1.1.26090.9",
+          "AntivirusSignatureVersion": "1.461.119.0",
+          "RealTimeProtectionEnabled": true,
+          "IsTamperProtected": true
+        }
+      },
+      "phases": {
+        "banner": 32.7523468,
+        "package_ready": 44.5927916,
+        "embedded_host": 45.631064,
+        "host_initialized": 54.7553121,
+        "installer": 57.2456704
+      },
+      "main_process_cpu_seconds_observed": 8.375,
+      "loaded_runtime_modules": [
+        {
+          "name": "System.Management.Automation.ni.dll",
+          "version": "10.0.26100.9711"
+        },
+        {
+          "name": "clr.dll",
+          "version": "4.8.9363.0 built by: NET481REL1LAST_25H2_B"
+        },
+        {
+          "name": "mscorlib.ni.dll",
+          "version": "4.8.9363.0 built by: NET481REL1LAST_25H2_B"
+        }
+      ],
+      "gaps_over_one_second": [
+        {
+          "seconds": 32.7523468,
+          "before": "Chocolatey v2.7.4"
+        },
+        {
+          "seconds": 2.6055788000000035,
+          "before": "7zip.install 26.4.0"
+        },
+        {
+          "seconds": 1.2753505000000018,
+          "before": "gradle 9.8.0"
+        },
+        {
+          "seconds": 1.1689123999999964,
+          "before": "[NuGet] Installed nasm 3.2.0 from https://community.chocolatey.org/api/v2/ with content hash eKci+sJac2kpoRcb9ruaVPo+NzUysRSrNk90eeFWY7UHSaidHAtUNnEl6y1z98YWSHpXRfrl6gbUFIDsj5XKiA==."
+        },
+        {
+          "seconds": 8.932198,
+          "before": "Host version is 5.1.26100.8875, PowerShell Version is '5.1.26100.9711' and CLR Version is '4.0.30319.42000'."
+        },
+        {
+          "seconds": 5.080684699999999,
+          "before": "Command [\"C:\\ProgramData\\chocolatey\\lib\\nasm\\tools\\nasm-3.02-installer-x64.exe\" /S] exited with '0'."
+        }
+      ],
+      "caveat": "Profiled execution, not comparable to unprofiled installation timings; process I/O is logical, not physical disk latency."
+    },
+    {
+      "configuration": {
+        "powershell": "7.6.7",
+        "temp": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp",
+        "framework": {
+          "release": 533509,
+          "version": "4.8.09221"
+        },
+        "choco_path": "C:\\ProgramData\\Chocolatey\\bin\\choco.exe",
+        "warm_version_timings": [
+          {
+            "seconds": 2.3509944,
+            "attempt": 1,
+            "version": "2.7.4"
+          },
+          {
+            "seconds": 2.3705538,
+            "attempt": 2,
+            "version": "2.7.4"
+          },
+          {
+            "seconds": 2.5489333,
+            "attempt": 3,
+            "version": "2.7.4"
+          }
+        ],
+        "label": "windows-11-arm",
+        "install_exit": 0,
+        "install_seconds": 91.628572,
+        "tmp": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp",
+        "ngen_services": [],
+        "choco_sha256": "A158CA956434A4C4CFA696A7DC3711B60B63BAB60B5E1A3401CCBD6E28C875BA",
+        "choco_config": {
+          "features": [
+            {
+              "name": "checksumFiles",
+              "enabled": "true"
+            },
+            {
+              "name": "autoUninstaller",
+              "enabled": "true"
+            },
+            {
+              "name": "allowGlobalConfirmation",
+              "enabled": "true"
+            },
+            {
+              "name": "failOnAutoUninstaller",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnStandardError",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksumsSecure",
+              "enabled": "true"
+            },
+            {
+              "name": "powershellHost",
+              "enabled": "true"
+            },
+            {
+              "name": "logEnvironmentValues",
+              "enabled": "false"
+            },
+            {
+              "name": "virusCheck",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnInvalidOrMissingLicense",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreInvalidOptionsSwitches",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageExitCodes",
+              "enabled": "true"
+            },
+            {
+              "name": "useEnhancedExitCodes",
+              "enabled": "false"
+            },
+            {
+              "name": "exitOnRebootDetected",
+              "enabled": "false"
+            },
+            {
+              "name": "useFipsCompliantChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "showNonElevatedWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "showDownloadProgress",
+              "enabled": "true"
+            },
+            {
+              "name": "stopOnFirstPackageFailure",
+              "enabled": "false"
+            },
+            {
+              "name": "useRememberedArgumentsForUpgrades",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreUnfoundPackagesOnUpgradeOutdated",
+              "enabled": "false"
+            },
+            {
+              "name": "skipPackageUpgradesWhenNotInstalled",
+              "enabled": "false"
+            },
+            {
+              "name": "removePackageInformationOnUninstall",
+              "enabled": "false"
+            },
+            {
+              "name": "logWithoutColor",
+              "enabled": "false"
+            },
+            {
+              "name": "logValidationResultsOnWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageRepositoryOptimizations",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageHashValidation",
+              "enabled": "false"
+            },
+            {
+              "name": "disableCompatibilityChecks",
+              "enabled": "false"
+            },
+            {
+              "name": "alwaysIncludeHeaders",
+              "enabled": "false"
+            },
+            {
+              "name": "useHttpCache",
+              "enabled": "true"
+            }
+          ],
+          "executable_config_present": false,
+          "exe_startup": null,
+          "cache_location": [
+            {
+              "key": "cacheLocation",
+              "value": ""
+            }
+          ],
+          "exe_runtime": null
+        },
+        "storage": "default",
+        "os_build": "26200.9711",
+        "defender": {
+          "AMProductVersion": "4.18.26090.9",
+          "AMEngineVersion": "1.1.26090.9",
+          "AntivirusSignatureVersion": "1.461.96.0",
+          "RealTimeProtectionEnabled": true,
+          "IsTamperProtected": true
+        },
+        "image": "20261018.189.1",
+        "runtime_environment": [],
+        "cpu": [
+          {
+            "Name": "Cobalt 100",
+            "NumberOfLogicalProcessors": 4
+          }
+        ]
+      },
+      "phases": {
+        "banner": 31.3333693,
+        "package_ready": 49.1953883,
+        "embedded_host": 51.5791914,
+        "host_initialized": 75.5242445,
+        "installer": 80.7584121
+      },
+      "main_process_cpu_seconds_observed": 9.65625,
+      "loaded_runtime_modules": [
+        {
+          "name": "System.Management.Automation.ni.dll",
+          "version": "10.0.26100.9711"
+        },
+        {
+          "name": "clr.dll",
+          "version": "4.8.9363.0 built by: NET481REL1LAST_25H2_B"
+        },
+        {
+          "name": "mscorlib.ni.dll",
+          "version": "4.8.9363.0 built by: NET481REL1LAST_25H2_B"
+        }
+      ],
+      "gaps_over_one_second": [
+        {
+          "seconds": 31.3333693,
+          "before": "Chocolatey v2.7.4"
+        },
+        {
+          "seconds": 4.927441999999999,
+          "before": "7zip.install 26.4.0"
+        },
+        {
+          "seconds": 2.8883989999999997,
+          "before": "gradle 9.8.0"
+        },
+        {
+          "seconds": 2.032976599999998,
+          "before": "Calling built-in PowerShell host with ['[System.Threading.Thread]::CurrentThread.CurrentCulture = '';[System.Threading.Thread]::CurrentThread.CurrentUICulture = '';[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]"
+        },
+        {
+          "seconds": 23.475119499999998,
+          "before": "Host version is 5.1.26100.8875, PowerShell Version is '5.1.26100.9711' and CLR Version is '4.0.30319.42000'."
+        },
+        {
+          "seconds": 2.0072277000000014,
+          "before": "VERBOSE: Loading module from path 'C:\\ProgramData\\chocolatey\\helpers\\Chocolatey.PowerShell.dll'."
+        },
+        {
+          "seconds": 9.263303100000002,
+          "before": "Command [\"C:\\ProgramData\\chocolatey\\lib\\nasm\\tools\\nasm-3.02-installer-x64.exe\" /S] exited with '0'."
+        }
+      ],
+      "caveat": "Profiled execution, not comparable to unprofiled installation timings; process I/O is logical, not physical disk latency."
+    },
+    {
+      "configuration": {
+        "framework": {
+          "version": "4.8.09221",
+          "release": 533509
+        },
+        "choco_sha256": "A158CA956434A4C4CFA696A7DC3711B60B63BAB60B5E1A3401CCBD6E28C875BA",
+        "runtime_environment": [],
+        "install_exit": 0,
+        "os_build": "26200.9457",
+        "label": "windows-11-arm",
+        "choco_config": {
+          "cache_location": [
+            {
+              "key": "cacheLocation",
+              "value": ""
+            }
+          ],
+          "exe_runtime": null,
+          "features": [
+            {
+              "name": "checksumFiles",
+              "enabled": "true"
+            },
+            {
+              "name": "autoUninstaller",
+              "enabled": "true"
+            },
+            {
+              "name": "allowGlobalConfirmation",
+              "enabled": "true"
+            },
+            {
+              "name": "failOnAutoUninstaller",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnStandardError",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksumsSecure",
+              "enabled": "true"
+            },
+            {
+              "name": "powershellHost",
+              "enabled": "true"
+            },
+            {
+              "name": "logEnvironmentValues",
+              "enabled": "false"
+            },
+            {
+              "name": "virusCheck",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnInvalidOrMissingLicense",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreInvalidOptionsSwitches",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageExitCodes",
+              "enabled": "true"
+            },
+            {
+              "name": "useEnhancedExitCodes",
+              "enabled": "false"
+            },
+            {
+              "name": "exitOnRebootDetected",
+              "enabled": "false"
+            },
+            {
+              "name": "useFipsCompliantChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "showNonElevatedWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "showDownloadProgress",
+              "enabled": "true"
+            },
+            {
+              "name": "stopOnFirstPackageFailure",
+              "enabled": "false"
+            },
+            {
+              "name": "useRememberedArgumentsForUpgrades",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreUnfoundPackagesOnUpgradeOutdated",
+              "enabled": "false"
+            },
+            {
+              "name": "skipPackageUpgradesWhenNotInstalled",
+              "enabled": "false"
+            },
+            {
+              "name": "removePackageInformationOnUninstall",
+              "enabled": "false"
+            },
+            {
+              "name": "logWithoutColor",
+              "enabled": "false"
+            },
+            {
+              "name": "logValidationResultsOnWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageRepositoryOptimizations",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageHashValidation",
+              "enabled": "false"
+            },
+            {
+              "name": "disableCompatibilityChecks",
+              "enabled": "false"
+            },
+            {
+              "name": "alwaysIncludeHeaders",
+              "enabled": "false"
+            },
+            {
+              "name": "useHttpCache",
+              "enabled": "true"
+            }
+          ],
+          "exe_startup": null,
+          "executable_config_present": false
+        },
+        "choco_path": "C:\\ProgramData\\Chocolatey\\bin\\choco.exe",
+        "image": "20261013.183.4",
+        "tmp": "D:\\build-temp",
+        "temp": "D:\\build-temp",
+        "defender": {
+          "AMProductVersion": "4.18.25080.5",
+          "AMEngineVersion": "1.1.26080.3",
+          "AntivirusSignatureVersion": "1.459.691.0",
+          "RealTimeProtectionEnabled": true,
+          "IsTamperProtected": true
+        },
+        "storage": "refs",
+        "cpu": [
+          {
+            "Name": "Cobalt 100",
+            "NumberOfLogicalProcessors": 4
+          }
+        ],
+        "install_seconds": 30.5401665,
+        "powershell": "7.6.6",
+        "warm_version_timings": [
+          {
+            "version": "2.7.4",
+            "seconds": 2.2034352,
+            "attempt": 1
+          },
+          {
+            "version": "2.7.4",
+            "seconds": 2.2819294,
+            "attempt": 2
+          },
+          {
+            "version": "2.7.4",
+            "seconds": 2.2483151,
+            "attempt": 3
+          }
+        ],
+        "ngen_services": []
+      },
+      "phases": {
+        "banner": 14.0812383,
+        "package_ready": 21.3437946,
+        "embedded_host": 21.9965541,
+        "host_initialized": 25.5222613,
+        "installer": 27.6440952
+      },
+      "main_process_cpu_seconds_observed": 8.046875,
+      "loaded_runtime_modules": [
+        {
+          "name": "System.Management.Automation.ni.dll",
+          "version": "10.0.26100.9457"
+        },
+        {
+          "name": "clr.dll",
+          "version": "4.8.9345.0 built by: NET481REL1LAST_25H2_C"
+        },
+        {
+          "name": "mscorlib.ni.dll",
+          "version": "4.8.9345.0 built by: NET481REL1LAST_25H2_C"
+        }
+      ],
+      "gaps_over_one_second": [
+        {
+          "seconds": 14.0812383,
+          "before": "Chocolatey v2.7.4"
+        },
+        {
+          "seconds": 1.3709611000000006,
+          "before": "7zip.install 26.4.0"
+        },
+        {
+          "seconds": 3.456749600000002,
+          "before": "Host version is 5.1.26100.8875, PowerShell Version is '5.1.26100.9457' and CLR Version is '4.0.30319.42000'."
+        },
+        {
+          "seconds": 1.9362480000000026,
+          "before": "Command [\"C:\\ProgramData\\chocolatey\\lib\\nasm\\tools\\nasm-3.02-installer-x64.exe\" /S] exited with '0'."
+        }
+      ],
+      "caveat": "Profiled execution, not comparable to unprofiled installation timings; process I/O is logical, not physical disk latency."
+    },
+    {
+      "configuration": {
+        "warm_version_timings": [
+          {
+            "version": "2.7.4",
+            "attempt": 1,
+            "seconds": 2.2480381
+          },
+          {
+            "version": "2.7.4",
+            "attempt": 2,
+            "seconds": 2.1968668
+          },
+          {
+            "version": "2.7.4",
+            "attempt": 3,
+            "seconds": 2.1979498
+          }
+        ],
+        "install_exit": 0,
+        "temp": "D:\\build-temp",
+        "framework": {
+          "version": "4.8.09221",
+          "release": 533509
+        },
+        "choco_path": "C:\\ProgramData\\Chocolatey\\bin\\choco.exe",
+        "storage": "refs",
+        "cpu": [
+          {
+            "Name": "Cobalt 100",
+            "NumberOfLogicalProcessors": 4
+          }
+        ],
+        "ngen_services": [],
+        "powershell": "7.6.6",
+        "os_build": "26200.9457",
+        "runtime_environment": [],
+        "install_seconds": 34.1486059,
+        "label": "windows-11-arm",
+        "choco_config": {
+          "exe_runtime": null,
+          "executable_config_present": false,
+          "cache_location": [
+            {
+              "key": "cacheLocation",
+              "value": ""
+            }
+          ],
+          "exe_startup": null,
+          "features": [
+            {
+              "name": "checksumFiles",
+              "enabled": "true"
+            },
+            {
+              "name": "autoUninstaller",
+              "enabled": "true"
+            },
+            {
+              "name": "allowGlobalConfirmation",
+              "enabled": "true"
+            },
+            {
+              "name": "failOnAutoUninstaller",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnStandardError",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksumsSecure",
+              "enabled": "true"
+            },
+            {
+              "name": "powershellHost",
+              "enabled": "true"
+            },
+            {
+              "name": "logEnvironmentValues",
+              "enabled": "false"
+            },
+            {
+              "name": "virusCheck",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnInvalidOrMissingLicense",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreInvalidOptionsSwitches",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageExitCodes",
+              "enabled": "true"
+            },
+            {
+              "name": "useEnhancedExitCodes",
+              "enabled": "false"
+            },
+            {
+              "name": "exitOnRebootDetected",
+              "enabled": "false"
+            },
+            {
+              "name": "useFipsCompliantChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "showNonElevatedWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "showDownloadProgress",
+              "enabled": "true"
+            },
+            {
+              "name": "stopOnFirstPackageFailure",
+              "enabled": "false"
+            },
+            {
+              "name": "useRememberedArgumentsForUpgrades",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreUnfoundPackagesOnUpgradeOutdated",
+              "enabled": "false"
+            },
+            {
+              "name": "skipPackageUpgradesWhenNotInstalled",
+              "enabled": "false"
+            },
+            {
+              "name": "removePackageInformationOnUninstall",
+              "enabled": "false"
+            },
+            {
+              "name": "logWithoutColor",
+              "enabled": "false"
+            },
+            {
+              "name": "logValidationResultsOnWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageRepositoryOptimizations",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageHashValidation",
+              "enabled": "false"
+            },
+            {
+              "name": "disableCompatibilityChecks",
+              "enabled": "false"
+            },
+            {
+              "name": "alwaysIncludeHeaders",
+              "enabled": "false"
+            },
+            {
+              "name": "useHttpCache",
+              "enabled": "true"
+            }
+          ]
+        },
+        "defender": {
+          "AMProductVersion": "4.18.25080.5",
+          "AMEngineVersion": "1.1.26080.3",
+          "AntivirusSignatureVersion": "1.459.691.0",
+          "RealTimeProtectionEnabled": true,
+          "IsTamperProtected": true
+        },
+        "tmp": "D:\\build-temp",
+        "choco_sha256": "A158CA956434A4C4CFA696A7DC3711B60B63BAB60B5E1A3401CCBD6E28C875BA",
+        "image": "20261013.183.4"
+      },
+      "phases": {
+        "banner": 14.2041306,
+        "package_ready": 21.2762598,
+        "embedded_host": 22.4018883,
+        "host_initialized": 29.2832989,
+        "installer": 31.2055305
+      },
+      "main_process_cpu_seconds_observed": 8.3125,
+      "loaded_runtime_modules": [
+        {
+          "name": "System.Management.Automation.ni.dll",
+          "version": "10.0.26100.9457"
+        },
+        {
+          "name": "clr.dll",
+          "version": "4.8.9345.0 built by: NET481REL1LAST_25H2_C"
+        },
+        {
+          "name": "mscorlib.ni.dll",
+          "version": "4.8.9345.0 built by: NET481REL1LAST_25H2_C"
+        }
+      ],
+      "gaps_over_one_second": [
+        {
+          "seconds": 14.2041306,
+          "before": "Chocolatey v2.7.4"
+        },
+        {
+          "seconds": 1.415134000000002,
+          "before": "7zip.install 26.4.0"
+        },
+        {
+          "seconds": 6.691102399999998,
+          "before": "Host version is 5.1.26100.8875, PowerShell Version is '5.1.26100.9457' and CLR Version is '4.0.30319.42000'."
+        },
+        {
+          "seconds": 1.9643856000000035,
+          "before": "Command [\"C:\\ProgramData\\chocolatey\\lib\\nasm\\tools\\nasm-3.02-installer-x64.exe\" /S] exited with '0'."
+        }
+      ],
+      "caveat": "Profiled execution, not comparable to unprofiled installation timings; process I/O is logical, not physical disk latency."
+    },
+    {
+      "configuration": {
+        "runtime_environment": [],
+        "storage": "default",
+        "temp": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp",
+        "warm_version_timings": [
+          {
+            "seconds": 2.2740242,
+            "attempt": 1,
+            "version": "2.7.4"
+          },
+          {
+            "seconds": 2.2283171,
+            "attempt": 2,
+            "version": "2.7.4"
+          },
+          {
+            "seconds": 2.2495025,
+            "attempt": 3,
+            "version": "2.7.4"
+          }
+        ],
+        "tmp": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp",
+        "install_seconds": 29.7390608,
+        "defender": {
+          "AMProductVersion": "4.18.25080.5",
+          "AMEngineVersion": "1.1.26080.3",
+          "AntivirusSignatureVersion": "1.459.691.0",
+          "RealTimeProtectionEnabled": true,
+          "IsTamperProtected": true
+        },
+        "os_build": "26200.9457",
+        "cpu": [
+          {
+            "Name": "Cobalt 100",
+            "NumberOfLogicalProcessors": 4
+          }
+        ],
+        "framework": {
+          "release": 533509,
+          "version": "4.8.09221"
+        },
+        "powershell": "7.6.6",
+        "choco_path": "C:\\ProgramData\\Chocolatey\\bin\\choco.exe",
+        "choco_sha256": "A158CA956434A4C4CFA696A7DC3711B60B63BAB60B5E1A3401CCBD6E28C875BA",
+        "choco_config": {
+          "executable_config_present": false,
+          "exe_startup": null,
+          "cache_location": [
+            {
+              "key": "cacheLocation",
+              "value": ""
+            }
+          ],
+          "exe_runtime": null,
+          "features": [
+            {
+              "name": "checksumFiles",
+              "enabled": "true"
+            },
+            {
+              "name": "autoUninstaller",
+              "enabled": "true"
+            },
+            {
+              "name": "allowGlobalConfirmation",
+              "enabled": "true"
+            },
+            {
+              "name": "failOnAutoUninstaller",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnStandardError",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksumsSecure",
+              "enabled": "true"
+            },
+            {
+              "name": "powershellHost",
+              "enabled": "true"
+            },
+            {
+              "name": "logEnvironmentValues",
+              "enabled": "false"
+            },
+            {
+              "name": "virusCheck",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnInvalidOrMissingLicense",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreInvalidOptionsSwitches",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageExitCodes",
+              "enabled": "true"
+            },
+            {
+              "name": "useEnhancedExitCodes",
+              "enabled": "false"
+            },
+            {
+              "name": "exitOnRebootDetected",
+              "enabled": "false"
+            },
+            {
+              "name": "useFipsCompliantChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "showNonElevatedWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "showDownloadProgress",
+              "enabled": "true"
+            },
+            {
+              "name": "stopOnFirstPackageFailure",
+              "enabled": "false"
+            },
+            {
+              "name": "useRememberedArgumentsForUpgrades",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreUnfoundPackagesOnUpgradeOutdated",
+              "enabled": "false"
+            },
+            {
+              "name": "skipPackageUpgradesWhenNotInstalled",
+              "enabled": "false"
+            },
+            {
+              "name": "removePackageInformationOnUninstall",
+              "enabled": "false"
+            },
+            {
+              "name": "logWithoutColor",
+              "enabled": "false"
+            },
+            {
+              "name": "logValidationResultsOnWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageRepositoryOptimizations",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageHashValidation",
+              "enabled": "false"
+            },
+            {
+              "name": "disableCompatibilityChecks",
+              "enabled": "false"
+            },
+            {
+              "name": "alwaysIncludeHeaders",
+              "enabled": "false"
+            },
+            {
+              "name": "useHttpCache",
+              "enabled": "true"
+            }
+          ]
+        },
+        "image": "20261013.183.4",
+        "ngen_services": [],
+        "label": "windows-11-vs2026-arm",
+        "install_exit": 0
+      },
+      "phases": {
+        "banner": 13.4078023,
+        "package_ready": 20.5209173,
+        "embedded_host": 21.1561393,
+        "host_initialized": 24.841215,
+        "installer": 26.7768535
+      },
+      "main_process_cpu_seconds_observed": 8.359375,
+      "loaded_runtime_modules": [
+        {
+          "name": "System.Management.Automation.ni.dll",
+          "version": "10.0.26100.9457"
+        },
+        {
+          "name": "clr.dll",
+          "version": "4.8.9345.0 built by: NET481REL1LAST_25H2_C"
+        },
+        {
+          "name": "mscorlib.ni.dll",
+          "version": "4.8.9345.0 built by: NET481REL1LAST_25H2_C"
+        }
+      ],
+      "gaps_over_one_second": [
+        {
+          "seconds": 13.4078023,
+          "before": "Chocolatey v2.7.4"
+        },
+        {
+          "seconds": 1.3487539000000002,
+          "before": "7zip.install 26.4.0"
+        },
+        {
+          "seconds": 3.6136818999999996,
+          "before": "Host version is 5.1.26100.8875, PowerShell Version is '5.1.26100.9457' and CLR Version is '4.0.30319.42000'."
+        },
+        {
+          "seconds": 1.973559599999998,
+          "before": "Command [\"C:\\ProgramData\\chocolatey\\lib\\nasm\\tools\\nasm-3.02-installer-x64.exe\" /S] exited with '0'."
+        }
+      ],
+      "caveat": "Profiled execution, not comparable to unprofiled installation timings; process I/O is logical, not physical disk latency."
+    },
+    {
+      "configuration": {
+        "powershell": "7.6.7",
+        "framework": {
+          "version": "4.8.09221",
+          "release": 533509
+        },
+        "image": "20261018.189.1",
+        "temp": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp",
+        "storage": "default",
+        "ngen_services": [],
+        "choco_sha256": "A158CA956434A4C4CFA696A7DC3711B60B63BAB60B5E1A3401CCBD6E28C875BA",
+        "label": "windows-11-vs2026-arm",
+        "runtime_environment": [],
+        "tmp": "C:\\Users\\RUNNER~1\\AppData\\Local\\Temp",
+        "os_build": "26200.9711",
+        "install_exit": 0,
+        "defender": {
+          "AMProductVersion": "4.18.26090.9",
+          "AMEngineVersion": "1.1.26090.9",
+          "AntivirusSignatureVersion": "1.461.119.0",
+          "RealTimeProtectionEnabled": true,
+          "IsTamperProtected": true
+        },
+        "install_seconds": 80.2673953,
+        "choco_path": "C:\\ProgramData\\Chocolatey\\bin\\choco.exe",
+        "choco_config": {
+          "cache_location": [
+            {
+              "key": "cacheLocation",
+              "value": ""
+            }
+          ],
+          "exe_startup": null,
+          "exe_runtime": null,
+          "executable_config_present": false,
+          "features": [
+            {
+              "name": "checksumFiles",
+              "enabled": "true"
+            },
+            {
+              "name": "autoUninstaller",
+              "enabled": "true"
+            },
+            {
+              "name": "allowGlobalConfirmation",
+              "enabled": "true"
+            },
+            {
+              "name": "failOnAutoUninstaller",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnStandardError",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksumsSecure",
+              "enabled": "true"
+            },
+            {
+              "name": "powershellHost",
+              "enabled": "true"
+            },
+            {
+              "name": "logEnvironmentValues",
+              "enabled": "false"
+            },
+            {
+              "name": "virusCheck",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnInvalidOrMissingLicense",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreInvalidOptionsSwitches",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageExitCodes",
+              "enabled": "true"
+            },
+            {
+              "name": "useEnhancedExitCodes",
+              "enabled": "false"
+            },
+            {
+              "name": "exitOnRebootDetected",
+              "enabled": "false"
+            },
+            {
+              "name": "useFipsCompliantChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "showNonElevatedWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "showDownloadProgress",
+              "enabled": "true"
+            },
+            {
+              "name": "stopOnFirstPackageFailure",
+              "enabled": "false"
+            },
+            {
+              "name": "useRememberedArgumentsForUpgrades",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreUnfoundPackagesOnUpgradeOutdated",
+              "enabled": "false"
+            },
+            {
+              "name": "skipPackageUpgradesWhenNotInstalled",
+              "enabled": "false"
+            },
+            {
+              "name": "removePackageInformationOnUninstall",
+              "enabled": "false"
+            },
+            {
+              "name": "logWithoutColor",
+              "enabled": "false"
+            },
+            {
+              "name": "logValidationResultsOnWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageRepositoryOptimizations",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageHashValidation",
+              "enabled": "false"
+            },
+            {
+              "name": "disableCompatibilityChecks",
+              "enabled": "false"
+            },
+            {
+              "name": "alwaysIncludeHeaders",
+              "enabled": "false"
+            },
+            {
+              "name": "useHttpCache",
+              "enabled": "true"
+            }
+          ]
+        },
+        "cpu": [
+          {
+            "Name": "Cobalt 100",
+            "NumberOfLogicalProcessors": 4
+          }
+        ],
+        "warm_version_timings": [
+          {
+            "version": "2.7.4",
+            "attempt": 1,
+            "seconds": 2.3932596
+          },
+          {
+            "version": "2.7.4",
+            "attempt": 2,
+            "seconds": 2.5238167
+          },
+          {
+            "version": "2.7.4",
+            "attempt": 3,
+            "seconds": 2.4144378
+          }
+        ]
+      },
+      "phases": {
+        "banner": 35.2874147,
+        "package_ready": 49.4521973,
+        "embedded_host": 51.3122242,
+        "host_initialized": 68.27639,
+        "installer": 72.1109756
+      },
+      "main_process_cpu_seconds_observed": 8.609375,
+      "loaded_runtime_modules": [
+        {
+          "name": "System.Management.Automation.ni.dll",
+          "version": "10.0.26100.9711"
+        },
+        {
+          "name": "clr.dll",
+          "version": "4.8.9363.0 built by: NET481REL1LAST_25H2_B"
+        },
+        {
+          "name": "mscorlib.ni.dll",
+          "version": "4.8.9363.0 built by: NET481REL1LAST_25H2_B"
+        }
+      ],
+      "gaps_over_one_second": [
+        {
+          "seconds": 35.2874147,
+          "before": "Chocolatey v2.7.4"
+        },
+        {
+          "seconds": 3.6294094,
+          "before": "7zip.install 26.4.0"
+        },
+        {
+          "seconds": 2.118865900000003,
+          "before": "gradle 9.8.0"
+        },
+        {
+          "seconds": 1.1026564000000008,
+          "before": "[NuGet] Installed nasm 3.2.0 from https://community.chocolatey.org/api/v2/ with content hash eKci+sJac2kpoRcb9ruaVPo+NzUysRSrNk90eeFWY7UHSaidHAtUNnEl6y1z98YWSHpXRfrl6gbUFIDsj5XKiA==."
+        },
+        {
+          "seconds": 1.5478069000000048,
+          "before": "Calling built-in PowerShell host with ['[System.Threading.Thread]::CurrentThread.CurrentCulture = '';[System.Threading.Thread]::CurrentThread.CurrentUICulture = '';[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]"
+        },
+        {
+          "seconds": 16.633508000000006,
+          "before": "Host version is 5.1.26100.8875, PowerShell Version is '5.1.26100.9711' and CLR Version is '4.0.30319.42000'."
+        },
+        {
+          "seconds": 1.3637742999999887,
+          "before": "VERBOSE: Loading module from path 'C:\\ProgramData\\chocolatey\\helpers\\Chocolatey.PowerShell.dll'."
+        },
+        {
+          "seconds": 6.689720699999995,
+          "before": "Command [\"C:\\ProgramData\\chocolatey\\lib\\nasm\\tools\\nasm-3.02-installer-x64.exe\" /S] exited with '0'."
+        }
+      ],
+      "caveat": "Profiled execution, not comparable to unprofiled installation timings; process I/O is logical, not physical disk latency."
+    },
+    {
+      "configuration": {
+        "powershell": "7.6.7",
+        "install_exit": 0,
+        "temp": "D:\\build-temp",
+        "install_seconds": 26.4883731,
+        "choco_config": {
+          "exe_startup": null,
+          "executable_config_present": false,
+          "exe_runtime": null,
+          "cache_location": [
+            {
+              "key": "cacheLocation",
+              "value": ""
+            }
+          ],
+          "features": [
+            {
+              "name": "checksumFiles",
+              "enabled": "true"
+            },
+            {
+              "name": "autoUninstaller",
+              "enabled": "true"
+            },
+            {
+              "name": "allowGlobalConfirmation",
+              "enabled": "true"
+            },
+            {
+              "name": "failOnAutoUninstaller",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnStandardError",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksumsSecure",
+              "enabled": "true"
+            },
+            {
+              "name": "powershellHost",
+              "enabled": "true"
+            },
+            {
+              "name": "logEnvironmentValues",
+              "enabled": "false"
+            },
+            {
+              "name": "virusCheck",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnInvalidOrMissingLicense",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreInvalidOptionsSwitches",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageExitCodes",
+              "enabled": "true"
+            },
+            {
+              "name": "useEnhancedExitCodes",
+              "enabled": "false"
+            },
+            {
+              "name": "exitOnRebootDetected",
+              "enabled": "false"
+            },
+            {
+              "name": "useFipsCompliantChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "showNonElevatedWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "showDownloadProgress",
+              "enabled": "true"
+            },
+            {
+              "name": "stopOnFirstPackageFailure",
+              "enabled": "false"
+            },
+            {
+              "name": "useRememberedArgumentsForUpgrades",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreUnfoundPackagesOnUpgradeOutdated",
+              "enabled": "false"
+            },
+            {
+              "name": "skipPackageUpgradesWhenNotInstalled",
+              "enabled": "false"
+            },
+            {
+              "name": "removePackageInformationOnUninstall",
+              "enabled": "false"
+            },
+            {
+              "name": "logWithoutColor",
+              "enabled": "false"
+            },
+            {
+              "name": "logValidationResultsOnWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageRepositoryOptimizations",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageHashValidation",
+              "enabled": "false"
+            },
+            {
+              "name": "disableCompatibilityChecks",
+              "enabled": "false"
+            },
+            {
+              "name": "alwaysIncludeHeaders",
+              "enabled": "false"
+            },
+            {
+              "name": "useHttpCache",
+              "enabled": "true"
+            }
+          ]
+        },
+        "defender": {
+          "AMProductVersion": "4.18.26090.9",
+          "AMEngineVersion": "1.1.26090.9",
+          "AntivirusSignatureVersion": "1.461.96.0",
+          "RealTimeProtectionEnabled": true,
+          "IsTamperProtected": true
+        },
+        "choco_path": "C:\\ProgramData\\Chocolatey\\bin\\choco.exe",
+        "choco_sha256": "A158CA956434A4C4CFA696A7DC3711B60B63BAB60B5E1A3401CCBD6E28C875BA",
+        "ngen_services": [],
+        "cpu": [
+          {
+            "Name": "Cobalt 100",
+            "NumberOfLogicalProcessors": 4
+          }
+        ],
+        "storage": "refs",
+        "image": "20261018.189.1",
+        "tmp": "D:\\build-temp",
+        "label": "windows-11-vs2026-arm",
+        "warm_version_timings": [
+          {
+            "seconds": 2.3054948,
+            "version": "2.7.4",
+            "attempt": 1
+          },
+          {
+            "seconds": 2.3056634,
+            "version": "2.7.4",
+            "attempt": 2
+          },
+          {
+            "seconds": 2.2191089,
+            "version": "2.7.4",
+            "attempt": 3
+          }
+        ],
+        "runtime_environment": [],
+        "os_build": "26200.9711",
+        "framework": {
+          "release": 533509,
+          "version": "4.8.09221"
+        }
+      },
+      "phases": {
+        "banner": 11.0884097,
+        "package_ready": 17.3288573,
+        "embedded_host": 17.8721755,
+        "host_initialized": 21.0771553,
+        "installer": 23.0705276
+      },
+      "main_process_cpu_seconds_observed": 8.734375,
+      "loaded_runtime_modules": [
+        {
+          "name": "System.Management.Automation.ni.dll",
+          "version": "10.0.26100.9711"
+        },
+        {
+          "name": "clr.dll",
+          "version": "4.8.9363.0 built by: NET481REL1LAST_25H2_B"
+        },
+        {
+          "name": "mscorlib.ni.dll",
+          "version": "4.8.9363.0 built by: NET481REL1LAST_25H2_B"
+        }
+      ],
+      "gaps_over_one_second": [
+        {
+          "seconds": 11.0884097,
+          "before": "Chocolatey v2.7.4"
+        },
+        {
+          "seconds": 1.186116499999999,
+          "before": "7zip.install 26.4.0"
+        },
+        {
+          "seconds": 3.1499558000000007,
+          "before": "Host version is 5.1.26100.8875, PowerShell Version is '5.1.26100.9711' and CLR Version is '4.0.30319.42000'."
+        },
+        {
+          "seconds": 2.0328511999999996,
+          "before": "Command [\"C:\\ProgramData\\chocolatey\\lib\\nasm\\tools\\nasm-3.02-installer-x64.exe\" /S] exited with '0'."
+        }
+      ],
+      "caveat": "Profiled execution, not comparable to unprofiled installation timings; process I/O is logical, not physical disk latency."
+    },
+    {
+      "configuration": {
+        "storage": "refs",
+        "ngen_services": [],
+        "temp": "D:\\build-temp",
+        "choco_sha256": "A158CA956434A4C4CFA696A7DC3711B60B63BAB60B5E1A3401CCBD6E28C875BA",
+        "install_exit": 0,
+        "defender": {
+          "AMProductVersion": "4.18.25080.5",
+          "AMEngineVersion": "1.1.26080.3",
+          "AntivirusSignatureVersion": "1.459.691.0",
+          "RealTimeProtectionEnabled": true,
+          "IsTamperProtected": true
+        },
+        "runtime_environment": [],
+        "framework": {
+          "version": "4.8.09221",
+          "release": 533509
+        },
+        "install_seconds": 28.6889989,
+        "label": "windows-11-vs2026-arm",
+        "tmp": "D:\\build-temp",
+        "image": "20261013.183.4",
+        "warm_version_timings": [
+          {
+            "attempt": 1,
+            "seconds": 2.2166178,
+            "version": "2.7.4"
+          },
+          {
+            "attempt": 2,
+            "seconds": 2.199472,
+            "version": "2.7.4"
+          },
+          {
+            "attempt": 3,
+            "seconds": 2.2056434,
+            "version": "2.7.4"
+          }
+        ],
+        "choco_path": "C:\\ProgramData\\Chocolatey\\bin\\choco.exe",
+        "powershell": "7.6.6",
+        "cpu": [
+          {
+            "Name": "Cobalt 100",
+            "NumberOfLogicalProcessors": 4
+          }
+        ],
+        "os_build": "26200.9457",
+        "choco_config": {
+          "features": [
+            {
+              "name": "checksumFiles",
+              "enabled": "true"
+            },
+            {
+              "name": "autoUninstaller",
+              "enabled": "true"
+            },
+            {
+              "name": "allowGlobalConfirmation",
+              "enabled": "true"
+            },
+            {
+              "name": "failOnAutoUninstaller",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnStandardError",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "allowEmptyChecksumsSecure",
+              "enabled": "true"
+            },
+            {
+              "name": "powershellHost",
+              "enabled": "true"
+            },
+            {
+              "name": "logEnvironmentValues",
+              "enabled": "false"
+            },
+            {
+              "name": "virusCheck",
+              "enabled": "false"
+            },
+            {
+              "name": "failOnInvalidOrMissingLicense",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreInvalidOptionsSwitches",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageExitCodes",
+              "enabled": "true"
+            },
+            {
+              "name": "useEnhancedExitCodes",
+              "enabled": "false"
+            },
+            {
+              "name": "exitOnRebootDetected",
+              "enabled": "false"
+            },
+            {
+              "name": "useFipsCompliantChecksums",
+              "enabled": "false"
+            },
+            {
+              "name": "showNonElevatedWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "showDownloadProgress",
+              "enabled": "true"
+            },
+            {
+              "name": "stopOnFirstPackageFailure",
+              "enabled": "false"
+            },
+            {
+              "name": "useRememberedArgumentsForUpgrades",
+              "enabled": "false"
+            },
+            {
+              "name": "ignoreUnfoundPackagesOnUpgradeOutdated",
+              "enabled": "false"
+            },
+            {
+              "name": "skipPackageUpgradesWhenNotInstalled",
+              "enabled": "false"
+            },
+            {
+              "name": "removePackageInformationOnUninstall",
+              "enabled": "false"
+            },
+            {
+              "name": "logWithoutColor",
+              "enabled": "false"
+            },
+            {
+              "name": "logValidationResultsOnWarnings",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageRepositoryOptimizations",
+              "enabled": "true"
+            },
+            {
+              "name": "usePackageHashValidation",
+              "enabled": "false"
+            },
+            {
+              "name": "disableCompatibilityChecks",
+              "enabled": "false"
+            },
+            {
+              "name": "alwaysIncludeHeaders",
+              "enabled": "false"
+            },
+            {
+              "name": "useHttpCache",
+              "enabled": "true"
+            }
+          ],
+          "cache_location": [
+            {
+              "key": "cacheLocation",
+              "value": ""
+            }
+          ],
+          "exe_runtime": null,
+          "executable_config_present": false,
+          "exe_startup": null
+        }
+      },
+      "phases": {
+        "banner": 13.3809463,
+        "package_ready": 20.0602535,
+        "embedded_host": 20.651805,
+        "host_initialized": 24.1724962,
+        "installer": 25.9567252
+      },
+      "main_process_cpu_seconds_observed": 7.765625,
+      "loaded_runtime_modules": [
+        {
+          "name": "System.Management.Automation.ni.dll",
+          "version": "10.0.26100.9457"
+        },
+        {
+          "name": "clr.dll",
+          "version": "4.8.9345.0 built by: NET481REL1LAST_25H2_C"
+        },
+        {
+          "name": "mscorlib.ni.dll",
+          "version": "4.8.9345.0 built by: NET481REL1LAST_25H2_C"
+        }
+      ],
+      "gaps_over_one_second": [
+        {
+          "seconds": 13.3809463,
+          "before": "Chocolatey v2.7.4"
+        },
+        {
+          "seconds": 1.2604740000000003,
+          "before": "7zip.install 26.4.0"
+        },
+        {
+          "seconds": 3.4543662000000026,
+          "before": "Host version is 5.1.26100.8875, PowerShell Version is '5.1.26100.9457' and CLR Version is '4.0.30319.42000'."
+        },
+        {
+          "seconds": 1.7912537000000022,
+          "before": "Command [\"C:\\ProgramData\\chocolatey\\lib\\nasm\\tools\\nasm-3.02-installer-x64.exe\" /S] exited with '0'."
+        }
+      ],
+      "caveat": "Profiled execution, not comparable to unprofiled installation timings; process I/O is logical, not physical disk latency."
+    }
+  ],
+  "recovery": {
+    "cells": [
+      {
+        "image": "20261013.183.4",
+        "mode": "default",
+        "n": 4,
+        "median_seconds": 27.09912895,
+        "cpu_models": {
+          "Cobalt 100": 4
+        }
+      },
+      {
+        "image": "20261013.183.4",
+        "mode": "refs",
+        "n": 2,
+        "median_seconds": 30.011470250000002,
+        "cpu_models": {
+          "Cobalt 100": 2
+        }
+      },
+      {
+        "image": "20261013.183.4",
+        "mode": "refs-direct",
+        "n": 2,
+        "median_seconds": 25.5874915,
+        "cpu_models": {
+          "Cobalt 100": 2
+        }
+      },
+      {
+        "image": "20261013.183.4",
+        "mode": "refs-temp-c",
+        "n": 5,
+        "median_seconds": 30.4749331,
+        "cpu_models": {
+          "Cobalt 100": 5
+        }
+      },
+      {
+        "image": "20261018.189.1",
+        "mode": "default",
+        "n": 4,
+        "median_seconds": 81.03447265,
+        "cpu_models": {
+          "Cobalt 100": 4
+        }
+      },
+      {
+        "image": "20261018.189.1",
+        "mode": "refs",
+        "n": 6,
+        "median_seconds": 44.2421716,
+        "cpu_models": {
+          "Cobalt 100": 6
+        }
+      },
+      {
+        "image": "20261018.189.1",
+        "mode": "refs-direct",
+        "n": 6,
+        "median_seconds": 50.274431250000006,
+        "cpu_models": {
+          "Cobalt 100": 6
+        }
+      },
+      {
+        "image": "20261018.189.1",
+        "mode": "refs-temp-c",
+        "n": 3,
+        "median_seconds": 26.4273312,
+        "cpu_models": {
+          "Cobalt 100": 3
+        }
+      }
+    ],
+    "effects": [
+      {
+        "image": "20261013.183.4",
+        "treatment": "refs-temp-c",
+        "control": "refs",
+        "difference_seconds": 0.4634628499999991,
+        "exploratory_95_percent_block_interval": [
+          -4.557886100000001,
+          3.869669700000003
+        ],
+        "valid_bootstrap_replicates": 9332,
+        "minimum_cell_size_met": false,
+        "warning": "Small exploratory cells; four nominal blocks; not confirmatory or multiplicity-adjusted."
+      },
+      {
+        "image": "20261013.183.4",
+        "treatment": "refs-direct",
+        "control": "refs",
+        "difference_seconds": -4.423978750000003,
+        "exploratory_95_percent_block_interval": [
+          -7.939752300000002,
+          -0.9082051999999976
+        ],
+        "valid_bootstrap_replicates": 8686,
+        "minimum_cell_size_met": false,
+        "warning": "Small exploratory cells; four nominal blocks; not confirmatory or multiplicity-adjusted."
+      },
+      {
+        "image": "20261018.189.1",
+        "treatment": "refs-temp-c",
+        "control": "refs",
+        "difference_seconds": -17.814840399999998,
+        "exploratory_95_percent_block_interval": [
+          -65.99917455,
+          -9.562899549999997
+        ],
+        "valid_bootstrap_replicates": 9390,
+        "minimum_cell_size_met": false,
+        "warning": "Small exploratory cells; four nominal blocks; not confirmatory or multiplicity-adjusted."
+      },
+      {
+        "image": "20261018.189.1",
+        "treatment": "refs-direct",
+        "control": "refs",
+        "difference_seconds": 6.032259650000007,
+        "exploratory_95_percent_block_interval": [
+          -42.87218730000001,
+          30.412757600000006
+        ],
+        "valid_bootstrap_replicates": 10000,
+        "minimum_cell_size_met": false,
+        "warning": "Small exploratory cells; four nominal blocks; not confirmatory or multiplicity-adjusted."
+      }
+    ]
+  },
+  "confirmation": {
+    "cells": [
+      {
+        "image": "20261013.183.4",
+        "mode": "refs",
+        "n": 9,
+        "median_seconds": 27.6262698,
+        "cpu_models": {
+          "Cobalt 100": 9
+        }
+      },
+      {
+        "image": "20261013.183.4",
+        "mode": "refs-temp-c",
+        "n": 12,
+        "median_seconds": 28.101463799999998,
+        "cpu_models": {
+          "Cobalt 100": 12
+        }
+      },
+      {
+        "image": "20261018.189.1",
+        "mode": "refs",
+        "n": 7,
+        "median_seconds": 31.552391,
+        "cpu_models": {
+          "Cobalt 100": 7
+        }
+      },
+      {
+        "image": "20261018.189.1",
+        "mode": "refs-temp-c",
+        "n": 4,
+        "median_seconds": 29.264312,
+        "cpu_models": {
+          "Cobalt 100": 4
+        }
+      }
+    ],
+    "effects": [
+      {
+        "image": "20261013.183.4",
+        "treatment": "refs-temp-c",
+        "control": "refs",
+        "difference_seconds": 0.47519399999999834,
+        "exploratory_95_percent_block_interval": [
+          -3.629282100000001,
+          4.7136752999999985
+        ],
+        "valid_bootstrap_replicates": 10000,
+        "minimum_cell_size_met": true,
+        "warning": "Fixed-size independent follow-up; interpret descriptively if either cell has fewer than eight observations."
+      },
+      {
+        "image": "20261018.189.1",
+        "treatment": "refs-temp-c",
+        "control": "refs",
+        "difference_seconds": -2.2880789999999998,
+        "exploratory_95_percent_block_interval": [
+          -10.2160176,
+          80.83800529999999
+        ],
+        "valid_bootstrap_replicates": 9782,
+        "minimum_cell_size_met": false,
+        "warning": "Fixed-size independent follow-up; interpret descriptively if either cell has fewer than eight observations."
+      }
+    ]
+  },
+  "defender": [
+    {
+      "artifact": "defender-windows-11-arm-default",
+      "image": "20261018.189.1",
+      "installation_seconds": 26.2644256,
+      "recording_seconds": 120.4256915,
+      "recorded_realtime_scan_seconds": 0.1770809,
+      "maximum_scan_seconds": 0.0256329
+    },
+    {
+      "artifact": "defender-windows-11-arm-refs",
+      "image": "20261018.189.1",
+      "installation_seconds": 60.3074397,
+      "recording_seconds": 120.6517075,
+      "recorded_realtime_scan_seconds": 0.2517082,
+      "maximum_scan_seconds": 0.0941542
+    },
+    {
+      "artifact": "defender-windows-11-vs2026-arm-default",
+      "image": "20261013.183.4",
+      "installation_seconds": 41.1205701,
+      "recording_seconds": 120.4711331,
+      "recorded_realtime_scan_seconds": 0.1330845,
+      "maximum_scan_seconds": 0.0632244
+    },
+    {
+      "artifact": "defender-windows-11-vs2026-arm-refs",
+      "image": "20261013.183.4",
+      "installation_seconds": 33.4332261,
+      "recording_seconds": 120.3226761,
+      "recorded_realtime_scan_seconds": 0.1030789,
+      "maximum_scan_seconds": 0.055445
+    }
+  ],
+  "builds": {
+    "jobs": [
+      {
+        "id": 119202346488,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202346488",
+        "label": "windows-11-arm",
+        "package": "ironrdp-agent",
+        "variant": "without-nasm",
+        "sample": 3,
+        "conclusion": "success",
+        "job_seconds": 427.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 8.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 11.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Install build dependencies": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Rust cache": {
+            "seconds": 16.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 332.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 43.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202346882,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202346882",
+        "label": "windows-11-arm",
+        "package": "ironrdp-agent",
+        "variant": "baseline",
+        "sample": 1,
+        "conclusion": "success",
+        "job_seconds": 560.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 13.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 10.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Install build dependencies": {
+            "seconds": 92.0,
+            "conclusion": "success"
+          },
+          "Rust cache": {
+            "seconds": 17.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 367.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 43.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202346884,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202346884",
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-agent",
+        "variant": "baseline",
+        "sample": 3,
+        "conclusion": "success",
+        "job_seconds": 571.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 13.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 11.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Install build dependencies": {
+            "seconds": 125.0,
+            "conclusion": "success"
+          },
+          "Rust cache": {
+            "seconds": 16.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 350.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 40.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202346900,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202346900",
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-agent",
+        "variant": "baseline",
+        "sample": 1,
+        "conclusion": "success",
+        "job_seconds": 460.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 8.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 11.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Install build dependencies": {
+            "seconds": 24.0,
+            "conclusion": "success"
+          },
+          "Rust cache": {
+            "seconds": 14.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 349.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 40.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202346929,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202346929",
+        "label": "windows-11-arm",
+        "package": "ironrdp-agent",
+        "variant": "baseline",
+        "sample": 3,
+        "conclusion": "success",
+        "job_seconds": 579.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 13.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 18.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Install build dependencies": {
+            "seconds": 99.0,
+            "conclusion": "success"
+          },
+          "Rust cache": {
+            "seconds": 18.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 375.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 39.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202346933,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202346933",
+        "label": "windows-11-arm",
+        "package": "ironrdp-agent",
+        "variant": "without-nasm",
+        "sample": 1,
+        "conclusion": "success",
+        "job_seconds": 460.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 14.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 16.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Install build dependencies": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Rust cache": {
+            "seconds": 27.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 341.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 43.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 4.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202346973,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202346973",
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-agent",
+        "variant": "without-nasm",
+        "sample": 3,
+        "conclusion": "success",
+        "job_seconds": 474.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 12.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 12.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Install build dependencies": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Rust cache": {
+            "seconds": 18.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 366.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 4.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 49.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 4.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347061,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347061",
+        "label": "windows-11-arm",
+        "package": "ironrdp-viewer",
+        "variant": "without-nasm",
+        "sample": 1,
+        "conclusion": "failure",
+        "job_seconds": 517.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 28.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 12.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 4.0,
+            "conclusion": "success"
+          },
+          "Install build dependencies": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Rust cache": {
+            "seconds": 49.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 416.0,
+            "conclusion": "failure"
+          },
+          "Package binary": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Upload release asset": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Verify archive and storage": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Post Rust cache": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347074,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347074",
+        "label": "windows-11-arm",
+        "package": "ironrdp-agent",
+        "variant": "baseline",
+        "sample": 2,
+        "conclusion": "success",
+        "job_seconds": 565.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 12.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 15.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Install build dependencies": {
+            "seconds": 77.0,
+            "conclusion": "success"
+          },
+          "Rust cache": {
+            "seconds": 20.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 374.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 52.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 4.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347117,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347117",
+        "label": "windows-11-arm",
+        "package": "ironrdp-agent",
+        "variant": "without-nasm",
+        "sample": 2,
+        "conclusion": "success",
+        "job_seconds": 469.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 8.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 14.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Install build dependencies": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Rust cache": {
+            "seconds": 18.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 362.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 50.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 4.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347124,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347124",
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-agent",
+        "variant": "without-nasm",
+        "sample": 2,
+        "conclusion": "success",
+        "job_seconds": 438.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 9.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 10.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Install build dependencies": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Rust cache": {
+            "seconds": 18.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 342.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 42.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 4.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347196,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347196",
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-viewer",
+        "variant": "baseline",
+        "sample": 1,
+        "conclusion": "failure",
+        "job_seconds": 439.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 10.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 15.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Install build dependencies": {
+            "seconds": 27.0,
+            "conclusion": "success"
+          },
+          "Rust cache": {
+            "seconds": 15.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 362.0,
+            "conclusion": "failure"
+          },
+          "Package binary": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Upload release asset": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Verify archive and storage": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Post Rust cache": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347225,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347225",
+        "label": "windows-11-arm",
+        "package": "ironrdp-viewer",
+        "variant": "baseline",
+        "sample": 1,
+        "conclusion": "failure",
+        "job_seconds": 466.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 12.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 11.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Install build dependencies": {
+            "seconds": 25.0,
+            "conclusion": "success"
+          },
+          "Rust cache": {
+            "seconds": 16.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 392.0,
+            "conclusion": "failure"
+          },
+          "Package binary": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Upload release asset": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Verify archive and storage": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Post Rust cache": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347287,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347287",
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-agent",
+        "variant": "baseline",
+        "sample": 2,
+        "conclusion": "success",
+        "job_seconds": 498.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 11.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 12.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Install build dependencies": {
+            "seconds": 36.0,
+            "conclusion": "success"
+          },
+          "Rust cache": {
+            "seconds": 19.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 360.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 45.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347335,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347335",
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-agent",
+        "variant": "without-nasm",
+        "sample": 1,
+        "conclusion": "success",
+        "job_seconds": 486.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 8.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 12.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Install build dependencies": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Rust cache": {
+            "seconds": 24.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 356.0,
+            "conclusion": "success"
+          },
+          "Package binary": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Upload release asset": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Verify archive and storage": {
+            "seconds": 3.0,
+            "conclusion": "success"
+          },
+          "Post Rust cache": {
+            "seconds": 69.0,
+            "conclusion": "success"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      },
+      {
+        "id": 119202347393,
+        "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39594198946/job/119202347393",
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-viewer",
+        "variant": "without-nasm",
+        "sample": 1,
+        "conclusion": "failure",
+        "job_seconds": 434.0,
+        "steps": {
+          "Set up job": {
+            "seconds": 2.0,
+            "conclusion": "success"
+          },
+          "Record runner": {
+            "seconds": 14.0,
+            "conclusion": "success"
+          },
+          "Checkout release tag": {
+            "seconds": 11.0,
+            "conclusion": "success"
+          },
+          "Confirm NASM is absent in omission variant": {
+            "seconds": 1.0,
+            "conclusion": "success"
+          },
+          "Install build dependencies": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Rust cache": {
+            "seconds": 18.0,
+            "conclusion": "success"
+          },
+          "Build release binary": {
+            "seconds": 380.0,
+            "conclusion": "failure"
+          },
+          "Package binary": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Upload release asset": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Verify archive and storage": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Post Rust cache": {
+            "seconds": 0.0,
+            "conclusion": "skipped"
+          },
+          "Post Checkout release tag": {
+            "seconds": 5.0,
+            "conclusion": "success"
+          },
+          "Complete job": {
+            "seconds": 0.0,
+            "conclusion": "success"
+          }
+        }
+      }
+    ],
+    "successful_cells": [
+      {
+        "label": "windows-11-arm",
+        "package": "ironrdp-agent",
+        "variant": "baseline",
+        "n": 3,
+        "median_job_seconds": 565.0
+      },
+      {
+        "label": "windows-11-arm",
+        "package": "ironrdp-agent",
+        "variant": "without-nasm",
+        "n": 3,
+        "median_job_seconds": 460.0
+      },
+      {
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-agent",
+        "variant": "baseline",
+        "n": 3,
+        "median_job_seconds": 498.0
+      },
+      {
+        "label": "windows-11-vs2026-arm",
+        "package": "ironrdp-agent",
+        "variant": "without-nasm",
+        "n": 3,
+        "median_job_seconds": 474.0
+      }
+    ],
+    "warning": "Job duration excludes queueing; includes setup, archive, and cache post-steps. Small samples and uncontrolled image/hardware assignment preclude a causal whole-job speedup claim."
+  }
+}
