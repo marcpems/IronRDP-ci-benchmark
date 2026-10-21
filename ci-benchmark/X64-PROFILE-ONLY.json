@@ -1,0 +1,315 @@
+{
+  "protocol": {
+    "schema": 1,
+    "study": "official-versus-repaired-llvm-profile-only",
+    "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+    "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+    "llvm_sha": "00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7",
+    "rust_version": "1.94.1",
+    "clang_installer_sha256": "0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af",
+    "host": "x86_64-pc-windows-msvc",
+    "variants": [
+      "official",
+      "repaired"
+    ],
+    "official_bundle_url": "https://static.rust-lang.org/dist/reproducible-artifacts-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+    "official_bundle_sha256": "7c1aabaabd49f6b59b0ca2211b7b7dc737cba0b3accf63542527f89cf7641793",
+    "rustc_profile_sha256": "12a055f3c79bd699973e89be4fadba3667f859803872027907d7402baec0d82c",
+    "llvm_profile_sha256": {
+      "official": "eb7ad944fd1a3313273676cbd4c74b7fc376088acc359c66f81d2502081994a0",
+      "repaired": "6e2ee1d5e52aeba92fd3f0e40d70be9dd0916605a74ed79db478e7a9feddeeb2"
+    },
+    "repaired_profile_run": "39456859889",
+    "repaired_profile_artifact": "x64-pgo-local-evidence",
+    "runner": "MARCPE-TEST01-X64",
+    "build_drive": "D:",
+    "build_filesystem": "ReFS",
+    "build_disk_model": "NVMe HFS002TFM9X189N-SKhynix",
+    "build_cores": 16,
+    "cores": 4,
+    "warmup_rounds": 1,
+    "measured_rounds": 3,
+    "common_inputs": "Pinned source, clang-cl 20.1.3, Microsoft link/lib, official rustc profile, thin-local Rust LTO, LLVM ThinLTO off; no training",
+    "primary_endpoint": "Sum of five original offline native Cargo compilation commands per block",
+    "shared_replay_inputs": "Official Rust 1.94.1 Cargo and byte-identical official native standard libraries",
+    "order": "Official build then repaired build; replay alternates compiler order over four rounds",
+    "correctness": "Unmodified upstream extracted-distribution tests for each build; four original native tests after each replay warmup; NTFS correctness TEMP/TMP",
+    "aggregation": "Mean of three measured blocks per compiler; report paired per-round differences and range, not independent-VM confidence intervals",
+    "exclusions": "Exclude only preregistered warmup, setup, fetching and correctness; reject failures, incomplete matrices and changed common inputs",
+    "scope": "One build pair and one self-hosted machine; isolates switching the complete LLVM profile file, not a particular function or the prior linking-tool change"
+  },
+  "release_inputs": {
+    "release_run": "39611328907",
+    "release_attempt": "1",
+    "compiler_metadata_sha256": {
+      "official": "c0f4b385e9ef5a62a1de2f365162cf8de22e60919edcbe4729d4e98cc8d2d498",
+      "repaired": "ca45c016dba69ddbe97c6d0edc116d4a2c3bb4d3503aba42bbaaa8b03199f921"
+    },
+    "compiler_archive_sha256": {
+      "official": "3b1af4eaf94454b6df069827a01bd7682204f57e1d7437e338f91f794f9d79c0",
+      "repaired": "8ae14b5512436b41c40df77cb41b2de34068ff9f21e9f1ef4c57945da3662f2e"
+    },
+    "compiler_archive_bytes": {
+      "official": 85061032,
+      "repaired": 88197276
+    }
+  },
+  "replay_run": "39635843303",
+  "summary": {
+    "scope": "One build pair and one self-hosted machine; isolates switching the complete LLVM profile file, not a particular function or the prior linking-tool change",
+    "means": {
+      "official": {
+        "wall_seconds": 711.048853400002,
+        "cpu_seconds": 2769.4583333333335
+      },
+      "repaired": {
+        "wall_seconds": 613.4363387999983,
+        "cpu_seconds": 2381.2916666666665
+      }
+    },
+    "paired_rounds": [
+      {
+        "round": 1,
+        "seconds_saved": 106.21967879999647,
+        "wall_reduction_percent": 14.75591486572153
+      },
+      {
+        "round": 2,
+        "seconds_saved": 91.80230310000479,
+        "wall_reduction_percent": 12.968342886514094
+      },
+      {
+        "round": 3,
+        "seconds_saved": 94.81556190000993,
+        "wall_reduction_percent": 13.441267500212817
+      }
+    ],
+    "wall_reduction_percent": 13.727961747389472,
+    "seconds_saved": 97.61251460000369,
+    "uncertainty": "Three rounds on one machine; paired-round variation, not a multi-VM confidence interval"
+  },
+  "components": [
+    {
+      "name": "xtask-bootstrap",
+      "means": {
+        "official": {
+          "wall_seconds": 3.322757966667268,
+          "cpu_seconds": 10.744791666666666
+        },
+        "repaired": {
+          "wall_seconds": 2.9051470666672685,
+          "cpu_seconds": 9.213541666666666
+        }
+      },
+      "seconds_saved": 0.4176108999999997,
+      "wall_reduction_percent": 12.568201000172884
+    },
+    {
+      "name": "workspace-tests",
+      "means": {
+        "official": {
+          "wall_seconds": 554.2194648000004,
+          "cpu_seconds": 2167.5520833333335
+        },
+        "repaired": {
+          "wall_seconds": 476.8491868666679,
+          "cpu_seconds": 1859.7760416666667
+        }
+      },
+      "seconds_saved": 77.37027793333255,
+      "wall_reduction_percent": 13.960223854868204
+    },
+    {
+      "name": "native-tls-tests",
+      "means": {
+        "official": {
+          "wall_seconds": 12.197527300001335,
+          "cpu_seconds": 39.901041666666664
+        },
+        "repaired": {
+          "wall_seconds": 10.969896899998275,
+          "cpu_seconds": 34.828125
+        }
+      },
+      "seconds_saved": 1.2276304000030596,
+      "wall_reduction_percent": 10.064584155535572
+    },
+    {
+      "name": "gateway-native-tls-tests",
+      "means": {
+        "official": {
+          "wall_seconds": 70.79784783333162,
+          "cpu_seconds": 276.3802083333333
+        },
+        "repaired": {
+          "wall_seconds": 62.44203716666501,
+          "cpu_seconds": 242.515625
+        }
+      },
+      "seconds_saved": 8.355810666666606,
+      "wall_reduction_percent": 11.802351232960351
+    },
+    {
+      "name": "gateway-smartcard-tests",
+      "means": {
+        "official": {
+          "wall_seconds": 70.51125550000143,
+          "cpu_seconds": 274.8802083333333
+        },
+        "repaired": {
+          "wall_seconds": 60.27007079999991,
+          "cpu_seconds": 234.95833333333334
+        }
+      },
+      "seconds_saved": 10.241184700001519,
+      "wall_reduction_percent": 14.524184298493036
+    }
+  ],
+  "cpu_reduction_percent": 14.015977853671757,
+  "measured_blocks": 6,
+  "measured_commands": 30,
+  "excluded_warmup_blocks": 2,
+  "original_correctness_commands_passed": 8,
+  "experiment_job_accounting": {
+    "job_seconds": 5979.0,
+    "benchmark_step_seconds": 5486.0,
+    "measured_native_commands_seconds": 3973.455576600001,
+    "excluded_warmup_commands_seconds": 1316.0962781999951,
+    "untimed_correctness_seconds": 57.74158379999062,
+    "other_inside_benchmark_step_seconds": 138.70656140001302,
+    "outside_benchmark_step_seconds": 493.0,
+    "scope": "Eight-block experiment job, not a representative single-toolchain production CI job"
+  },
+  "compiler_production": {
+    "wall_seconds": {
+      "official": 4506.1535367,
+      "repaired": 4337.159597999998
+    },
+    "seconds_saved": 168.9939387000013,
+    "wall_reduction_percent": 3.7502925127527065,
+    "qualification": {
+      "official": {
+        "total_seconds": 630.5733716487885,
+        "helper_seconds": 87.17189119999966,
+        "tests_seconds": 542.2640897000019
+      },
+      "repaired": {
+        "total_seconds": 581.504230260849,
+        "helper_seconds": 36.16712959999859,
+        "tests_seconds": 545.1992026000007
+      }
+    },
+    "whole_ci_comparable": false,
+    "limitation": "One ordered pair, fixed profiles reused; control qualification recovered separately. No matched fresh whole-CI comparison."
+  },
+  "build_resource_checks": {
+    "official": {
+      "samples": 731,
+      "minimum_build_free_gib": 1805.7141761779785,
+      "minimum_available_ram_mib": 8076
+    },
+    "repaired": {
+      "samples": 798,
+      "minimum_build_free_gib": 1794.5584907531738,
+      "minimum_available_ram_mib": 8731
+    }
+  },
+  "evidence_sha256": {
+    "builds/official/build-test-helper.json": "8f890708720a4b69f6dfbec47620c4f4444f53c96a827886920b823fc9d9c091",
+    "builds/official/dist-manifest.json": "547238ce8eeeb7081cb807101f75b360ddef2bd50adf4a584400c29f506ba2f3",
+    "builds/official/extracted-dist-tests.json": "655d942ca3e79a6b8fffed94b418be9d30e367b1da39f1f9510a4364a1655514",
+    "builds/official/lld-CMakeCache.txt": "98aad6c69fb6200e09f8224f16b8771fd756f15baf9db696b6622201c05e4dc3",
+    "builds/official/llvm-CMakeCache.txt": "cf899e2d0a3e837a9fc95130c93def52f685dd70fcbc98a5e25f06540aea7f38",
+    "builds/official/production-bootstrap.toml": "7cbb89ad08b3432fe60544c2db6d198b81b1d4d72381519bfa98042a2124dcff",
+    "builds/official/production-metrics.json": "d482891eff7ff13ad11829624a9e58ac263555584a93a04b2b9f378e7773cc63",
+    "builds/official/production.json": "52c49ad308789e8df7205b667a24fded211afb8cdbdad34e57580523c8ec006f",
+    "builds/official/profile-use-audit.json": "8576218526c12382543a42366e3ee98f1d4d085c891288038cb1e6671cc61590",
+    "builds/official/qualification-result.json": "5846a29c3ef8b53bd7a683dcbd81da83aaac5bdd2447801117fa1569edbe75df",
+    "builds/official/readiness.json": "6c1084d383b69b1dbcfdad24f74fd63abf9aa94116d92519554de99c79fee30a",
+    "builds/official/result.json": "c0f4b385e9ef5a62a1de2f365162cf8de22e60919edcbe4729d4e98cc8d2d498",
+    "builds/official/telemetry.jsonl": "250530a61180caa84f5f660511124c623f94cedbb2416ec6e0672bce514494b0",
+    "builds/repaired/build-test-helper.json": "ff9ef3aa4b5ac7078319dc616a2c581f9a79dd1a19aebeba17c51cd928be834b",
+    "builds/repaired/dist-manifest.json": "e9cac236a13ab35db4bc92898ff8c0b2500fca6085e097c00dfcc70c448fd1d6",
+    "builds/repaired/extracted-dist-tests.json": "d08c14d485166aa503ac0aeb786545df8cad711bf100eddc35bfcd13a25aa836",
+    "builds/repaired/lld-CMakeCache.txt": "ed84f091a451d1da05542e6fa3b32f04977aad8322946403de525630eca45382",
+    "builds/repaired/llvm-CMakeCache.txt": "77cc6e946d026b2e369ace3608f0df4f5c745364179a1dbf3f45a74a1f70125a",
+    "builds/repaired/production-bootstrap.toml": "7cbb89ad08b3432fe60544c2db6d198b81b1d4d72381519bfa98042a2124dcff",
+    "builds/repaired/production-metrics.json": "d6fb2ff84407458d88728911429dc7a437210fb29fc123d1583b76c1ac78d8da",
+    "builds/repaired/production.json": "b007beca597a3165076d170454025cb7b05e2424d014d2453c3edc134cb5822a",
+    "builds/repaired/profile-use-audit.json": "06bf193ac4902ca0c8e887d77aca37897b790628b131d6b51a06f5b690a69d9f",
+    "builds/repaired/readiness.json": "0e0b501b5e0f6d989ff33e2c8a3ca8f21c3f8a5d133f3036e9774a90ad236f6c",
+    "builds/repaired/result.json": "ca45c016dba69ddbe97c6d0edc116d4a2c3bb4d3503aba42bbaaa8b03199f921",
+    "builds/repaired/telemetry.jsonl": "f623c8f81b4482777e9e01174584c1b867ac099583682a75c4067ddb352b0b99",
+    "jobs/continuation.json": "9b451f860eca65bd41e44c62000a96a7ae37501814dcddb5bb9728e4390dbf46",
+    "jobs/control-production.json": "588de2620b3a2d4525a824606c1f21b4d54f004afe570963a65a5308e2042080",
+    "jobs/control-qualification.json": "ddcf7e24ca399ff5e9d38415db445509bffcd7c02a4ca5b9a543783972a005f0",
+    "jobs/replay.json": "28daceca60c083924729769976787067b921ed54fd3076b972f969cf460d03b0",
+    "official-profile-audit.json": "747363f95029fc1e8af5b13473d866aab4caa413b9df8f0ec7f7deede6fae732",
+    "replay/index.json": "c930c03b9af7d10550d4817fad2dd8a1ea936fdb1e48a3f68a67921b6be0b928",
+    "replay/meter-validation/affinity.stdout": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+    "replay/meter-validation/self-test.json": "a7ae82500057c9efc03188c9f547d4828c22dd7937634e742bc543d23e5ca204",
+    "replay/official/cargo-1.94.1-x86_64-pc-windows-msvc.json": "70f75b22884f4396ad1cda832b559aa7ec5764c1a46a45dcd204eec8ae029e34",
+    "replay/official/rust-std-1.94.1-x86_64-pc-windows-msvc.json": "553b992a5dd78954a3f6ab262e3b61cc23410ec5ff214f3308df075033101fb8",
+    "replay/official/rustc-1.94.1-x86_64-pc-windows-msvc.json": "5ddc0bca5c51a4a1901a4069bd12281673f42cdb82a4006e0e99759677ca7caa",
+    "replay/readiness.json": "cac59deeb98a7317ea1f49b8b84851c7e74a6632c5444c1ed254c96b0c9c849b",
+    "replay/round-0-official/correctness.json": "e9a3c7e2e0211367407fe896f9369c5c8368ea2565ae0ca67bee33a207d31dba",
+    "replay/round-0-official/environment.json": "012b42565c34dc94da845d45cf832bffdec4d44d2964cb960e7beeb81ecdeba7",
+    "replay/round-0-official/gateway-native-tls-tests.measurement.json": "b9f3f17ccfa4484cccd4d7836ea6e8032aeef4a545df76e327e4ff7a5241bf4c",
+    "replay/round-0-official/gateway-smartcard-tests.measurement.json": "0c84e9689baa0befb42e03517918be88bdf2809512f55168992b4d3165adbf4a",
+    "replay/round-0-official/native-tls-tests.measurement.json": "2c4107faeed4c5c88e226ab70844ae408f7d844e35fcedd1aef6f0d55c107353",
+    "replay/round-0-official/results.json": "016a2290ab25abba7b6ffcf2f6b24e68ba32b77588735c5b94accc78329593e3",
+    "replay/round-0-official/workspace-tests.measurement.json": "ed735e28f1f0e7ccf3d084e647ee4b201d8b15e3b27e1cb5487be8c62d3dd3a0",
+    "replay/round-0-official/xtask-bootstrap.measurement.json": "563c7cb1e4231d1288099abd3c46b8ca1f92006af8e80a8608a34db7896923e0",
+    "replay/round-0-repaired/correctness.json": "2190c19ecdcf8301afa74f9c170e9b038bf48a2b9acb133a9fa4ea9989b3d342",
+    "replay/round-0-repaired/environment.json": "c486b6574939c561c028209f1d306f4672a1875b004e4191841d60005ed422b3",
+    "replay/round-0-repaired/gateway-native-tls-tests.measurement.json": "1a5ac25166e3e278af4e19ec81410661ddf4a61fb010f31e6d1d560c0ff84955",
+    "replay/round-0-repaired/gateway-smartcard-tests.measurement.json": "019cdc4f0aa4ac6d6b8d7b5095e16b662781b229f62539a36d221f907b0b5dfc",
+    "replay/round-0-repaired/native-tls-tests.measurement.json": "ed0fd7edb266df13f408a1ca81b04935e27ebd4cce8d3ed8f88b7afaf1fe56eb",
+    "replay/round-0-repaired/results.json": "6e24ec526d9f845c840fe5d4f840cd29b7acace67f4a5768ea868747529bfcf2",
+    "replay/round-0-repaired/workspace-tests.measurement.json": "74ef5d71381313ae4c7113d8516a030b9133adc369523429405aee5fa126ba75",
+    "replay/round-0-repaired/xtask-bootstrap.measurement.json": "446dea649580c2499ed9546318707c628e9211e464662fef5fef24e9e728e656",
+    "replay/round-1-official/environment.json": "c9b73f2cffaf3c1d29b2cde4e2e88b41f1e6305dbace03c8feb7bd87a36f7ede",
+    "replay/round-1-official/gateway-native-tls-tests.measurement.json": "96073a8c9abfef5a4b1e1644a3d59f9d33eeec56d17d6e55a6dbe89ef8312a68",
+    "replay/round-1-official/gateway-smartcard-tests.measurement.json": "b3e43e41a8b279f22edd5f5327b720efa60d67893c36e3c3f931fa45b6d53cbd",
+    "replay/round-1-official/native-tls-tests.measurement.json": "cafd292a7e04bcceb8634e8cdb80255f70cc8f983f7f6a2e2df43ca50653493e",
+    "replay/round-1-official/results.json": "2c203b129d59d90d858d9c55d47eb5059b79444708da98974e7153cc058860f3",
+    "replay/round-1-official/workspace-tests.measurement.json": "8f94e948d3f080d62b03d9bf1c27c8fa6c5fe0c3b7964d8676aa35ad85ebda5f",
+    "replay/round-1-official/xtask-bootstrap.measurement.json": "c8a2444d38a1d1482e813a45eac8e8e3bf8025e3ea17f96301f66d6c02345685",
+    "replay/round-1-repaired/environment.json": "d38219f96563cfcaf8c16dcf013b30028198d2d32883432fa47a3f5158b99b4e",
+    "replay/round-1-repaired/gateway-native-tls-tests.measurement.json": "d34fe5e56fce5909ce0bde0d109183d0c66ac50c5d98619d470e51aabae68bb7",
+    "replay/round-1-repaired/gateway-smartcard-tests.measurement.json": "af0c5f267df716c1ccd8556390e9f14893c6d66fde8612288c72149317a500b3",
+    "replay/round-1-repaired/native-tls-tests.measurement.json": "878cb3bc848d4d37ee43cd5c1b682158f245d872a8467a787792b055282524d8",
+    "replay/round-1-repaired/results.json": "8ec2ac67f7635364386bcfa1b8540e4f512d9ff77890b10bac418a317aeacc3d",
+    "replay/round-1-repaired/workspace-tests.measurement.json": "43a4ed2cad7b12b7ba7682dbd3b7c5df37b2d520bc76736c900fd27b1152f1ee",
+    "replay/round-1-repaired/xtask-bootstrap.measurement.json": "91f00a1c3dbe23b242f30537f70568ae67543c4d5bea1d329b2a4e3de79edce6",
+    "replay/round-2-official/environment.json": "17f7b208f2c0c386e3da75cb749e7a43bea9141077b7972c577e56b1ea274351",
+    "replay/round-2-official/gateway-native-tls-tests.measurement.json": "6d1c7e9fe57c7bb7ca50a319656db49cb5e29e2c79db9a571a830634060181f6",
+    "replay/round-2-official/gateway-smartcard-tests.measurement.json": "058ed8f23608e25af86472eae492598357c8afd9beff36633ecd425df4dbe7b5",
+    "replay/round-2-official/native-tls-tests.measurement.json": "6e95ded31c482836042746d42d5e0cb7ac4963fe647cbd4b52084869053a98c1",
+    "replay/round-2-official/results.json": "548d41742ac0b26eb5440e5c6e273fa9fad3a40e5751818c74f92797d4bd5506",
+    "replay/round-2-official/workspace-tests.measurement.json": "2dfda88ab8c3461767342fb55ae20e75bad3e3190048ee05af92edce77a1408e",
+    "replay/round-2-official/xtask-bootstrap.measurement.json": "de086cfcffc80278da722c5b8f79ff4e41a34941e9f77446ca268e2ce89585b0",
+    "replay/round-2-repaired/environment.json": "6a449c0856b66a40448e80349efa44f9207ec81d4ea6dd7a761c728f0e49b7b1",
+    "replay/round-2-repaired/gateway-native-tls-tests.measurement.json": "e2ee9c2154339d39fbd54232a3682319f09d18863ec0d66946dc6db02fa64602",
+    "replay/round-2-repaired/gateway-smartcard-tests.measurement.json": "04c7226b089fa10ab27882337e44f5042fb74a3f80e04e762589af1e7ac909f8",
+    "replay/round-2-repaired/native-tls-tests.measurement.json": "f8062fb23bd3e951f01a5aec392c38e59971c8cfe059bde38c679884431bd474",
+    "replay/round-2-repaired/results.json": "7445e3d9901dc19375c664e6aecd065ad1573d35207cbe51572c15e943d9c090",
+    "replay/round-2-repaired/workspace-tests.measurement.json": "dad9d4a01a0cb2370de7ae81648c0272cc6682769ccddb51cc677e0953e35243",
+    "replay/round-2-repaired/xtask-bootstrap.measurement.json": "309aef278f881093e0f64ba722eff046592c75e27bd40c5fdfa6544fd6739d99",
+    "replay/round-3-official/environment.json": "40cce45f8e2aa16e29555224ca26aa62fd7ce561f498b49497a671ae4fe023a0",
+    "replay/round-3-official/gateway-native-tls-tests.measurement.json": "83b7ff315f474463f2b670823a4594d9e13935bde35b0aa39e3113f081bb8728",
+    "replay/round-3-official/gateway-smartcard-tests.measurement.json": "18148ad033cb6160e1b3ca4c7a73018357c4bbee28c54a605f21dcc1643e8225",
+    "replay/round-3-official/native-tls-tests.measurement.json": "5407095c3c1e8629387948fda687215dbd4442eed832a9951b47ab84628e0a66",
+    "replay/round-3-official/results.json": "fda450b9de4ffcdf5e91697fba526af0fdf16e6bc31466c3ff97f6b524048d1c",
+    "replay/round-3-official/workspace-tests.measurement.json": "eaac5698c1be91bacb7fde69c389eead8358861c20e2e7db1118386d315905b8",
+    "replay/round-3-official/xtask-bootstrap.measurement.json": "226bb5dfc55aaef3812e40995e1a00dfd0dc8fd8b874b6ac435135127efc7ed3",
+    "replay/round-3-repaired/environment.json": "676cf73e213b18699050ae568c7c562416d46f154ab032951442cd6df6cf5c32",
+    "replay/round-3-repaired/gateway-native-tls-tests.measurement.json": "837f75c57747a33afd740e5bb0a1408b1ebda364ad3baa7764f8c8da0edce5eb",
+    "replay/round-3-repaired/gateway-smartcard-tests.measurement.json": "43fae16c2ea206c7d1642935c6f0a49a6c2d3db69c40cd12e1af876bb7d6f7c4",
+    "replay/round-3-repaired/native-tls-tests.measurement.json": "3046cf49293435de5d9780b7ab6606c9ab298688e7310fc10199161d864f2c8c",
+    "replay/round-3-repaired/results.json": "852b28f3e9bd6dadbc9263d568bd6ef5365b7891dfc1f2e20118f41b52ea9a22",
+    "replay/round-3-repaired/workspace-tests.measurement.json": "84789998c3b1fea2b305e37f263d715af241931324c9e614bcbaa1463e428ed7",
+    "replay/round-3-repaired/xtask-bootstrap.measurement.json": "90ab5cf2ef2a3970ea74cb6093435891873efa09370dbda1c88998c3b7f3b297",
+    "replay/summary.json": "62d71db02563920fc8496f1e0d4bad0dfe9e545b294e2c2d3d057be41d54ea08"
+  }
+}

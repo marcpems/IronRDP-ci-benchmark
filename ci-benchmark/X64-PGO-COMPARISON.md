@@ -135,8 +135,13 @@ A subsequent [direct audit of Rust's published reproducibility bundle](X64-PROFI
 confirmed the same 0 / 0 and 6 / 0 coverage in the official LLVM profile.
 This establishes that specific coverage gap, not that all official PGO is ineffective.
 Profile coverage is not by itself a performance estimate; the fresh IronRDP
-replay measures the overall recipe benefit, while the separately preregistered
-profile-only experiment will isolate changing the LLVM profile file.
+replay measures the overall recipe benefit. The subsequent
+[profile-only experiment](X64-PROFILE-ONLY.md) held Microsoft link/lib and the
+official Rust-side profile fixed: changing only the LLVM profile reduced
+IronRDP wall time by **13.73% (711.049 to 613.436 seconds)** on one self-hosted
+runner. All three measured rounds improved (12.97-14.76%; not a confidence
+interval). This is a different control and host from the five-VM study;
+the two percentages must not be subtracted to infer a linker contribution.
 
 ## 4. Resource checks and limits
 

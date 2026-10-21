@@ -100,8 +100,8 @@ measure variation between independent PGO-training runs.
 
 This qualifies the **toolchain replacement**, not a PGO-only causal effect.
 Both builds have the same Rust revision, but the local compiler uses LLVM
-linking tools and a different compiler-build environment. The official profile
-contents have not been audited. The direct contrast was added after the
+linking tools and a different compiler-build environment. Official profile
+contents had not been audited at that stage. The direct contrast was added after the
 original experiment, not preregistered as its primary comparison.
 Exact estimates and intervals are in [the native results](X64-NATIVE-RESULTS.md).
 
@@ -117,6 +117,17 @@ and **20.9% less versus the rebuilt upstream recipe (18.1-23.4%)**. See the
 [final comparison](X64-PGO-COMPARISON.md) for phase accounting, profile coverage
 and qualifications. The following explains why earlier production experiments
 could not supply this comparison.
+
+**Subsequent LLVM-profile-only qualification:** the official published LLVM
+profile was directly audited and has the same missing active coverage in the
+two checked backend areas. With source, Microsoft link/lib, the official
+Rust-side profile and other settings held fixed, replacing only the LLVM
+profile reduced offline IronRDP wall time **711.049 to 613.436 seconds:
+13.73% / 97.61 seconds saved**, with **14.02% less CPU**. All three measured
+rounds improved (12.97-14.76%, an observed range, not a confidence interval).
+This one-host/build-pair result is conditional on these rebuilt compilers;
+it is not the earlier five-VM shipping-binary contrast or a whole-CI percentage.
+See the [completed report, CI limits and permanent evidence](X64-PROFILE-ONLY.md).
 
 The original local x64 compiler-only build
 cannot be compared to upstream's full distribution; later full-release pilots
@@ -494,6 +505,9 @@ The accepted profile contains **179 / 595 active functions** in these groups;
 specific return-lowering and instruction-combining counters also confirm execution.
 This demonstrates why configured PGO is not proof of effective training;
 **it does not establish that official Windows x64 profiles have the same defect**.
+The later [direct official x64 profile audit and isolated replay](X64-PROFILE-ONLY.md)
+provide separate evidence of the official LLVM coverage gap and the benefit
+from replacing that profile; neither establishes that all official PGO is ineffective.
 
 **Reproducible evidence:** [all endpoint tables](ARM64-AB-RESULTS.md),
 [machine-readable estimates and intervals](ARM64-AB-RESULTS.json),
