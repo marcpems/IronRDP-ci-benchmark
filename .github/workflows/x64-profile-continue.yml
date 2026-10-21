@@ -1,13 +1,9 @@
 name: Continue qualified x64 profile-only comparison
 on:
-  push:
-    branches: [experiment/x64-profile-continue]
+  workflow_call:
 permissions:
   contents: read
   actions: read
-concurrency:
-  group: matched-x64-selfhost
-  cancel-in-progress: false
 jobs:
   preserve:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
