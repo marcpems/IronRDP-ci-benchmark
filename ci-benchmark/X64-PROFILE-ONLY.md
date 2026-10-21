@@ -35,7 +35,12 @@ ineffective or that this gap alone explains the earlier 18% toolchain benefit.
 ## Preregistered causal experiment
 
 **Status: control correctness passed; preserving artifacts and continuing the
-repaired build/replay. No profile-only performance result yet.** Replacement run
+repaired build/replay. No profile-only performance result yet.** Continuation
+[39611328907](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39611328907)
+uses harness `599cf40bdfcaec3aca1cec43e1027630357a1ccf`; preservation checks
+passed and artifact upload started.
+
+Replacement production run
 [39595776289](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39595776289)
 used harness `23ef5e31d9c4ad2ab48a8b0b7ec5ad381e95dea8`. Its official-profile
 distribution build succeeded in 4506.15 seconds but was incorrectly rejected
