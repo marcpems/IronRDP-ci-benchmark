@@ -130,10 +130,13 @@ these two backend areas. The local static-LLVM training relink produced
 substantial coverage in both, consistent with addressing the training-path
 gap in this reproduced x64 recipe.
 
-This does **not** establish the content or effectiveness of profiles used for
-official shipping Rust. Its binary is measured directly as a separate baseline.
-Profile coverage is evidence of execution, not by itself a performance estimate;
-the fresh IronRDP replay supplies that estimate.
+At this study's completion, the official shipping profile had not been inspected.
+A subsequent [direct audit of Rust's published reproducibility bundle](X64-PROFILE-ONLY.md)
+confirmed the same 0 / 0 and 6 / 0 coverage in the official LLVM profile.
+This establishes that specific coverage gap, not that all official PGO is ineffective.
+Profile coverage is not by itself a performance estimate; the fresh IronRDP
+replay measures the overall recipe benefit, while the separately preregistered
+profile-only experiment will isolate changing the LLVM profile file.
 
 ## 4. Resource checks and limits
 

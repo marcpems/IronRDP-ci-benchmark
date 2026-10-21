@@ -1,0 +1,143 @@
+name: Build one fixed-profile x64 full distribution
+on:
+  workflow_call:
+    inputs:
+      variant:
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  release:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 650
+    env:
+      PROFILE_VARIANT: ${{ inputs.variant }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - name: Reserve clean paths on the qualified ReFS SSD
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Wrong x64 runner' }
+          if ($env:PROFILE_VARIANT -notin @('official','repaired')) { throw 'Wrong variant' }
+          $volume = Get-Volume -DriveLetter D
+          $disk = Get-Disk -Number (Get-Partition -DriveLetter D).DiskNumber
+          if ($volume.FileSystem -ne 'ReFS' -or $disk.FriendlyName -ne 'NVMe HFS002TFM9X189N-SKhynix') { throw 'D: no longer matches readiness inventory' }
+          if ($volume.SizeRemaining -lt 180GB) { throw 'Insufficient ReFS build capacity' }
+          if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Correctness temp requires NTFS' }
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
+          $root = "D:\p$suffix"
+          if ($env:PROFILE_VARIANT -eq 'official') {
+            if (Test-Path -LiteralPath $root) { throw 'Refusing existing experiment root' }
+            New-Item -ItemType Directory "$root\inputs" | Out-Null
+            "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT" | Set-Content "$root\owner-run.txt"
+          } elseif ((Get-Content "$root\owner-run.txt").Trim() -ne "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT") {
+            throw 'Wrong paired build owner'
+          }
+          if (Test-Path -LiteralPath "$root\r") { throw 'Source/build from a previous cell remains' }
+          $correctness = "C:\pt$suffix\$env:PROFILE_VARIANT"
+          New-Item -ItemType Directory "$root\e\$env:PROFILE_VARIANT",$correctness | Out-Null
+          "PROFILE_ROOT=$root" >> $env:GITHUB_ENV
+          "CORRECTNESS_TEMP=$correctness" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - name: Record idle host and storage
+        shell: powershell
+        run: harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:PROFILE_ROOT\e\$env:PROFILE_VARIANT\readiness.json"
+      - name: Fetch pinned Rust into the identical fresh source path
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = "$env:PROFILE_ROOT\r"
+          git init --quiet $source
+          if ($LASTEXITCODE) { throw 'Source init failed' }
+          git -C $source remote add origin https://github.com/rust-lang/rust.git
+          if ($LASTEXITCODE) { throw 'Source remote failed' }
+          git -C $source fetch --quiet --depth 1 origin e408947bfd200af42db322daf0fadfe7e26d3bd1
+          if ($LASTEXITCODE) { throw 'Pinned source fetch failed' }
+          git -C $source checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Pinned source checkout failed' }
+          git -C $source submodule update --init --recursive --depth 1 --jobs 4
+          if ($LASTEXITCODE) { throw 'Pinned submodule checkout failed' }
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Download isolated build tools and official profile inputs
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tools = "$env:PROFILE_ROOT\r\citools"
+          New-Item -ItemType Directory "$tools\clang-rust","$env:PROFILE_ROOT\r\wix\bin" | Out-Null
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-win64.exe --output "$tools\LLVM-20.1.3-win64.exe"
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          7z x "-o$tools\clang-rust" "$tools\LLVM-20.1.3-win64.exe" -y | Out-Null
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip --output "$tools\wix311-binaries.zip"
+          if ($LASTEXITCODE) { throw 'WiX download failed' }
+          7z x "-o$env:PROFILE_ROOT\r\wix\bin" "$tools\wix311-binaries.zip" -y | Out-Null
+          if ($LASTEXITCODE) { throw 'WiX extraction failed' }
+          curl.exe --fail --location --retry 3 https://static.rust-lang.org/dist/reproducible-artifacts-1.94.1-x86_64-pc-windows-msvc.tar.xz --output "$env:PROFILE_ROOT\inputs\official.tar.xz"
+          if ($LASTEXITCODE) { throw 'Official profile download failed' }
+      - uses: actions/download-artifact@v6
+        if: inputs.variant == 'repaired'
+        with:
+          name: x64-pgo-local-evidence
+          path: ${{ env.PROFILE_ROOT }}/inputs/repaired
+          run-id: "39456859889"
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v6
+        if: inputs.variant == 'repaired'
+        with:
+          name: x64-profile-official-evidence
+          path: ${{ env.PROFILE_ROOT }}/reference
+      - name: Build with fixed profiles and run upstream distribution tests
+        shell: powershell
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\x64_profile_only.py --root $env:PROFILE_ROOT --variant $env:PROFILE_VARIANT --correctness-temp $env:CORRECTNESS_TEMP
+      - uses: actions/upload-artifact@v6
+        if: always() && env.PROFILE_ROOT != ''
+        with:
+          name: x64-profile-${{ inputs.variant }}-evidence
+          path: |
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.variant }}/*.json
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.variant }}/*.jsonl
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.variant }}/*.toml
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.variant }}/*.cmake
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.variant }}/*.txt
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.variant }}/*.stdout
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.variant }}/*.stderr
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.variant }}/*.profdata
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 1
+      - uses: actions/upload-artifact@v6
+        with:
+          name: x64-profile-${{ inputs.variant }}-dist
+          path: ${{ env.PROFILE_ROOT }}/r/build/dist
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Reclaim only this cell's owned source and build after both uploads
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
+          $expected = "D:\p$suffix"
+          if ($env:PROFILE_ROOT -ne $expected) { throw 'Unexpected cleanup root' }
+          if ((Get-Content "$expected\owner-run.txt").Trim() -ne "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT") { throw 'Ownership mismatch' }
+          if (!(Get-Content -Raw "$expected\e\$env:PROFILE_VARIANT\result.json" | ConvertFrom-Json).complete) { throw 'Unqualified source must remain' }
+          $source = Get-Item -LiteralPath "$expected\r"
+          if ($source.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Refusing redirected source' }
+          Remove-Item -LiteralPath $source.FullName -Recurse -Force

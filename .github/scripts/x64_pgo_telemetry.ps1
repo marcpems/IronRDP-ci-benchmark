@@ -1,4 +1,7 @@
-param([Parameter(Mandatory = $true)][string]$OutputDirectory)
+param(
+    [Parameter(Mandatory = $true)][string]$OutputDirectory,
+    [ValidatePattern('^[A-Za-z]:$')][string]$BuildDrive = 'C:'
+)
 $ErrorActionPreference = 'Stop'
 $paths = @(
     '\Processor(_Total)\% Processor Time',
@@ -17,6 +20,8 @@ try {
         $row = @{
             UTC = [datetime]::UtcNow.ToString('o')
             CFreeBytes = (Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'").FreeSpace
+            BuildDrive = $BuildDrive
+            BuildFreeBytes = (Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$BuildDrive'").FreeSpace
             Counters = @($counters.CounterSamples | Select-Object Path, CookedValue, Status)
         }
         $writer.WriteLine(($row | ConvertTo-Json -Depth 4 -Compress))

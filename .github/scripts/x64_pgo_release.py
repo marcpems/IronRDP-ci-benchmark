@@ -48,14 +48,15 @@ def preserve_literal_release_batch(llvm):
 
 
 @contextmanager
-def telemetry(output):
+def telemetry(output, build_drive="C:"):
     if os.environ.get("RUNNER_NAME") != "MARCPE-TEST01-X64":
         raise RuntimeError("Telemetry requires the dedicated x64 runner")
     with (output / "telemetry.stdout").open("wb") as stdout, (
             output / "telemetry.stderr").open("wb") as stderr:
         process = subprocess.Popen(
             ["powershell.exe", "-NoProfile", "-File",
-             str(Path(__file__).with_name("x64_pgo_telemetry.ps1")), "-OutputDirectory", str(output)],
+             str(Path(__file__).with_name("x64_pgo_telemetry.ps1")), "-OutputDirectory", str(output),
+             "-BuildDrive", build_drive],
             stdout=stdout, stderr=stderr,
         )
         try:
