@@ -89,7 +89,7 @@ jobs:
     steps:
       # Keep the runner's logical paths intact for checkout, caching, artifacts and post steps.
       # Never repurpose an existing volume or initialize storage on a self-hosted machine.
-      - name: Prepare Windows ARM build storage
+      - name: Prepare Windows Arm build storage
         if: runner.os == 'Windows' && runner.arch == 'ARM64' && runner.environment == 'github-hosted'
         shell: pwsh
         run: |
@@ -127,6 +127,15 @@ jobs:
             Write-Host 'Workspace is not an empty ordinary directory; leaving storage unchanged'
             return
           }
+          $cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }
+          if (Test-Path -LiteralPath $cargoHome) {
+            $cargoDirectory = Get-Item -LiteralPath $cargoHome -Force
+            if (-not $cargoDirectory.PSIsContainer -or
+                ($cargoDirectory.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+              Write-Host 'Cargo home is not an ordinary directory; leaving storage unchanged'
+              return
+            }
+          }
 
           # Dev Drive is ReFS with Windows' developer-workload defaults. Do not disable antivirus
           # or change filter/trust policy. Any provisioning failure must fail the job visibly.
@@ -146,23 +155,16 @@ jobs:
           Move-Item -LiteralPath $workspace.FullName -Destination 'D:\workspace'
           New-Item -ItemType Junction -Path $workspace.FullName -Target 'D:\workspace' | Out-Null
 
-          $cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }
-          New-Item -ItemType Directory -Path $cargoHome -Force | Out-Null
-          New-Item -ItemType Directory -Path 'D:\cargo-cache', 'D:\build-temp' | Out-Null
-          foreach ($name in @('registry', 'git')) {
-            $source = Join-Path $cargoHome $name
-            $destination = Join-Path 'D:\cargo-cache' $name
-            if (Test-Path -LiteralPath $source) {
-              $item = Get-Item -LiteralPath $source -Force
-              if (-not $item.PSIsContainer -or ($item.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
-                throw "refusing to relocate non-directory or linked Cargo cache: $source"
-              }
-              Move-Item -LiteralPath $source -Destination $destination
-            } else {
-              New-Item -ItemType Directory -Path $destination | Out-Null
-            }
-            New-Item -ItemType Junction -Path $source -Target $destination | Out-Null
+          # Give rust-cache the physical Cargo path: paths relative to the old C: workspace
+          # would otherwise traverse the junction's parents on D: when GNU tar saves/restores.
+          if (Test-Path -LiteralPath $cargoHome) {
+            Move-Item -LiteralPath $cargoHome -Destination 'D:\cargo-home'
+          } else {
+            New-Item -ItemType Directory -Path 'D:\cargo-home' | Out-Null
           }
+          New-Item -ItemType Junction -Path $cargoHome -Target 'D:\cargo-home' | Out-Null
+          New-Item -ItemType Directory -Path 'D:\build-temp' | Out-Null
+          "CARGO_HOME=D:\cargo-home" >> $env:GITHUB_ENV
           "TEMP=D:\build-temp" >> $env:GITHUB_ENV
           "TMP=D:\build-temp" >> $env:GITHUB_ENV
           Write-Host 'Workspace, Cargo source caches and compiler temporary files now use D: (ReFS)'
