@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -94,6 +95,33 @@ def audit_native_cache(source, output, profiles, tools):
         shutil.copy2(caches[0], output / f"{component}-CMakeCache.txt")
 
 
+def audit_profile_use(source, output, rustc_profile):
+    utility_main = re.compile(
+        r"warning: " + re.escape(source.as_posix())
+        + r"/src/llvm-project/llvm/(?:tools|utils)/[^:\r\n]+:"
+        r" function control flow change detected \(hash mismatch\) main Hash = \d+"
+        r" up to \d+ count discarded \[-Wbackend-plugin\]"
+    )
+    profile_use, warnings, utilities, rejected = False, [], [], []
+    for suffix in ("stdout", "stderr"):
+        with (output / f"fixed-profile-dist.{suffix}").open(errors="replace") as log:
+            for line in log:
+                normalized = line.strip().replace("\\\\", "\\").replace("\\", "/")
+                if "-Cprofile-use=" in line and rustc_profile.as_posix() in normalized:
+                    profile_use = True
+                if ("mismatched data" in line.lower() or "hash mismatch" in line.lower()
+                        or "out of date" in line.lower() and "profile" in line.lower()):
+                    warnings.append(line.strip())
+                    # Standalone tool entry points are not linked into rustc's LLVM backend.
+                    (utilities if utility_main.fullmatch(normalized) else rejected).append(line.strip())
+    return {
+        "rustc_profile_use": profile_use, "profile_mismatch_warnings": warnings,
+        "standalone_llvm_utility_main_warnings": utilities,
+        "rejected_profile_mismatch_warnings": rejected,
+        "policy": "Retain standalone LLVM tools/utils main-entry collisions; reject every other profile mismatch",
+    }
+
+
 def build(root, variant, correctness_temp):
     protocol = json.loads(PROTOCOL.read_text())
     output, source = root / "e" / variant, root / "r"
@@ -154,18 +182,12 @@ def build(root, variant, correctness_temp):
     production_finished = time.time()
     shutil.copy2(source / "build/metrics.json", output / "production-metrics.json")
     audit_native_cache(source, output, profiles, tools)
-    profile_use, warnings = False, []
-    for suffix in ("stdout", "stderr"):
-        with (output / f"fixed-profile-dist.{suffix}").open(errors="replace") as log:
-            for line in log:
-                if "-Cprofile-use=" in line and profiles["rustc"].as_posix() in line.replace("\\\\", "\\").replace("\\", "/"):
-                    profile_use = True
-                if ("mismatched data" in line.lower() or "hash mismatch" in line.lower()
-                        or "out of date" in line.lower() and "profile" in line.lower()):
-                    warnings.append(line.strip())
-    save(output / "profile-use-audit.json", {"rustc_profile_use": profile_use, "profile_mismatch_warnings": warnings})
-    if not profile_use or warnings:
+    audit = audit_profile_use(source, output, profiles["rustc"])
+    save(output / "profile-use-audit.json", audit)
+    if not audit["rustc_profile_use"] or audit["rejected_profile_mismatch_warnings"]:
         raise RuntimeError("Missing rustc profile use or mismatched profile data; inspect profile-use-audit.json")
+    print(f"Retained {len(audit['standalone_llvm_utility_main_warnings'])} standalone LLVM utility main "
+          "profile warnings; no other profile mismatches detected.", flush=True)
     files = sorted(path for path in (source / "build/dist").iterdir() if path.is_file())
     check_distribution(files)
     if f"rustc-codegen-cranelift-1.94.1-{HOST}.tar.xz" not in {path.name for path in files}:

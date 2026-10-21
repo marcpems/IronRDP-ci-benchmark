@@ -34,10 +34,23 @@ ineffective or that this gap alone explains the earlier 18% toolchain benefit.
 
 ## Preregistered causal experiment
 
-**Status: scheduled and running; no profile-only performance result yet.**
-Run [39584578532](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39584578532)
-uses harness commit `b175183e4fbf0cfd8be02dde9dc223bb37c84c34`.
-Its readiness job passed and the official-profile release job started.
+**Status: restarting after an overbroad qualification guard; no accepted
+profile-only performance result yet.**
+
+Initial run [39584578532](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39584578532),
+harness `b175183e4fbf0cfd8be02dde9dc223bb37c84c34`, completed its official-profile
+full distribution successfully in 4495.89 seconds, then stopped before
+correctness qualification. Its guard rejected 56 hash-mismatch diagnostics,
+all for `main` entry points in standalone `llvm/tools` or `llvm/utils`
+executables, not functions in the LLVM libraries linked into rustc. The
+official profile contains multiple `main` records, including a one-counter
+record with count 501, matching the discarded count in those diagnostics.
+
+The corrected guard retains and reports these narrowly identified standalone
+tool-entry collisions. Missing Rust profile use, LLVM library mismatches,
+non-`main` function mismatches, and unclassified warnings still reject a build.
+Both variants use the same guard. The original attempt remains excluded and
+preserved; the replacement pair starts with two fresh builds, not reused objects.
 
 Two clean complete Rust distributions use the same source path and revisions,
 clang-cl 20.1.3, Microsoft linker/librarian, official Rust-side PGO profile,

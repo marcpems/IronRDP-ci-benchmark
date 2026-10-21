@@ -8,11 +8,33 @@ import unittest
 from build_arm_compilers import digest, save
 from native_ci_probe import PROFILE_ENV, paired_order
 from offline_benchmark import NATIVE_COMMANDS
-from x64_profile_only import load_profiles, tests_only_helper, verify_pair
+from x64_profile_only import audit_profile_use, load_profiles, tests_only_helper, verify_pair
 from x64_profile_replay import summarize
 
 
 class ProfileOnlyTests(unittest.TestCase):
+    def test_profile_audit_retains_only_standalone_utility_main_collisions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source, profile = root / "r", root / "rustc-pgo.profdata"
+            prefix = f"warning: {source}/src/llvm-project/llvm"
+            suffix = (": function control flow change detected (hash mismatch) main "
+                      "Hash = 123 up to 501 count discarded [-Wbackend-plugin]")
+            expected = [prefix + "/tools/llc/llc.cpp" + suffix,
+                        prefix + "/utils/FileCheck/FileCheck.cpp" + suffix]
+            rejected = [prefix + "/lib/CodeGen/CodeGen.cpp" + suffix,
+                        (prefix + "/tools/llc/llc.cpp" + suffix).replace("main Hash", "compileModule Hash"),
+                        "warning: profile data may be out of date",
+                        prefix.replace(str(source), str(root / "other")) + "/tools/llc/llc.cpp" + suffix]
+            (root / "fixed-profile-dist.stdout").write_text(
+                f'"-Cprofile-use={profile}"\n' + "\n".join(expected + rejected), encoding="utf-8")
+            (root / "fixed-profile-dist.stderr").write_text("", encoding="utf-8")
+            audit = audit_profile_use(source, root, profile)
+            self.assertTrue(audit["rustc_profile_use"])
+            self.assertEqual(audit["standalone_llvm_utility_main_warnings"], expected)
+            self.assertEqual(audit["rejected_profile_mismatch_warnings"], rejected)
+            self.assertEqual(audit["profile_mismatch_warnings"], expected + rejected)
+
     def test_pair_rejects_common_input_changes_but_allows_only_llvm_profile(self):
         control = {
             "complete": True, "variant": "official", "protocol": {"fixed": True},
