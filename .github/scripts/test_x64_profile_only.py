@@ -8,11 +8,28 @@ import unittest
 from build_arm_compilers import digest, save
 from native_ci_probe import PROFILE_ENV, paired_order
 from offline_benchmark import NATIVE_COMMANDS
+from qualify_x64_profile_existing import verify_retained_evidence
 from x64_profile_only import audit_profile_use, load_profiles, tests_only_helper, verify_pair
 from x64_profile_replay import summarize
 
 
 class ProfileOnlyTests(unittest.TestCase):
+    def test_recovery_rejects_changed_or_failed_production_evidence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            save(root / "provenance.json", {"run_id": "original", "attempt": "1", "variant": "official"})
+            save(root / "fixed-profile-dist.json", {"exit_code": 0, "wall_seconds": 100})
+            expected = {"run_id": "original", "attempt": "1", "evidence_sha256": {
+                name: digest(root / name) for name in ("provenance.json", "fixed-profile-dist.json")}}
+            _, measurement = verify_retained_evidence(root, expected)
+            self.assertEqual(measurement["wall_seconds"], 100)
+            save(root / "fixed-profile-dist.json", {"exit_code": 1, "wall_seconds": 100})
+            with self.assertRaisesRegex(RuntimeError, "evidence changed"):
+                verify_retained_evidence(root, expected)
+            expected["evidence_sha256"]["fixed-profile-dist.json"] = digest(root / "fixed-profile-dist.json")
+            with self.assertRaisesRegex(RuntimeError, "successful production"):
+                verify_retained_evidence(root, expected)
+
     def test_profile_audit_retains_only_standalone_utility_main_collisions(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

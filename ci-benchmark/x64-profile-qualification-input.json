@@ -1,0 +1,14 @@
+{
+  "run_id": "39595776289",
+  "attempt": "1",
+  "root": "D:\\p957762891",
+  "evidence_sha256": {
+    "provenance.json": "faf0a514a1f89db684c7f9decd236b2fa130ae72328a9c7eaf93a9e199dcbf53",
+    "fixed-profile-dist.json": "52c49ad308789e8df7205b667a24fded211afb8cdbdad34e57580523c8ec006f",
+    "production-bootstrap.toml": "7cbb89ad08b3432fe60544c2db6d198b81b1d4d72381519bfa98042a2124dcff",
+    "fixed-profile-dist.stdout": "6248cbdda2586cc257dd025dd2e49db810ce0c6aa5606a0a301ebb3e8511f226",
+    "fixed-profile-dist.stderr": "1001d06fdf4f8c1ce9b79d8dd486c7f354a51086ca4f65482cabd941145979fe",
+    "production-metrics.json": "d482891eff7ff13ad11829624a9e58ac263555584a93a04b2b9f378e7773cc63"
+  },
+  "scope": "Qualify the retained completed official-profile distribution without rerunning production. Preserve original production identity and report separate qualification run identity."
+}

@@ -122,6 +122,18 @@ def audit_profile_use(source, output, rustc_profile):
     }
 
 
+def qualify_distribution(source, output, env, correctness_temp, expected_test_sha256, cores):
+    execute([sys.executable, "x.py", "build", "--set", "rust.debug=true", "opt-dist"],
+            source, env, output, "build-test-helper", timeout=1800, cores=cores)
+    helper = source / "build" / HOST / "stage1-tools-bin/opt-dist.exe"
+    test_env = {**env, "X64_PROFILE_ONLY_TESTS": "1",
+                "TEMP": str(correctness_temp), "TMP": str(correctness_temp)}
+    execute([helper, "windows-ci"], source, test_env, output, "extracted-dist-tests",
+            timeout=3600, cores=cores)
+    if digest(source / "src/tools/opt-dist/src/tests.rs") != expected_test_sha256:
+        raise RuntimeError("The upstream extracted-distribution test implementation changed")
+
+
 def build(root, variant, correctness_temp):
     protocol = json.loads(PROTOCOL.read_text())
     output, source = root / "e" / variant, root / "r"
@@ -190,8 +202,6 @@ def build(root, variant, correctness_temp):
           "profile warnings; no other profile mismatches detected.", flush=True)
     files = sorted(path for path in (source / "build/dist").iterdir() if path.is_file())
     check_distribution(files)
-    if f"rustc-codegen-cranelift-1.94.1-{HOST}.tar.xz" not in {path.name for path in files}:
-        raise RuntimeError("Missing required Cranelift distribution")
     if variant == "repaired":
         previous = json.loads((root / "reference/dist-manifest.json").read_text())
         if {row["name"] for row in previous} != {path.name for path in files}:
@@ -199,15 +209,8 @@ def build(root, variant, correctness_temp):
     save(output / "dist-manifest.json",
          [{"name": path.name, "bytes": path.stat().st_size, "sha256": digest(path)} for path in files])
     qualification_start = time.time()
-    execute(x + ["build", "--set", "rust.debug=true", "opt-dist"], source, env, output,
-            "build-test-helper", timeout=1800, cores=protocol["build_cores"])
-    helper = source / "build" / HOST / "stage1-tools-bin/opt-dist.exe"
-    test_env = {**env, "X64_PROFILE_ONLY_TESTS": "1",
-                "TEMP": str(correctness_temp), "TMP": str(correctness_temp)}
-    execute([helper, "windows-ci"], source, test_env, output, "extracted-dist-tests",
-            timeout=3600, cores=protocol["build_cores"])
-    if digest(test_module) != provenance["test_module_sha256"]:
-        raise RuntimeError("The upstream extracted-distribution test implementation changed")
+    qualify_distribution(source, output, env, correctness_temp,
+                         provenance["test_module_sha256"], protocol["build_cores"])
     save(output / "result.json", {
         **provenance, "complete": True, "started_unix": started, "finished_unix": time.time(),
         "production_seconds": production_finished - started,

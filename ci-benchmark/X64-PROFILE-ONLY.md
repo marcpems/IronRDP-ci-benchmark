@@ -34,10 +34,25 @@ ineffective or that this gap alone explains the earlier 18% toolchain benefit.
 
 ## Preregistered causal experiment
 
-**Status: replacement run in progress; no accepted profile-only performance
-result yet.** Run
+**Status: qualification-only recovery; no accepted profile-only performance
+result yet.** Replacement run
 [39595776289](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39595776289)
-uses corrected harness `23ef5e31d9c4ad2ab48a8b0b7ec5ad381e95dea8`.
+used harness `23ef5e31d9c4ad2ab48a8b0b7ec5ad381e95dea8`. Its official-profile
+distribution build succeeded in 4506.15 seconds but was incorrectly rejected
+by an added Cranelift-archive requirement. The pinned upstream
+`CraneliftCodegenBackend::run` explicitly omits that component on stable/beta;
+the previously accepted 1.94.1 manifests likewise contain no Cranelift archive.
+The check now reuses the existing stable-distribution validator.
+
+The retained distribution is being qualified without another compiler build.
+Original production provenance, raw logs, measurement, configuration and metrics
+are hash-pinned in
+[`x64-profile-qualification-input.json`](x64-profile-qualification-input.json).
+Qualification uses separate output and run identities, verifies native tools,
+profiles and test implementation, and checks archive hashes before and after
+the upstream tests. It does not overwrite or relabel the failed Actions job.
+Any eventual CI accounting must identify the split production/qualification
+runs; a resumed job is not a fresh whole-CI timing sample.
 
 Initial run [39584578532](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39584578532),
 harness `b175183e4fbf0cfd8be02dde9dc223bb37c84c34`, completed its official-profile
@@ -52,7 +67,7 @@ The corrected guard retains and reports these narrowly identified standalone
 tool-entry collisions. Missing Rust profile use, LLVM library mismatches,
 non-`main` function mismatches, and unclassified warnings still reject a build.
 Both variants use the same guard. The original attempt remains excluded and
-preserved; the replacement pair starts with two fresh builds, not reused objects.
+preserved; the replacement control was also a fresh build, not reused objects.
 
 Two clean complete Rust distributions use the same source path and revisions,
 clang-cl 20.1.3, Microsoft linker/librarian, official Rust-side PGO profile,

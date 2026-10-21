@@ -1,0 +1,68 @@
+name: Qualify retained official-profile x64 distribution
+on:
+  push:
+    branches: [experiment/x64-profile-qualification]
+permissions:
+  contents: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  qualify:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 100
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Verify retained paths and reserve separate qualification evidence
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Wrong runner' }
+          $disk = Get-Disk -Number (Get-Partition -DriveLetter D).DiskNumber
+          if ((Get-Volume -DriveLetter D).FileSystem -ne 'ReFS' -or $disk.FriendlyName -ne 'NVMe HFS002TFM9X189N-SKhynix') { throw 'Build volume changed' }
+          if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Correctness temp requires NTFS' }
+          $input = Get-Content -Raw ci-benchmark\x64-profile-qualification-input.json | ConvertFrom-Json
+          if ($input.root -ne 'D:\p957762891') { throw 'Unexpected recovery root' }
+          if ((Get-Content "$($input.root)\owner-run.txt").Trim() -ne "$($input.run_id)/$($input.attempt)") { throw 'Retained root owner differs' }
+          $output = "$($input.root)\e\qualification-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          if (Test-Path -LiteralPath $output) { throw 'Refusing existing qualification output' }
+          $correctness = "C:\pq$($env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8))$env:GITHUB_RUN_ATTEMPT"
+          New-Item -ItemType Directory $correctness | Out-Null
+          "QUALIFICATION_OUTPUT=$output" >> $env:GITHUB_ENV
+          "CORRECTNESS_TEMP=$correctness" >> $env:GITHUB_ENV
+      - name: Check idle state
+        shell: powershell
+        run: .github\scripts\x64_pgo_preflight.ps1 -Output "$env:CORRECTNESS_TEMP\readiness.json"
+      - name: Qualify the hash-pinned retained full distribution without rebuilding it
+        shell: powershell
+        run: .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\qualify_x64_profile_existing.py
+      - uses: actions/upload-artifact@v6
+        if: always() && env.QUALIFICATION_OUTPUT != ''
+        with:
+          name: x64-profile-official-qualification
+          path: |
+            ${{ env.QUALIFICATION_OUTPUT }}/*.json
+            ${{ env.QUALIFICATION_OUTPUT }}/*.jsonl
+            ${{ env.QUALIFICATION_OUTPUT }}/*.txt
+            ${{ env.QUALIFICATION_OUTPUT }}/*.stdout
+            ${{ env.QUALIFICATION_OUTPUT }}/*.stderr
+            ${{ env.CORRECTNESS_TEMP }}/readiness.json
+          retention-days: 30
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v6
+        with:
+          name: x64-profile-official-dist
+          path: D:/p957762891/r/build/dist
+          retention-days: 30
+          if-no-files-found: error
+          compression-level: 0
