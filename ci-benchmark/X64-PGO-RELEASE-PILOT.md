@@ -110,10 +110,13 @@ remains **957.41 to 791.12 seconds: 17.4% less offline native IronRDP wall time,
 It used five independent standard Windows VMs and the earlier fixed compiler
 artifacts, without added ThinLTO.
 
-The new full-release artifacts above have **not yet been replayed on IronRDP**.
-Therefore the 17.4% downstream benefit and 2.51% CI increase answer different
-endpoints using different artifact sets; they are not a jointly measured
-cost/benefit pair or a break-even estimate.
+The new full-release artifacts have now completed their
+[own five-VM IronRDP replay](X64-PGO-FRESH-REPLAY.md): **18.0% less wall time
+versus official shipping Rust (95% interval 15.0-20.8%)**, and **20.9% less
+versus the rebuilt upstream recipe (18.1-23.4%)**. The earlier 17.4% result
+remains separate. The fresh replay and this first release pair use the same
+compiler artifacts, but different benchmark/release machines and CPU allocations;
+they do not establish a general break-even count.
 
 The follow-up [replay protocol](x64-pgo-replay-protocol.json) pins these two
 compiler archive hashes before measurement. Five independent standard four-CPU

@@ -1,6 +1,6 @@
 # Windows Rust compiler performance: investigation summary
 
-Updated 20 October 2026. This is the end-to-end summary of the problem,
+Updated 21 October 2026. This is the end-to-end summary of the problem,
 investigation stages, measured results and remaining limitations. Detailed
 reports and reproducible evidence are linked throughout. All experiments were
 conducted in forks; no upstream rollout is claimed. The broad campaign stopped
@@ -26,18 +26,24 @@ an earlier consolidation.
   These compilers used rustc/LLVM PGO, Rust/LLVM ThinLTO and LLVM linking tools.
   A matched x64 comparison with identical profiles isolated a **7.6% wall-time
   reduction from adding both ThinLTO modes**.
-- **Direct x64 upstream-PGO versus local-PGO comparison, without added ThinLTO:**
+- **Earlier direct x64 upstream-PGO versus local-PGO comparison, without added ThinLTO:**
   reanalysis of the accepted paired trials gives **957.41 to 791.12 seconds**,
   or **17.4% less IronRDP native compilation wall time (95% interval 15.2-19.1%)**.
   This is a toolchain-replacement result, not proof of better PGO profiles alone:
   compiler-build/linker differences remain.
+- **Fresh full-release x64 artifacts confirmed the IronRDP benefit:** five
+  independent standard Windows VMs measured **922.50 to 756.28 seconds** versus
+  official shipping Rust, **18.0% less wall time (95% interval 15.0-20.8%)**.
+  Compared with the separately rebuilt upstream recipe, local PGO saved **20.9%
+  (18.1-23.4%)**. Same official Cargo/std and no added ThinLTO were used.
+  See the [fresh-artifact report and persistent raw evidence](X64-PGO-FRESH-REPLAY.md).
 - **The first matched x64 full-release PGO pair qualified:** local production
   took **2h17m28s versus 2h14m19s (+2.34%)**; whole CI jobs took
   **2h54m00s versus 2h49m44s (+2.51%, 4m16s extra)**. This is one fresh
   NVMe/16-LP pair, not a stable repeated estimate. The upstream-recipe rebuild
   had no active LLVM counters in two checked backend areas; the local build did.
   This does not prove a gap in official shipping profiles. Fresh downstream
-  replay and reverse-order production repetitions remain outstanding.
+  replay passed; the reverse-order production repetition is still running.
   See the [qualified pilot report](X64-PGO-RELEASE-PILOT.md).
 - **Keeping Microsoft linking tools captures much of the benefit.** Nine
   qualified full-release pilots measured **21.5-24.6% less IronRDP compilation

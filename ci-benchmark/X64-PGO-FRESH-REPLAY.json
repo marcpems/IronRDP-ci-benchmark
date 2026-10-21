@@ -1,0 +1,1533 @@
+{
+  "protocol": {
+    "schema": 1,
+    "study": "fresh-x64-pgo-full-release-ironrdp-replay",
+    "release_run": "39456859889",
+    "release_attempt": "1",
+    "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+    "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+    "rust_version": "1.94.1",
+    "host": "x86_64-pc-windows-msvc",
+    "variants": [
+      "official",
+      "upstream",
+      "local"
+    ],
+    "compiler_archive_sha256": {
+      "upstream": "79c91d962715caaa06b5b2c1ccdcc96e3e183b27a971cb6ccee1763e3dd547b8",
+      "local": "80b69e1d1580402909f620705edac0aea3dbbd3f54335f3a766528a730dfb4e8"
+    },
+    "compiler_metadata_sha256": {
+      "upstream": "166d2b1a223585c8f4994052fd255644207ff479adca1409803872a4fab3a303",
+      "local": "87c9b4b4053b7a1d9e79174e5a59365330d8cfd167db260e2451056f3c2b96a9"
+    },
+    "cores": 4,
+    "independent_vms": 5,
+    "runner": "windows-2025",
+    "warmup_rounds": 1,
+    "measured_rounds": 3,
+    "primary_endpoint": "Sum of five original offline native Cargo compilation commands per block",
+    "primary_contrast": "Official shipping Rust to fresh local PGO: practical adoption",
+    "secondary_contrasts": [
+      "Rebuilt upstream recipe to local PGO",
+      "Official shipping Rust to rebuilt upstream recipe"
+    ],
+    "shared_inputs": "Official Rust 1.94.1 Cargo and byte-identical official native target libraries for all compilers",
+    "cold_artifacts": "Fresh target per compiler/round; five commands share the initially empty native target",
+    "order": "Existing counterbalanced three-variant rotation by VM and round, reversing alternate rounds",
+    "correctness": "Four original native cargo test commands for every compiler/VM after excluded round zero; no filters or ignores",
+    "aggregation": "Average three measured totals per VM, then equal-weight five VM means",
+    "uncertainty": "10000 paired whole-VM bootstrap draws, seed 1012026, 95% percentile intervals; conditional on fixed compiler artifacts",
+    "exclusions": "Fixed warmup only; reject incomplete or failed matrices, mixed attempts, changed inputs; never trim slow samples",
+    "scope": "No added ThinLTO; recipe comparison also changes native compiler-build linking tools; not isolated profile quality",
+    "ci_endpoint": "Compiler production cost is measured separately on the dedicated NVMe runner"
+  },
+  "workflow_attempt": [
+    "39506872211",
+    "1"
+  ],
+  "vm_means": {
+    "1": {
+      "official": {
+        "xtask-bootstrap": {
+          "wall_seconds": 3.4380983666666602,
+          "cpu_seconds": 10.453125
+        },
+        "workspace-tests": {
+          "wall_seconds": 519.5457112666663,
+          "cpu_seconds": 1943.4322916666667
+        },
+        "native-tls-tests": {
+          "wall_seconds": 12.261022233333279,
+          "cpu_seconds": 37.546875
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 69.57007213333327,
+          "cpu_seconds": 261.1354166666667
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 69.6099980999996,
+          "cpu_seconds": 261.703125
+        },
+        "native-total": {
+          "wall_seconds": 674.4249020999991,
+          "cpu_seconds": 2514.2708333333335
+        }
+      },
+      "upstream": {
+        "xtask-bootstrap": {
+          "wall_seconds": 3.3976956999999857,
+          "cpu_seconds": 10.203125
+        },
+        "workspace-tests": {
+          "wall_seconds": 570.0046156000003,
+          "cpu_seconds": 2085.3854166666665
+        },
+        "native-tls-tests": {
+          "wall_seconds": 12.853062866666429,
+          "cpu_seconds": 38.505208333333336
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 73.27591166666662,
+          "cpu_seconds": 273.5364583333333
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 72.23751130000012,
+          "cpu_seconds": 270.28125
+        },
+        "native-total": {
+          "wall_seconds": 731.7687971333335,
+          "cpu_seconds": 2677.9114583333335
+        }
+      },
+      "local": {
+        "xtask-bootstrap": {
+          "wall_seconds": 2.976324533333203,
+          "cpu_seconds": 8.8125
+        },
+        "workspace-tests": {
+          "wall_seconds": 454.42865153333304,
+          "cpu_seconds": 1687.4947916666667
+        },
+        "native-tls-tests": {
+          "wall_seconds": 10.928947733333038,
+          "cpu_seconds": 32.203125
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 58.63953246666673,
+          "cpu_seconds": 216.828125
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 55.02321326666697,
+          "cpu_seconds": 205.05208333333334
+        },
+        "native-total": {
+          "wall_seconds": 581.9966695333329,
+          "cpu_seconds": 2150.390625
+        }
+      }
+    },
+    "2": {
+      "official": {
+        "xtask-bootstrap": {
+          "wall_seconds": 5.653730366666726,
+          "cpu_seconds": 16.802083333333332
+        },
+        "workspace-tests": {
+          "wall_seconds": 867.389141966667,
+          "cpu_seconds": 3250.5208333333335
+        },
+        "native-tls-tests": {
+          "wall_seconds": 27.323111866666903,
+          "cpu_seconds": 65.53125
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 116.81256199999946,
+          "cpu_seconds": 422.015625
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 114.51740346666672,
+          "cpu_seconds": 419.546875
+        },
+        "native-total": {
+          "wall_seconds": 1131.6959496666668,
+          "cpu_seconds": 4174.416666666667
+        }
+      },
+      "upstream": {
+        "xtask-bootstrap": {
+          "wall_seconds": 6.716897566666982,
+          "cpu_seconds": 17.421875
+        },
+        "workspace-tests": {
+          "wall_seconds": 908.7911766999993,
+          "cpu_seconds": 3264.7135416666665
+        },
+        "native-tls-tests": {
+          "wall_seconds": 21.079534733333276,
+          "cpu_seconds": 63.135416666666664
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 113.89368706666664,
+          "cpu_seconds": 421.6979166666667
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 112.26821026666676,
+          "cpu_seconds": 414.7291666666667
+        },
+        "native-total": {
+          "wall_seconds": 1162.7495063333329,
+          "cpu_seconds": 4181.697916666667
+        }
+      },
+      "local": {
+        "xtask-bootstrap": {
+          "wall_seconds": 4.864214666666764,
+          "cpu_seconds": 13.28125
+        },
+        "workspace-tests": {
+          "wall_seconds": 723.8325908999996,
+          "cpu_seconds": 2605.5416666666665
+        },
+        "native-tls-tests": {
+          "wall_seconds": 17.52510420000029,
+          "cpu_seconds": 51.546875
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 91.89618500000022,
+          "cpu_seconds": 340.1927083333333
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 89.98181819999961,
+          "cpu_seconds": 325.9635416666667
+        },
+        "native-total": {
+          "wall_seconds": 928.0999129666665,
+          "cpu_seconds": 3336.5260416666665
+        }
+      }
+    },
+    "3": {
+      "official": {
+        "xtask-bootstrap": {
+          "wall_seconds": 4.221714133333383,
+          "cpu_seconds": 12.427083333333334
+        },
+        "workspace-tests": {
+          "wall_seconds": 643.7638740333335,
+          "cpu_seconds": 2389.7083333333335
+        },
+        "native-tls-tests": {
+          "wall_seconds": 16.209076466666676,
+          "cpu_seconds": 45.864583333333336
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 84.10295653333287,
+          "cpu_seconds": 307.7604166666667
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 89.73957986666665,
+          "cpu_seconds": 313.1822916666667
+        },
+        "native-total": {
+          "wall_seconds": 838.0372010333331,
+          "cpu_seconds": 3068.9427083333335
+        }
+      },
+      "upstream": {
+        "xtask-bootstrap": {
+          "wall_seconds": 4.425764499999938,
+          "cpu_seconds": 12.630208333333334
+        },
+        "workspace-tests": {
+          "wall_seconds": 672.8674239000002,
+          "cpu_seconds": 2435.578125
+        },
+        "native-tls-tests": {
+          "wall_seconds": 15.707569866666745,
+          "cpu_seconds": 46.453125
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 82.90586863333344,
+          "cpu_seconds": 309.6979166666667
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 82.15838823333372,
+          "cpu_seconds": 307.625
+        },
+        "native-total": {
+          "wall_seconds": 858.065015133334,
+          "cpu_seconds": 3111.984375
+        }
+      },
+      "local": {
+        "xtask-bootstrap": {
+          "wall_seconds": 3.3889233666665555,
+          "cpu_seconds": 9.833333333333334
+        },
+        "workspace-tests": {
+          "wall_seconds": 523.2472130000002,
+          "cpu_seconds": 1987.8645833333333
+        },
+        "native-tls-tests": {
+          "wall_seconds": 13.197235333333387,
+          "cpu_seconds": 39.057291666666664
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 69.0250282666669,
+          "cpu_seconds": 258.0364583333333
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 66.91479819999995,
+          "cpu_seconds": 245.20833333333334
+        },
+        "native-total": {
+          "wall_seconds": 675.773198166667,
+          "cpu_seconds": 2540.0
+        }
+      }
+    },
+    "4": {
+      "official": {
+        "xtask-bootstrap": {
+          "wall_seconds": 4.038643733333477,
+          "cpu_seconds": 12.057291666666666
+        },
+        "workspace-tests": {
+          "wall_seconds": 642.3768152999997,
+          "cpu_seconds": 2435.7760416666665
+        },
+        "native-tls-tests": {
+          "wall_seconds": 16.608277100000123,
+          "cpu_seconds": 46.59375
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 83.8857954999997,
+          "cpu_seconds": 315.6822916666667
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 83.70584636666702,
+          "cpu_seconds": 317.5885416666667
+        },
+        "native-total": {
+          "wall_seconds": 830.6153780000001,
+          "cpu_seconds": 3127.6979166666665
+        }
+      },
+      "upstream": {
+        "xtask-bootstrap": {
+          "wall_seconds": 4.44646219999989,
+          "cpu_seconds": 12.692708333333334
+        },
+        "workspace-tests": {
+          "wall_seconds": 662.4376198333339,
+          "cpu_seconds": 2439.7604166666665
+        },
+        "native-tls-tests": {
+          "wall_seconds": 16.505114600000223,
+          "cpu_seconds": 46.947916666666664
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 86.63875063333307,
+          "cpu_seconds": 313.3125
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 83.74800703333312,
+          "cpu_seconds": 309.6041666666667
+        },
+        "native-total": {
+          "wall_seconds": 853.7759543000002,
+          "cpu_seconds": 3122.3177083333335
+        }
+      },
+      "local": {
+        "xtask-bootstrap": {
+          "wall_seconds": 4.784642800000104,
+          "cpu_seconds": 10.072916666666666
+        },
+        "workspace-tests": {
+          "wall_seconds": 553.5719139666661,
+          "cpu_seconds": 2013.203125
+        },
+        "native-tls-tests": {
+          "wall_seconds": 14.094223866666047,
+          "cpu_seconds": 40.458333333333336
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 70.57027406666687,
+          "cpu_seconds": 257.5572916666667
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 72.05573666666685,
+          "cpu_seconds": 251.26041666666666
+        },
+        "native-total": {
+          "wall_seconds": 715.0767913666659,
+          "cpu_seconds": 2572.5520833333335
+        }
+      }
+    },
+    "5": {
+      "official": {
+        "xtask-bootstrap": {
+          "wall_seconds": 5.665352600000006,
+          "cpu_seconds": 16.786458333333332
+        },
+        "workspace-tests": {
+          "wall_seconds": 864.2131862000002,
+          "cpu_seconds": 3232.1822916666665
+        },
+        "native-tls-tests": {
+          "wall_seconds": 25.599613099999562,
+          "cpu_seconds": 64.53125
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 115.26330943333353,
+          "cpu_seconds": 418.9583333333333
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 126.99396983333342,
+          "cpu_seconds": 421.4895833333333
+        },
+        "native-total": {
+          "wall_seconds": 1137.7354311666668,
+          "cpu_seconds": 4153.947916666667
+        }
+      },
+      "upstream": {
+        "xtask-bootstrap": {
+          "wall_seconds": 6.666158866666895,
+          "cpu_seconds": 17.182291666666668
+        },
+        "workspace-tests": {
+          "wall_seconds": 904.1428950333325,
+          "cpu_seconds": 3234.8125
+        },
+        "native-tls-tests": {
+          "wall_seconds": 21.588539566666743,
+          "cpu_seconds": 62.260416666666664
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 130.962648033333,
+          "cpu_seconds": 416.3854166666667
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 110.05091153333372,
+          "cpu_seconds": 413.6458333333333
+        },
+        "native-total": {
+          "wall_seconds": 1173.4111530333328,
+          "cpu_seconds": 4144.286458333333
+        }
+      },
+      "local": {
+        "xtask-bootstrap": {
+          "wall_seconds": 4.852818199999699,
+          "cpu_seconds": 12.84375
+        },
+        "workspace-tests": {
+          "wall_seconds": 681.3517335666669,
+          "cpu_seconds": 2556.5104166666665
+        },
+        "native-tls-tests": {
+          "wall_seconds": 16.89020513333374,
+          "cpu_seconds": 50.348958333333336
+        },
+        "gateway-native-tls-tests": {
+          "wall_seconds": 89.1025556333334,
+          "cpu_seconds": 329.7291666666667
+        },
+        "gateway-smartcard-tests": {
+          "wall_seconds": 88.23345730000074,
+          "cpu_seconds": 317.1458333333333
+        },
+        "native-total": {
+          "wall_seconds": 880.4307698333345,
+          "cpu_seconds": 3266.578125
+        }
+      }
+    }
+  },
+  "evidence_sha256": {
+    "x64-pgo-fresh-replay-1/index.json": "45484afbf804350af86411197426be470cd9a570e97f4d887f5430a920610055",
+    "x64-pgo-fresh-replay-1/meter-validation/self-test.json": "5223f908d90e11c311ddaeba9102fc60fdc09872336c77dd96066af719de4719",
+    "x64-pgo-fresh-replay-1/round-0-local/results.json": "c14d16a7cd08371a7264db52d4d5241538286a1e3c2258b3e8c19418b841b1da",
+    "x64-pgo-fresh-replay-1/round-0-official/results.json": "05a4ada1d378bd31f1885e17c6d7901ff6b6f2b7ef776b20fad418192944adfc",
+    "x64-pgo-fresh-replay-1/round-0-upstream/results.json": "6a34b4cc5c466ac4759112454da1c9f7899ca603a7c307cc2c9358dacda677a0",
+    "x64-pgo-fresh-replay-1/round-1-local/results.json": "293b968182ab6fbbc0de0527350b2e01df5e01b8e058a1921120c8a7dcd16267",
+    "x64-pgo-fresh-replay-1/round-1-official/results.json": "4458a13988ac48f29f716e13ec4ce624443b7d977cbf0f65a3899bec19f217ba",
+    "x64-pgo-fresh-replay-1/round-1-upstream/results.json": "24c0476814316d1d163de7493f7a174143161e0df7193262968036408db90c4c",
+    "x64-pgo-fresh-replay-1/round-2-local/results.json": "f8720a058e95ee87f23b5a34cb5c9c61eb9af46a68e1242ce0dd67985f45126d",
+    "x64-pgo-fresh-replay-1/round-2-official/results.json": "83f819a63dcbc580fac9ac8f7f91d216bbbac78166f4e6567335f19d0cae95bd",
+    "x64-pgo-fresh-replay-1/round-2-upstream/results.json": "10f293f17eb8ea4a9f86a9ce21abb9667ad73bac4928670b5c3948ea6f09659e",
+    "x64-pgo-fresh-replay-1/round-3-local/results.json": "7673fcb8698f48e06574b1715b2d943951aec5e9862b1f6647bc4c5185e7c5fc",
+    "x64-pgo-fresh-replay-1/round-3-official/results.json": "5e54af51eee0cdec0cf9d9d008eab6ae2ae37782662a9c6e59af6b20f0a3195b",
+    "x64-pgo-fresh-replay-1/round-3-upstream/results.json": "af6c3ec1a2e9ef3a6b08047a4e51c76fc7b7a785cc6e31ae896a72e0e9d946e1",
+    "x64-pgo-fresh-replay-2/index.json": "545ab64696d08b1d8fc87577bcecb04d29ee72f148988d90b44c2e5e23780626",
+    "x64-pgo-fresh-replay-2/meter-validation/self-test.json": "668fb079ddc65890db511154bc2eb544b6f6a2823bff1a4d61937c537e491413",
+    "x64-pgo-fresh-replay-2/round-0-local/results.json": "b09a39cba3d942a3229455128df7c94beeed196ea2e63d2eeac031b099d6d4bf",
+    "x64-pgo-fresh-replay-2/round-0-official/results.json": "c930c98232900181efe768d32eca1d27daf704ba8b79b1da0488f8c5c70489bb",
+    "x64-pgo-fresh-replay-2/round-0-upstream/results.json": "a853e28b19f16022857d52567fffebdcce04dfb7d335084f1ad58944ca09a88a",
+    "x64-pgo-fresh-replay-2/round-1-local/results.json": "17945f2b4635eb97c903f21b333d8bb3774770a9a908c8791605ff85fff395cc",
+    "x64-pgo-fresh-replay-2/round-1-official/results.json": "92abe67cc2121513c394d63f2b353db05f558b1954150db82cb95fd13fe1abe7",
+    "x64-pgo-fresh-replay-2/round-1-upstream/results.json": "abc83774bcb6ff4bdc58d8b66cad464ecf2189b5c3020e8d7dc9ceaa2a801c96",
+    "x64-pgo-fresh-replay-2/round-2-local/results.json": "67d4dcacaaa917f6fbe6edc06fc449e8951de4ac5159e66ebfe27111fd5684c8",
+    "x64-pgo-fresh-replay-2/round-2-official/results.json": "4bd02e1d83249aef8dd84089da0c3e79c9948f5cde6a919cae3582cb6be57705",
+    "x64-pgo-fresh-replay-2/round-2-upstream/results.json": "8ce7cdf559f31aa722c21b810afe44d6aa311e629cbb99a546a348d9c720ffdb",
+    "x64-pgo-fresh-replay-2/round-3-local/results.json": "37350047ce937bf2bf23a279df022b56dff3cf666dcfc2e4307e157dcf8d325a",
+    "x64-pgo-fresh-replay-2/round-3-official/results.json": "996a840c880051b45a5a7597e1cea5763e42c65795af2bbe7babcb1449b2398c",
+    "x64-pgo-fresh-replay-2/round-3-upstream/results.json": "02a5e06792a45daf673dc8bad8d9194578863386215fb3c5273a0b3465ae48c1",
+    "x64-pgo-fresh-replay-3/index.json": "30eeb9501a1411a440c025456be1f9a6f1138533f0d8406639048432522a5337",
+    "x64-pgo-fresh-replay-3/meter-validation/self-test.json": "f52640223d41d264f44db83d0a528a0ed7cf5815865c406cc5aad62d9820dba3",
+    "x64-pgo-fresh-replay-3/round-0-local/results.json": "dc94a9bccf550b54b413649ef8d56424d3dd0eaa4b09af6b82ca4553b12f32cb",
+    "x64-pgo-fresh-replay-3/round-0-official/results.json": "57c867725abecc482ff8d541586782d360ce783feeac7738f76fed1baa64fd0b",
+    "x64-pgo-fresh-replay-3/round-0-upstream/results.json": "fe2e3663bf1e33e159851671ebc564b7f7f1a1c45cb23404a7e33b3cd0abb700",
+    "x64-pgo-fresh-replay-3/round-1-local/results.json": "793e50723267c6613e7e378ab50506121b4a518c46c0df2e05ee635f3b81e2be",
+    "x64-pgo-fresh-replay-3/round-1-official/results.json": "69ea2f899818181614f53007d665d26390c2d5aaf834e1635c0624aafaca603e",
+    "x64-pgo-fresh-replay-3/round-1-upstream/results.json": "873d636f028caa1ce3bf652ce4565b338203124791b47ac8eaab5c3cc91adca1",
+    "x64-pgo-fresh-replay-3/round-2-local/results.json": "f9146bb84789dbfce55bb1e2908a5040e649c5cb76a2440ec18bb50c0b216f0a",
+    "x64-pgo-fresh-replay-3/round-2-official/results.json": "5dae5132def86bf4ee5180b3c3c2576fe3ba9c3fcc2ecdcbd149f805c3ede3b9",
+    "x64-pgo-fresh-replay-3/round-2-upstream/results.json": "be68c0e9066718795618a27df5f2ecd2d4b6114cbb8a3867f041295f7e2e3e6c",
+    "x64-pgo-fresh-replay-3/round-3-local/results.json": "23709e58973225b290d128ff4ab2a5f383fbc1189558cce196bf4dd0c3be5eb1",
+    "x64-pgo-fresh-replay-3/round-3-official/results.json": "ece04a36199314402aaa4d7e98682062cf5e9d4649872b99063cc1f1bb3b6887",
+    "x64-pgo-fresh-replay-3/round-3-upstream/results.json": "c205ff79df26891d4d744700d07d90b44d20f4c2444af7d8af7db427ef564ad8",
+    "x64-pgo-fresh-replay-4/index.json": "476fe41f8057d11d7a7341483a0d2b1b5bc3e7bfa1bf220e97e2f42d8de7bdf2",
+    "x64-pgo-fresh-replay-4/meter-validation/self-test.json": "9a34207784d69e28b8b4251001e744b9502333e5cb12c7e605978f3b840dfab4",
+    "x64-pgo-fresh-replay-4/round-0-local/results.json": "3a3418da0100b43d1d88e8170b9b95c2b7c81c0325249af5b57dd59b139dc5c2",
+    "x64-pgo-fresh-replay-4/round-0-official/results.json": "555eb031bf4d2c401264d345314d6752e2d53ef44a913554bb20d3d96758a88b",
+    "x64-pgo-fresh-replay-4/round-0-upstream/results.json": "c5d4adf374d8cebc6dbd89a4a92c999f5474d90c50180267e45b6019c83204d1",
+    "x64-pgo-fresh-replay-4/round-1-local/results.json": "98cdff2eb0a945c79b251d73c6aecd0f3c6be22ebe50e8731852d6f1e49d46e9",
+    "x64-pgo-fresh-replay-4/round-1-official/results.json": "5c3d3b29a45700508daffda76d5b471939d95ed6c50b6106571205609e84534b",
+    "x64-pgo-fresh-replay-4/round-1-upstream/results.json": "2d00388284348764fb808dd28c8fe56cd8ae2c4809b8458497b3956d72e2d1e1",
+    "x64-pgo-fresh-replay-4/round-2-local/results.json": "0189f32964791aa8072b1223ed928b79247f808b4258ae91c820f44a7a2dd7b8",
+    "x64-pgo-fresh-replay-4/round-2-official/results.json": "f3a7daa7776a9bb5e3ea2b50dea8d02e9f6ccf3421b5ed7fb93fff04dd9d43c0",
+    "x64-pgo-fresh-replay-4/round-2-upstream/results.json": "91c605804d087dd3d3138d00db4bde5828e625be857dda0ca7b698fc74f24396",
+    "x64-pgo-fresh-replay-4/round-3-local/results.json": "940a6ea12fb9c9512b31c63356344155a6e4bf1a63e1d2f27e4e4be99def233a",
+    "x64-pgo-fresh-replay-4/round-3-official/results.json": "cedbda0e898f91632aba039183cb185305e17ba6ab3229b2edc297c63dbab9b7",
+    "x64-pgo-fresh-replay-4/round-3-upstream/results.json": "0a20e508136ad485753bbc9536520fb95d238b1bcab7580d5349ddbf20d99309",
+    "x64-pgo-fresh-replay-5/index.json": "c83443a023188d6701c40732faf93389a000d3da7b7ac1be2688c8c63acf4804",
+    "x64-pgo-fresh-replay-5/meter-validation/self-test.json": "c88a0ce37c4c1245a336a14359af0d0a0515bbeb2bc176a5408f47b662711e62",
+    "x64-pgo-fresh-replay-5/round-0-local/results.json": "a934c517e404452935e1cd3d57ccb360f0086eee6e2d89dfdd447edac26bf93f",
+    "x64-pgo-fresh-replay-5/round-0-official/results.json": "74db5598e47ba3fa8e2c5428449a039a5f042d3964ab9e7673163f17dceffb12",
+    "x64-pgo-fresh-replay-5/round-0-upstream/results.json": "666b138d3178d8b7d4e301dcba093a41769789d3f1ebe5b126f8150a92708c1a",
+    "x64-pgo-fresh-replay-5/round-1-local/results.json": "683cdd808a4f55bdb322f9d7aab7ff2f34e783022788610f6fa34452dd112bff",
+    "x64-pgo-fresh-replay-5/round-1-official/results.json": "36bb5033691ff633b7a5f2410023cdb787c2e4a47b9cb56f2dfdd4a6ae6f0ad1",
+    "x64-pgo-fresh-replay-5/round-1-upstream/results.json": "859c865e3edd9ee41cf964724ab3bef4062358702aeb4d4e5eeeb53f332775c0",
+    "x64-pgo-fresh-replay-5/round-2-local/results.json": "572005e3a0998c85899d56018e4e7202b82e4edcdfd1b4c1410c0f012039d380",
+    "x64-pgo-fresh-replay-5/round-2-official/results.json": "2836211e61cca1a2e03e549c2f35c9cde8384f1efc226d27a09f3fd84b5b953a",
+    "x64-pgo-fresh-replay-5/round-2-upstream/results.json": "a29124163b39d27e789e9840bed56aeb81d6c5945b2bd85834bd025f30386efd",
+    "x64-pgo-fresh-replay-5/round-3-local/results.json": "6840910cddd4f9457258ab59cae720727f3317bfb8c31d7519fa91762132e099",
+    "x64-pgo-fresh-replay-5/round-3-official/results.json": "48ee93c6f0442db67f4c473f55368ee1509e5efcc9cc6930bc061eaaea5479a7",
+    "x64-pgo-fresh-replay-5/round-3-upstream/results.json": "6b21eeb909cf931c2bf9660d0c1e1ef4cab71a8563032b8c1f81146e2aa5a134"
+  },
+  "results": [
+    {
+      "component": "xtask-bootstrap",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 4.60350784000005,
+      "candidate_seconds": 4.173384713333265,
+      "saved_seconds": 0.43012312666678554,
+      "reduction_fraction": 0.09343377737503339,
+      "ci95": {
+        "baseline_seconds": [
+          3.8350396666667317,
+          5.371976013333369
+        ],
+        "candidate_seconds": [
+          3.4341430333331724,
+          4.8414624133331925
+        ],
+        "saved_seconds": [
+          -0.18878780183325142,
+          0.8160332066668463
+        ],
+        "reduction_fraction": [
+          -0.045443262434800916,
+          0.17183977697879152
+        ]
+      }
+    },
+    {
+      "component": "xtask-bootstrap",
+      "metric": "wall_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 5.1305957666667386,
+      "candidate_seconds": 4.173384713333265,
+      "saved_seconds": 0.9572110533334737,
+      "reduction_fraction": 0.1865691816050746,
+      "ci95": {
+        "baseline_seconds": [
+          4.018676519999947,
+          6.242515013333529
+        ],
+        "candidate_seconds": [
+          3.4341430333331724,
+          4.8414624133331925
+        ],
+        "saved_seconds": [
+          0.2406444533333043,
+          1.6661059178337005
+        ],
+        "reduction_fraction": [
+          0.05213679697798575,
+          0.26749790186317524
+        ]
+      }
+    },
+    {
+      "component": "xtask-bootstrap",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 4.60350784000005,
+      "candidate_seconds": 5.1305957666667386,
+      "saved_seconds": -0.5270879266666881,
+      "reduction_fraction": -0.11449701944391222,
+      "ci95": {
+        "baseline_seconds": [
+          3.8350396666667317,
+          5.371976013333369
+        ],
+        "candidate_seconds": [
+          4.018676519999947,
+          6.242515013333529
+        ],
+        "saved_seconds": [
+          -0.8946808933334678,
+          -0.14702277333323455
+        ],
+        "reduction_fraction": [
+          -0.1676158600635994,
+          -0.03797415341178516
+        ]
+      }
+    },
+    {
+      "component": "xtask-bootstrap",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 13.705208333333333,
+      "candidate_seconds": 10.96875,
+      "saved_seconds": 2.736458333333333,
+      "reduction_fraction": 0.19966557725925363,
+      "ci95": {
+        "baseline_seconds": [
+          11.489583333333334,
+          15.91778645833333
+        ],
+        "candidate_seconds": [
+          9.472916666666666,
+          12.464583333333334
+        ],
+        "saved_seconds": [
+          1.96875,
+          3.5041666666666664
+        ],
+        "reduction_fraction": [
+          0.171350861287398,
+          0.22057601772362226
+        ]
+      }
+    },
+    {
+      "component": "xtask-bootstrap",
+      "metric": "cpu_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 14.026041666666668,
+      "candidate_seconds": 10.96875,
+      "saved_seconds": 3.057291666666668,
+      "reduction_fraction": 0.2179725213516525,
+      "ci95": {
+        "baseline_seconds": [
+          11.671875,
+          16.380208333333336
+        ],
+        "candidate_seconds": [
+          9.472916666666666,
+          12.464583333333334
+        ],
+        "saved_seconds": [
+          2.163541666666667,
+          3.955208333333333
+        ],
+        "reduction_fraction": [
+          0.18193962062516703,
+          0.2421710568276038
+        ]
+      }
+    },
+    {
+      "component": "xtask-bootstrap",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 13.705208333333333,
+      "candidate_seconds": 14.026041666666668,
+      "saved_seconds": -0.32083333333333464,
+      "reduction_fraction": -0.02340959185224605,
+      "ci95": {
+        "baseline_seconds": [
+          11.489583333333334,
+          15.91778645833333
+        ],
+        "candidate_seconds": [
+          11.671875,
+          16.380208333333336
+        ],
+        "saved_seconds": [
+          -0.5812500000000007,
+          -0.01458333333333428
+        ],
+        "reduction_fraction": [
+          -0.04172971251095014,
+          -0.0012034728788791291
+        ]
+      }
+    },
+    {
+      "component": "workspace-tests",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 707.4577457533334,
+      "candidate_seconds": 587.2864205933331,
+      "saved_seconds": 120.17132516000026,
+      "reduction_fraction": 0.16986360794175254,
+      "ci95": {
+        "baseline_seconds": [
+          593.5217854333331,
+          821.3937060733336
+        ],
+        "candidate_seconds": [
+          501.78472860666653,
+          672.7881125799998
+        ],
+        "saved_seconds": [
+          85.67211663333342,
+          156.18916206000029
+        ],
+        "reduction_fraction": [
+          0.1414501241849022,
+          0.195481368500184
+        ]
+      }
+    },
+    {
+      "component": "workspace-tests",
+      "metric": "wall_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 743.6487462133332,
+      "candidate_seconds": 587.2864205933331,
+      "saved_seconds": 156.3623256200001,
+      "reduction_fraction": 0.21026368485955044,
+      "ci95": {
+        "baseline_seconds": [
+          627.5503789533337,
+          859.5261315303328
+        ],
+        "candidate_seconds": [
+          501.78472860666653,
+          672.7881125799998
+        ],
+        "saved_seconds": [
+          119.70071015333406,
+          193.78160685333273
+        ],
+        "reduction_fraction": [
+          0.18320725007100278,
+          0.23356588126188985
+        ]
+      }
+    },
+    {
+      "component": "workspace-tests",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 707.4577457533334,
+      "candidate_seconds": 743.6487462133332,
+      "saved_seconds": -36.19100045999983,
+      "reduction_fraction": -0.051156412771284306,
+      "ci95": {
+        "baseline_seconds": [
+          593.5217854333331,
+          821.3937060733336
+        ],
+        "candidate_seconds": [
+          627.5503789533337,
+          859.5261315303328
+        ],
+        "saved_seconds": [
+          -44.73031739333294,
+          -26.14042449333408
+        ],
+        "reduction_fraction": [
+          -0.07110575277134021,
+          -0.03867846216310969
+        ]
+      }
+    },
+    {
+      "component": "workspace-tests",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 2650.3239583333334,
+      "candidate_seconds": 2170.1229166666667,
+      "saved_seconds": 480.2010416666667,
+      "reduction_fraction": 0.18118579057355805,
+      "ci95": {
+        "baseline_seconds": [
+          2220.4114583333335,
+          3078.3583333333336
+        ],
+        "candidate_seconds": [
+          1872.784375,
+          2467.461458333333
+        ],
+        "saved_seconds": [
+          347.62708333333353,
+          614.7677083333338
+        ],
+        "reduction_fraction": [
+          0.15655975924131937,
+          0.20042273117346968
+        ]
+      }
+    },
+    {
+      "component": "workspace-tests",
+      "metric": "cpu_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 2692.0499999999997,
+      "candidate_seconds": 2170.1229166666667,
+      "saved_seconds": 521.927083333333,
+      "reduction_fraction": 0.19387718776892446,
+      "ci95": {
+        "baseline_seconds": [
+          2296.3375,
+          3087.7625
+        ],
+        "candidate_seconds": [
+          1872.784375,
+          2467.461458333333
+        ],
+        "saved_seconds": [
+          419.32187499999986,
+          624.5322916666669
+        ],
+        "reduction_fraction": [
+          0.1813468196595504,
+          0.2039498151947387
+        ]
+      }
+    },
+    {
+      "component": "workspace-tests",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 2650.3239583333334,
+      "candidate_seconds": 2692.0499999999997,
+      "saved_seconds": -41.72604166666633,
+      "reduction_fraction": -0.01574375145176815,
+      "ci95": {
+        "baseline_seconds": [
+          2220.4114583333335,
+          3078.3583333333336
+        ],
+        "candidate_seconds": [
+          2296.3375,
+          3087.7625
+        ],
+        "saved_seconds": [
+          -94.87187499999982,
+          -5.484375
+        ],
+        "reduction_fraction": [
+          -0.041420853002974246,
+          -0.0018799569805855612
+        ]
+      }
+    },
+    {
+      "component": "native-tls-tests",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 19.600220153333307,
+      "candidate_seconds": 14.5271432533333,
+      "saved_seconds": 5.073076900000007,
+      "reduction_fraction": 0.2588275468496335,
+      "ci95": {
+        "baseline_seconds": [
+          14.709694900000006,
+          24.490745406666612
+        ],
+        "candidate_seconds": [
+          12.46931799999978,
+          16.584968506666822
+        ],
+        "saved_seconds": [
+          2.1408193200003858,
+          8.005334479999629
+        ],
+        "reduction_fraction": [
+          0.14475230736735942,
+          0.32909551057644437
+        ]
+      }
+    },
+    {
+      "component": "native-tls-tests",
+      "metric": "wall_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 17.546764326666683,
+      "candidate_seconds": 14.5271432533333,
+      "saved_seconds": 3.019621073333383,
+      "reduction_fraction": 0.17208990883546066,
+      "ci95": {
+        "baseline_seconds": [
+          14.725276013333314,
+          20.36825264000005
+        ],
+        "candidate_seconds": [
+          12.46931799999978,
+          16.584968506666822
+        ],
+        "saved_seconds": [
+          2.2360692533336994,
+          4.011992093332996
+        ],
+        "reduction_fraction": [
+          0.15022516343653633,
+          0.19832969596256447
+        ]
+      }
+    },
+    {
+      "component": "native-tls-tests",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 19.600220153333307,
+      "candidate_seconds": 17.546764326666683,
+      "saved_seconds": 2.0534558266666245,
+      "reduction_fraction": 0.10476697764628955,
+      "ci95": {
+        "baseline_seconds": [
+          14.709694900000006,
+          24.490745406666612
+        ],
+        "candidate_seconds": [
+          14.725276013333314,
+          20.36825264000005
+        ],
+        "saved_seconds": [
+          -0.09524993333331366,
+          4.42995286000011
+        ],
+        "reduction_fraction": [
+          -0.0064403602386126765,
+          0.18397067003355078
+        ]
+      }
+    },
+    {
+      "component": "native-tls-tests",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 52.01354166666667,
+      "candidate_seconds": 42.72291666666667,
+      "saved_seconds": 9.290624999999999,
+      "reduction_fraction": 0.17861934992890469,
+      "ci95": {
+        "baseline_seconds": [
+          42.68333333333334,
+          61.34375
+        ],
+        "candidate_seconds": [
+          36.59583333333333,
+          48.85
+        ],
+        "saved_seconds": [
+          5.953125,
+          12.628124999999997
+        ],
+        "reduction_fraction": [
+          0.1389969841424263,
+          0.20767444243314326
+        ]
+      }
+    },
+    {
+      "component": "native-tls-tests",
+      "metric": "cpu_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 51.46041666666667,
+      "candidate_seconds": 42.72291666666667,
+      "saved_seconds": 8.737499999999997,
+      "reduction_fraction": 0.16979069673292574,
+      "ci95": {
+        "baseline_seconds": [
+          43.37291666666667,
+          59.547916666666666
+        ],
+        "candidate_seconds": [
+          36.59583333333333,
+          48.85
+        ],
+        "saved_seconds": [
+          6.595833333333331,
+          10.879166666666663
+        ],
+        "reduction_fraction": [
+          0.15122864606209108,
+          0.18462998435934838
+        ]
+      }
+    },
+    {
+      "component": "native-tls-tests",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 52.01354166666667,
+      "candidate_seconds": 51.46041666666667,
+      "saved_seconds": 0.5531250000000014,
+      "reduction_fraction": 0.010634249894859138,
+      "ci95": {
+        "baseline_seconds": [
+          42.68333333333334,
+          61.34375
+        ],
+        "candidate_seconds": [
+          43.37291666666667,
+          59.547916666666666
+        ],
+        "saved_seconds": [
+          -0.6895833333333314,
+          1.7958333333333343
+        ],
+        "reduction_fraction": [
+          -0.01615579851620456,
+          0.029204856765989193
+        ]
+      }
+    },
+    {
+      "component": "gateway-native-tls-tests",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 93.92693911999977,
+      "candidate_seconds": 75.84671508666682,
+      "saved_seconds": 18.080224033332954,
+      "reduction_fraction": 0.19249242233087044,
+      "ci95": {
+        "baseline_seconds": [
+          78.20293835999976,
+          109.65093987999977
+        ],
+        "candidate_seconds": [
+          65.17987910666682,
+          86.51355106666682
+        ],
+        "saved_seconds": [
+          12.714010093332945,
+          23.446437973332948
+        ],
+        "reduction_fraction": [
+          0.1625771404497004,
+          0.2148347850627652
+        ]
+      }
+    },
+    {
+      "component": "gateway-native-tls-tests",
+      "metric": "wall_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 97.53537320666656,
+      "candidate_seconds": 75.84671508666682,
+      "saved_seconds": 21.688658119999744,
+      "reduction_fraction": 0.22236710033439766,
+      "ci95": {
+        "baseline_seconds": [
+          79.80046224666664,
+          117.93749995999983
+        ],
+        "candidate_seconds": [
+          65.17987910666682,
+          86.51355106666682
+        ],
+        "saved_seconds": [
+          14.620583139999823,
+          32.291723926666364
+        ],
+        "reduction_fraction": [
+          0.17844048868394166,
+          0.27965183880605804
+        ]
+      }
+    },
+    {
+      "component": "gateway-native-tls-tests",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 93.92693911999977,
+      "candidate_seconds": 97.53537320666656,
+      "saved_seconds": -3.60843408666679,
+      "reduction_fraction": -0.03841745638124867,
+      "ci95": {
+        "baseline_seconds": [
+          78.20293835999976,
+          109.65093987999977
+        ],
+        "candidate_seconds": [
+          79.80046224666664,
+          117.93749995999983
+        ],
+        "saved_seconds": [
+          -9.921353486666476,
+          1.249574633332898
+        ],
+        "reduction_fraction": [
+          -0.09932021332393434,
+          0.012393851161834163
+        ]
+      }
+    },
+    {
+      "component": "gateway-native-tls-tests",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 345.11041666666665,
+      "candidate_seconds": 280.46875,
+      "saved_seconds": 64.64166666666665,
+      "reduction_fraction": 0.18730720240502735,
+      "ci95": {
+        "baseline_seconds": [
+          290.6947916666667,
+          399.1645833333333
+        ],
+        "candidate_seconds": [
+          241.36145833333333,
+          319.57604166666664
+        ],
+        "saved_seconds": [
+          49.23750000000001,
+          80.04583333333335
+        ],
+        "reduction_fraction": [
+          0.16937867967190678,
+          0.20299609380243494
+        ]
+      }
+    },
+    {
+      "component": "gateway-native-tls-tests",
+      "metric": "cpu_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 346.92604166666666,
+      "candidate_seconds": 280.46875,
+      "saved_seconds": 66.45729166666666,
+      "reduction_fraction": 0.1915604010220718,
+      "ci95": {
+        "baseline_seconds": [
+          295.95625,
+          397.89583333333337
+        ],
+        "candidate_seconds": [
+          241.36145833333333,
+          319.57604166666664
+        ],
+        "saved_seconds": [
+          54.30833333333331,
+          79.44583333333338
+        ],
+        "reduction_fraction": [
+          0.17642349885419203,
+          0.20439958831556312
+        ]
+      }
+    },
+    {
+      "component": "gateway-native-tls-tests",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 345.11041666666665,
+      "candidate_seconds": 346.92604166666666,
+      "saved_seconds": -1.8156250000000114,
+      "reduction_fraction": -0.005260997386102307,
+      "ci95": {
+        "baseline_seconds": [
+          290.6947916666667,
+          399.1645833333333
+        ],
+        "candidate_seconds": [
+          295.95625,
+          397.89583333333337
+        ],
+        "saved_seconds": [
+          -7.3135416666666515,
+          2.0406249999999773
+        ],
+        "reduction_fraction": [
+          -0.02421502083160881,
+          0.005394777062696668
+        ]
+      }
+    },
+    {
+      "component": "gateway-smartcard-tests",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 96.91335952666668,
+      "candidate_seconds": 74.44180472666682,
+      "saved_seconds": 22.471554799999865,
+      "reduction_fraction": 0.23187262220351149,
+      "ci95": {
+        "baseline_seconds": [
+          79.27425375999998,
+          115.8410318666668
+        ],
+        "candidate_seconds": [
+          63.186351920000135,
+          85.36841419999968
+        ],
+        "saved_seconds": [
+          14.814539840000052,
+          31.080781539999563
+        ],
+        "reduction_fraction": [
+          0.17629157754979652,
+          0.27961279201954187
+        ]
+      }
+    },
+    {
+      "component": "gateway-smartcard-tests",
+      "metric": "wall_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 92.0926056733335,
+      "candidate_seconds": 74.44180472666682,
+      "saved_seconds": 17.650800946666678,
+      "reduction_fraction": 0.19166360662306328,
+      "ci95": {
+        "baseline_seconds": [
+          78.50796122000017,
+          105.67725012666682
+        ],
+        "candidate_seconds": [
+          63.186351920000135,
+          85.36841419999968
+        ],
+        "saved_seconds": [
+          14.217203766666643,
+          21.084398126666684
+        ],
+        "reduction_fraction": [
+          0.166489282073674,
+          0.21689221281238516
+        ]
+      }
+    },
+    {
+      "component": "gateway-smartcard-tests",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 96.91335952666668,
+      "candidate_seconds": 92.0926056733335,
+      "saved_seconds": 4.820753853333187,
+      "reduction_fraction": 0.04974292375043204,
+      "ci95": {
+        "baseline_seconds": [
+          79.27425375999998,
+          115.8410318666668
+        ],
+        "candidate_seconds": [
+          78.50796122000017,
+          105.67725012666682
+        ],
+        "saved_seconds": [
+          -0.6180309066666609,
+          11.325938299999635
+        ],
+        "reduction_fraction": [
+          -0.0073374360507901335,
+          0.10364922850506247
+        ]
+      }
+    },
+    {
+      "component": "gateway-smartcard-tests",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 346.70208333333335,
+      "candidate_seconds": 268.92604166666666,
+      "saved_seconds": 77.77604166666669,
+      "reduction_fraction": 0.22433104790976888,
+      "ci95": {
+        "baseline_seconds": [
+          293.471875,
+          399.9322916666667
+        ],
+        "candidate_seconds": [
+          230.35625000000002,
+          307.49583333333334
+        ],
+        "saved_seconds": [
+          62.78645833333337,
+          94.58854166666669
+        ],
+        "reduction_fraction": [
+          0.2133031824728661,
+          0.23794017374757898
+        ]
+      }
+    },
+    {
+      "component": "gateway-smartcard-tests",
+      "metric": "cpu_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 343.1770833333333,
+      "candidate_seconds": 268.92604166666666,
+      "saved_seconds": 74.25104166666665,
+      "reduction_fraction": 0.21636363636363634,
+      "ci95": {
+        "baseline_seconds": [
+          293.0833333333333,
+          393.2708333333333
+        ],
+        "candidate_seconds": [
+          230.35625000000002,
+          307.49583333333334
+        ],
+        "saved_seconds": [
+          61.35000000000002,
+          88.13645833333328
+        ],
+        "reduction_fraction": [
+          0.20027223001225355,
+          0.23144755002277623
+        ]
+      }
+    },
+    {
+      "component": "gateway-smartcard-tests",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 346.70208333333335,
+      "candidate_seconds": 343.1770833333333,
+      "saved_seconds": 3.525000000000034,
+      "reduction_fraction": 0.010167230511306035,
+      "ci95": {
+        "baseline_seconds": [
+          293.471875,
+          399.9322916666667
+        ],
+        "candidate_seconds": [
+          293.0833333333333,
+          393.2708333333333
+        ],
+        "saved_seconds": [
+          -2.5864583333333258,
+          7.442708333333371
+        ],
+        "reduction_fraction": [
+          -0.008495540098059652,
+          0.020774153406001784
+        ]
+      }
+    },
+    {
+      "component": "native-total",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 922.5017723933332,
+      "candidate_seconds": 756.2754683733334,
+      "saved_seconds": 166.22630401999982,
+      "reduction_fraction": 0.1801907692694652,
+      "ci95": {
+        "baseline_seconds": [
+          769.6235522466663,
+          1075.37999254
+        ],
+        "candidate_seconds": [
+          646.1233053533332,
+          866.4276313933335
+        ],
+        "saved_seconds": [
+          115.63952825333342,
+          218.20972146666634
+        ],
+        "reduction_fraction": [
+          0.1495806626997229,
+          0.2084196776492322
+        ]
+      }
+    },
+    {
+      "component": "native-total",
+      "metric": "wall_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 955.9540851866667,
+      "candidate_seconds": 756.2754683733334,
+      "saved_seconds": 199.6786168133333,
+      "reduction_fraction": 0.20887887808371317,
+      "ci95": {
+        "baseline_seconds": [
+          805.8309036000003,
+          1107.3517839466663
+        ],
+        "candidate_seconds": [
+          646.1233053533332,
+          866.4276313933335
+        ],
+        "saved_seconds": [
+          151.84687960666736,
+          252.67257411333242
+        ],
+        "reduction_fraction": [
+          0.18118028284574067,
+          0.23386957927059895
+        ]
+      }
+    },
+    {
+      "component": "native-total",
+      "metric": "wall_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 922.5017723933332,
+      "candidate_seconds": 955.9540851866667,
+      "saved_seconds": -33.452312793333476,
+      "reduction_fraction": -0.03626260002356959,
+      "ci95": {
+        "baseline_seconds": [
+          769.6235522466663,
+          1075.37999254
+        ],
+        "candidate_seconds": [
+          805.8309036000003,
+          1107.3517839466663
+        ],
+        "saved_seconds": [
+          -45.54704421333395,
+          -23.48606749333362
+        ],
+        "reduction_fraction": [
+          -0.056947368157960074,
+          -0.026272782366506084
+        ]
+      }
+    },
+    {
+      "component": "native-total",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "local",
+      "baseline_seconds": 3407.8552083333334,
+      "candidate_seconds": 2773.209375,
+      "saved_seconds": 634.6458333333335,
+      "reduction_fraction": 0.18623028108160652,
+      "ci95": {
+        "baseline_seconds": [
+          2858.8250000000003,
+          3953.321875
+        ],
+        "candidate_seconds": [
+          2390.6666666666665,
+          3155.7520833333333
+        ],
+        "saved_seconds": [
+          468.15833333333376,
+          805.7885416666668
+        ],
+        "reduction_fraction": [
+          0.1637590035533248,
+          0.2044608564943851
+        ]
+      }
+    },
+    {
+      "component": "native-total",
+      "metric": "cpu_seconds",
+      "baseline": "upstream",
+      "candidate": "local",
+      "baseline_seconds": 3447.6395833333336,
+      "candidate_seconds": 2773.209375,
+      "saved_seconds": 674.4302083333337,
+      "reduction_fraction": 0.19562085654013292,
+      "ci95": {
+        "baseline_seconds": [
+          2940.421875,
+          3954.8572916666667
+        ],
+        "candidate_seconds": [
+          2390.6666666666665,
+          3155.7520833333333
+        ],
+        "saved_seconds": [
+          545.3114583333331,
+          805.6125000000002
+        ],
+        "reduction_fraction": [
+          0.18294774203775543,
+          0.20555126090678372
+        ]
+      }
+    },
+    {
+      "component": "native-total",
+      "metric": "cpu_seconds",
+      "baseline": "official",
+      "candidate": "upstream",
+      "baseline_seconds": 3407.8552083333334,
+      "candidate_seconds": 3447.6395833333336,
+      "saved_seconds": -39.78437500000018,
+      "reduction_fraction": -0.011674314948215588,
+      "ci95": {
+        "baseline_seconds": [
+          2858.8250000000003,
+          3953.321875
+        ],
+        "candidate_seconds": [
+          2940.421875,
+          3954.8572916666667
+        ],
+        "saved_seconds": [
+          -104.86041666666688,
+          4.560416666667152
+        ],
+        "reduction_fraction": [
+          -0.035508101368070435,
+          0.0012169088624766418
+        ]
+      }
+    }
+  ]
+}

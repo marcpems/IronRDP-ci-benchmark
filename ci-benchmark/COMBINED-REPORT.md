@@ -108,8 +108,10 @@ Exact estimates and intervals are in [the native results](X64-NATIVE-RESULTS.md)
 **A first matched compiler-production CI pair has now qualified:** local
 production took 8,248.00 versus 8,059.20 seconds (**+2.34%**), while whole
 jobs took 10,440 versus 10,184 seconds (**+2.51%, 4m16s extra**).
-This is a single fresh pair, not a repeated estimate; its new compiler artifacts
-have not yet been replayed on IronRDP. See the
+This is a single fresh pair, not a repeated estimate. Its new compiler artifacts
+subsequently passed a [five-VM IronRDP replay](X64-PGO-FRESH-REPLAY.md):
+**18.0% less wall time versus official Rust (95% interval 15.0-20.8%)**,
+and **20.9% less versus the rebuilt upstream recipe (18.1-23.4%)**. See the
 [full pilot report](X64-PGO-RELEASE-PILOT.md) for phase accounting, profile coverage
 and qualifications. The following explains why earlier production experiments
 could not supply this comparison.

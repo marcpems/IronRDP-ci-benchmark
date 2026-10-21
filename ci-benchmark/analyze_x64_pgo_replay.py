@@ -1,6 +1,7 @@
 """Validate and analyze the fresh full-release three-compiler native replay."""
 
 import argparse
+import hashlib
 import json
 import math
 from pathlib import Path
@@ -147,7 +148,12 @@ def main():
     args = parser.parse_args()
     protocol = json.loads(Path(__file__).with_name("x64-pgo-replay-protocol.json").read_text())
     matrix, attempt = load_matrix(args.evidence, protocol)
-    result = {"protocol": protocol, "workflow_attempt": attempt, "vm_means": matrix, "results": analyze(matrix)}
+    evidence = {str(path.relative_to(args.evidence)).replace("\\", "/"):
+                hashlib.sha256(path.read_bytes()).hexdigest()
+                for path in sorted(args.evidence.rglob("*.json"))
+                if path.name in ("index.json", "results.json", "self-test.json")}
+    result = {"protocol": protocol, "workflow_attempt": attempt, "vm_means": matrix,
+              "evidence_sha256": evidence, "results": analyze(matrix)}
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps([row for row in result["results"]
                       if row["component"] == "native-total" and row["metric"] == "wall_seconds"], indent=2))
