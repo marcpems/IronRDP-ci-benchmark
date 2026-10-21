@@ -1,0 +1,2962 @@
+[
+  {
+    "run_id": 39572966152,
+    "attempt": 1,
+    "workflow_commit": "6614154b8635c8f2e6c39718048f5cd2a62bed0b",
+    "job": "windows-11-arm / ironrdp-viewer / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39572966152/job/119131429451",
+    "conclusion": "failure",
+    "job_seconds": 464.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Prepare Windows ARM build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 31.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 17.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "failure",
+        "seconds": 382.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39572966152,
+    "attempt": 1,
+    "workflow_commit": "6614154b8635c8f2e6c39718048f5cd2a62bed0b",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39572966152/job/119131429454",
+    "conclusion": "success",
+    "job_seconds": 453.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 7.0
+      },
+      {
+        "name": "Prepare Windows ARM build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 24.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 16.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 341.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 41.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39572966152,
+    "attempt": 1,
+    "workflow_commit": "6614154b8635c8f2e6c39718048f5cd2a62bed0b",
+    "job": "windows-11-arm / ironrdp-viewer / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39572966152/job/119131429513",
+    "conclusion": "failure",
+    "job_seconds": 450.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows ARM build storage",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 25.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "failure",
+        "seconds": 376.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39572966152,
+    "attempt": 1,
+    "workflow_commit": "6614154b8635c8f2e6c39718048f5cd2a62bed0b",
+    "job": "windows-11-arm / ironrdp-agent / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39572966152/job/119131429574",
+    "conclusion": "success",
+    "job_seconds": 526.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Prepare Windows ARM build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 34.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 22.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 377.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 55.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39572966152,
+    "attempt": 1,
+    "workflow_commit": "6614154b8635c8f2e6c39718048f5cd2a62bed0b",
+    "job": "windows-11-arm / ironrdp-agent / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39572966152/job/119131429580",
+    "conclusion": "success",
+    "job_seconds": 424.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows ARM build storage",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 24.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 324.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 20.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39572966152,
+    "attempt": 1,
+    "workflow_commit": "6614154b8635c8f2e6c39718048f5cd2a62bed0b",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39572966152/job/119131429616",
+    "conclusion": "success",
+    "job_seconds": 416.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 7.0
+      },
+      {
+        "name": "Prepare Windows ARM build storage",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 24.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 316.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 21.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39572966152,
+    "attempt": 1,
+    "workflow_commit": "6614154b8635c8f2e6c39718048f5cd2a62bed0b",
+    "job": "windows-11-vs2026-arm / ironrdp-viewer / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39572966152/job/119131429696",
+    "conclusion": "failure",
+    "job_seconds": 452.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows ARM build storage",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 32.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 16.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "failure",
+        "seconds": 366.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39572966152,
+    "attempt": 1,
+    "workflow_commit": "6614154b8635c8f2e6c39718048f5cd2a62bed0b",
+    "job": "windows-11-vs2026-arm / ironrdp-viewer / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39572966152/job/119131429789",
+    "conclusion": "failure",
+    "job_seconds": 473.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows ARM build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 24.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "failure",
+        "seconds": 405.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / refs / 3",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136525797",
+    "conclusion": "success",
+    "job_seconds": 466.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 11.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 43.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 23.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 327.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 23.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261018.189.1",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / baseline / 2",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136525930",
+    "conclusion": "success",
+    "job_seconds": 455.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 11.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 31.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 19.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 334.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 39.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526002",
+    "conclusion": "success",
+    "job_seconds": 526.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 17.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 72.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 29.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 340.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 23.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261018.189.1",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526012",
+    "conclusion": "success",
+    "job_seconds": 431.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 27.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 13.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 328.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 23.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526024",
+    "conclusion": "success",
+    "job_seconds": 488.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 30.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 17.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 360.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 46.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526033",
+    "conclusion": "success",
+    "job_seconds": 452.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 11.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 25.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 328.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 40.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / refs / 2",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526230",
+    "conclusion": "success",
+    "job_seconds": 482.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 13.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 17.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 54.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 19.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 326.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 24.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261018.189.1",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / refs / 2",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526269",
+    "conclusion": "success",
+    "job_seconds": 428.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 25.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 328.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 23.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / baseline / 3",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526330",
+    "conclusion": "success",
+    "job_seconds": 481.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 13.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 28.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 17.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 353.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 47.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261018.189.1",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / refs / 3",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526340",
+    "conclusion": "success",
+    "job_seconds": 419.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 29.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 311.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 23.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / baseline / 3",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526348",
+    "conclusion": "success",
+    "job_seconds": 503.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 11.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 13.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 32.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 17.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 365.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 49.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 1,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / baseline / 2",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119136526357",
+    "conclusion": "success",
+    "job_seconds": 483.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 17.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 32.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 18.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 343.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 46.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141249847",
+    "conclusion": "success",
+    "job_seconds": 318.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 21.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 13.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 100.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 41.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 113.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": true
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250053",
+    "conclusion": "success",
+    "job_seconds": 424.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 28.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 310.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 22.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / baseline / 3",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250089",
+    "conclusion": "success",
+    "job_seconds": 233.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 29.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 60.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 110.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": true
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250165",
+    "conclusion": "success",
+    "job_seconds": 242.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 40.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 54.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 115.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": true
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / baseline / 3",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250199",
+    "conclusion": "success",
+    "job_seconds": 298.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 16.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 62.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 69.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 118.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261018.189.1",
+    "cache_hit": true
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / refs / 2",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250200",
+    "conclusion": "success",
+    "job_seconds": 217.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 34.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 31.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 104.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": true
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250214",
+    "conclusion": "success",
+    "job_seconds": 243.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 31.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 59.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 117.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": true
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / refs / 3",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250222",
+    "conclusion": "success",
+    "job_seconds": 470.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 31.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 13.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 336.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 42.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261018.189.1",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / refs / 3",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250230",
+    "conclusion": "success",
+    "job_seconds": 427.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 29.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 19.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 312.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 22.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / baseline / 2",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250309",
+    "conclusion": "success",
+    "job_seconds": 244.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 13.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 29.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 61.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 116.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": true
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-vs2026-arm / ironrdp-agent / baseline / 2",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250317",
+    "conclusion": "success",
+    "job_seconds": 463.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 26.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 342.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 43.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261018.189.1",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574497666,
+    "attempt": 2,
+    "workflow_commit": "8ed1260a8c960b4743cca1071a7623dd0444fcca",
+    "job": "windows-11-arm / ironrdp-agent / refs / 2",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574497666/job/119141250358",
+    "conclusion": "success",
+    "job_seconds": 406.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 26.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 304.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 22.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ],
+    "image": "win11-vs2026-arm64",
+    "image_version": "20261013.183.4",
+    "cache_hit": false
+  },
+  {
+    "run_id": 39574562225,
+    "attempt": 1,
+    "workflow_commit": "f4436baf0c3f2bd99a577d9ed77ab6af2a766a17",
+    "job": "windows-11-arm / ironrdp-agent / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574562225/job/119136745481",
+    "conclusion": "success",
+    "job_seconds": 353.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 9.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 29.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 14.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 248.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 22.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39574562225,
+    "attempt": 1,
+    "workflow_commit": "f4436baf0c3f2bd99a577d9ed77ab6af2a766a17",
+    "job": "windows-11-arm / ironrdp-viewer / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574562225/job/119136745817",
+    "conclusion": "failure",
+    "job_seconds": 404.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 29.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 19.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "failure",
+        "seconds": 329.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39574562225,
+    "attempt": 1,
+    "workflow_commit": "f4436baf0c3f2bd99a577d9ed77ab6af2a766a17",
+    "job": "windows-2022 / ironrdp-agent / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574562225/job/119136745900",
+    "conclusion": "success",
+    "job_seconds": 320.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 18.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 239.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 34.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39574562225,
+    "attempt": 1,
+    "workflow_commit": "f4436baf0c3f2bd99a577d9ed77ab6af2a766a17",
+    "job": "windows-11-arm / ironrdp-viewer / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574562225/job/119136745914",
+    "conclusion": "failure",
+    "job_seconds": 365.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 13.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "success",
+        "seconds": 10.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 27.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 15.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "failure",
+        "seconds": 280.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39574562225,
+    "attempt": 1,
+    "workflow_commit": "f4436baf0c3f2bd99a577d9ed77ab6af2a766a17",
+    "job": "windows-11-arm / ironrdp-agent / baseline / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574562225/job/119136745970",
+    "conclusion": "success",
+    "job_seconds": 382.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 8.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 12.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 29.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 17.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 260.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 39.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 5.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  },
+  {
+    "run_id": 39574562225,
+    "attempt": 1,
+    "workflow_commit": "f4436baf0c3f2bd99a577d9ed77ab6af2a766a17",
+    "job": "windows-2022 / ironrdp-viewer / refs / 1",
+    "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39574562225/job/119136746024",
+    "conclusion": "success",
+    "job_seconds": 494.0,
+    "steps": [
+      {
+        "name": "Set up job",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Record runner",
+        "conclusion": "success",
+        "seconds": 4.0
+      },
+      {
+        "name": "Prepare Windows Arm build storage",
+        "conclusion": "skipped",
+        "seconds": 0.0
+      },
+      {
+        "name": "Checkout release tag",
+        "conclusion": "success",
+        "seconds": 6.0
+      },
+      {
+        "name": "Install build dependencies",
+        "conclusion": "success",
+        "seconds": 16.0
+      },
+      {
+        "name": "Rust cache",
+        "conclusion": "success",
+        "seconds": 19.0
+      },
+      {
+        "name": "Build release binary",
+        "conclusion": "success",
+        "seconds": 394.0
+      },
+      {
+        "name": "Package binary",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Upload release asset",
+        "conclusion": "success",
+        "seconds": 3.0
+      },
+      {
+        "name": "Verify archive and storage",
+        "conclusion": "success",
+        "seconds": 1.0
+      },
+      {
+        "name": "Post Rust cache",
+        "conclusion": "success",
+        "seconds": 43.0
+      },
+      {
+        "name": "Post Checkout release tag",
+        "conclusion": "success",
+        "seconds": 2.0
+      },
+      {
+        "name": "Complete job",
+        "conclusion": "success",
+        "seconds": 0.0
+      }
+    ]
+  }
+]

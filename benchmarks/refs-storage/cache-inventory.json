@@ -1,0 +1,104 @@
+[
+  {
+    "key": "storage-39574497666-windows-11-arm-ironrdp-agent-refs-3-build-Windows_NT-arm64-863b1527-79a9e77e",
+    "size_in_bytes": 395060252,
+    "created_at": "2026-10-21T09:26:06.630197Z",
+    "last_accessed_at": "2026-10-21T09:26:06.630197Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-baseline-2-build-Windows_NT-arm64-09bea9f5-251bdb17",
+    "size_in_bytes": 395212735,
+    "created_at": "2026-10-21T09:25:59.627610Z",
+    "last_accessed_at": "2026-10-21T09:25:59.627610Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-refs-3-build-Windows_NT-arm64-daa31c26-79a9e77e",
+    "size_in_bytes": 395048234,
+    "created_at": "2026-10-21T09:25:24.406155Z",
+    "last_accessed_at": "2026-10-21T09:25:24.406155Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-refs-1-build-Windows_NT-arm64-daa31c26-79a9e77e",
+    "size_in_bytes": 395194977,
+    "created_at": "2026-10-21T09:25:21.397120Z",
+    "last_accessed_at": "2026-10-21T09:25:21.397120Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-arm-ironrdp-agent-refs-2-build-Windows_NT-arm64-daa31c26-79a9e77e",
+    "size_in_bytes": 395019505,
+    "created_at": "2026-10-21T09:25:03.310314Z",
+    "last_accessed_at": "2026-10-21T09:25:03.310314Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-arm-ironrdp-agent-refs-1-build-Windows_NT-arm64-daa31c26-79a9e77e",
+    "size_in_bytes": 395163289,
+    "created_at": "2026-10-21T09:14:29.295875Z",
+    "last_accessed_at": "2026-10-21T09:21:19.430532Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-arm-ironrdp-agent-baseline-3-build-Windows_NT-arm64-09bea9f5-251bdb17",
+    "size_in_bytes": 395459244,
+    "created_at": "2026-10-21T09:15:19.483315Z",
+    "last_accessed_at": "2026-10-21T09:20:28.530415Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-refs-2-build-Windows_NT-arm64-daa31c26-79a9e77e",
+    "size_in_bytes": 395289403,
+    "created_at": "2026-10-21T09:14:26.126230Z",
+    "last_accessed_at": "2026-10-21T09:19:46.447433Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-baseline-1-build-Windows_NT-arm64-17be2fa8-251bdb17",
+    "size_in_bytes": 395376494,
+    "created_at": "2026-10-21T09:15:26.408390Z",
+    "last_accessed_at": "2026-10-21T09:19:39.246479Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-arm-ironrdp-agent-baseline-1-build-Windows_NT-arm64-17be2fa8-251bdb17",
+    "size_in_bytes": 395037989,
+    "created_at": "2026-10-21T09:14:50.686290Z",
+    "last_accessed_at": "2026-10-21T09:19:34.422660Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-arm-ironrdp-agent-baseline-2-build-Windows_NT-arm64-17be2fa8-251bdb17",
+    "size_in_bytes": 395246476,
+    "created_at": "2026-10-21T09:15:20.745713Z",
+    "last_accessed_at": "2026-10-21T09:19:33.900541Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-baseline-3-build-Windows_NT-arm64-17be2fa8-251bdb17",
+    "size_in_bytes": 395414783,
+    "created_at": "2026-10-21T09:15:40.796182Z",
+    "last_accessed_at": "2026-10-21T09:19:30.645561Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-refs-1-build-Windows_NT-arm64-863b1527-79a9e77e",
+    "size_in_bytes": 395118899,
+    "created_at": "2026-10-21T09:16:03.547572Z",
+    "last_accessed_at": "2026-10-21T09:16:03.547572Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-arm-ironrdp-agent-refs-2-build-Windows_NT-arm64-863b1527-79a9e77e",
+    "size_in_bytes": 395092626,
+    "created_at": "2026-10-21T09:15:19.992822Z",
+    "last_accessed_at": "2026-10-21T09:15:19.992822Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-refs-3-build-Windows_NT-arm64-863b1527-79a9e77e",
+    "size_in_bytes": 395223537,
+    "created_at": "2026-10-21T09:15:03.217469Z",
+    "last_accessed_at": "2026-10-21T09:15:03.217469Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-vs2026-arm-ironrdp-agent-baseline-2-build-Windows_NT-arm64-17be2fa8-251bdb17",
+    "size_in_bytes": 395459229,
+    "created_at": "2026-10-21T09:14:54.040991Z",
+    "last_accessed_at": "2026-10-21T09:14:54.040991Z"
+  },
+  {
+    "key": "storage-39574497666-windows-11-arm-ironrdp-agent-refs-3-build-Windows_NT-arm64-daa31c26-79a9e77e",
+    "size_in_bytes": 395181986,
+    "created_at": "2026-10-21T09:14:17.520989Z",
+    "last_accessed_at": "2026-10-21T09:14:17.520989Z"
+  }
+]
