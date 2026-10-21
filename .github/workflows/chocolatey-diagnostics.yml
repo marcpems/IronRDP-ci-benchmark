@@ -1,0 +1,170 @@
+name: Chocolatey startup diagnostics
+'on':
+  push:
+    branches:
+    - perf/chocolatey-startup-diagnostics
+  workflow_dispatch: {}
+permissions:
+  contents: read
+jobs:
+  measure:
+    name: ${{ matrix.label }} / ${{ matrix.storage }} / ${{ matrix.block }}
+    runs-on: ${{ matrix.label }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        include:
+        - label: windows-11-arm
+          storage: refs
+          block: 1
+        - label: windows-11-arm
+          storage: default
+          block: 1
+        - label: windows-11-vs2026-arm
+          storage: default
+          block: 1
+        - label: windows-11-vs2026-arm
+          storage: refs
+          block: 1
+        - label: windows-11-arm
+          storage: default
+          block: 2
+        - label: windows-11-vs2026-arm
+          storage: default
+          block: 2
+        - label: windows-11-arm
+          storage: refs
+          block: 2
+        - label: windows-11-vs2026-arm
+          storage: refs
+          block: 2
+    env:
+      LABEL: ${{ matrix.label }}
+      STORAGE: ${{ matrix.storage }}
+      BLOCK: ${{ matrix.block }}
+    steps:
+    - name: Record actual runner image
+      id: runner
+      shell: pwsh
+      run: "\n$ErrorActionPreference = 'Stop'\n$eligible = $env:ImageVersion -in @('20261013.183.4', '20261018.189.1')\n$cpu\
+        \ = Get-CimInstance Win32_Processor\n$data = [ordered]@{\n  run_id = $env:GITHUB_RUN_ID\n  run_attempt = $env:GITHUB_RUN_ATTEMPT\n\
+        \  label = $env:LABEL\n  storage = $env:STORAGE\n  block = [int]$env:BLOCK\n  image = $env:ImageOS\n  image_version\
+        \ = $env:ImageVersion\n  eligible = $eligible\n  outcome = if ($eligible) { 'not-measured' } else { 'excluded-image'\
+        \ }\n  cpu_name = @($cpu.Name)\n  logical_processors = ($cpu.NumberOfLogicalProcessors | Measure-Object -Sum).Sum\n\
+        \  recorded_at = [DateTime]::UtcNow.ToString('o')\n}\n$data | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $env:RUNNER_TEMP\
+        \ 'nasm-statistics.json')\n\"eligible=$($eligible.ToString().ToLowerInvariant())\" >> $env:GITHUB_OUTPUT\n$data |\
+        \ ConvertTo-Json -Depth 8\nif (-not $eligible) { Write-Host 'Image is outside the requested comparison; no installation\
+        \ or storage modification will run' }\n"
+    - name: Prepare Windows Arm build storage
+      if: runner.os == 'Windows' && runner.arch == 'ARM64' && runner.environment == 'github-hosted' && matrix.storage == 'refs'
+        && steps.runner.outputs.eligible == 'true'
+      shell: pwsh
+      run: "$ErrorActionPreference = 'Stop'\nif ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'Arm64')\
+        \ {\n  throw 'runner architecture does not match the operating system'\n}\n\n$partitions = @(Get-Partition)\n$volumes\
+        \ = @(Get-Volume)\n$drives = @(Get-PSDrive -PSProvider FileSystem)\nif (($partitions | Where-Object DriveLetter -eq\
+        \ 'D') -or\n    ($volumes | Where-Object DriveLetter -eq 'D') -or\n    ($drives | Where-Object Name -eq 'D')) {\n\
+        \  Write-Host 'D: is already assigned; leaving storage and workspace unchanged'\n  return\n}\n\n$disks = @(Get-Disk\
+        \ | Where-Object {\n  $_.BusType -eq 'NVMe' -and $_.PartitionStyle -eq 'RAW' -and\n  -not $_.IsBoot -and -not $_.IsSystem\
+        \ -and\n  -not $_.IsOffline -and -not $_.IsReadOnly -and\n  $_.NumberOfPartitions -eq 0 -and $_.Size -ge 50GB -and\n\
+        \  $_.Number -notin $partitions.DiskNumber\n})\nif ($disks.Count -ne 1) {\n  Write-Host \"Found $($disks.Count) eligible\
+        \ raw NVMe disks; leaving storage and workspace unchanged\"\n  return\n}\n\n$workspace = Get-Item -LiteralPath $env:GITHUB_WORKSPACE\
+        \ -Force\nif (-not $workspace.PSIsContainer -or\n    ($workspace.Attributes -band [IO.FileAttributes]::ReparsePoint)\
+        \ -or\n    @(Get-ChildItem -LiteralPath $workspace.FullName -Force).Count -ne 0) {\n  Write-Host 'Workspace is not\
+        \ an empty ordinary directory; leaving storage unchanged'\n  return\n}\n$cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME\
+        \ } else { Join-Path $HOME '.cargo' }\nif (Test-Path -LiteralPath $cargoHome) {\n  $cargoDirectory = Get-Item -LiteralPath\
+        \ $cargoHome -Force\n  if (-not $cargoDirectory.PSIsContainer -or\n      ($cargoDirectory.Attributes -band [IO.FileAttributes]::ReparsePoint))\
+        \ {\n    Write-Host 'Cargo home is not an ordinary directory; leaving storage unchanged'\n    return\n  }\n}\n\n#\
+        \ Dev Drive is ReFS with Windows' developer-workload defaults. Do not disable antivirus\n# or change filter/trust\
+        \ policy. Any provisioning failure must fail the job visibly.\n$disk = $disks[0]\nWrite-Host \"Initializing unused\
+        \ NVMe disk $($disk.Number) ($($disk.Size) bytes)\"\n$partition = Initialize-Disk -InputObject $disk -PartitionStyle\
+        \ GPT -PassThru |\n  New-Partition -UseMaximumSize -DriveLetter D\n$volume = $partition | Format-Volume -DevDrive\
+        \ -FileSystem ReFS -NewFileSystemLabel 'Build' -Confirm:$false\nif ($volume.FileSystem -ne 'ReFS' -or $volume.DriveLetter\
+        \ -ne 'D') {\n  throw 'new build volume is not ReFS on D:'\n}\n\n# Run before checkout so there is no source tree\
+        \ to copy. The agent itself and its\n# control files stay where GitHub placed them; only build data moves.\nSet-Location\
+        \ -LiteralPath $env:RUNNER_TEMP\n[Environment]::CurrentDirectory = $env:RUNNER_TEMP\nMove-Item -LiteralPath $workspace.FullName\
+        \ -Destination 'D:\\workspace'\nNew-Item -ItemType Junction -Path $workspace.FullName -Target 'D:\\workspace' | Out-Null\n\
+        \n# Give rust-cache the physical Cargo path: paths relative to the old C: workspace\n# would otherwise traverse the\
+        \ junction's parents on D: when GNU tar saves/restores.\nif (Test-Path -LiteralPath $cargoHome) {\n  Move-Item -LiteralPath\
+        \ $cargoHome -Destination 'D:\\cargo-home'\n} else {\n  New-Item -ItemType Directory -Path 'D:\\cargo-home' | Out-Null\n\
+        }\nNew-Item -ItemType Junction -Path $cargoHome -Target 'D:\\cargo-home' | Out-Null\nNew-Item -ItemType Directory\
+        \ -Path 'D:\\build-temp' | Out-Null\n\"CARGO_HOME=D:\\cargo-home\" >> $env:GITHUB_ENV\n\"TEMP=D:\\build-temp\" >>\
+        \ $env:GITHUB_ENV\n\"TMP=D:\\build-temp\" >> $env:GITHUB_ENV\nWrite-Host 'Workspace, Cargo source caches and compiler\
+        \ temporary files now use D: (ReFS)'\n"
+    - name: Diagnose Chocolatey and embedded PowerShell
+      if: steps.runner.outputs.eligible == 'true'
+      shell: pwsh
+      run: "$ErrorActionPreference = 'Stop'\n$out = Join-Path $env:RUNNER_TEMP 'choco-diagnostic'\nNew-Item -ItemType Directory\
+        \ -Path $out | Out-Null\n$stop = Join-Path $out 'stop'\n$sampler = Start-Job -ArgumentList $stop -ScriptBlock {\n\
+        \    param($stop)\n    $ErrorActionPreference = 'Stop'\n    Add-Type @'\nusing System;\nusing System.Runtime.InteropServices;\n\
+        public static class ChocoProcessProbe {\n    [StructLayout(LayoutKind.Sequential)]\n    public struct Io {\n     \
+        \   public ulong ReadOperations, WriteOperations, OtherOperations;\n        public ulong ReadBytes, WriteBytes, OtherBytes;\n\
+        \    }\n    [DllImport(\"kernel32.dll\", SetLastError=true)]\n    public static extern bool IsWow64Process2(IntPtr\
+        \ process, out ushort machine, out ushort native);\n    [DllImport(\"kernel32.dll\", SetLastError=true)]\n    public\
+        \ static extern bool GetProcessIoCounters(IntPtr process, out Io counters);\n}\n'@\n    $samples = [Collections.Generic.List[object]]::new()\n\
+        \    $modules = @{}\n    $deadline = [DateTime]::UtcNow.AddMinutes(8)\n    while (-not (Test-Path -LiteralPath $stop)\
+        \ -and [DateTime]::UtcNow -lt $deadline) {\n        foreach ($p in [Diagnostics.Process]::GetProcesses() | Where-Object\
+        \ {\n            $_.ProcessName -eq 'choco' -or $_.ProcessName -eq 'powershell' -or $_.ProcessName -like 'nasm*'\n\
+        \        }) {\n            try {\n                if ($p.HasExited) { continue }\n                [ushort]$machine\
+        \ = 0\n                [ushort]$native = 0\n                $io = [ChocoProcessProbe+Io]::new()\n                if\
+        \ (-not [ChocoProcessProbe]::IsWow64Process2($p.Handle, [ref]$machine, [ref]$native)) {\n                    throw\
+        \ [ComponentModel.Win32Exception]::new()\n                }\n                if (-not [ChocoProcessProbe]::GetProcessIoCounters($p.Handle,\
+        \ [ref]$io)) {\n                    throw [ComponentModel.Win32Exception]::new()\n                }\n            \
+        \    $samples.Add([ordered]@{\n                    at = [DateTime]::UtcNow.ToString('o')\n                    id =\
+        \ $p.Id\n                    name = $p.ProcessName\n                    machine = ('0x{0:X4}' -f $machine)\n     \
+        \               native_machine = ('0x{0:X4}' -f $native)\n                    cpu_seconds = $p.TotalProcessorTime.TotalSeconds\n\
+        \                    working_set = $p.WorkingSet64\n                    threads = $p.Threads.Count\n             \
+        \       read_bytes = $io.ReadBytes\n                    write_bytes = $io.WriteBytes\n                    other_bytes\
+        \ = $io.OtherBytes\n                })\n                foreach ($m in $p.Modules) {\n                    $key = \"\
+        $($p.Id):$($m.FileName)\"\n                    if (-not $modules.ContainsKey($key)) {\n                        $modules[$key]\
+        \ = @{\n                            process_id = $p.Id\n                            process_name = $p.ProcessName\n\
+        \                            name = $m.ModuleName\n                            path = $m.FileName\n              \
+        \              version = $m.FileVersionInfo.FileVersion\n                            observed_at = [DateTime]::UtcNow.ToString('o')\n\
+        \                        }\n                    }\n                }\n            } catch [InvalidOperationException]\
+        \ {\n                Write-Warning \"Process exited during sampling: $($_.Exception.Message)\"\n            } catch\
+        \ [ComponentModel.Win32Exception] {\n                Write-Warning \"Process inspection failed: $($_.Exception.Message)\"\
+        \n            } finally {\n                $p.Dispose()\n            }\n        }\n        Start-Sleep -Milliseconds\
+        \ 300\n    }\n    @{ samples = @($samples); modules = @($modules.Values) }\n}\n\n$events = [Collections.Generic.List[object]]::new()\n\
+        $timer = [Diagnostics.Stopwatch]::StartNew()\ntry {\n    & choco install nasm --debug --verbose 2>&1 | ForEach-Object\
+        \ {\n        $line = $_.ToString()\n        if ($line -match '(?i)password|token|apikey|api_key|secret|authorization|credential')\
+        \ {\n            $line = '[credential-related diagnostic line redacted]'\n        }\n        if ($line -notmatch 'Progress:')\
+        \ {\n            $events.Add(@{ at = [DateTime]::UtcNow.ToString('o'); elapsed = $timer.Elapsed.TotalSeconds; message\
+        \ = $line })\n            Write-Host $line\n        }\n    }\n    $installExit = $LASTEXITCODE\n    $timer.Stop()\n\
+        } finally {\n    New-Item -ItemType File -Path $stop | Out-Null\n    Wait-Job $sampler -Timeout 60 | Out-Null\n  \
+        \  if ($sampler.State -ne 'Completed') { throw \"process sampler did not complete: $($sampler.State)\" }\n    $sampled\
+        \ = Receive-Job $sampler\n    $sampled | ConvertTo-Json -Depth 8 | Set-Content (Join-Path $out 'processes.json')\n\
+        \    Remove-Job $sampler\n}\n$events | ConvertTo-Json -Depth 5 | Set-Content (Join-Path $out 'events.json')\n$versionTimings\
+        \ = @(\n    foreach ($i in 1..3) {\n        $t = [Diagnostics.Stopwatch]::StartNew()\n        $version = & choco --version\n\
+        \        $code = $LASTEXITCODE\n        $t.Stop()\n        if ($code -ne 0) { throw \"Chocolatey version probe failed:\
+        \ $code\" }\n        @{ attempt = $i; seconds = $t.Elapsed.TotalSeconds; version = $version }\n    }\n)\n$configPath\
+        \ = Join-Path $env:ChocolateyInstall 'config\\chocolatey.config'\n[xml]$config = Get-Content -Raw $configPath\n$exeConfigPath\
+        \ = Join-Path $env:ChocolateyInstall 'choco.exe.config'\n[xml]$exeConfig = Get-Content -Raw $exeConfigPath\n$framework\
+        \ = Get-ItemProperty 'HKLM:\\SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4\\Full'\n$os = Get-ItemProperty 'HKLM:\\\
+        SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion'\n$data = @{\n    image = $env:ImageVersion\n    label = $env:LABEL\n\
+        \    storage = $env:STORAGE\n    cpu = @(Get-CimInstance Win32_Processor | Select-Object Name, NumberOfLogicalProcessors)\n\
+        \    install_seconds = $timer.Elapsed.TotalSeconds\n    install_exit = $installExit\n    warm_version_timings = $versionTimings\n\
+        \    powershell = $PSVersionTable.PSVersion.ToString()\n    os_build = \"$($os.CurrentBuild).$($os.UBR)\"\n    framework\
+        \ = @{ release = $framework.Release; version = $framework.Version }\n    choco_sha256 = (Get-FileHash (Join-Path $env:ChocolateyInstall\
+        \ 'choco.exe')).Hash\n    choco_config = @{\n        features = @($config.chocolatey.features.feature | Select-Object\
+        \ name, enabled)\n        cache_location = @($config.chocolatey.config.add | Where-Object key -eq 'cacheLocation'\
+        \ | Select-Object key, value)\n        exe_startup = $exeConfig.configuration.startup.OuterXml\n        exe_runtime\
+        \ = $exeConfig.configuration.runtime.OuterXml\n    }\n    defender = Get-MpComputerStatus | Select-Object AMProductVersion,\
+        \ AMEngineVersion, AntivirusSignatureVersion, RealTimeProtectionEnabled, IsTamperProtected\n    ngen_services = @(Get-Service\
+        \ | Where-Object Name -like 'clr_optimization*' | Select-Object Name, Status, StartType)\n    temp = $env:TEMP\n \
+        \   tmp = $env:TMP\n    runtime_environment = @(Get-ChildItem Env: | Where-Object Name -in @(\n        'COMPLUS_ReadyToRun',\
+        \ 'COMPLUS_ZapDisable', 'COMPLUS_TieredCompilation',\n        'DOTNET_ReadyToRun', 'DOTNET_TieredCompilation'\n  \
+        \  ) | Select-Object Name, Value)\n}\n$data | ConvertTo-Json -Depth 10 | Set-Content (Join-Path $out 'configuration.json')\n\
+        Get-Content (Join-Path $env:ChocolateyInstall 'logs\\chocolatey.log') | ForEach-Object {\n    if ($_ -match '(?i)password|token|apikey|api_key|secret|authorization|credential')\
+        \ {\n        '[credential-related diagnostic line redacted]'\n    } else { $_ }\n} | Set-Content (Join-Path $out 'chocolatey-sanitized.log')\n\
+        if ($installExit -ne 0) { throw \"NASM installation failed: $installExit\" }\n"
+    - name: Upload measurement
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: choco-diagnostic-${{ matrix.label }}-${{ matrix.storage }}-${{ matrix.block }}
+        path: '${{ runner.temp }}\choco-diagnostic\*
+
+          ${{ runner.temp }}\nasm-statistics.json'
+        if-no-files-found: error
+        retention-days: 14
