@@ -1,0 +1,203 @@
+name: ReFS release build experiment
+'on':
+  push:
+    branches:
+    - perf/windows-arm-refs-benchmark
+  workflow_dispatch: {}
+permissions:
+  contents: read
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+  RUST_BACKTRACE: short
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+jobs:
+  build:
+    name: ${{ matrix.runner }} / ${{ matrix.package }} / ${{ matrix.variant }} / ${{ matrix.sample }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: refs
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-viewer
+          variant: baseline
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-viewer
+          variant: refs
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: baseline
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-agent
+          variant: refs
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-viewer
+          variant: baseline
+          sample: 1
+          macos_deployment_target: '11.0'
+        - runner: windows-11-vs2026-arm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          package: ironrdp-viewer
+          variant: refs
+          sample: 1
+          macos_deployment_target: '11.0'
+    steps:
+    - name: Record runner
+      shell: pwsh
+      run: "\nWrite-Host \"Image: $env:ImageOS $env:ImageVersion\"\nWrite-Host \"Workspace: $env:GITHUB_WORKSPACE Temp: $env:TEMP\
+        \ RunnerTemp: $env:RUNNER_TEMP\"\nif ($IsWindows) {\n  Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors\
+        \ | ConvertTo-Json\n  Get-Disk | Select-Object Number,FriendlyName,BusType,PartitionStyle,IsBoot,IsSystem,IsOffline,IsReadOnly,NumberOfPartitions,Size\
+        \ | ConvertTo-Json\n}\n"
+    - name: Prepare Windows ARM build storage
+      if: runner.os == 'Windows' && runner.arch == 'ARM64' && runner.environment == 'github-hosted' && matrix.variant == 'refs'
+      shell: pwsh
+      run: "$ErrorActionPreference = 'Stop'\nif ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'Arm64')\
+        \ {\n  throw 'runner architecture does not match the operating system'\n}\n\n$partitions = @(Get-Partition)\n$volumes\
+        \ = @(Get-Volume)\n$drives = @(Get-PSDrive -PSProvider FileSystem)\nif (($partitions | Where-Object DriveLetter -eq\
+        \ 'D') -or\n    ($volumes | Where-Object DriveLetter -eq 'D') -or\n    ($drives | Where-Object Name -eq 'D')) {\n\
+        \  Write-Host 'D: is already assigned; leaving storage and workspace unchanged'\n  return\n}\n\n$disks = @(Get-Disk\
+        \ | Where-Object {\n  $_.BusType -eq 'NVMe' -and $_.PartitionStyle -eq 'RAW' -and\n  -not $_.IsBoot -and -not $_.IsSystem\
+        \ -and\n  -not $_.IsOffline -and -not $_.IsReadOnly -and\n  $_.NumberOfPartitions -eq 0 -and $_.Size -ge 50GB -and\n\
+        \  $_.Number -notin $partitions.DiskNumber\n})\nif ($disks.Count -ne 1) {\n  Write-Host \"Found $($disks.Count) eligible\
+        \ raw NVMe disks; leaving storage and workspace unchanged\"\n  return\n}\n\n$workspace = Get-Item -LiteralPath $env:GITHUB_WORKSPACE\
+        \ -Force\nif (-not $workspace.PSIsContainer -or\n    ($workspace.Attributes -band [IO.FileAttributes]::ReparsePoint)\
+        \ -or\n    @(Get-ChildItem -LiteralPath $workspace.FullName -Force).Count -ne 0) {\n  Write-Host 'Workspace is not\
+        \ an empty ordinary directory; leaving storage unchanged'\n  return\n}\n\n# Dev Drive is ReFS with Windows' developer-workload\
+        \ defaults. Do not disable antivirus\n# or change filter/trust policy. Any provisioning failure must fail the job\
+        \ visibly.\n$disk = $disks[0]\nWrite-Host \"Initializing unused NVMe disk $($disk.Number) ($($disk.Size) bytes)\"\n\
+        $partition = Initialize-Disk -InputObject $disk -PartitionStyle GPT -PassThru |\n  New-Partition -UseMaximumSize -DriveLetter\
+        \ D\n$volume = $partition | Format-Volume -DevDrive -FileSystem ReFS -NewFileSystemLabel 'Build' -Confirm:$false\n\
+        if ($volume.FileSystem -ne 'ReFS' -or $volume.DriveLetter -ne 'D') {\n  throw 'new build volume is not ReFS on D:'\n\
+        }\n\n# Run before checkout so there is no source tree to copy. The agent itself and its\n# control files stay where\
+        \ GitHub placed them; only build data moves.\nSet-Location -LiteralPath $env:RUNNER_TEMP\n[Environment]::CurrentDirectory\
+        \ = $env:RUNNER_TEMP\nMove-Item -LiteralPath $workspace.FullName -Destination 'D:\\workspace'\nNew-Item -ItemType\
+        \ Junction -Path $workspace.FullName -Target 'D:\\workspace' | Out-Null\n\n$cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME\
+        \ } else { Join-Path $HOME '.cargo' }\nNew-Item -ItemType Directory -Path $cargoHome -Force | Out-Null\nNew-Item -ItemType\
+        \ Directory -Path 'D:\\cargo-cache', 'D:\\build-temp' | Out-Null\nforeach ($name in @('registry', 'git')) {\n  $source\
+        \ = Join-Path $cargoHome $name\n  $destination = Join-Path 'D:\\cargo-cache' $name\n  if (Test-Path -LiteralPath $source)\
+        \ {\n    $item = Get-Item -LiteralPath $source -Force\n    if (-not $item.PSIsContainer -or ($item.Attributes -band\
+        \ [IO.FileAttributes]::ReparsePoint)) {\n      throw \"refusing to relocate non-directory or linked Cargo cache: $source\"\
+        \n    }\n    Move-Item -LiteralPath $source -Destination $destination\n  } else {\n    New-Item -ItemType Directory\
+        \ -Path $destination | Out-Null\n  }\n  New-Item -ItemType Junction -Path $source -Target $destination | Out-Null\n\
+        }\n\"TEMP=D:\\build-temp\" >> $env:GITHUB_ENV\n\"TMP=D:\\build-temp\" >> $env:GITHUB_ENV\nWrite-Host 'Workspace, Cargo\
+        \ source caches and compiler temporary files now use D: (ReFS)'\n"
+    - name: Checkout release tag
+      uses: actions/checkout@v6
+      with:
+        repository: Devolutions/IronRDP
+        ref: 860cf6ccb1359e15034cfbf402a308e3ad21b341
+    - name: Install build dependencies
+      uses: ./.github/actions/install-build-deps
+    - name: Rust cache
+      uses: Swatinem/rust-cache@v2.9.1
+      id: cache
+      with:
+        prefix-key: storage-${{ github.run_id }}-${{ matrix.runner }}-${{ matrix.package }}-${{ matrix.variant }}-${{ matrix.sample
+          }}
+    - name: Build release binary
+      shell: pwsh
+      run: "if ($env:RUNNER_OS -eq 'Windows') {\n  $env:RUSTFLAGS = '-C target-feature=+crt-static'\n}\n\nif ($env:RUNNER_OS\
+        \ -eq 'macOS') {\n  $env:MACOSX_DEPLOYMENT_TARGET = '${{ matrix.macos_deployment_target }}'\n}\n\nrustup target add\
+        \ '${{ matrix.target }}'\ncargo build --locked --release --target '${{ matrix.target }}' --package '${{ matrix.package\
+        \ }}'\n"
+    - name: Package binary
+      shell: pwsh
+      env:
+        PACKAGE: ${{ matrix.package }}
+        VERSION: storage-benchmark
+        TARGET: ${{ matrix.target }}
+        OS_ARCH: ${{ matrix.os_arch }}
+      run: '$extension = if ($env:RUNNER_OS -eq ''Windows'') { ''.exe'' } else { '''' }
+
+        $binary = Join-Path (Join-Path (Join-Path ''target'' $env:TARGET) ''release'') "$env:PACKAGE$extension"
+
+        $assetName = "$env:PACKAGE-$env:VERSION-$env:OS_ARCH.tar.gz"
+
+        $assetDirectory = ''release-assets''
+
+
+        New-Item -ItemType Directory -Force -Path $assetDirectory | Out-Null
+
+        Copy-Item $binary (Join-Path $assetDirectory "$env:PACKAGE$extension")
+
+
+        Push-Location $assetDirectory
+
+        tar -czf $assetName "$env:PACKAGE$extension"
+
+        $hash = (Get-FileHash -Algorithm SHA256 $assetName).Hash.ToLowerInvariant()
+
+        "$hash  $assetName" | Set-Content -NoNewline -Encoding ascii "$assetName.sha256"
+
+        Remove-Item "$env:PACKAGE$extension"
+
+        Pop-Location
+
+        '
+    - name: Upload release asset
+      uses: actions/upload-artifact@v7
+      with:
+        name: release-${{ matrix.runner }}-${{ matrix.package }}-${{ matrix.variant }}-${{ matrix.sample }}
+        path: release-assets/*
+        if-no-files-found: error
+        retention-days: 30
+        overwrite: true
+    - name: Verify archive and storage
+      shell: pwsh
+      env:
+        VARIANT: ${{ matrix.variant }}
+        PACKAGE: ${{ matrix.package }}
+        TARGET: ${{ matrix.target }}
+        CACHE_HIT: ${{ steps.cache.outputs.cache-hit }}
+      run: "\n$ErrorActionPreference = 'Stop'\nWrite-Host \"Cache hit: $env:CACHE_HIT\"\nforeach ($sidecar in Get-ChildItem\
+        \ release-assets -Filter '*.sha256') {\n  $archive = $sidecar.FullName.Substring(0, $sidecar.FullName.Length - 7)\n\
+        \  if ((Get-FileHash $archive -Algorithm SHA256).Hash.ToLowerInvariant() -ne (Get-Content $sidecar.FullName).Split('\
+        \ ')[0]) {\n    throw 'archive checksum mismatch'\n  }\n  tar -tzf $archive\n  if ($LASTEXITCODE -ne 0) { throw 'archive\
+        \ verification failed' }\n}\n$extension = if ($IsWindows) { '.exe' } else { '' }\n& \".\\target\\$env:TARGET\\release\\\
+        $env:PACKAGE$extension\" --help\nif ($LASTEXITCODE -ne 0) { throw 'binary smoke test failed' }\nif ($IsWindows) {\n\
+        \  Get-Volume | Select-Object DriveLetter,FileSystem,Size,SizeRemaining | ConvertTo-Json\n  Get-Item -Force $env:GITHUB_WORKSPACE\
+        \ | Select-Object FullName,LinkType,Target | ConvertTo-Json\n  if ($env:VARIANT -eq 'refs' -and $env:RUNNER_ARCH -eq\
+        \ 'ARM64') {\n    if ((Get-Volume -DriveLetter D).FileSystem -ne 'ReFS') { throw 'expected ReFS volume' }\n    if\
+        \ ((Get-Item -Force $env:GITHUB_WORKSPACE).Target -ne 'D:\\workspace') { throw 'workspace not redirected' }\n    if\
+        \ ($env:TEMP -ne 'D:\\build-temp' -or $env:TMP -ne 'D:\\build-temp') { throw 'temp not redirected' }\n    $cargoHome\
+        \ = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }\n    foreach ($name in @('registry',\
+        \ 'git')) {\n      if ((Get-Item -Force (Join-Path $cargoHome $name)).Target -ne \"D:\\cargo-cache\\$name\") { throw\
+        \ 'cache not redirected' }\n    }\n    fsutil devdrv query D:\n    if ($LASTEXITCODE -ne 0) { throw 'Dev Drive query\
+        \ failed' }\n    if (-not (Test-Path \"D:\\workspace\\target\\$env:TARGET\\release\\$env:PACKAGE.exe\")) { throw 'binary\
+        \ is not on D:' }\n  }\n}\n"
