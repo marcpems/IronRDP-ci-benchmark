@@ -97,6 +97,9 @@ as independent observations.
 These are the same first-pair full-release artifacts for which production cost
 was **+2.34%** and whole successful CI-job cost was **+2.51%**, or **4m16s extra**.
 See the [release report](X64-PGO-RELEASE-PILOT.md).
+The completed [two-pair CI comparison](X64-PGO-COMPARISON.md) reports a
+**2.71% mean production increase** and **4.00% mean whole-job increase**,
+with observed whole-job increases of 2.51% and 5.55%.
 The reverse-order fresh-production repetition is analyzed separately;
 its newly trained compilers are not substituted into this fixed-artifact replay.
 

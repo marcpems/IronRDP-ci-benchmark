@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "release_pairs": [
+    {
+      "run_id": "39456859889",
+      "order": [
+        "upstream",
+        "local"
+      ],
+      "contrasts": {
+        "production_seconds": {
+          "upstream": 8059.196449279785,
+          "local": 8247.99784582138,
+          "local_minus_upstream_seconds": 188.80139654159575,
+          "local_increase_fraction": 0.023426826449734713
+        },
+        "whole_job_seconds": {
+          "upstream": 10184.0,
+          "local": 10440.0,
+          "local_minus_upstream_seconds": 256.0,
+          "local_increase_fraction": 0.02513747054202671
+        }
+      },
+      "source": "X64-PGO-RELEASE-PILOT.json",
+      "source_sha256": "ae60416a4d2aaa3f70f48ed064f66d8ecd54809fd1404565dcd71b7e3fb64c93"
+    },
+    {
+      "run_id": "39506380543",
+      "order": [
+        "local",
+        "upstream"
+      ],
+      "contrasts": {
+        "production_seconds": {
+          "upstream": 7886.168472414017,
+          "local": 8129.881903095245,
+          "local_minus_upstream_seconds": 243.7134306812286,
+          "local_increase_fraction": 0.03090390872750732
+        },
+        "whole_job_seconds": {
+          "upstream": 9715.0,
+          "local": 10254.0,
+          "local_minus_upstream_seconds": 539.0,
+          "local_increase_fraction": 0.05548121461657231
+        }
+      },
+      "source": "X64-PGO-RELEASE-REVERSE.json",
+      "source_sha256": "fc73a38f4015a53fa9c0456b08b9b41452487d5ab2909e8b6a92b08b907c7b72"
+    }
+  ],
+  "means": {
+    "production_seconds": {
+      "upstream": 7972.682460846901,
+      "local": 8188.939874458313,
+      "local_minus_upstream_seconds": 216.25741361141172,
+      "local_increase_fraction": 0.02712479954813607,
+      "observed_pair_increase_range": [
+        0.023426826449734713,
+        0.03090390872750732
+      ]
+    },
+    "whole_job_seconds": {
+      "upstream": 9949.5,
+      "local": 10347.0,
+      "local_minus_upstream_seconds": 397.5,
+      "local_increase_fraction": 0.03995175636966675,
+      "observed_pair_increase_range": [
+        0.02513747054202671,
+        0.05548121461657231
+      ]
+    }
+  },
+  "mean_job_breakdown_seconds": {
+    "upstream": {
+      "production": 7972.682460846901,
+      "qualification": 401.685,
+      "evidence_upload": 18.5,
+      "distribution_upload": 769.5,
+      "cleanup": 129.0,
+      "setup_and_other_job_overhead": 658.1325391530991
+    },
+    "local": {
+      "production": 8188.939874458313,
+      "qualification": 383.575,
+      "evidence_upload": 41.5,
+      "distribution_upload": 880.5,
+      "cleanup": 129.5,
+      "setup_and_other_job_overhead": 722.985125541687
+    }
+  },
+  "mean_production_phases_seconds": {
+    "upstream": {
+      "Stage 1 (Rustc PGO)": 3068.35,
+      "Stage 2 (LLVM PGO)": 1473.54,
+      "Stage 5 (final build)": 3241.415,
+      "Helper and other production": 189.3774608469007
+    },
+    "local": {
+      "Stage 1 (Rustc PGO)": 3049.7,
+      "Stage 2 (LLVM PGO)": 1677.0149999999999,
+      "Stage 5 (final build)": 3261.2799999999997,
+      "Helper and other production": 200.94487445831328
+    }
+  },
+  "limits": [
+    "Two fresh pairs on one runner in opposite order; descriptive means and observed ranges, not a CI confidence interval",
+    "Local recipe changes static-LLVM training relink and native linking tools; not profile quality alone",
+    "Production includes helper, compilation, fresh training and packaging, and is not offline",
+    "Whole job includes setup, tests, transfers and experiment cleanup; excludes queues and shared preflight",
+    "Local-only reference-evidence downloads of 34 and 27 seconds are included in whole-job cost",
+    "Fresh hosted IronRDP replay uses the first pair's fixed compiler artifacts, not the second pair's new profiles"
+  ],
+  "compact_release_evidence_sha256": "6588c7d82bc211e0336dda88c3d38f99748f5016faf7139f096959822d427fa2",
+  "fresh_replay": {
+    "source": "X64-PGO-FRESH-REPLAY.json",
+    "source_sha256": "f792081849c142085b8ad3574c5cecff5c86f0901b94b8d683c7e84fd8b7765d",
+    "native_wall_results": [
+      {
+        "component": "native-total",
+        "metric": "wall_seconds",
+        "baseline": "official",
+        "candidate": "local",
+        "baseline_seconds": 922.5017723933332,
+        "candidate_seconds": 756.2754683733334,
+        "saved_seconds": 166.22630401999982,
+        "reduction_fraction": 0.1801907692694652,
+        "ci95": {
+          "baseline_seconds": [
+            769.6235522466663,
+            1075.37999254
+          ],
+          "candidate_seconds": [
+            646.1233053533332,
+            866.4276313933335
+          ],
+          "saved_seconds": [
+            115.63952825333342,
+            218.20972146666634
+          ],
+          "reduction_fraction": [
+            0.1495806626997229,
+            0.2084196776492322
+          ]
+        }
+      },
+      {
+        "component": "native-total",
+        "metric": "wall_seconds",
+        "baseline": "upstream",
+        "candidate": "local",
+        "baseline_seconds": 955.9540851866667,
+        "candidate_seconds": 756.2754683733334,
+        "saved_seconds": 199.6786168133333,
+        "reduction_fraction": 0.20887887808371317,
+        "ci95": {
+          "baseline_seconds": [
+            805.8309036000003,
+            1107.3517839466663
+          ],
+          "candidate_seconds": [
+            646.1233053533332,
+            866.4276313933335
+          ],
+          "saved_seconds": [
+            151.84687960666736,
+            252.67257411333242
+          ],
+          "reduction_fraction": [
+            0.18118028284574067,
+            0.23386957927059895
+          ]
+        }
+      },
+      {
+        "component": "native-total",
+        "metric": "wall_seconds",
+        "baseline": "official",
+        "candidate": "upstream",
+        "baseline_seconds": 922.5017723933332,
+        "candidate_seconds": 955.9540851866667,
+        "saved_seconds": -33.452312793333476,
+        "reduction_fraction": -0.03626260002356959,
+        "ci95": {
+          "baseline_seconds": [
+            769.6235522466663,
+            1075.37999254
+          ],
+          "candidate_seconds": [
+            805.8309036000003,
+            1107.3517839466663
+          ],
+          "saved_seconds": [
+            -45.54704421333395,
+            -23.48606749333362
+          ],
+          "reduction_fraction": [
+            -0.056947368157960074,
+            -0.026272782366506084
+          ]
+        }
+      }
+    ]
+  }
+}

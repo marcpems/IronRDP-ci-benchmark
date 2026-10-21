@@ -37,14 +37,15 @@ an earlier consolidation.
   Compared with the separately rebuilt upstream recipe, local PGO saved **20.9%
   (18.1-23.4%)**. Same official Cargo/std and no added ThinLTO were used.
   See the [fresh-artifact report and persistent raw evidence](X64-PGO-FRESH-REPLAY.md).
-- **The first matched x64 full-release PGO pair qualified:** local production
-  took **2h17m28s versus 2h14m19s (+2.34%)**; whole CI jobs took
-  **2h54m00s versus 2h49m44s (+2.51%, 4m16s extra)**. This is one fresh
-  NVMe/16-LP pair, not a stable repeated estimate. The upstream-recipe rebuild
-  had no active LLVM counters in two checked backend areas; the local build did.
+- **Two matched x64 full-release PGO pairs qualified, in opposite order:**
+  local production cost **2.71% more on average (3m36s)**; whole release CI
+  jobs cost **4.00% more (6m38s)**. Observed per-pair increases were
+  **2.34-3.09% production** and **2.51-5.55% whole job**; these ranges are
+  not confidence intervals. Both upstream-recipe rebuilds lacked active LLVM
+  counters in two checked backend areas; both local builds had coverage.
   This does not prove a gap in official shipping profiles. Fresh downstream
-  replay passed; the reverse-order production repetition is still running.
-  See the [qualified pilot report](X64-PGO-RELEASE-PILOT.md).
+  replay and reverse-order production qualification are complete.
+  See the [final x64 comparison and persistent evidence](X64-PGO-COMPARISON.md).
 - **Keeping Microsoft linking tools captures much of the benefit.** Nine
   qualified full-release pilots measured **21.5-24.6% less IronRDP compilation
   time with PGO alone**, versus controlled no-PGO builds. Their LLVM/PGO/ThinLTO
@@ -324,6 +325,20 @@ storage and runner-disconnection failures; its qualified 64-LP pilots remain val
 
 See the [preserved phase evidence and recovery history](matched-release/README.md).
 Incomplete attempts are never successful totals, zero-gain samples or forecasts.
+
+### Requested x64 PGO follow-up completed on 21 October
+
+The separately resumed x64 comparison completed **four fresh full releases**
+on the dedicated NVMe runner, using opposite order in two pairs, and replayed
+the first pair's fixed artifacts on **five independent standard Windows VMs**.
+It measured **18.0% less offline IronRDP wall time versus official Rust**
+(95% interval 15.0-20.8%), with **2.71% more compiler-production time** and
+**4.00% more whole release-job time** on average. Observed whole-job increases
+were 2.51% and 5.55%, not a population confidence interval.
+
+This completes the requested x64 toolchain-benefit/CI-cost comparison. It does
+not complete the older hosted-release reference or GB300 scaling study.
+See the [final report, limits and permanent evidence](X64-PGO-COMPARISON.md).
 
 ## 9. Conclusions and prioritized follow-up
 

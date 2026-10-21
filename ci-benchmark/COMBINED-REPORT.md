@@ -105,14 +105,16 @@ contents have not been audited. The direct contrast was added after the
 original experiment, not preregistered as its primary comparison.
 Exact estimates and intervals are in [the native results](X64-NATIVE-RESULTS.md).
 
-**A first matched compiler-production CI pair has now qualified:** local
-production took 8,248.00 versus 8,059.20 seconds (**+2.34%**), while whole
-jobs took 10,440 versus 10,184 seconds (**+2.51%, 4m16s extra**).
-This is a single fresh pair, not a repeated estimate. Its new compiler artifacts
+**Two matched compiler-production CI pairs have now qualified, with order
+reversed:** mean local production took 8,188.94 versus 7,972.68 seconds
+(**+2.71%, 3m36s extra**), while mean whole jobs took 10,347.00 versus
+9,949.50 seconds (**+4.00%, 6m38s extra**). Observed per-pair increases
+were 2.34-3.09% for production and 2.51-5.55% for whole jobs; those ranges are
+not confidence intervals. The first pair's preregistered compiler artifacts
 subsequently passed a [five-VM IronRDP replay](X64-PGO-FRESH-REPLAY.md):
 **18.0% less wall time versus official Rust (95% interval 15.0-20.8%)**,
 and **20.9% less versus the rebuilt upstream recipe (18.1-23.4%)**. See the
-[full pilot report](X64-PGO-RELEASE-PILOT.md) for phase accounting, profile coverage
+[final comparison](X64-PGO-COMPARISON.md) for phase accounting, profile coverage
 and qualifications. The following explains why earlier production experiments
 could not supply this comparison.
 
@@ -135,8 +137,10 @@ processes, and that D:/E: share a separate HDD. This is readiness evidence only.
 Both cells passed in
 [39456859889](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39456859889),
 with full distributions and upstream qualification tests retained.
-Reverse-order repeats are required before claiming a stable production-cost
-difference. The failed preparation history below is excluded from that pair.
+The reverse-order pair also passed in
+[39506380543](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39506380543).
+Two pairs support the descriptive repeated observations above, not a precise
+CI confidence interval. The failed preparation history below is excluded.
 
 The first full-release attempt
 ([39446235255](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39446235255))

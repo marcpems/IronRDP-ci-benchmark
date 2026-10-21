@@ -1,0 +1,578 @@
+{
+  "schema": 1,
+  "run_id": "39506380543",
+  "harness_sha": "9f95dac90b30ff3a498bcb9f07713c738150bc8e",
+  "url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39506380543",
+  "status": "Qualified single-pair pilot; not a repeated CI-cost estimate",
+  "order": [
+    "local",
+    "upstream"
+  ],
+  "attribution": "Static-LLVM training relink plus LLVM native linking tools; not PGO quality alone",
+  "official_binary_limit": "Upstream is a local recipe rebuild, not the official downloadable distribution",
+  "fresh_downstream_replay": "Not yet measured with this pair's compiler artifacts",
+  "variants": {
+    "upstream": {
+      "result": {
+        "schema": 1,
+        "variant": "upstream",
+        "complete": true,
+        "pilot": true,
+        "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+        "llvm_sha": "00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7",
+        "rustc_perf_sha": "c0301bc44d175b9b2c5442b25049475c39d7700c",
+        "runner_name": "MARCPE-TEST01-X64",
+        "cores": 16,
+        "run_id": "39506380543",
+        "attempt": "1",
+        "configuration": "profile = \"dist\"\n[build]\nbuild = \"x86_64-pc-windows-msvc\"\nhost = [\"x86_64-pc-windows-msvc\"]\ntarget = [\"x86_64-pc-windows-msvc\"]\nsubmodules = false\njobs = 16\nextended = true\ndocs = true\nlocked-deps = true\nprofiler = true\ncargo-native-static = true\noptimized-compiler-builtins = true\nmetrics = true\nprint-step-timings = true\nverbose = 2\n[llvm]\ndownload-ci-llvm = false\nclang-cl = \"C:/q06380543u/r/citools/clang-rust/bin/clang-cl.exe\"\nninja = true\nthin-lto = false\nlink-shared = false\nstatic-libstdcpp = true\n\n[rust]\nchannel = \"stable\"\ndownload-rustc = false\ncodegen-units = 1\ncodegen-units-std = 1\ndebuginfo-level-std = 1\nremap-debuginfo = true\ncodegen-backends = [\"llvm\", \"cranelift\"]\nlld = true\nllvm-tools = true\nllvm-bitcode-linker = true\nlto = \"thin-local\"\nverbose-tests = true\n[target.x86_64-pc-windows-msvc]\nlinker = \"link.exe\"\nar = \"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/lib.exe\"\n[dist]\nsrc-tarball = false\ncompression-formats = [\"xz\"]\ncompression-profile = \"balanced\"\n",
+        "tools": {
+          "files": {
+            "cl.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe",
+              "sha256": "88c8344236a27a6e727e0a8edc49aaa2690bdc7a9464b9d18cc7abe70a9f1c0d"
+            },
+            "link.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe",
+              "sha256": "ca11e6c45debd34bf652dfe984c5360a531a005ed78bf72852330c9c2590cf0d"
+            },
+            "lib.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\lib.exe",
+              "sha256": "3d694c782f93e998fec5db0c2df78153565da23a028ee4618561fa0c33408489"
+            },
+            "cmake.exe": {
+              "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+              "sha256": "daae341e73330c9c5bf391f22d10510c0f70e5f01d2b61b0fd256cd9edd28379"
+            },
+            "ninja.exe": {
+              "path": "C:\\Users\\marcp\\scoop\\shims\\ninja.exe",
+              "sha256": "140e3801d8adeda639a21b14e62b93a4c7d26b7a758421f43c82be59753be49b"
+            },
+            "clang-cl.exe": {
+              "path": "C:\\q06380543u\\r\\citools\\clang-rust\\bin\\clang-cl.exe",
+              "sha256": "d7873f2dc2ff2205cab6fb352328becaf47fdd6ba2705a8143b3d437ab40f666"
+            },
+            "llvm-profdata.exe": {
+              "path": "C:\\q06380543u\\r\\citools\\clang-rust\\bin\\llvm-profdata.exe",
+              "sha256": "ec2e68081f5e255efb3f4c635d1479aeddd2e9b28c7217a143179151f1ebabae"
+            }
+          },
+          "msvc": "14.44.35207",
+          "sdk": "10.0.26100.0\\",
+          "image": null
+        },
+        "clang_installer_sha256": "0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af",
+        "measurement": "Fresh complete Rust 1.94.1 distribution using opt-dist windows-ci; not compiler-only",
+        "common_controls": [
+          "16 LP on C: NVMe; sequential isolated jobs; fresh Cargo home and no compiler cache",
+          "Full tools, docs, MSI, balanced XZ and upstream extracted-distribution tests",
+          "Rust thin-local; LLVM ThinLTO disabled; identical upstream training corpus",
+          "Common bootstrap-only clang-runtime discovery fix; no compiler/LLVM implementation changes"
+        ],
+        "intervention": "None to the upstream PGO training sequence or Microsoft native linkers",
+        "limits": "Cold local release recipe; not upstream eight-CPU/private-cache infrastructure",
+        "job_started_unix": 1792544681.0,
+        "patches": {
+          "bootstrap-clang-runtime.patch": "53364984309444cb355762cbda91a8fecba755b9c5a8fb77df3e5ec4a03ddad5"
+        },
+        "profiles": {
+          "rustc-pgo.profdata": {
+            "sha256": "d35093811a530ed1ac172ea149af863169884a22a183779b4ff4d5154a0cee16",
+            "bytes": 39722392
+          },
+          "llvm-pgo.profdata": {
+            "sha256": "f9d21fafe689be9210fdcfa640e733a4ddd823906fc435ce647b6d6bd5afaf66",
+            "bytes": 21059840
+          }
+        },
+        "llvm_training_coverage": {
+          "X86TargetLowering": {
+            "functions": 0,
+            "nonzero_functions": 0
+          },
+          "InstCombine": {
+            "functions": 6,
+            "nonzero_functions": 0
+          }
+        },
+        "started_unix": 1792545202.2535229,
+        "finished_unix": 1792553486.0419953,
+        "preparation_seconds": 521.2535228729248,
+        "production_and_qualification_seconds": 8283.788472414017,
+        "qualification_seconds": 397.62,
+        "production_seconds": 7886.168472414017,
+        "whole_job_seconds": null,
+        "whole_job_note": "Obtain final job duration from GitHub after evidence/distribution uploads and cleanup",
+        "qualification": "Unmodified opt-dist windows-ci extracted-distribution tests passed",
+        "attribution": "Local recipe also changes native linking tools; not isolated PGO profile quality"
+      },
+      "job": {
+        "id": 118977941978,
+        "html_url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39506380543/job/118977941978",
+        "started_at": "2026-10-21T01:04:31Z",
+        "completed_at": "2026-10-21T03:46:26Z",
+        "conclusion": "success"
+      },
+      "whole_job_seconds": 9715.0,
+      "steps": {
+        "Set up job": 8.0,
+        "Reserve fresh isolated build paths on NVMe": 1.0,
+        "Run actions/checkout@v6": 23.0,
+        "Record fresh idle-state inventory": 24.0,
+        "Check out pinned Rust directly on NVMe": 404.0,
+        "Run actions/setup-python@v6": 1.0,
+        "Install pinned tools into this experiment only": 63.0,
+        "Build and qualify complete PGO distribution": 8297.0,
+        "Preserve evidence and profiles, including failures": 14.0,
+        "Retain every qualified distribution artifact": 744.0,
+        "Reclaim only this job's generated build directory after successful preservation": 127.0,
+        "Post Run actions/setup-python@v6": 1.0,
+        "Post Run actions/checkout@v6": 3.0,
+        "Complete job": 0.0
+      },
+      "timers": {
+        "Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM": 2051.57,
+        "Stage 1 (Rustc PGO) > Gather profiles": 645.76,
+        "Stage 1 (Rustc PGO) > Build PGO optimized rustc": 344.38,
+        "Stage 1 (Rustc PGO)": 3041.72,
+        "Stage 2 (LLVM PGO) > Build PGO instrumented LLVM": 1169.75,
+        "Stage 2 (LLVM PGO) > Gather profiles": 287.83,
+        "Stage 2 (LLVM PGO)": 1461.54,
+        "Stage 5 (final build)": 3207.59,
+        "Run tests": 397.62
+      },
+      "other_production_seconds": 175.31847241401647,
+      "manifest": [
+        {
+          "name": "bootstrap-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 7770088,
+          "sha256": "f413d5fa465b20e392e7e3e0eeb421a54bb75c67226aedbfb24d53092a55d399"
+        },
+        {
+          "name": "cargo-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10234132,
+          "sha256": "d2858a90d4ba369a49b7f6e2476110598960a010049ad18efc05838651b1cd3a"
+        },
+        {
+          "name": "clippy-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3976120,
+          "sha256": "4518c4b58b4f2a6c2548d168e016f12326d1733e3abd7095b65dd7de14507a9e"
+        },
+        {
+          "name": "llvm-bitcode-linker-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 996188,
+          "sha256": "d393ae4a505b7246a0d64df7975d152551901f8caa83e00f3e55d8b60f4baef3"
+        },
+        {
+          "name": "llvm-tools-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 65538568,
+          "sha256": "02336b6c60353a2aadb6ceffb695c9a45fa657936c5503609ed4f0024259c951"
+        },
+        {
+          "name": "reproducible-artifacts-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 6035516,
+          "sha256": "cb3cdf476120947ad73beed94dcf286830a1de0362c1fc46fe22f8db34457560"
+        },
+        {
+          "name": "rust-1.94.1-x86_64-pc-windows-msvc.msi",
+          "bytes": 295900054,
+          "sha256": "115528a738980a17f7e6224656795b096ac7c7f2efc8b55d45503e2e0dd94952"
+        },
+        {
+          "name": "rust-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 232510320,
+          "sha256": "2650292111afc7a70cdf5256324aea8223016b260c8cc25f429011e1b720b369"
+        },
+        {
+          "name": "rust-analysis-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 13648,
+          "sha256": "2f705f0379608ae6e303aac2539b83748d14d45b3b66fe116252b1c5b0aa5fc4"
+        },
+        {
+          "name": "rust-analyzer-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10002028,
+          "sha256": "85b0626465aeba26bb226bfb7426dc91649a17bf9b495a0b8daf6c29070e482c"
+        },
+        {
+          "name": "rust-dev-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 495295824,
+          "sha256": "5eca2e04df4f16fef2be393df2d4a67612ddbcb6f69adba908a91102e3fbdc2e"
+        },
+        {
+          "name": "rust-docs-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 28501996,
+          "sha256": "418b86c7874170e423b4aac35dc2f180b6aa13262e6f1bc854a09884e9bfc43b"
+        },
+        {
+          "name": "rust-docs-json-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3558428,
+          "sha256": "813f19810cd7dd7665738a5aa3787bd2513e406fd73de84eb59cd42aa7125fff"
+        },
+        {
+          "name": "rust-src-1.94.1.tar.xz",
+          "bytes": 4077792,
+          "sha256": "c826a96a6164231f5a676aee4dd166516436f06b63ed10aec9f557f84636a6d8"
+        },
+        {
+          "name": "rust-std-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 23332100,
+          "sha256": "476e99b844c124a4e18923e0b9a447e1d75b860a75f4eae3a340461053764ec8"
+        },
+        {
+          "name": "rustc-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 84631140,
+          "sha256": "1d2290d928a35578e5bad8037590107692b525b2165e679090c582caceecb4b1"
+        },
+        {
+          "name": "rustc-dev-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 149818216,
+          "sha256": "6bfa3c755d6c132cbf73234f1e0259becf278264e7be195ea7cc4ea6579cd5ab"
+        },
+        {
+          "name": "rustfmt-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2630872,
+          "sha256": "b241ea25cf4f87882825d169e3449aa1db816d481413f72c57d60ef8ca38bc26"
+        }
+      ],
+      "telemetry": {
+        "samples": 1340,
+        "min_c_free_gib": 140.44994735717773,
+        "counters": {
+          "processor(_total)\\% processor time": {
+            "min": 0.8946962182573848,
+            "median": 88.58057187726439,
+            "p95": 100,
+            "max": 100
+          },
+          "memory\\available mbytes": {
+            "min": 9431,
+            "median": 19691.5,
+            "p95": 22095,
+            "max": 23151
+          },
+          "memory\\pages input/sec": {
+            "min": 0,
+            "median": 29.959638054467035,
+            "p95": 6694.206739434431,
+            "max": 390395.32540890184
+          },
+          "physicaldisk(1 c:)\\avg. disk sec/read": {
+            "min": 0,
+            "median": 0.0001250909090909091,
+            "p95": 0.0004433,
+            "max": 0.007239237037037037
+          },
+          "physicaldisk(1 c:)\\avg. disk sec/write": {
+            "min": 0,
+            "median": 7.012991148906629e-05,
+            "p95": 0.00038514117647058823,
+            "max": 0.002747704
+          },
+          "physicaldisk(1 c:)\\current disk queue length": {
+            "min": 0,
+            "median": 0.0,
+            "p95": 0,
+            "max": 10
+          }
+        }
+      },
+      "evidence_sha256": {
+        "result.json": "bcec9b45f632215a6874b10c75b51e9b0b362f90952f2f1794a45cbfa8bcdcaf",
+        "provenance.json": "4bdd46bbd1a106321115a4d036419b14715976f24c4a4ee38cb838c199b0fb20",
+        "dist-manifest.json": "80b17c990a464ec757e85ff663dc29397c8b3150660f1e657df5fe5f74f5eaff",
+        "production-sections.json": "9294bd6a6c1f212b76ba95c37946accceff6032641dd000b55e683434db6d0d1",
+        "CMakeCache.txt": "6473a80171064c63042135769fc32f9f48af160114db61dc1bdbfcbddea7e6ad",
+        "telemetry.jsonl": "db40b2afecb2b18a28c94b74df4e1c03c039834bfea12951ec4f641391190dfb"
+      }
+    },
+    "local": {
+      "result": {
+        "schema": 1,
+        "variant": "local",
+        "complete": true,
+        "pilot": true,
+        "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+        "llvm_sha": "00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7",
+        "rustc_perf_sha": "c0301bc44d175b9b2c5442b25049475c39d7700c",
+        "runner_name": "MARCPE-TEST01-X64",
+        "cores": 16,
+        "run_id": "39506380543",
+        "attempt": "1",
+        "configuration": "profile = \"dist\"\n[build]\nbuild = \"x86_64-pc-windows-msvc\"\nhost = [\"x86_64-pc-windows-msvc\"]\ntarget = [\"x86_64-pc-windows-msvc\"]\nsubmodules = false\njobs = 16\nextended = true\ndocs = true\nlocked-deps = true\nprofiler = true\ncargo-native-static = true\noptimized-compiler-builtins = true\nmetrics = true\nprint-step-timings = true\nverbose = 2\n[llvm]\ndownload-ci-llvm = false\nclang-cl = \"C:/q06380543l/r/citools/clang-rust/bin/clang-cl.exe\"\nninja = true\nthin-lto = false\nlink-shared = false\nstatic-libstdcpp = true\nuse-linker = \"lld\"\n[rust]\nchannel = \"stable\"\ndownload-rustc = false\ncodegen-units = 1\ncodegen-units-std = 1\ndebuginfo-level-std = 1\nremap-debuginfo = true\ncodegen-backends = [\"llvm\", \"cranelift\"]\nlld = true\nllvm-tools = true\nllvm-bitcode-linker = true\nlto = \"thin-local\"\nverbose-tests = true\n[target.x86_64-pc-windows-msvc]\nlinker = \"lld-link.exe\"\nar = \"C:/q06380543l/r/citools/clang-rust/bin/llvm-lib.exe\"\n[dist]\nsrc-tarball = false\ncompression-formats = [\"xz\"]\ncompression-profile = \"balanced\"\n",
+        "tools": {
+          "files": {
+            "cl.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\cl.exe",
+              "sha256": "88c8344236a27a6e727e0a8edc49aaa2690bdc7a9464b9d18cc7abe70a9f1c0d"
+            },
+            "link.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe",
+              "sha256": "ca11e6c45debd34bf652dfe984c5360a531a005ed78bf72852330c9c2590cf0d"
+            },
+            "lib.exe": {
+              "path": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\lib.exe",
+              "sha256": "3d694c782f93e998fec5db0c2df78153565da23a028ee4618561fa0c33408489"
+            },
+            "cmake.exe": {
+              "path": "C:\\Program Files\\CMake\\bin\\cmake.exe",
+              "sha256": "daae341e73330c9c5bf391f22d10510c0f70e5f01d2b61b0fd256cd9edd28379"
+            },
+            "ninja.exe": {
+              "path": "C:\\Users\\marcp\\scoop\\shims\\ninja.exe",
+              "sha256": "140e3801d8adeda639a21b14e62b93a4c7d26b7a758421f43c82be59753be49b"
+            },
+            "clang-cl.exe": {
+              "path": "C:\\q06380543l\\r\\citools\\clang-rust\\bin\\clang-cl.exe",
+              "sha256": "d7873f2dc2ff2205cab6fb352328becaf47fdd6ba2705a8143b3d437ab40f666"
+            },
+            "llvm-profdata.exe": {
+              "path": "C:\\q06380543l\\r\\citools\\clang-rust\\bin\\llvm-profdata.exe",
+              "sha256": "ec2e68081f5e255efb3f4c635d1479aeddd2e9b28c7217a143179151f1ebabae"
+            }
+          },
+          "msvc": "14.44.35207",
+          "sdk": "10.0.26100.0\\",
+          "image": null
+        },
+        "clang_installer_sha256": "0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af",
+        "measurement": "Fresh complete Rust 1.94.1 distribution using opt-dist windows-ci; not compiler-only",
+        "common_controls": [
+          "16 LP on C: NVMe; sequential isolated jobs; fresh Cargo home and no compiler cache",
+          "Full tools, docs, MSI, balanced XZ and upstream extracted-distribution tests",
+          "Rust thin-local; LLVM ThinLTO disabled; identical upstream training corpus",
+          "Common bootstrap-only clang-runtime discovery fix; no compiler/LLVM implementation changes"
+        ],
+        "intervention": "Static LLVM training relink plus LLVM lld-link/llvm-lib; no added ThinLTO",
+        "limits": "Cold local release recipe; not upstream eight-CPU/private-cache infrastructure",
+        "job_started_unix": 1792534422.0,
+        "patches": {
+          "bootstrap-clang-runtime.patch": "53364984309444cb355762cbda91a8fecba755b9c5a8fb77df3e5ec4a03ddad5",
+          "static-llvm-pgo.patch": "1126fff1b1f1452db0bc0316c86c261618f5faea2f300541bd34da646a4d707b"
+        },
+        "profiles": {
+          "rustc-pgo.profdata": {
+            "sha256": "e38e1bb5b64fd8f1ba7365f5ca31d1a8a9686425383bd17ba7b62834096f2df8",
+            "bytes": 39722528
+          },
+          "llvm-pgo.profdata": {
+            "sha256": "ade0c566a9fd6128a5c6d7a349e9afcc13ab9af4744d13f6025df602335c1945",
+            "bytes": 48239568
+          }
+        },
+        "llvm_training_coverage": {
+          "X86TargetLowering": {
+            "functions": 255,
+            "nonzero_functions": 167
+          },
+          "InstCombine": {
+            "functions": 873,
+            "nonzero_functions": 597
+          }
+        },
+        "started_unix": 1792535073.5862193,
+        "finished_unix": 1792543586.5481224,
+        "preparation_seconds": 651.5862193107605,
+        "production_and_qualification_seconds": 8512.961903095245,
+        "qualification_seconds": 383.08,
+        "production_seconds": 8129.881903095245,
+        "whole_job_seconds": null,
+        "whole_job_note": "Obtain final job duration from GitHub after evidence/distribution uploads and cleanup",
+        "qualification": "Unmodified opt-dist windows-ci extracted-distribution tests passed",
+        "attribution": "Local recipe also changes native linking tools; not isolated PGO profile quality"
+      },
+      "job": {
+        "id": 118916696057,
+        "html_url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39506380543/job/118916696057",
+        "started_at": "2026-10-20T22:13:35Z",
+        "completed_at": "2026-10-21T01:04:29Z",
+        "conclusion": "success"
+      },
+      "whole_job_seconds": 10254.0,
+      "steps": {
+        "Set up job": 6.0,
+        "Reserve fresh isolated build paths on NVMe": 1.0,
+        "Run actions/checkout@v6": 15.0,
+        "Record fresh idle-state inventory": 19.0,
+        "Check out pinned Rust directly on NVMe": 508.0,
+        "Run actions/setup-python@v6": 0.0,
+        "Install pinned tools into this experiment only": 76.0,
+        "Obtain upstream reference provenance": 27.0,
+        "Build and qualify complete PGO distribution": 8527.0,
+        "Preserve evidence and profiles, including failures": 42.0,
+        "Retain every qualified distribution artifact": 896.0,
+        "Reclaim only this job's generated build directory after successful preservation": 129.0,
+        "Post Run actions/setup-python@v6": 1.0,
+        "Post Run actions/checkout@v6": 3.0,
+        "Complete job": 0.0
+      },
+      "timers": {
+        "Stage 1 (Rustc PGO) > Build PGO instrumented rustc and LLVM": 2053.15,
+        "Stage 1 (Rustc PGO) > Gather profiles": 646.85,
+        "Stage 1 (Rustc PGO) > Build PGO optimized rustc": 342.5,
+        "Stage 1 (Rustc PGO)": 3042.49,
+        "Stage 2 (LLVM PGO) > Build PGO instrumented LLVM": 1222.94,
+        "Stage 2 (LLVM PGO) > Gather profiles": 439.23,
+        "Stage 2 (LLVM PGO)": 1665.84,
+        "Stage 5 (final build)": 3228.24,
+        "Run tests": 383.08
+      },
+      "other_production_seconds": 193.31190309524573,
+      "manifest": [
+        {
+          "name": "bootstrap-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 7509308,
+          "sha256": "e0c1e8a57c7edbad3df5fa2637fef8e897f6775d6ba391160d0751bdef6d9e9c"
+        },
+        {
+          "name": "cargo-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10424268,
+          "sha256": "03f3801fe57b03972fd61bcba1ef1dc1e7f313e2a3024ed8dba23919287ac46d"
+        },
+        {
+          "name": "clippy-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3998552,
+          "sha256": "6c5f0094041e0dcc0ed91564b5ad0505768dfc6d6e40b92fddd5efb9d947779a"
+        },
+        {
+          "name": "llvm-bitcode-linker-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 1034732,
+          "sha256": "7d11f7aeb7b70d8164c5b25032bd87329092de75c974895a814285b3efe9299d"
+        },
+        {
+          "name": "llvm-tools-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 70105280,
+          "sha256": "0a26b834445214f89456296080fbf1f7b551eb4fe6be280e4f3b0405e6e4ea39"
+        },
+        {
+          "name": "reproducible-artifacts-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 9388096,
+          "sha256": "4a8d0aab9f563b358bf8aa7c7aa2ffd926951af1e1c29d424d65bea1e7f06a53"
+        },
+        {
+          "name": "rust-1.94.1-x86_64-pc-windows-msvc.msi",
+          "bytes": 300962710,
+          "sha256": "f1cf6d50043ec11a6c3763ec51aa70a55e5d1f17045c54f01301f81d98369a13"
+        },
+        {
+          "name": "rust-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 240458764,
+          "sha256": "90d5057cd6b8bd74141bec0885b4e5d4422e93b12fc68ae9b7fe16838d79e34a"
+        },
+        {
+          "name": "rust-analysis-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 13588,
+          "sha256": "773557dfed4bf1c77cffbb1944dfea56f9e94481df5b6ef938615fcb31335854"
+        },
+        {
+          "name": "rust-analyzer-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10330620,
+          "sha256": "3868ddc6230deba889f2aaa0d99c3ba222a3ef888461c308f421012f2823d365"
+        },
+        {
+          "name": "rust-dev-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 527833544,
+          "sha256": "23b6e1fdd71590d3e07118f38f81fe9f9fdd5250e8cd154d983d8f3715926026"
+        },
+        {
+          "name": "rust-docs-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 28457180,
+          "sha256": "3944e6f6dae1aceead1e70892d73fb3f5d363fc5a62c035e49a34e3d31a53195"
+        },
+        {
+          "name": "rust-docs-json-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3558344,
+          "sha256": "da4a4cc62f196fa22377db4539c5ca745b855210a62e8814bbdee1fbe93bb81a"
+        },
+        {
+          "name": "rust-src-1.94.1.tar.xz",
+          "bytes": 4077600,
+          "sha256": "c2104046d8679515fadb2f84f51a63fcb56e8f53da75a9693ef900e229db2b68"
+        },
+        {
+          "name": "rust-std-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 23336088,
+          "sha256": "3c4766e3739339d48e6922f755447f839bc07545de37e18ca267e799c9583724"
+        },
+        {
+          "name": "rustc-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 87507868,
+          "sha256": "b52e1dae068a9bd9ca6b2480b9cb1596c7562f5c99d63473555b0f23bc3f1d72"
+        },
+        {
+          "name": "rustc-dev-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 149377144,
+          "sha256": "5c552b31c8d1de7ad7cd79ccd3a71df477c1d4f3f5740e072c8cd6d2ee08c0e4"
+        },
+        {
+          "name": "rustfmt-1.94.1-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2647240,
+          "sha256": "176dbc2539eb153d6aede92b6f3765a0f1f4b1ed048aeb5619bd4f1fc05a22f1"
+        }
+      ],
+      "telemetry": {
+        "samples": 1377,
+        "min_c_free_gib": 134.40799713134766,
+        "counters": {
+          "processor(_total)\\% processor time": {
+            "min": 0,
+            "median": 82.67246799572929,
+            "p95": 100,
+            "max": 100
+          },
+          "memory\\available mbytes": {
+            "min": 9744,
+            "median": 19799,
+            "p95": 22199,
+            "max": 23350
+          },
+          "memory\\pages input/sec": {
+            "min": 0,
+            "median": 31.75864068254083,
+            "p95": 8276.805902653814,
+            "max": 468513.97992758127
+          },
+          "physicaldisk(1 c:)\\avg. disk sec/read": {
+            "min": 0,
+            "median": 0.00012573333333333334,
+            "p95": 0.0005427,
+            "max": 0.019119957421875
+          },
+          "physicaldisk(1 c:)\\avg. disk sec/write": {
+            "min": 0,
+            "median": 7.130215827338129e-05,
+            "p95": 0.00043383076923076926,
+            "max": 0.04808069719626168
+          },
+          "physicaldisk(1 c:)\\current disk queue length": {
+            "min": 0,
+            "median": 0,
+            "p95": 0,
+            "max": 15
+          }
+        }
+      },
+      "evidence_sha256": {
+        "result.json": "b3f055844f3012d77b0f3baddb260afa9d7a76c0619a01ba784e1f732e09bd53",
+        "provenance.json": "fcdf96f7155ee90849f96167f272ffac8ce731e312105c231f17618e289431a7",
+        "dist-manifest.json": "ea7ab6875341ef43dea45d8ae06818f77dc1214a7a815d53e9f1ede94c2da09a",
+        "production-sections.json": "6aabf9dd2cb8b897352bd2193f61bb246e65d96110189beb9f9f3b44eb9cc0de",
+        "CMakeCache.txt": "b88c09961b97cf980c405c042d19d9244a6011193346a1ab420d6106545fade0",
+        "telemetry.jsonl": "35f7af8bf4e7a640a3a8bf25cb2396f97ddd3339ff4e1ccac09dc4b1bc32784b"
+      }
+    }
+  },
+  "contrasts": {
+    "production_seconds": {
+      "upstream": 7886.168472414017,
+      "local": 8129.881903095245,
+      "local_minus_upstream_seconds": 243.7134306812286,
+      "local_increase_fraction": 0.03090390872750732
+    },
+    "whole_job_seconds": {
+      "upstream": 9715.0,
+      "local": 10254.0,
+      "local_minus_upstream_seconds": 539.0,
+      "local_increase_fraction": 0.05548121461657231
+    }
+  }
+}

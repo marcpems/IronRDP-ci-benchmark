@@ -1,5 +1,9 @@
 # x64 upstream-PGO versus local-PGO: qualified full-release pilot
 
+This page retains the first-pair observation. The
+[completed comparison](X64-PGO-COMPARISON.md) includes the reverse-order release
+pair and fresh five-VM IronRDP replay.
+
 ## Result
 
 The first matched fresh full-release pair completed on 20 October 2026:
@@ -15,8 +19,8 @@ Both releases passed the unmodified upstream extracted-distribution tests.
 
 This is a **qualified single-pair observation**, not a stable estimate or a
 confidence interval. Upstream ran first, local second, on the same machine.
-Reverse-order fresh-profile repetitions remain necessary before generalizing
-the CI-cost difference.
+The later reverse-order fresh-profile repetition is reported in the completed
+comparison; this historical first-pair table is unchanged.
 
 Production includes helper construction, fresh rustc/LLVM PGO training,
 compilation and packaging. It excludes initial source/tool setup, extracted
@@ -136,8 +140,8 @@ Fresh replay run:
 [39506872211](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39506872211).
 Reverse-order release run:
 [39506380543](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39506380543).
-Both were started after the first pair qualified; neither is included in the
-table above. Once all five replay jobs complete, download their
+Both completed successfully after the first pair qualified; neither is included
+in the table above. To reproduce the replay, download its
 `x64-pgo-fresh-replay-*` artifacts into separate folders beneath one evidence
 directory and run:
 
