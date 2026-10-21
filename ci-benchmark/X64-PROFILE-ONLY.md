@@ -34,8 +34,10 @@ ineffective or that this gap alone explains the earlier 18% toolchain benefit.
 
 ## Preregistered causal experiment
 
-**Status: restarting after an overbroad qualification guard; no accepted
-profile-only performance result yet.**
+**Status: replacement run in progress; no accepted profile-only performance
+result yet.** Run
+[39595776289](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39595776289)
+uses corrected harness `23ef5e31d9c4ad2ab48a8b0b7ec5ad381e95dea8`.
 
 Initial run [39584578532](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39584578532),
 harness `b175183e4fbf0cfd8be02dde9dc223bb37c84c34`, completed its official-profile
