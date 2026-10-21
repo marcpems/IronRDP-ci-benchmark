@@ -34,7 +34,10 @@ ineffective or that this gap alone explains the earlier 18% toolchain benefit.
 
 ## Preregistered causal experiment
 
-**Status: implementation and scheduling; no profile-only performance result yet.**
+**Status: scheduled and running; no profile-only performance result yet.**
+Run [39584578532](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39584578532)
+uses harness commit `b175183e4fbf0cfd8be02dde9dc223bb37c84c34`.
+Its readiness job passed and the official-profile release job started.
 
 Two clean complete Rust distributions use the same source path and revisions,
 clang-cl 20.1.3, Microsoft linker/librarian, official Rust-side PGO profile,
