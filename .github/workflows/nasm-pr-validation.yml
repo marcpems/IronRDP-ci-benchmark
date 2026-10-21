@@ -1,0 +1,149 @@
+name: Native Windows Arm NASM PR validation
+'on':
+  push:
+    branches:
+    - perf/nasm-pr-validation
+  workflow_dispatch: {}
+permissions:
+  contents: read
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+  RUST_BACKTRACE: short
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+jobs:
+  build:
+    name: ${{ matrix.variant }}
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - variant: baseline
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          macos_deployment_target: '11.0'
+        - variant: without-nasm
+          target: aarch64-pc-windows-msvc
+          os_arch: windows-arm64
+          macos_deployment_target: '11.0'
+    steps:
+    - name: Prepare Windows Arm build storage
+      if: runner.os == 'Windows' && runner.arch == 'ARM64' && runner.environment == 'github-hosted'
+      shell: pwsh
+      run: "$ErrorActionPreference = 'Stop'\nif ([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'Arm64')\
+        \ {\n  throw 'runner architecture does not match the operating system'\n}\n\n$partitions = @(Get-Partition)\n$volumes\
+        \ = @(Get-Volume)\n$drives = @(Get-PSDrive -PSProvider FileSystem)\nif (($partitions | Where-Object DriveLetter -eq\
+        \ 'D') -or\n    ($volumes | Where-Object DriveLetter -eq 'D') -or\n    ($drives | Where-Object Name -eq 'D')) {\n\
+        \  Write-Host 'D: is already assigned; leaving storage and workspace unchanged'\n  return\n}\n\n$disks = @(Get-Disk\
+        \ | Where-Object {\n  $_.BusType -eq 'NVMe' -and $_.PartitionStyle -eq 'RAW' -and\n  -not $_.IsBoot -and -not $_.IsSystem\
+        \ -and\n  -not $_.IsOffline -and -not $_.IsReadOnly -and\n  $_.NumberOfPartitions -eq 0 -and $_.Size -ge 50GB -and\n\
+        \  $_.Number -notin $partitions.DiskNumber\n})\nif ($disks.Count -ne 1) {\n  Write-Host \"Found $($disks.Count) eligible\
+        \ raw NVMe disks; leaving storage and workspace unchanged\"\n  return\n}\n\n$workspace = Get-Item -LiteralPath $env:GITHUB_WORKSPACE\
+        \ -Force\nif (-not $workspace.PSIsContainer -or\n    ($workspace.Attributes -band [IO.FileAttributes]::ReparsePoint))\
+        \ {\n  Write-Host 'Workspace is not an ordinary directory; leaving storage unchanged'\n  return\n}\n$cargoHome = if\
+        \ ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }\nif (Test-Path -LiteralPath $cargoHome)\
+        \ {\n  $cargoDirectory = Get-Item -LiteralPath $cargoHome -Force\n  if (-not $cargoDirectory.PSIsContainer -or\n \
+        \     ($cargoDirectory.Attributes -band [IO.FileAttributes]::ReparsePoint)) {\n    Write-Host 'Cargo home is not an\
+        \ ordinary directory; leaving storage unchanged'\n    return\n  }\n}\n\n# Create ReFS format drive (Dev Drive) with\
+        \ developer-workload defaults. AV is delayed by default for \n# dev drive. Any errors end the job here with a message\
+        \ as the runner is now in an unknown state.  \n$disk = $disks[0]\nWrite-Host \"Initializing unused NVMe disk $($disk.Number)\
+        \ ($($disk.Size) bytes)\"\n$partition = Initialize-Disk -InputObject $disk -PartitionStyle GPT -PassThru |\n  New-Partition\
+        \ -UseMaximumSize -DriveLetter D\n$volume = $partition | Format-Volume -DevDrive -FileSystem ReFS -NewFileSystemLabel\
+        \ 'Build' -Confirm:$false\nif ($volume.FileSystem -ne 'ReFS' -or $volume.DriveLetter -ne 'D') {\n  throw 'new build\
+        \ volume is not ReFS on D:'\n}\n\n# Preserve files left by pre-job hooks, including hidden entries and links.\n# Keep\
+        \ the original populated directory as a job-lifetime backup after copying.\nSet-Location -LiteralPath $env:RUNNER_TEMP\n\
+        [Environment]::CurrentDirectory = $env:RUNNER_TEMP\nif (@(Get-ChildItem -LiteralPath $workspace.FullName -Force).Count\
+        \ -eq 0) {\n  Move-Item -LiteralPath $workspace.FullName -Destination 'D:\\workspace'\n} else {\n  robocopy $workspace.FullName\
+        \ 'D:\\workspace' /E /COPY:DAT /DCOPY:DAT /SL /SJ /R:2 /W:1 /NP\n  if ($LASTEXITCODE -ge 8) { throw \"workspace copy\
+        \ failed with robocopy exit code $LASTEXITCODE\" }\n  $LASTEXITCODE = 0\n  Move-Item -LiteralPath $workspace.FullName\
+        \ -Destination \"$($workspace.FullName).before-refs-$([guid]::NewGuid())\"\n}\nNew-Item -ItemType Junction -Path $workspace.FullName\
+        \ -Target 'D:\\workspace' | Out-Null\n\n# Give rust-cache the physical Cargo path: paths relative to the old C: workspace\n\
+        # would otherwise traverse the junction's parents on D: when GNU tar saves/restores.\nif (Test-Path -LiteralPath $cargoHome)\
+        \ {\n  Move-Item -LiteralPath $cargoHome -Destination 'D:\\cargo-home'\n} else {\n  New-Item -ItemType Directory -Path\
+        \ 'D:\\cargo-home' | Out-Null\n}\nNew-Item -ItemType Junction -Path $cargoHome -Target 'D:\\cargo-home' | Out-Null\n\
+        New-Item -ItemType Directory -Path 'D:\\build-temp' | Out-Null\n\"CARGO_HOME=D:\\cargo-home\" >> $env:GITHUB_ENV\n\
+        \"TEMP=D:\\build-temp\" >> $env:GITHUB_ENV\n\"TMP=D:\\build-temp\" >> $env:GITHUB_ENV\nWrite-Host 'Workspace, Cargo\
+        \ source caches and compiler temporary files now use D: (ReFS)'\n"
+    - name: Checkout release tag
+      uses: actions/checkout@v6
+      with:
+        repository: Devolutions/IronRDP
+        ref: bf5d4a47a3006290f3804695de1980247fdc6829
+    - name: Install build dependencies
+      if: matrix.variant == 'baseline' || (runner.os != 'Windows' || runner.arch != 'ARM64' || matrix.target != 'aarch64-pc-windows-msvc')
+      uses: ./.github/actions/install-build-deps
+    - name: Verify target-specific NASM selection
+      shell: pwsh
+      env:
+        VARIANT: ${{ matrix.variant }}
+      run: "\n$ErrorActionPreference = 'Stop'\nWrite-Host \"Image: $env:ImageVersion\"\nGet-CimInstance Win32_Processor |\
+        \ Select-Object Name, NumberOfLogicalProcessors | ConvertTo-Json\n$nasm = @(Get-Command nasm -CommandType Application\
+        \ -ErrorAction SilentlyContinue)\nif ($env:VARIANT -eq 'without-nasm') {\n    if ($nasm.Count -ne 0) { throw 'NASM\
+        \ unexpectedly exists on PATH' }\n    foreach ($path in @(\"$env:ProgramFiles\\NASM\", \"${env:ProgramFiles(x86)}\\\
+        NASM\", \"$env:ChocolateyInstall\\lib\\nasm\")) {\n        if (Test-Path -LiteralPath $path) { throw \"NASM unexpectedly\
+        \ exists at $path\" }\n    }\n    Write-Host 'NASM absence verified'\n} else {\n    if ($nasm.Count -eq 0) { throw\
+        \ 'Baseline did not install NASM' }\n    nasm -v\n    if ($LASTEXITCODE -ne 0) { throw 'Baseline NASM executable failed'\
+        \ }\n}\n"
+    - name: Rust cache
+      uses: Swatinem/rust-cache@v2.9.1
+      with:
+        prefix-key: nasm-pr-${{ github.run_id }}-${{ matrix.variant }}
+    - name: Build release binary
+      shell: pwsh
+      run: "if ($env:RUNNER_OS -eq 'Windows') {\n  $env:RUSTFLAGS = '-C target-feature=+crt-static'\n}\n\nif ($env:RUNNER_OS\
+        \ -eq 'macOS') {\n  $env:MACOSX_DEPLOYMENT_TARGET = '${{ matrix.macos_deployment_target }}'\n}\n\nrustup target add\
+        \ '${{ matrix.target }}'\ncargo build --locked --release --target '${{ matrix.target }}' --package 'ironrdp-agent'\n"
+    - name: Package binary
+      shell: pwsh
+      env:
+        PACKAGE: ironrdp-agent
+        VERSION: nasm-validation
+        TARGET: ${{ matrix.target }}
+        OS_ARCH: ${{ matrix.os_arch }}
+      run: '$extension = if ($env:RUNNER_OS -eq ''Windows'') { ''.exe'' } else { '''' }
+
+        $binary = Join-Path (Join-Path (Join-Path ''target'' $env:TARGET) ''release'') "$env:PACKAGE$extension"
+
+        $assetName = "$env:PACKAGE-$env:VERSION-$env:OS_ARCH.tar.gz"
+
+        $assetDirectory = ''release-assets''
+
+
+        New-Item -ItemType Directory -Force -Path $assetDirectory | Out-Null
+
+        Copy-Item $binary (Join-Path $assetDirectory "$env:PACKAGE$extension")
+
+
+        Push-Location $assetDirectory
+
+        tar -czf $assetName "$env:PACKAGE$extension"
+
+        $hash = (Get-FileHash -Algorithm SHA256 $assetName).Hash.ToLowerInvariant()
+
+        "$hash  $assetName" | Set-Content -NoNewline -Encoding ascii "$assetName.sha256"
+
+        Remove-Item "$env:PACKAGE$extension"
+
+        Pop-Location
+
+        '
+    - name: Upload release asset
+      uses: actions/upload-artifact@v7
+      with:
+        name: nasm-pr-${{ matrix.variant }}
+        path: release-assets/*
+        if-no-files-found: error
+        retention-days: 14
+        overwrite: true
+    - name: Verify release archive, executable, and ReFS paths
+      shell: pwsh
+      run: "\n$ErrorActionPreference = 'Stop'\nforeach ($sidecar in Get-ChildItem release-assets -Filter '*.sha256') {\n \
+        \   $archive = $sidecar.FullName.Substring(0, $sidecar.FullName.Length - 7)\n    if ((Get-FileHash $archive).Hash.ToLowerInvariant()\
+        \ -ne (Get-Content $sidecar.FullName).Split(' ')[0]) { throw 'Archive checksum mismatch' }\n    tar -tzf $archive\n\
+        \    if ($LASTEXITCODE -ne 0) { throw 'Archive verification failed' }\n}\n& '.\\target\\aarch64-pc-windows-msvc\\\
+        release\\ironrdp-agent.exe' --help\nif ($LASTEXITCODE -ne 0) { throw 'Agent executable smoke check failed' }\nif ((Get-Volume\
+        \ -DriveLetter D).FileSystem -ne 'ReFS' -or\n    (Get-Item -LiteralPath $env:GITHUB_WORKSPACE).Target -ne 'D:\\workspace'\
+        \ -or\n    $env:CARGO_HOME -ne 'D:\\cargo-home') { throw 'Expected merged ReFS configuration' }\n"
