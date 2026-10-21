@@ -9,11 +9,33 @@ from build_arm_compilers import digest, save
 from native_ci_probe import PROFILE_ENV, paired_order
 from offline_benchmark import NATIVE_COMMANDS
 from qualify_x64_profile_existing import verify_retained_evidence
+from preserve_x64_profile_control import recovered_result
 from x64_profile_only import audit_profile_use, load_profiles, tests_only_helper, verify_pair
 from x64_profile_replay import summarize
 
 
 class ProfileOnlyTests(unittest.TestCase):
+    def test_preserved_control_keeps_production_and_qualification_identities(self):
+        expected = {"run_id": "production", "attempt": "1"}
+        protocol = {"scope": "one profile-only pair"}
+        qualification = {
+            "complete": True, "original_evidence": expected, "production_run_id": "production",
+            "production_attempt": "1", "qualification_run_id": "39608556774", "qualification_attempt": "1",
+            "original_provenance": {"protocol": protocol, "variant": "official", "run_id": "production"},
+            "production_measurement": {"exit_code": 0, "wall_seconds": 100},
+            "qualification_seconds": 10, "qualification": "upstream tests passed",
+        }
+        result = recovered_result(qualification, expected, protocol, "continuation", "1")
+        self.assertEqual(result["run_id"], "continuation")
+        self.assertEqual(result["production_run_id"], "production")
+        self.assertEqual(result["qualification_run_id"], "39608556774")
+        self.assertEqual(result["production_seconds"], 100)
+        self.assertTrue(result["recovered_control"])
+        with self.assertRaisesRegex(RuntimeError, "designated qualified control"):
+            recovered_result({**qualification, "complete": False}, expected, protocol, "continuation", "1")
+        with self.assertRaisesRegex(RuntimeError, "designated qualified control"):
+            recovered_result({**qualification, "qualification_run_id": "wrong"}, expected, protocol, "continuation", "1")
+
     def test_recovery_rejects_changed_or_failed_production_evidence(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

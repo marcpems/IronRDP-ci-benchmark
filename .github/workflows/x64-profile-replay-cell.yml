@@ -1,0 +1,85 @@
+name: Replay a qualified x64 profile-only pair
+on:
+  workflow_call:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  replay:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 240
+    env:
+      BENCHMARK_HOST: x86_64-pc-windows-msvc
+      BENCHMARK_PLATFORM: windows-x64-selfhosted-refs
+      BENCHMARK_REPLICATE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Prepare isolated replay paths and check native dependency
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Wrong replay host' }
+          $disk = Get-Disk -Number (Get-Partition -DriveLetter D).DiskNumber
+          if ((Get-Volume -DriveLetter D).FileSystem -ne 'ReFS' -or $disk.FriendlyName -ne 'NVMe HFS002TFM9X189N-SKhynix') { throw 'Wrong replay volume' }
+          if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Correctness requires NTFS' }
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
+          $root = "D:\b$suffix"
+          if (Test-Path -LiteralPath $root) { throw 'Refusing existing replay root' }
+          $correctness = "C:\pt$suffix\replay"
+          New-Item -ItemType Directory "$root\t","$root\cargo",$correctness | Out-Null
+          "REPLAY_ROOT=$root" >> $env:GITHUB_ENV
+          "CORRECTNESS_TEMP=$correctness" >> $env:GITHUB_ENV
+          "CARGO_HOME=$root\cargo" >> $env:GITHUB_ENV
+          "TEMP=$root\t" >> $env:GITHUB_ENV
+          "TMP=$root\t" >> $env:GITHUB_ENV
+          if (!(Get-Command nasm.exe -ErrorAction SilentlyContinue)) {
+            curl.exe --fail --location --retry 3 https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/win64/nasm-2.16.03-win64.zip --output "$root\nasm.zip"
+            if ($LASTEXITCODE) { throw 'Required NASM download failed' }
+            Expand-Archive "$root\nasm.zip" "$root\nasm"
+            "$root\nasm\nasm-2.16.03" >> $env:GITHUB_PATH
+          }
+          git init --quiet "$root\s"
+          if ($LASTEXITCODE) { throw 'IronRDP init failed' }
+          git -C "$root\s" remote add origin https://github.com/Devolutions/IronRDP.git
+          if ($LASTEXITCODE) { throw 'IronRDP remote failed' }
+          git -C "$root\s" fetch --quiet --depth 1 origin 0c5419eca6bf53563056ed252f537bca67862705
+          if ($LASTEXITCODE) { throw 'IronRDP fetch failed' }
+          git -C "$root\s" checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'IronRDP checkout failed' }
+      - name: Check idle state before replay
+        shell: powershell
+        run: .github\scripts\x64_pgo_preflight.ps1 -Output "$env:REPLAY_ROOT\readiness.json"
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: x64-profile-*-evidence
+          path: ${{ env.REPLAY_ROOT }}/a
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: x64-profile-*-dist
+          path: ${{ env.REPLAY_ROOT }}/a
+      - name: Measure the isolated LLVM profile difference
+        shell: powershell
+        run: |
+          $env:RUNNER_TEMP = "$env:REPLAY_ROOT\t"
+          .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\x64_profile_replay.py --root $env:REPLAY_ROOT --correctness-temp $env:CORRECTNESS_TEMP
+      - uses: actions/upload-artifact@v6
+        if: always() && env.REPLAY_ROOT != ''
+        with:
+          name: x64-profile-replay
+          path: |
+            ${{ env.REPLAY_ROOT }}/readiness.json
+            ${{ env.REPLAY_ROOT }}/e/*.json
+            ${{ env.REPLAY_ROOT }}/e/official/*.json
+            ${{ env.REPLAY_ROOT }}/e/round-*
+            ${{ env.REPLAY_ROOT }}/e/meter-validation
+          if-no-files-found: error
+          retention-days: 30

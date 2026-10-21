@@ -188,10 +188,10 @@ def build(root, variant, correctness_temp):
     env["CMAKE_TOOLCHAIN_FILE"] = str(native)
     x = [sys.executable, "x.py"]
     started = time.time()
-    execute(x + ["dist", "bootstrap", "--include-default-paths",
-                 "--rust-profile-use", profiles["rustc"], "--llvm-profile-use", profiles["llvm"]],
-            source, env, output, "fixed-profile-dist", timeout=8 * 3600, cores=protocol["build_cores"])
-    production_finished = time.time()
+    production = execute(
+        x + ["dist", "bootstrap", "--include-default-paths",
+             "--rust-profile-use", profiles["rustc"], "--llvm-profile-use", profiles["llvm"]],
+        source, env, output, "fixed-profile-dist", timeout=8 * 3600, cores=protocol["build_cores"])
     shutil.copy2(source / "build/metrics.json", output / "production-metrics.json")
     audit_native_cache(source, output, profiles, tools)
     audit = audit_profile_use(source, output, profiles["rustc"])
@@ -213,7 +213,8 @@ def build(root, variant, correctness_temp):
                          provenance["test_module_sha256"], protocol["build_cores"])
     save(output / "result.json", {
         **provenance, "complete": True, "started_unix": started, "finished_unix": time.time(),
-        "production_seconds": production_finished - started,
+        "production_seconds": production["wall_seconds"],
+        "production_run_id": provenance["run_id"], "qualification_run_id": provenance["run_id"],
         "qualification_seconds": time.time() - qualification_start,
         "qualification": "Unmodified upstream opt-dist tests.rs; dispatch-only entry bypasses all training",
         "scope": protocol["scope"],

@@ -46,6 +46,12 @@ jobs:
       - name: Qualify the hash-pinned retained full distribution without rebuilding it
         shell: powershell
         run: .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\qualify_x64_profile_existing.py
+      - name: Stage readiness beside the qualification evidence
+        if: always() && env.QUALIFICATION_OUTPUT != ''
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path $env:QUALIFICATION_OUTPUT -Force | Out-Null
+          Copy-Item -LiteralPath "$env:CORRECTNESS_TEMP\readiness.json" -Destination "$env:QUALIFICATION_OUTPUT\readiness.json"
       - uses: actions/upload-artifact@v6
         if: always() && env.QUALIFICATION_OUTPUT != ''
         with:
@@ -56,7 +62,6 @@ jobs:
             ${{ env.QUALIFICATION_OUTPUT }}/*.txt
             ${{ env.QUALIFICATION_OUTPUT }}/*.stdout
             ${{ env.QUALIFICATION_OUTPUT }}/*.stderr
-            ${{ env.CORRECTNESS_TEMP }}/readiness.json
           retention-days: 30
           if-no-files-found: error
       - uses: actions/upload-artifact@v6

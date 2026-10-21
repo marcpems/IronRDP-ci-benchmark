@@ -5,6 +5,9 @@ on:
       variant:
         required: true
         type: string
+      retained_control:
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -15,6 +18,7 @@ jobs:
     timeout-minutes: 650
     env:
       PROFILE_VARIANT: ${{ inputs.variant }}
+      RETAINED_CONTROL: ${{ inputs.retained_control }}
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
     steps:
@@ -31,7 +35,12 @@ jobs:
           if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Correctness temp requires NTFS' }
           $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
           $root = "D:\p$suffix"
-          if ($env:PROFILE_VARIANT -eq 'official') {
+          if ($env:RETAINED_CONTROL -eq 'true') {
+            if ($env:PROFILE_VARIANT -ne 'repaired') { throw 'Only the repaired cell may follow a retained control' }
+            $root = 'D:\p957762891'
+            if ((Get-Content "$root\owner-run.txt").Trim() -ne '39595776289/1') { throw 'Wrong retained root owner' }
+            if ((Get-Content "$root\pair-run.txt").Trim() -ne "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT") { throw 'Wrong continuation owner' }
+          } elseif ($env:PROFILE_VARIANT -eq 'official') {
             if (Test-Path -LiteralPath $root) { throw 'Refusing existing experiment root' }
             New-Item -ItemType Directory "$root\inputs" | Out-Null
             "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT" | Set-Content "$root\owner-run.txt"
@@ -135,8 +144,14 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
           $expected = "D:\p$suffix"
+          $owner = "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT"
+          if ($env:RETAINED_CONTROL -eq 'true') {
+            $expected = 'D:\p957762891'
+            $owner = '39595776289/1'
+            if ((Get-Content "$expected\pair-run.txt").Trim() -ne "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT") { throw 'Wrong continuation owner' }
+          }
           if ($env:PROFILE_ROOT -ne $expected) { throw 'Unexpected cleanup root' }
-          if ((Get-Content "$expected\owner-run.txt").Trim() -ne "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT") { throw 'Ownership mismatch' }
+          if ((Get-Content "$expected\owner-run.txt").Trim() -ne $owner) { throw 'Ownership mismatch' }
           if (!(Get-Content -Raw "$expected\e\$env:PROFILE_VARIANT\result.json" | ConvertFrom-Json).complete) { throw 'Unqualified source must remain' }
           $source = Get-Item -LiteralPath "$expected\r"
           if ($source.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Refusing redirected source' }

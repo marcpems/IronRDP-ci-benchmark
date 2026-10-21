@@ -34,8 +34,8 @@ ineffective or that this gap alone explains the earlier 18% toolchain benefit.
 
 ## Preregistered causal experiment
 
-**Status: qualification-only recovery; no accepted profile-only performance
-result yet.** Replacement run
+**Status: control correctness passed; preserving artifacts and continuing the
+repaired build/replay. No profile-only performance result yet.** Replacement run
 [39595776289](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39595776289)
 used harness `23ef5e31d9c4ad2ab48a8b0b7ec5ad381e95dea8`. Its official-profile
 distribution build succeeded in 4506.15 seconds but was incorrectly rejected
@@ -44,13 +44,28 @@ by an added Cranelift-archive requirement. The pinned upstream
 the previously accepted 1.94.1 manifests likewise contain no Cranelift archive.
 The check now reuses the existing stable-distribution validator.
 
-The retained distribution is being qualified without another compiler build.
+The retained distribution passed qualification without another compiler build in
+[run 39608556774](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39608556774):
+87.17 seconds to build the test helper and 542.26 seconds for the unmodified
+upstream extracted-distribution tests. Archive hashes remained unchanged.
+That run failed only when `upload-artifact` could not find a common root for
+evidence on D: and readiness on C:. The upload layout now stages readiness
+alongside the evidence on D:.
+
+The continuation preserves the successful production and qualification evidence,
+uploads the verified archives, then starts the repaired build from a fresh
+checkout at the **same** D: source path. Original ownership and a separate
+continuation ownership marker gate cleanup. No control build or test rerun is
+needed. The paired replay follows automatically after the repaired build qualifies.
+
 Original production provenance, raw logs, measurement, configuration and metrics
 are hash-pinned in
 [`x64-profile-qualification-input.json`](x64-profile-qualification-input.json).
-Qualification uses separate output and run identities, verifies native tools,
+Qualification used separate output and run identities, verified native tools,
 profiles and test implementation, and checks archive hashes before and after
-the upstream tests. It does not overwrite or relabel the failed Actions job.
+the upstream tests. Continuation metadata records its orchestration run separately
+from `production_run_id` and `qualification_run_id`; it does not overwrite or
+relabel either failed Actions job.
 Any eventual CI accounting must identify the split production/qualification
 runs; a resumed job is not a fresh whole-CI timing sample.
 
