@@ -1,1 +1,2 @@
 .github/scripts/msvc-bootstrap-runtime-path.patch text eol=lf
+ci-benchmark/X64-PGO-1991.json text eol=lf
