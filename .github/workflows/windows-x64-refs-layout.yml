@@ -2,7 +2,7 @@ name: Windows x64 storage inventory
 
 on:
   push:
-    branches: [perf/windows-x64-refs-layout]
+    branches: [perf/windows-x64-refs-hosts]
   workflow_dispatch:
 
 permissions:
@@ -14,8 +14,9 @@ jobs:
     timeout-minutes: 15
     strategy:
       fail-fast: false
+      max-parallel: 4
       matrix:
-        sample: [1, 2]
+        sample: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
       - name: Inspect hosted storage without modifying partitions
         if: runner.os == 'Windows' && runner.arch == 'X64' && runner.environment == 'github-hosted'
