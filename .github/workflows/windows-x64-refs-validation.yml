@@ -25,7 +25,6 @@ jobs:
         - ironrdp-agent
         - ironrdp-viewer
         storage:
-        - baseline
         - refs
         target:
         - x86_64-pc-windows-msvc
@@ -88,6 +87,25 @@ jobs:
         $partition = $partition[0]
         $disk = Get-Disk -Number $partition.DiskNumber
         $volume = Get-Volume -DriveLetter D
+        $eligibility = [ordered]@{
+            disk_not_boot = -not $disk.IsBoot
+            disk_not_system = -not $disk.IsSystem
+            disk_online = -not $disk.IsOffline
+            disk_writable = -not $disk.IsReadOnly
+            partition_not_boot = -not $partition.IsBoot
+            partition_not_system = -not $partition.IsSystem
+            supported_style = $disk.PartitionStyle -in @('MBR', 'GPT')
+            single_partition = @($partitions | Where-Object DiskNumber -eq $disk.Number).Count -eq 1
+            ntfs = $volume.FileSystem -eq 'NTFS'
+            healthy = $volume.HealthStatus -eq 'Healthy'
+            fixed = $volume.DriveType -eq 'Fixed'
+        }
+        $eligibility | ConvertTo-Json | Write-Host
+        $disk | Select-Object Number, PartitionStyle, IsBoot, IsSystem, IsOffline, IsReadOnly |
+            ConvertTo-Json | Write-Host
+        $volume | Select-Object DriveLetter, FileSystem, HealthStatus, DriveType |
+            ConvertTo-Json | Write-Host
+        Write-Host "PartitionStyle type: $($disk.PartitionStyle.GetType().FullName)"
         if ($disk.IsBoot -or $disk.IsSystem -or $disk.IsOffline -or $disk.IsReadOnly -or
             $partition.IsBoot -or $partition.IsSystem -or
             $disk.PartitionStyle -notin @('MBR', 'GPT') -or
