@@ -7,6 +7,14 @@ detailed compiler-performance experiments and their original evidence.
 
 ## Answer
 
+**Latest, Rust 1.99.1 profile-only revalidation:** otherwise matched Windows x64
+rebuilds using official versus repaired LLVM profiles reduce offline IronRDP
+compilation **631.608 to 549.949 seconds: 12.93% less wall time and 13.66% less
+CPU**. Microsoft link/lib, official Rust-side profiles and LTO settings are
+held fixed. Both distributions qualify. This is one host/build pair, not an
+untouched shipping-binary or whole-CI comparison.
+See the [completed 1.99.1 audit and reproducible results](X64-PGO-1991.md).
+
 **Windows x64 is now validated too:** original offline native compilation falls
 from **957.41 to 730.64 seconds**, a **23.7% wall reduction (95% interval
 21.7-25.3%)** and **24.6% CPU reduction (22.5-26.1%)** against official Rust.
@@ -118,7 +126,7 @@ and **20.9% less versus the rebuilt upstream recipe (18.1-23.4%)**. See the
 and qualifications. The following explains why earlier production experiments
 could not supply this comparison.
 
-**Subsequent LLVM-profile-only qualification:** the official published LLVM
+**Subsequent Rust 1.94.1 LLVM-profile-only qualification:** the official published LLVM
 profile was directly audited and has the same missing active coverage in the
 two checked backend areas. With source, Microsoft link/lib, the official
 Rust-side profile and other settings held fixed, replacing only the LLVM
@@ -128,6 +136,15 @@ rounds improved (12.97-14.76%, an observed range, not a confidence interval).
 This one-host/build-pair result is conditional on these rebuilt compilers;
 it is not the earlier five-VM shipping-binary contrast or a whole-CI percentage.
 See the [completed report, CI limits and permanent evidence](X64-PROFILE-ONLY.md).
+
+The subsequent [Rust 1.99.1 audit and matched revalidation](X64-PGO-1991.md)
+found zero official records in both queried groups; fresh repaired training
+restored **176 active X86TargetLowering** and **624 active InstCombine** functions.
+Changing only the final LLVM profile saved **12.93% wall / 13.66% CPU** on
+IronRDP, with all three paired rounds improving (11.34-13.79%, not a confidence
+interval). Fixed-profile distribution production took **72m17s versus 70m19s**,
+but neither that reduction nor the separately recorded **80m33s** repaired
+training duration establishes the fix's marginal official release-CI cost.
 
 The original local x64 compiler-only build
 cannot be compared to upstream's full distribution; later full-release pilots

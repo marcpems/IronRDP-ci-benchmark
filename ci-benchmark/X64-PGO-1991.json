@@ -1,0 +1,305 @@
+{
+  "protocol": {
+    "schema": 2,
+    "study": "rust-1.99.1-official-versus-repaired-llvm-profile-only",
+    "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+    "rust_sha": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+    "llvm_sha": "1b9c0d5ff9bbe7634aead059efe6b11a7eeba145",
+    "rustc_perf_sha": "0a054b0ead56e41a4584bfab6fdc1a5fad2aedc3",
+    "rust_version": "1.99.1",
+    "clang_installer_sha256": "0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af",
+    "host": "x86_64-pc-windows-msvc",
+    "variants": [
+      "official",
+      "repaired"
+    ],
+    "official_bundle_url": "https://static.rust-lang.org/dist/reproducible-artifacts-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+    "official_bundle_sha256": "f567d4a0d326216680ba92a520a36ad806627d3432fbde07b79d67a516e078eb",
+    "official_tools_url": "https://static.rust-lang.org/dist/llvm-tools-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+    "official_tools_sha256": "61b0ce740983240f48ceab73b6a1306a6c25bd7c92dc8135e47e8401b16d9b32",
+    "reader_sha256": "6d381285f5c9fae7ba9808ee701c192a681be421712a535f616f001563531d2a",
+    "rustc_profile_sha256": "3cc84c4e825145870c62a97c2aa5bd806fbf5d206a877509429ecc3b0eff519a",
+    "rustdoc_profile_sha256": "ddc4975530fef50dff9c57aaa8422fe9b60e728a9f757949d38488ce292648b4",
+    "llvm_profile_sha256": {
+      "official": "0967c426f74d7341438ed98b2b9b01db8ec8146704ee4d34614663b354cfe175",
+      "repaired": "3fb57e2e25be6f1c518c2fa7b6ca29308eadf77484bdb0555a1b2c941bfc4ee7"
+    },
+    "training_policy": "Fresh pinned upstream opt-dist rustc/Cargo/rustdoc/LLVM training, Microsoft link/lib, static-LLVM relink repair only; stop after LLVM profile generation. Freeze the repaired profile hash before either comparison build. Final builds use official rustc/Cargo/rustdoc profiles.",
+    "runner": "MARCPE-TEST01-X64",
+    "build_drive": "D:",
+    "build_filesystem": "ReFS",
+    "build_disk_model": "NVMe HFS002TFM9X189N-SKhynix",
+    "build_cores": 16,
+    "cores": 4,
+    "warmup_rounds": 1,
+    "measured_rounds": 3,
+    "common_inputs": "Pinned Rust 1.99.1/LLVM 23.1.1, clang-cl 20.1.3, Microsoft link/lib, official rustc and rustdoc profiles; Cargo shares official rustc profile; Rust thin-local, LLVM ThinLTO off",
+    "primary_endpoint": "Sum of five original offline native Cargo compilation commands per block",
+    "shared_replay_inputs": "Official Rust 1.99.1 Cargo and byte-identical official native standard libraries",
+    "order": "Training first, then fresh official and repaired builds at identical source paths; alternating replay order",
+    "correctness": "Unmodified upstream extracted-distribution tests for both compilers; original native correctness tests after each warmup; NTFS correctness TEMP/TMP",
+    "aggregation": "Mean of three measured rounds per compiler; paired round range, not independent-VM confidence intervals",
+    "exclusions": "Exclude preregistered warmup, setup, fetching, correctness; reject failures, incomplete matrices or changed common inputs",
+    "scope": "One matched build pair and one dedicated x64 host; only final LLVM profile differs. Training cost recorded separately, not a matched fresh-training CI cost comparison.",
+    "training_identity": {
+      "run_id": "39771158637",
+      "attempt": "1",
+      "provenance_sha256": "0fa4d558497673547605c9db5a30bc255a78040841f4456a123bf5fefe0d201a"
+    }
+  },
+  "release_inputs": {
+    "release_run": "39771158637",
+    "release_attempt": "1",
+    "compiler_metadata_sha256": {
+      "official": "02a30da201cb08755829709ae217b99b14991cf2e0f0f1810fb0016ea4d5fe42",
+      "repaired": "0e326cdee2725cd72e0e32b13b223f9c39202b98a86c9cb04df51b7be0eefe44"
+    },
+    "compiler_archive_sha256": {
+      "official": "433c690c208f498388e3110b9d34ddb9a1becbb2953b17c27c209c4fbb0bd470",
+      "repaired": "c63b200d70e101ab574865b1389ab641b7937ae292efcbc405f4c72e245ef680"
+    },
+    "compiler_archive_bytes": {
+      "official": 92081672,
+      "repaired": 92011644
+    }
+  },
+  "replay_run": "39771158637",
+  "summary": {
+    "scope": "One matched build pair and one dedicated x64 host; only final LLVM profile differs. Training cost recorded separately, not a matched fresh-training CI cost comparison.",
+    "means": {
+      "official": {
+        "wall_seconds": 631.6079368666542,
+        "cpu_seconds": 2451.9010416666665
+      },
+      "repaired": {
+        "wall_seconds": 549.9488916666596,
+        "cpu_seconds": 2116.984375
+      }
+    },
+    "paired_rounds": [
+      {
+        "round": 1,
+        "seconds_saved": 86.39401830000861,
+        "wall_reduction_percent": 13.651145635916773
+      },
+      {
+        "round": 2,
+        "seconds_saved": 87.2857115999941,
+        "wall_reduction_percent": 13.789159128251772
+      },
+      {
+        "round": 3,
+        "seconds_saved": 71.29740569998103,
+        "wall_reduction_percent": 11.335918482644802
+      }
+    ],
+    "wall_reduction_percent": 12.928755392957413,
+    "seconds_saved": 81.65904519999458,
+    "uncertainty": "Three rounds on one machine; paired-round variation, not a multi-VM confidence interval"
+  },
+  "components": [
+    {
+      "name": "xtask-bootstrap",
+      "means": {
+        "official": {
+          "wall_seconds": 2.966437600000063,
+          "cpu_seconds": 9.302083333333334
+        },
+        "repaired": {
+          "wall_seconds": 2.613622499998504,
+          "cpu_seconds": 7.932291666666667
+        }
+      },
+      "seconds_saved": 0.35281510000155913,
+      "wall_reduction_percent": 11.893562163638693
+    },
+    {
+      "name": "workspace-tests",
+      "means": {
+        "official": {
+          "wall_seconds": 489.9106142333282,
+          "cpu_seconds": 1909.9270833333333
+        },
+        "repaired": {
+          "wall_seconds": 426.6431551000035,
+          "cpu_seconds": 1658.6979166666667
+        }
+      },
+      "seconds_saved": 63.26745913332468,
+      "wall_reduction_percent": 12.91408213972528
+    },
+    {
+      "name": "native-tls-tests",
+      "means": {
+        "official": {
+          "wall_seconds": 11.131610399999772,
+          "cpu_seconds": 34.942708333333336
+        },
+        "repaired": {
+          "wall_seconds": 9.966379800001354,
+          "cpu_seconds": 30.567708333333332
+        }
+      },
+      "seconds_saved": 1.1652305999984183,
+      "wall_reduction_percent": 10.46776304710091
+    },
+    {
+      "name": "gateway-native-tls-tests",
+      "means": {
+        "official": {
+          "wall_seconds": 64.15834269999566,
+          "cpu_seconds": 250.38541666666666
+        },
+        "repaired": {
+          "wall_seconds": 55.91494513333115,
+          "cpu_seconds": 215.05729166666666
+        }
+      },
+      "seconds_saved": 8.243397566664505,
+      "wall_reduction_percent": 12.848520114072493
+    },
+    {
+      "name": "gateway-smartcard-tests",
+      "means": {
+        "official": {
+          "wall_seconds": 63.440931933330525,
+          "cpu_seconds": 247.34375
+        },
+        "repaired": {
+          "wall_seconds": 54.810789133325066,
+          "cpu_seconds": 204.72916666666666
+        }
+      },
+      "seconds_saved": 8.630142800005459,
+      "wall_reduction_percent": 13.60343005218586
+    }
+  ],
+  "cpu_reduction_percent": 13.659469161896054,
+  "measured_blocks": 6,
+  "measured_commands": 30,
+  "excluded_warmup_blocks": 2,
+  "original_correctness_commands_passed": 8,
+  "experiment_job_accounting": {
+    "job_seconds": 5271.0,
+    "benchmark_step_seconds": 4948.0,
+    "measured_native_commands_seconds": 3544.6704855999415,
+    "excluded_warmup_commands_seconds": 1178.7385581000271,
+    "untimed_correctness_seconds": 57.29293470001721,
+    "other_inside_benchmark_step_seconds": 167.29802160001418,
+    "outside_benchmark_step_seconds": 323.0,
+    "scope": "Eight-block experiment job, not a representative single-toolchain production CI job"
+  },
+  "compiler_production": {
+    "wall_seconds": {
+      "official": 4336.817378500011,
+      "repaired": 4218.885001600007
+    },
+    "seconds_saved": 117.93237690000387,
+    "wall_reduction_percent": 2.7193300203199544,
+    "qualification": {
+      "official": {
+        "total_seconds": 583.522810459137,
+        "helper_seconds": 37.07139749999624,
+        "tests_seconds": 546.3087651000096
+      },
+      "repaired": {
+        "total_seconds": 580.6080250740051,
+        "helper_seconds": 37.29676259998814,
+        "tests_seconds": 543.1879011000128
+      }
+    },
+    "whole_ci_comparable": false,
+    "limitation": "One ordered pair, fixed profiles reused, both distributions qualified in their original jobs. Standalone repaired training measured separately; no upstream-training control or marginal PR cost."
+  },
+  "build_resource_checks": {
+    "official": {
+      "samples": 807,
+      "minimum_build_free_gib": 1774.3271560668945,
+      "minimum_available_ram_mib": 6839
+    },
+    "repaired": {
+      "samples": 788,
+      "minimum_build_free_gib": 1772.1547470092773,
+      "minimum_available_ram_mib": 6239
+    }
+  },
+  "evidence_sha256": {
+    "builds/official/build-test-helper.json": "3905168612c32d379c90b3326ebd020113cbd5a296d9b953ff99153a11732cc9",
+    "builds/official/checkout-validation.json": "1f5f310a7984d824fffaf4419fccff91385f18031e6ba3b2de4f8cf7778fe009",
+    "builds/official/dist-manifest.json": "d46a699ebca0a245f0c432d7f95c502340f78f9b724cb46ae0ca94ce78a5dfd2",
+    "builds/official/extracted-dist-tests.json": "6a90a67d753ed581d3069f0e38a853d125d327e310af2af061fbcd02735c86f4",
+    "builds/official/lld-CMakeCache.txt": "378de205ecbdc3a4286f1b43b7e0088e3dbb3cf85e9bd2de6c61fa4d80fa14ea",
+    "builds/official/llvm-CMakeCache.txt": "c2f4ceb06a97f1bb74472366c42740c2a78ab116e6ff37abe979012a3b7b5507",
+    "builds/official/production-bootstrap.toml": "874a0d19df07fe107a64f01dff066bcf4a005ea574dc5ef2fa395eae008ffa32",
+    "builds/official/production.json": "30f6fe78044c5d6bb301117d734558339f1ce5b617f67709a1342ca0ab9decb1",
+    "builds/official/profile-use-audit.json": "1a496a4388f3f4e9036ba32ff2f0057e23c04c3a320b5c9c4950230c8ccd0822",
+    "builds/official/provenance.json": "298cc10a1a19e33d2a6a3cbdb42d51ee294f7a57160ef031b81a728e0904475b",
+    "builds/official/result.json": "02a30da201cb08755829709ae217b99b14991cf2e0f0f1810fb0016ea4d5fe42",
+    "builds/official/telemetry.jsonl": "ff2802dfc6bd5b4517dd2b828390498d6e326f112ff3a59b849d71a9df529df1",
+    "builds/repaired/build-test-helper.json": "0314de512c1f5dd57618fc5b1560cf4e668a9081918c4dfabb15380752ef96c3",
+    "builds/repaired/checkout-validation.json": "1f5f310a7984d824fffaf4419fccff91385f18031e6ba3b2de4f8cf7778fe009",
+    "builds/repaired/dist-manifest.json": "486f119d3633288d3c5a1352f56a378f33810d81886335b83643d2f0e0458689",
+    "builds/repaired/extracted-dist-tests.json": "e447a2ed26421f7bd9d30159833d7d516cd0b1342ce217579d27fb2933896ff3",
+    "builds/repaired/lld-CMakeCache.txt": "88c54675834d6649b7c89387fa4fae9e029c8622ed108800a470e3215d1276dc",
+    "builds/repaired/llvm-CMakeCache.txt": "d21b7594c74f2e0618811c913fd0c0aa42e2d2ed8d293ed983ca37b07ab1d915",
+    "builds/repaired/production-bootstrap.toml": "874a0d19df07fe107a64f01dff066bcf4a005ea574dc5ef2fa395eae008ffa32",
+    "builds/repaired/production.json": "ea2222584706849459b852a70389fe977be9c160afd64111ffb6a808d314c224",
+    "builds/repaired/profile-use-audit.json": "1a496a4388f3f4e9036ba32ff2f0057e23c04c3a320b5c9c4950230c8ccd0822",
+    "builds/repaired/provenance.json": "d1ea0396c261cd2d15d73458f8270ecce787dafd95f6ee4343cadc0878bcb696",
+    "builds/repaired/result.json": "0e326cdee2725cd72e0e32b13b223f9c39202b98a86c9cb04df51b7be0eefe44",
+    "builds/repaired/telemetry.jsonl": "bad9b8866e9f388bc5222f1e76ca64166d859dc1876a3586408cd3971f505545",
+    "jobs/replay.json": "68486ed786b8d80b7bd99e4b4b42662390a9986b0694bfa08175c24832193fe3",
+    "replay/index.json": "340e1921ef3aa00d3ea646644184135b6bea63e5e0f20e0dbb1c40867b6008cf",
+    "replay/meter-validation/affinity.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "replay/meter-validation/affinity.stdout": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+    "replay/meter-validation/busy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "replay/meter-validation/busy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "replay/meter-validation/self-test.json": "4ac3a55422a496dc395943e2f4f48adb92e48a7abb9f6a51aa43731757feb6c6",
+    "replay/meter-validation/sleep.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "replay/meter-validation/sleep.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "replay/round-0-official/results.json": "8fb3c3a3eee269cdc2ee552d00891690bb6c089bd71e4a0545cd1cbed1361542",
+    "replay/round-0-repaired/results.json": "e9b1aaeda14f764f3d64fbb0a723878ec8641399e9debf1d31039901dcc9d5ee",
+    "replay/round-1-official/results.json": "591e2dcf52c3f5478055d65f7a54fbac5ebdea907bb3b8dc50e39f5b233b50ac",
+    "replay/round-1-repaired/results.json": "0306eb554f15603dce214636789c9af6ad98fa97e17aab3f0403395c21cd9393",
+    "replay/round-2-official/results.json": "d588cd4bd2f1c7143156bbc97d9ff7b45690e6ad25800439a10c8c58e88ac3ba",
+    "replay/round-2-repaired/results.json": "0048f0d123d21b9b61bd849e27018ba6c6a1171f2af6a75d7f891fdd6e7080c5",
+    "replay/round-3-official/results.json": "2093086153b5667e8dca6c4bde2e362651390d8346d466392e5c75c9d9515732",
+    "replay/round-3-repaired/results.json": "c74ec5febe02974a1556eec5ad828e534ce8a72e04c1b6567492f814f20cf28a",
+    "replay/summary.json": "0977730f2c7ebcef8434ad3968dfda28d0da1bdba434c064ae59de1b9229c50e",
+    "training/build-training-helper.json": "412b82abdb8750085bc456bc93daf96dc3a4dab3292daab8b837783251237bcd",
+    "training/checkout-validation.json": "1f5f310a7984d824fffaf4419fccff91385f18031e6ba3b2de4f8cf7778fe009",
+    "training/coverage-InstCombine.txt": "1d140ef5a9be780e912ec54dc99ea483563e8e2367538859b4dfd3465bf8aca1",
+    "training/coverage-X86TargetLowering.txt": "1464d9ccd3fe9fb11fa1574935bdec6a38f2dd7f408108e7d413c69a85bfc87e",
+    "training/protocol.json": "c4982956a3e9632a1ccb2a080e4547b79a9f43ba56e93f4acc7cbf6ef1326792",
+    "training/provenance.json": "0fa4d558497673547605c9db5a30bc255a78040841f4456a123bf5fefe0d201a",
+    "training/result.json": "4820c82a3b340ba050ee58ab90bb4fafaddd3c766a49f84947e94426865733ac",
+    "training/train-profile.json": "a05d254647862e1bf215af3a329517a4b4321daa1856caac66da6678b65f097a",
+    "training/training-bootstrap.toml": "874a0d19df07fe107a64f01dff066bcf4a005ea574dc5ef2fa395eae008ffa32",
+    "training/training-sections.json": "2f385137bdd649251c4afcc1f07a1e23c8d76e2f8ed1bd26110164d84e276d87"
+  },
+  "training": {
+    "wall_seconds": 4833.265765300006,
+    "phase_wall_seconds": {
+      "Stage 1 (Rustc + rustdoc PGO)": 3339.65,
+      "Stage 2 (LLVM PGO)": 1273.04
+    },
+    "llvm_coverage": {
+      "X86TargetLowering": {
+        "functions": 273,
+        "active_functions": 176
+      },
+      "InstCombine": {
+        "functions": 971,
+        "active_functions": 624
+      }
+    },
+    "llvm_profile_sha256": "3fb57e2e25be6f1c518c2fa7b6ca29308eadf77484bdb0555a1b2c941bfc4ee7",
+    "scope": "Standalone repaired training, not the incremental cost versus upstream training"
+  },
+  "workflow_job_seconds": {
+    "train / cell": 5692.0,
+    "official / cell": 6762.0,
+    "repaired / cell": 6800.0,
+    "replay / replay": 5271.0
+  }
+}

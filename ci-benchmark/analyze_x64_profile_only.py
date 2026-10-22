@@ -11,8 +11,9 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / ".github/scripts"))
 from native_ci_probe import NATIVE_COMMANDS
-from x64_profile_only import verify_pair
+from x64_profile_only import verify_pair, verify_training_input
 from x64_profile_replay import summarize
+from audit_official_profiles import coverage
 
 
 def require(condition, message):
@@ -24,14 +25,23 @@ def load(path):
     return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
-def analyze(root):
-    protocol = load(Path(__file__).with_name("x64-profile-only-protocol.json"))
-    inputs = load(Path(__file__).with_name("x64-profile-replay-input.json"))
+def analyze(root, rust_version="1.94.1"):
+    require(rust_version in ("1.94.1", "1.99.1"), "Unsupported qualified release")
+    pins = None
+    if rust_version == "1.99.1":
+        pins = load(Path(__file__).with_name("x64-profile-1991-replay-input.json"))
+        protocol, inputs = pins["protocol"], pins["release_inputs"]
+        run_id, attempt = pins["replay_run"], pins["replay_attempt"]
+        recorded_inputs = None
+    else:
+        protocol = load(Path(__file__).with_name("x64-profile-only-protocol.json"))
+        inputs = load(Path(__file__).with_name("x64-profile-replay-input.json"))
+        run_id, attempt, recorded_inputs = "39635843303", "1", inputs
     replay = root / "replay"
     index = load(replay / "index.json")
-    require(index["complete"] and index["protocol"] == protocol and index["release_inputs"] == inputs,
+    require(index["complete"] and index["protocol"] == protocol and index["release_inputs"] == recorded_inputs,
             "Incomplete replay or changed protocol/input pins")
-    require(index["run_id"] == "39635843303" and index["attempt"] == "1", "Wrong replay attempt")
+    require(index["run_id"] == run_id and index["attempt"] == attempt, "Wrong replay attempt")
     for entry in index["runs"]:
         path = (replay / entry["path"]).resolve()
         require(path.is_relative_to(replay.resolve()), "Escaping result path")
@@ -92,6 +102,50 @@ def analyze(root):
                               "minimum_build_free_gib": min(row["BuildFreeBytes"] for row in telemetry) / 2**30,
                               "minimum_available_ram_mib": min(available)}
     verify_pair(metadata["official"], metadata["repaired"])
+    training = None
+    if pins is not None:
+        folder = root / "training"
+        for name, expected in pins["training_evidence_sha256"].items():
+            require(hashlib.sha256((folder / name).read_bytes()).hexdigest() == expected,
+                    f"Changed frozen training evidence: {name}")
+        verify_training_input(folder, protocol, metadata["official"]["tools"],
+                              run_id=run_id, attempt=attempt)
+        trained = load(folder / "result.json")
+        require(trained["protocol"] == load(Path(__file__).with_name("x64-profile-1991-protocol.json")),
+                "Changed preregistered training protocol")
+        for variant, result in metadata.items():
+            require(result["protocol"] == protocol and result["run_id"] == run_id
+                    and result["attempt"] == attempt
+                    and result["common_profile_sha256"] == {
+                        "rustc": protocol["rustc_profile_sha256"],
+                        "cargo": protocol["rustc_profile_sha256"],
+                        "rustdoc": protocol["rustdoc_profile_sha256"],
+                    }, f"Changed qualified release inputs: {variant}")
+            require(result["configuration"] == trained["configuration"],
+                    "Training and final-build configuration differ")
+        for group, counts in trained["llvm_coverage"].items():
+            parsed = coverage((folder / f"coverage-{group}.txt").read_text())
+            require(parsed == {"functions": counts["functions"], "active": counts["active_functions"]},
+                    f"Training coverage mismatch: {group}")
+        stages = load(folder / "training-sections.json")
+        require(not stages["unfinished"] and all(row["status"] == "OK" for row in stages["completed"]),
+                "Incomplete training timer sections")
+        phases = {row["name"]: row["wall_seconds"] for row in stages["completed"] if " > " not in row["name"]}
+        require(set(phases) == {"Stage 1 (Rustc + rustdoc PGO)", "Stage 2 (LLVM PGO)"}
+                and all(math.isfinite(value) and value > 0 for value in phases.values()),
+                "Missing successful upstream training phases")
+        executions = {name: load(folder / f"{name}.json")
+                      for name in ("build-training-helper", "train-profile")}
+        require(all(row["exit_code"] == 0 and row["wall_seconds"] > 0
+                    for row in executions.values()), "Failed training execution")
+        require(math.isfinite(trained["training_seconds"])
+                and trained["training_seconds"] >= sum(phases.values()), "Invalid standalone training duration")
+        training = {
+            "wall_seconds": trained["training_seconds"],
+            "phase_wall_seconds": phases, "llvm_coverage": trained["llvm_coverage"],
+            "llvm_profile_sha256": trained["profiles"]["llvm"]["sha256"],
+            "scope": trained["scope"],
+        }
     require(index["artifact_evidence"]["official"]["driver_sha256"]
             != index["artifact_evidence"]["repaired"]["driver_sha256"], "Identical compiler driver treatment")
     observations = {variant: [] for variant in protocol["variants"]}
@@ -138,7 +192,7 @@ def analyze(root):
     require(residual >= 0 and job_seconds >= step_seconds, "Inconsistent experiment job accounting")
     evidence_hashes = {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
                        for path in sorted(root.rglob("*")) if path.is_file()}
-    return {
+    result = {
         "protocol": protocol, "release_inputs": inputs, "replay_run": index["run_id"],
         "summary": summary, "components": components,
         "cpu_reduction_percent": 100 * (1 - cpu["repaired"]["cpu_seconds"] / cpu["official"]["cpu_seconds"]),
@@ -164,14 +218,28 @@ def analyze(root):
         "build_resource_checks": resources,
         "evidence_sha256": evidence_hashes,
     }
+    if training is not None:
+        result["training"] = training
+        result["compiler_production"]["limitation"] = (
+            "One ordered pair, fixed profiles reused, both distributions qualified in their original jobs. "
+            "Standalone repaired training measured separately; no upstream-training control or marginal PR cost.")
+        require(run["url"].endswith(f"/actions/runs/{run_id}") and run["headSha"] == pins["harness_sha"],
+                "Wrong completed workflow identity")
+        expected_jobs = {"train / cell", "official / cell", "repaired / cell", "replay / replay"}
+        require({job["name"] for job in run["jobs"]} == expected_jobs
+                and all(job["conclusion"] == "success" for job in run["jobs"]),
+                "Missing qualified experiment jobs")
+        result["workflow_job_seconds"] = {job["name"]: duration(job) for job in run["jobs"]}
+    return result
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("evidence", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--rust-version", choices=("1.94.1", "1.99.1"), default="1.94.1")
     args = parser.parse_args()
-    result = analyze(args.evidence.resolve())
+    result = analyze(args.evidence.resolve(), args.rust_version)
     args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps(result["summary"], indent=2))
 

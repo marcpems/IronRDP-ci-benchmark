@@ -1,12 +1,13 @@
 # Windows Rust compiler performance: investigation summary
 
-Updated 21 October 2026. This is the end-to-end summary of the problem,
+Updated 22 October 2026. This is the end-to-end summary of the problem,
 investigation stages, measured results and remaining limitations. Detailed
 reports and reproducible evidence are linked throughout. All experiments were
 conducted in forks; no upstream rollout is claimed. The broad campaign stopped
 at the user's request on 19 October. Only the requested x64 upstream/local-PGO
 comparison resumed on 20 October, followed by the requested profile-only test
-on 21 October; Arm64 and GB300 work remain stopped.
+on 21 October and Rust 1.99.1 revalidation on 22 October; Arm64 and GB300 work
+remain stopped.
 
 Presentation and document versions:
 [technical PowerPoint with linked report index](matched-release/Rust-Optimization-Summary-Published.pptx)
@@ -48,7 +49,7 @@ an earlier consolidation.
   published LLVM profile. Fresh downstream replay and reverse-order production
   qualification are complete.
   See the [final x64 comparison and persistent evidence](X64-PGO-COMPARISON.md).
-- **The LLVM-profile-only effect is now isolated:** two otherwise matched
+- **The LLVM-profile-only effect was isolated on Rust 1.94.1:** two otherwise matched
   rebuilds retained Microsoft link/lib and the official Rust-side profile.
   Switching official to repaired LLVM profile saved **13.73% IronRDP wall time
   (711.049 to 613.436 seconds)** and **14.02% CPU**, with no added ThinLTO.
@@ -56,6 +57,16 @@ an earlier consolidation.
   **not** a confidence interval). This is not an untouched shipping-binary
   comparison or a whole-CI percentage.
   See the [qualified profile-only report and compact evidence](X64-PROFILE-ONLY.md).
+- **Rust 1.99.1 revalidation is complete:** the official LLVM profile still
+  lacks both queried backend groups. Fresh repaired training restores active
+  coverage, and otherwise matched rebuilds retain Microsoft link/lib, official
+  Rust-side profiles and no added ThinLTO. Offline IronRDP wall time falls
+  **631.608 to 549.949 seconds: 12.93% / 81.659 seconds saved**, with **13.66%
+  less CPU**. Both distributions qualify; all three paired rounds improve
+  (11.34-13.79%, descriptive range on one host, not a confidence interval).
+  Fixed-profile production is 2.72% shorter in one ordered pair, but this
+  excludes training and does **not** measure the PR's incremental release cost.
+  See the [1.99.1 audit, completed comparison and reproducible evidence](X64-PGO-1991.md).
 - **Keeping Microsoft linking tools captures much of the benefit.** Nine
   qualified full-release pilots measured **21.5-24.6% less IronRDP compilation
   time with PGO alone**, versus controlled no-PGO builds. Their LLVM/PGO/ThinLTO
@@ -150,6 +161,8 @@ ineffective.** At that stage official shipped x64 profiles had not been inspecte
 The later [official-profile audit and isolated replay](X64-PROFILE-ONLY.md)
 confirmed missing coverage in the official LLVM profile and measured a 13.73%
 benefit from replacing the profile file. Separate rustc PGO was not shown ineffective.
+The [1.99.1 revalidation](X64-PGO-1991.md) confirms the same official-profile
+coverage gap and a 12.93% benefit from replacing only that release's LLVM profile.
 
 Native-tool compatibility probes also established that LLVM ThinLTO bitcode
 cannot be handed to Microsoft `link.exe`, including with `/LTCG`. Rust-side

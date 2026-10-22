@@ -86,13 +86,15 @@ def profile_arguments(profiles):
     return arguments
 
 
-def verify_training_input(directory, protocol, tools):
+def verify_training_input(directory, protocol, tools, *, run_id=None, attempt=None):
     training = json.loads((directory / "result.json").read_text())
     identity = protocol["training_identity"]
+    run_id = os.environ["GITHUB_RUN_ID"] if run_id is None else run_id
+    attempt = os.environ["GITHUB_RUN_ATTEMPT"] if attempt is None else attempt
     if (not training.get("complete")
             or training["run_id"] != identity["run_id"] or training["attempt"] != identity["attempt"]
-            or identity["run_id"] != os.environ["GITHUB_RUN_ID"]
-            or identity["attempt"] != os.environ["GITHUB_RUN_ATTEMPT"]
+            or identity["run_id"] != run_id
+            or identity["attempt"] != attempt
             or digest(directory / "provenance.json") != identity["provenance_sha256"]
             or training["profiles"]["llvm"]["sha256"] != protocol["llvm_profile_sha256"]["repaired"]
             or not equivalent_tools(training["tools"], tools)):

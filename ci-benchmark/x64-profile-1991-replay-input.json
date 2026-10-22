@@ -1,0 +1,81 @@
+{
+  "protocol": {
+    "schema": 2,
+    "study": "rust-1.99.1-official-versus-repaired-llvm-profile-only",
+    "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+    "rust_sha": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+    "llvm_sha": "1b9c0d5ff9bbe7634aead059efe6b11a7eeba145",
+    "rustc_perf_sha": "0a054b0ead56e41a4584bfab6fdc1a5fad2aedc3",
+    "rust_version": "1.99.1",
+    "clang_installer_sha256": "0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af",
+    "host": "x86_64-pc-windows-msvc",
+    "variants": [
+      "official",
+      "repaired"
+    ],
+    "official_bundle_url": "https://static.rust-lang.org/dist/reproducible-artifacts-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+    "official_bundle_sha256": "f567d4a0d326216680ba92a520a36ad806627d3432fbde07b79d67a516e078eb",
+    "official_tools_url": "https://static.rust-lang.org/dist/llvm-tools-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+    "official_tools_sha256": "61b0ce740983240f48ceab73b6a1306a6c25bd7c92dc8135e47e8401b16d9b32",
+    "reader_sha256": "6d381285f5c9fae7ba9808ee701c192a681be421712a535f616f001563531d2a",
+    "rustc_profile_sha256": "3cc84c4e825145870c62a97c2aa5bd806fbf5d206a877509429ecc3b0eff519a",
+    "rustdoc_profile_sha256": "ddc4975530fef50dff9c57aaa8422fe9b60e728a9f757949d38488ce292648b4",
+    "llvm_profile_sha256": {
+      "official": "0967c426f74d7341438ed98b2b9b01db8ec8146704ee4d34614663b354cfe175",
+      "repaired": "3fb57e2e25be6f1c518c2fa7b6ca29308eadf77484bdb0555a1b2c941bfc4ee7"
+    },
+    "training_policy": "Fresh pinned upstream opt-dist rustc/Cargo/rustdoc/LLVM training, Microsoft link/lib, static-LLVM relink repair only; stop after LLVM profile generation. Freeze the repaired profile hash before either comparison build. Final builds use official rustc/Cargo/rustdoc profiles.",
+    "runner": "MARCPE-TEST01-X64",
+    "build_drive": "D:",
+    "build_filesystem": "ReFS",
+    "build_disk_model": "NVMe HFS002TFM9X189N-SKhynix",
+    "build_cores": 16,
+    "cores": 4,
+    "warmup_rounds": 1,
+    "measured_rounds": 3,
+    "common_inputs": "Pinned Rust 1.99.1/LLVM 23.1.1, clang-cl 20.1.3, Microsoft link/lib, official rustc and rustdoc profiles; Cargo shares official rustc profile; Rust thin-local, LLVM ThinLTO off",
+    "primary_endpoint": "Sum of five original offline native Cargo compilation commands per block",
+    "shared_replay_inputs": "Official Rust 1.99.1 Cargo and byte-identical official native standard libraries",
+    "order": "Training first, then fresh official and repaired builds at identical source paths; alternating replay order",
+    "correctness": "Unmodified upstream extracted-distribution tests for both compilers; original native correctness tests after each warmup; NTFS correctness TEMP/TMP",
+    "aggregation": "Mean of three measured rounds per compiler; paired round range, not independent-VM confidence intervals",
+    "exclusions": "Exclude preregistered warmup, setup, fetching, correctness; reject failures, incomplete matrices or changed common inputs",
+    "scope": "One matched build pair and one dedicated x64 host; only final LLVM profile differs. Training cost recorded separately, not a matched fresh-training CI cost comparison.",
+    "training_identity": {
+      "run_id": "39771158637",
+      "attempt": "1",
+      "provenance_sha256": "0fa4d558497673547605c9db5a30bc255a78040841f4456a123bf5fefe0d201a"
+    }
+  },
+  "release_inputs": {
+    "release_run": "39771158637",
+    "release_attempt": "1",
+    "compiler_metadata_sha256": {
+      "official": "02a30da201cb08755829709ae217b99b14991cf2e0f0f1810fb0016ea4d5fe42",
+      "repaired": "0e326cdee2725cd72e0e32b13b223f9c39202b98a86c9cb04df51b7be0eefe44"
+    },
+    "compiler_archive_sha256": {
+      "official": "433c690c208f498388e3110b9d34ddb9a1becbb2953b17c27c209c4fbb0bd470",
+      "repaired": "c63b200d70e101ab574865b1389ab641b7937ae292efcbc405f4c72e245ef680"
+    },
+    "compiler_archive_bytes": {
+      "official": 92081672,
+      "repaired": 92011644
+    }
+  },
+  "replay_run": "39771158637",
+  "replay_attempt": "1",
+  "harness_sha": "d37b0ed6e6ebdeb17d5bdaaa12e6e5166bf09d95",
+  "training_evidence_sha256": {
+    "result.json": "4820c82a3b340ba050ee58ab90bb4fafaddd3c766a49f84947e94426865733ac",
+    "provenance.json": "0fa4d558497673547605c9db5a30bc255a78040841f4456a123bf5fefe0d201a",
+    "protocol.json": "c4982956a3e9632a1ccb2a080e4547b79a9f43ba56e93f4acc7cbf6ef1326792",
+    "training-sections.json": "2f385137bdd649251c4afcc1f07a1e23c8d76e2f8ed1bd26110164d84e276d87",
+    "build-training-helper.json": "412b82abdb8750085bc456bc93daf96dc3a4dab3292daab8b837783251237bcd",
+    "train-profile.json": "a05d254647862e1bf215af3a329517a4b4321daa1856caac66da6678b65f097a",
+    "coverage-X86TargetLowering.txt": "1464d9ccd3fe9fb11fa1574935bdec6a38f2dd7f408108e7d413c69a85bfc87e",
+    "coverage-InstCombine.txt": "1d140ef5a9be780e912ec54dc99ea483563e8e2367538859b4dfd3465bf8aca1",
+    "checkout-validation.json": "1f5f310a7984d824fffaf4419fccff91385f18031e6ba3b2de4f8cf7778fe009",
+    "training-bootstrap.toml": "874a0d19df07fe107a64f01dff066bcf4a005ea574dc5ef2fa395eae008ffa32"
+  }
+}
