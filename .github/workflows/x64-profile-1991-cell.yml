@@ -1,0 +1,187 @@
+name: Train or build a pinned Rust 1.99.1 profile cell
+on:
+  workflow_call:
+    inputs:
+      phase:
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+jobs:
+  cell:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 720
+    env:
+      PROFILE_PHASE: ${{ inputs.phase }}
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Reserve identical clean source paths on the qualified ReFS disk
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Wrong x64 runner' }
+          if ($env:PROFILE_PHASE -notin @('train','official','repaired')) { throw 'Unknown phase' }
+          $volume = Get-Volume -DriveLetter D
+          $disk = Get-Disk -Number (Get-Partition -DriveLetter D).DiskNumber
+          if ($volume.FileSystem -ne 'ReFS' -or $disk.FriendlyName -ne 'NVMe HFS002TFM9X189N-SKhynix') { throw 'Build storage changed' }
+          if ($volume.SizeRemaining -lt 250GB) { throw 'Insufficient build capacity' }
+          if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Correctness requires NTFS' }
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
+          $root = "D:\n$suffix"
+          if ($env:PROFILE_PHASE -eq 'train') {
+            if (Test-Path -LiteralPath $root) { throw 'Refusing an existing root' }
+            New-Item -ItemType Directory "$root\inputs" | Out-Null
+            "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT" | Set-Content "$root\owner-run.txt"
+          } elseif ((Get-Content "$root\owner-run.txt").Trim() -ne "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT") {
+            throw 'Wrong experiment owner'
+          }
+          if (Test-Path -LiteralPath "$root\r") { throw 'Previous source or build remains' }
+          $correctness = "C:\pt$suffix\$env:PROFILE_PHASE"
+          New-Item -ItemType Directory "$root\e\$env:PROFILE_PHASE",$correctness | Out-Null
+          "PROFILE_ROOT=$root" >> $env:GITHUB_ENV
+          "CORRECTNESS_TEMP=$correctness" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+      - name: Inspect runner readiness
+        shell: powershell
+        run: harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:PROFILE_ROOT\e\$env:PROFILE_PHASE\readiness.json"
+      - name: Fetch the pinned Rust release and all pinned submodules
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $protocol = Get-Content -Raw harness\ci-benchmark\x64-profile-1991-protocol.json | ConvertFrom-Json
+          $source = "$env:PROFILE_ROOT\r"
+          git init --quiet $source
+          if ($LASTEXITCODE) { throw 'Source init failed' }
+          git -C $source remote add origin https://github.com/rust-lang/rust.git
+          if ($LASTEXITCODE) { throw 'Source remote failed' }
+          git -C $source fetch --quiet --depth 1 origin $protocol.rust_sha
+          if ($LASTEXITCODE) { throw 'Pinned source fetch failed' }
+          git -C $source checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Pinned source checkout failed' }
+          git -C $source submodule update --init --recursive --depth 1 --jobs 4
+          if ($LASTEXITCODE) { throw 'Submodule checkout failed' }
+      - name: Fetch isolated native tools and checksum-pinned official inputs
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $protocol = Get-Content -Raw harness\ci-benchmark\x64-profile-1991-protocol.json | ConvertFrom-Json
+          $tools = "$env:PROFILE_ROOT\r\citools"
+          New-Item -ItemType Directory "$tools\clang-rust","$env:PROFILE_ROOT\r\wix\bin" | Out-Null
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-win64.exe --output "$tools\LLVM-20.1.3-win64.exe"
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          if ((Get-FileHash "$tools\LLVM-20.1.3-win64.exe").Hash.ToLowerInvariant() -ne $protocol.clang_installer_sha256) { throw 'Clang checksum mismatch' }
+          7z x "-o$tools\clang-rust" "$tools\LLVM-20.1.3-win64.exe" -y | Out-Null
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip --output "$tools\wix311-binaries.zip"
+          if ($LASTEXITCODE) { throw 'WiX download failed' }
+          7z x "-o$env:PROFILE_ROOT\r\wix\bin" "$tools\wix311-binaries.zip" -y | Out-Null
+          if ($LASTEXITCODE) { throw 'WiX extraction failed' }
+          curl.exe --fail --location --retry 3 $protocol.official_bundle_url --output "$env:PROFILE_ROOT\inputs\official.tar.xz"
+          if ($LASTEXITCODE) { throw 'Official profile download failed' }
+          if ((Get-FileHash "$env:PROFILE_ROOT\inputs\official.tar.xz").Hash.ToLowerInvariant() -ne $protocol.official_bundle_sha256) { throw 'Profile bundle checksum mismatch' }
+          if ($env:PROFILE_PHASE -eq 'train') {
+            curl.exe --fail --location --retry 3 $protocol.official_tools_url --output "$env:PROFILE_ROOT\inputs\llvm-tools.tar.xz"
+            if ($LASTEXITCODE) { throw 'Official LLVM reader download failed' }
+            if ((Get-FileHash "$env:PROFILE_ROOT\inputs\llvm-tools.tar.xz").Hash.ToLowerInvariant() -ne $protocol.official_tools_sha256) { throw 'Reader archive checksum mismatch' }
+          }
+      - uses: actions/download-artifact@v6
+        if: inputs.phase != 'train'
+        with:
+          name: x64-profile-trained-input
+          path: ${{ env.PROFILE_ROOT }}/inputs/repaired
+      - uses: actions/download-artifact@v6
+        if: inputs.phase == 'repaired'
+        with:
+          name: x64-profile-official-evidence
+          path: ${{ env.PROFILE_ROOT }}/reference
+      - name: Train the repaired profile or build and qualify a fixed-profile distribution
+        shell: powershell
+        run: |
+          if ($env:PROFILE_PHASE -eq 'train') {
+            harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\x64_profile_train.py --root $env:PROFILE_ROOT --protocol harness\ci-benchmark\x64-profile-1991-protocol.json
+          } else {
+            harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\x64_profile_only.py --root $env:PROFILE_ROOT --variant $env:PROFILE_PHASE --correctness-temp $env:CORRECTNESS_TEMP --protocol "$env:PROFILE_ROOT\inputs\repaired\protocol.json"
+          }
+      - uses: actions/upload-artifact@v6
+        if: always() && env.PROFILE_ROOT != ''
+        with:
+          name: x64-profile-${{ inputs.phase }}-evidence
+          path: |
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.phase }}/*.json
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.phase }}/*.jsonl
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.phase }}/*.toml
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.phase }}/*.cmake
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.phase }}/*.txt
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.phase }}/*.stdout
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.phase }}/*.stderr
+            ${{ env.PROFILE_ROOT }}/e/${{ inputs.phase }}/*.profdata
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 1
+      - uses: actions/upload-artifact@v6
+        if: inputs.phase == 'train'
+        with:
+          name: x64-profile-trained-input
+          path: |
+            ${{ env.PROFILE_ROOT }}/e/train/protocol.json
+            ${{ env.PROFILE_ROOT }}/e/train/provenance.json
+            ${{ env.PROFILE_ROOT }}/e/train/result.json
+            ${{ env.PROFILE_ROOT }}/e/train/llvm-pgo.profdata
+          if-no-files-found: error
+          retention-days: 30
+      - uses: actions/upload-artifact@v6
+        if: inputs.phase != 'train'
+        with:
+          name: x64-profile-${{ inputs.phase }}-dist
+          path: ${{ env.PROFILE_ROOT }}/r/build/dist
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Stage only qualified compiler archives and identity records for replay
+        if: inputs.phase != 'train'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $protocol = Get-Content -Raw "$env:PROFILE_ROOT\inputs\repaired\protocol.json" | ConvertFrom-Json
+          $stage = "$env:PROFILE_ROOT\compact\$env:PROFILE_PHASE"
+          $dist = "$stage\x64-profile-$env:PROFILE_PHASE-dist"
+          $meta = "$stage\x64-profile-$env:PROFILE_PHASE-evidence"
+          New-Item -ItemType Directory $dist,$meta | Out-Null
+          Copy-Item "$env:PROFILE_ROOT\r\build\dist\rustc-$($protocol.rust_version)-$($protocol.host).tar.xz" $dist
+          Copy-Item "$env:PROFILE_ROOT\e\$env:PROFILE_PHASE\result.json","$env:PROFILE_ROOT\e\$env:PROFILE_PHASE\dist-manifest.json" $meta
+          Copy-Item "$env:PROFILE_ROOT\inputs\repaired\protocol.json" $meta
+      - uses: actions/upload-artifact@v6
+        if: inputs.phase != 'train'
+        with:
+          name: x64-profile-${{ inputs.phase }}-compiler
+          path: ${{ env.PROFILE_ROOT }}/compact/${{ inputs.phase }}
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Remove only the owned successful source after all artifacts are preserved
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
+          $expected = "D:\n$suffix"
+          if ($env:PROFILE_ROOT -ne $expected) { throw 'Unexpected cleanup root' }
+          if ((Get-Content "$expected\owner-run.txt").Trim() -ne "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT") { throw 'Wrong root owner' }
+          if (!(Get-Content -Raw "$expected\e\$env:PROFILE_PHASE\result.json" | ConvertFrom-Json).complete) { throw 'Unqualified source must remain' }
+          $source = Get-Item -LiteralPath "$expected\r"
+          if ($source.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Refusing redirected source' }
+          Remove-Item -LiteralPath $source.FullName -Recurse -Force

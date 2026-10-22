@@ -146,10 +146,11 @@ def main():
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--correctness-temp", type=Path, required=True)
     parser.add_argument("--release-inputs", type=Path)
+    parser.add_argument("--protocol", type=Path, default=PROTOCOL)
     args = parser.parse_args()
     root, correctness = args.root.resolve(), args.correctness_temp.resolve()
     output, source = root / "e", root / "s"
-    protocol = json.loads(PROTOCOL.read_text())
+    protocol = json.loads(args.protocol.read_text())
     release_inputs = json.loads(args.release_inputs.read_text()) if args.release_inputs else None
     if (os.name != "nt" or os.cpu_count() != protocol["build_cores"]
             or os.environ.get("RUNNER_NAME") != protocol["runner"]

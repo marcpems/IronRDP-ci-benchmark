@@ -1,0 +1,44 @@
+{
+  "rust_version": "1.99.1",
+  "rust_sha": "58cf8f9c35b355199727627d07ae34a4e2846d67",
+  "host": "x86_64-pc-windows-msvc",
+  "archives": {
+    "reproducible-artifacts": {
+      "url": "https://static.rust-lang.org/dist/reproducible-artifacts-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+      "sha256": "f567d4a0d326216680ba92a520a36ad806627d3432fbde07b79d67a516e078eb",
+      "bytes": 7173196
+    },
+    "llvm-tools": {
+      "url": "https://static.rust-lang.org/dist/llvm-tools-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+      "sha256": "61b0ce740983240f48ceab73b6a1306a6c25bd7c92dc8135e47e8401b16d9b32",
+      "bytes": 49616272
+    }
+  },
+  "reader_version": "LLVM (http://llvm.org/):\n  LLVM version 23.1.1-rust-1.99.1-stable\n  Optimized build.\n",
+  "reader_sha256": "6d381285f5c9fae7ba9808ee701c192a681be421712a535f616f001563531d2a",
+  "profiles": {
+    "llvm": {
+      "sha256": "0967c426f74d7341438ed98b2b9b01db8ec8146704ee4d34614663b354cfe175",
+      "bytes": 13388808,
+      "coverage": {
+        "X86TargetLowering": {
+          "functions": 0,
+          "active": 0
+        },
+        "InstCombine": {
+          "functions": 0,
+          "active": 0
+        }
+      }
+    },
+    "rustc": {
+      "sha256": "3cc84c4e825145870c62a97c2aa5bd806fbf5d206a877509429ecc3b0eff519a",
+      "bytes": 54981048
+    },
+    "rustdoc": {
+      "sha256": "ddc4975530fef50dff9c57aaa8422fe9b60e728a9f757949d38488ce292648b4",
+      "bytes": 58964160
+    }
+  },
+  "scope": "Exact substring coverage in the published LLVM profile; not a performance estimate"
+}

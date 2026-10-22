@@ -130,15 +130,15 @@ compression-profile = "balanced"
 '''
 
 
-def check_distribution(files):
+def check_distribution(files, version="1.94.1"):
     names = {file.name for file in files}
     required = {
-        f"{component}-1.94.1-{HOST}.tar.xz" for component in (
+        f"{component}-{version}-{HOST}.tar.xz" for component in (
             "rust", "rustc", "rust-std", "cargo", "rust-docs", "rustfmt",
             "clippy", "llvm-tools", "rust-analyzer",
         )
     }
-    required.update({f"rust-1.94.1-{HOST}.msi", "rust-src-1.94.1.tar.xz"})
+    required.update({f"rust-{version}-{HOST}.msi", f"rust-src-{version}.tar.xz"})
     missing = required - names
     if missing:
         raise RuntimeError(f"Incomplete full distribution: {sorted(missing)}")

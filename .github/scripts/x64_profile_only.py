@@ -29,6 +29,8 @@ def verify_pair(left, right):
             raise RuntimeError(f"Profile-only common input differs: {key}")
     if not equivalent_tools(left["tools"], right["tools"]):
         raise RuntimeError("Native tool identities changed between builds")
+    if left.get("common_profile_sha256") != right.get("common_profile_sha256"):
+        raise RuntimeError("Non-LLVM PGO profiles changed between builds")
 
 
 def tests_only_helper(source):
@@ -57,7 +59,8 @@ def load_profiles(root, output, variant, protocol):
     with tarfile.open(bundle, "r:xz") as archive:
         archive.extractall(extracted, filter="data")
     profiles = {}
-    for name in ("rustc", "llvm"):
+    names = ("rustc", "llvm", "rustdoc") if "rustdoc_profile_sha256" in protocol else ("rustc", "llvm")
+    for name in names:
         files = list(extracted.rglob(f"{name}-pgo.profdata"))
         if len(files) != 1:
             raise RuntimeError(f"Expected one official {name} profile")
@@ -66,11 +69,42 @@ def load_profiles(root, output, variant, protocol):
             source = root / "inputs/repaired/llvm-pgo.profdata"
         destination = output / f"{name}-pgo.profdata"
         shutil.copy2(source, destination)
-        expected = protocol["rustc_profile_sha256"] if name == "rustc" else protocol["llvm_profile_sha256"][variant]
+        expected = (protocol["llvm_profile_sha256"][variant] if name == "llvm"
+                    else protocol[f"{name}_profile_sha256"])
         if digest(destination) != expected:
             raise RuntimeError(f"Wrong {name} profile for {variant}")
         profiles[name] = destination
     return profiles
+
+
+def profile_arguments(profiles):
+    if "rustdoc" not in profiles:
+        return ["--rust-profile-use", profiles["rustc"], "--llvm-profile-use", profiles["llvm"]]
+    arguments = []
+    for name, profile in {**profiles, "cargo": profiles["rustc"]}.items():
+        arguments.extend(["--set", f'pgo.{name}.use="{profile.as_posix()}"'])
+    return arguments
+
+
+def verify_training_input(directory, protocol, tools):
+    training = json.loads((directory / "result.json").read_text())
+    identity = protocol["training_identity"]
+    if (not training.get("complete")
+            or training["run_id"] != identity["run_id"] or training["attempt"] != identity["attempt"]
+            or identity["run_id"] != os.environ["GITHUB_RUN_ID"]
+            or identity["attempt"] != os.environ["GITHUB_RUN_ATTEMPT"]
+            or digest(directory / "provenance.json") != identity["provenance_sha256"]
+            or training["profiles"]["llvm"]["sha256"] != protocol["llvm_profile_sha256"]["repaired"]
+            or not equivalent_tools(training["tools"], tools)):
+        raise RuntimeError("Training identity or native tools differ from the frozen input")
+    expected = json.loads(json.dumps(training["protocol"]))
+    expected["llvm_profile_sha256"]["repaired"] = training["profiles"]["llvm"]["sha256"]
+    expected["training_identity"] = identity
+    if expected != protocol:
+        raise RuntimeError("Training source or configuration protocol changed")
+    if not all(training["llvm_coverage"][name]["active_functions"] > 0
+               for name in ("X86TargetLowering", "InstCombine")):
+        raise RuntimeError("Repaired profile has no qualifying backend coverage")
 
 
 def audit_native_cache(source, output, profiles, tools):
@@ -134,8 +168,8 @@ def qualify_distribution(source, output, env, correctness_temp, expected_test_sh
         raise RuntimeError("The upstream extracted-distribution test implementation changed")
 
 
-def build(root, variant, correctness_temp):
-    protocol = json.loads(PROTOCOL.read_text())
+def build(root, variant, correctness_temp, protocol_path=PROTOCOL):
+    protocol = json.loads(protocol_path.read_text())
     output, source = root / "e" / variant, root / "r"
     if (os.name != "nt" or os.cpu_count() != protocol["build_cores"]
             or os.environ.get("RUNNER_NAME") != protocol["runner"]
@@ -157,6 +191,8 @@ def build(root, variant, correctness_temp):
     if digest(source / "citools/LLVM-20.1.3-win64.exe") != protocol["clang_installer_sha256"]:
         raise RuntimeError("Clang installer differs from the accepted pinned 20.1.3 builder")
     tools = tool_identity(clang)
+    if "training_identity" in protocol:
+        verify_training_input(root / "inputs/repaired", protocol, tools)
     env = environment(output, clang)
     env.update({"WIX": str(source / "wix"), "PGO_HOST": HOST, "DIST_TRY_BUILD": "0",
                 "DIST_REQUIRE_ALL_TOOLS": "1", "COMPILETEST_REQUIRE_ALL_LLVM_COMPONENTS": "1",
@@ -176,6 +212,10 @@ def build(root, variant, correctness_temp):
         "patches": {"bootstrap-clang-runtime.patch": digest(patch),
                     "tests-only-opt-dist-main": tests_only_helper(source)},
     }
+    if "rustdoc" in profiles:
+        provenance["common_profile_sha256"] = {
+            name: digest(path) for name, path in profiles.items() if name != "llvm"}
+        provenance["common_profile_sha256"]["cargo"] = digest(profiles["rustc"])
     if variant == "repaired":
         verify_pair(json.loads((root / "reference/result.json").read_text()), provenance)
     save(output / "provenance.json", provenance)
@@ -189,8 +229,7 @@ def build(root, variant, correctness_temp):
     x = [sys.executable, "x.py"]
     started = time.time()
     production = execute(
-        x + ["dist", "bootstrap", "--include-default-paths",
-             "--rust-profile-use", profiles["rustc"], "--llvm-profile-use", profiles["llvm"]],
+        x + ["dist", "bootstrap", "--include-default-paths", *profile_arguments(profiles)],
         source, env, output, "fixed-profile-dist", timeout=8 * 3600, cores=protocol["build_cores"])
     shutil.copy2(source / "build/metrics.json", output / "production-metrics.json")
     audit_native_cache(source, output, profiles, tools)
@@ -201,7 +240,7 @@ def build(root, variant, correctness_temp):
     print(f"Retained {len(audit['standalone_llvm_utility_main_warnings'])} standalone LLVM utility main "
           "profile warnings; no other profile mismatches detected.", flush=True)
     files = sorted(path for path in (source / "build/dist").iterdir() if path.is_file())
-    check_distribution(files)
+    check_distribution(files, protocol["rust_version"])
     if variant == "repaired":
         previous = json.loads((root / "reference/dist-manifest.json").read_text())
         if {row["name"] for row in previous} != {path.name for path in files}:
@@ -226,11 +265,12 @@ def main():
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--variant", choices=("official", "repaired"), required=True)
     parser.add_argument("--correctness-temp", type=Path, required=True)
+    parser.add_argument("--protocol", type=Path, default=PROTOCOL)
     args = parser.parse_args()
     output = args.root / "e" / args.variant
     try:
         with telemetry(output, build_drive="D:"):
-            build(args.root.resolve(), args.variant, args.correctness_temp.resolve())
+            build(args.root.resolve(), args.variant, args.correctness_temp.resolve(), args.protocol)
     except Exception as error:
         save(output / "failure.json", {"complete": False, "error": str(error), "unix": time.time()})
         result = output / "result.json"

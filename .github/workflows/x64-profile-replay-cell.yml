@@ -8,6 +8,12 @@ on:
       release_inputs:
         type: string
         default: ""
+      compiler_artifacts:
+        type: boolean
+        default: false
+      protocol_from_artifact:
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: read
@@ -23,6 +29,7 @@ jobs:
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
       RELEASE_INPUTS: ${{ inputs.release_inputs }}
+      PROTOCOL_FROM_ARTIFACT: ${{ inputs.protocol_from_artifact }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -67,12 +74,12 @@ jobs:
         shell: powershell
         run: .github\scripts\x64_pgo_preflight.ps1 -Output "$env:REPLAY_ROOT\readiness.json"
       - uses: actions/download-artifact@v6
-        if: inputs.compiler_bundle == ''
+        if: inputs.compiler_bundle == '' && !inputs.compiler_artifacts
         with:
           pattern: x64-profile-*-evidence
           path: ${{ env.REPLAY_ROOT }}/a
       - uses: actions/download-artifact@v6
-        if: inputs.compiler_bundle == ''
+        if: inputs.compiler_bundle == '' && !inputs.compiler_artifacts
         with:
           pattern: x64-profile-*-dist
           path: ${{ env.REPLAY_ROOT }}/a
@@ -81,12 +88,21 @@ jobs:
         with:
           name: ${{ inputs.compiler_bundle }}
           path: ${{ env.REPLAY_ROOT }}/a
+      - uses: actions/download-artifact@v6
+        if: inputs.compiler_artifacts
+        with:
+          pattern: x64-profile-*-compiler
+          path: ${{ env.REPLAY_ROOT }}/a
+          merge-multiple: true
       - name: Measure the isolated LLVM profile difference
         shell: powershell
         run: |
           $env:RUNNER_TEMP = "$env:REPLAY_ROOT\t"
           $arguments = @('--root', $env:REPLAY_ROOT, '--correctness-temp', $env:CORRECTNESS_TEMP)
           if ($env:RELEASE_INPUTS) { $arguments += @('--release-inputs', $env:RELEASE_INPUTS) }
+          if ($env:PROTOCOL_FROM_ARTIFACT -eq 'true') {
+            $arguments += @('--protocol', "$env:REPLAY_ROOT\a\x64-profile-official-evidence\protocol.json")
+          }
           .github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script .github\scripts\x64_profile_replay.py @arguments
       - uses: actions/upload-artifact@v6
         if: always() && env.REPLAY_ROOT != ''
