@@ -1,0 +1,196 @@
+{
+  "source_commit": "bf5d4a47a3006290f3804695de1980247fdc6829",
+  "refs_merge_commit": "579979ea",
+  "runner": "windows-11-arm",
+  "nominal_blocks": 8,
+  "variants": [
+    "baseline",
+    "without-nasm",
+    "without-nasm-wait"
+  ],
+  "wait_seconds": 30,
+  "max_parallel": 12,
+  "matrix_seed": 20261022,
+  "matrix": [
+    {
+      "block": 1,
+      "variant": "baseline",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 1,
+      "variant": "without-nasm",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 1,
+      "variant": "without-nasm-wait",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 2,
+      "variant": "baseline",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 2,
+      "variant": "without-nasm",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 2,
+      "variant": "without-nasm-wait",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 3,
+      "variant": "without-nasm",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 3,
+      "variant": "without-nasm-wait",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 4,
+      "variant": "without-nasm",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 4,
+      "variant": "without-nasm-wait",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 4,
+      "variant": "baseline",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 5,
+      "variant": "without-nasm",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 5,
+      "variant": "without-nasm-wait",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 5,
+      "variant": "baseline",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 6,
+      "variant": "without-nasm",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 6,
+      "variant": "baseline",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 6,
+      "variant": "without-nasm-wait",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 7,
+      "variant": "without-nasm",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 7,
+      "variant": "without-nasm-wait",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 7,
+      "variant": "baseline",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 8,
+      "variant": "without-nasm-wait",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 8,
+      "variant": "without-nasm",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    },
+    {
+      "block": 8,
+      "variant": "baseline",
+      "target": "aarch64-pc-windows-msvc",
+      "os_arch": "windows-arm64",
+      "macos_deployment_target": "11.0"
+    }
+  ],
+  "primary": "Compare complete-job elapsed time and Cargo elapsed time between baseline and omission",
+  "uncertainty": "10000 nominal-block bootstrap resamples; report means, medians, differences, and percentile 95% intervals",
+  "negative_controls": "ReFS preparation and checkout occur before the NASM intervention",
+  "delay_control": "The fixed 30-second wait tests an elapsed-startup-time explanation, not an exact match to every installation",
+  "instrumentation": "Identical Cargo --timings and whole-system GetSystemTimes CPU deltas in all variants",
+  "limitations": [
+    "Nominal scheduling blocks do not guarantee identical machines or simultaneous starts",
+    "System CPU counters include all guest processes, not just the build, and cannot expose host contention directly",
+    "Image, CPU model, power plan, cache outcome, and failures will be reported, not silently filtered",
+    "Eight observations per variant; no top-ups based on results; failed jobs are retained",
+    "Pinned source is held constant with yesterday's experiment; current upstream source changes are intentionally excluded"
+  ]
+}
