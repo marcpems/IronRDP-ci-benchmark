@@ -1,0 +1,150 @@
+{
+  "source_commit": "b9d140003323f3ae3cd22f91be556e58ed43322e",
+  "runner": "windows-2022",
+  "package": "ironrdp-agent",
+  "blocks": 8,
+  "variants": [
+    "baseline",
+    "refs"
+  ],
+  "max_parallel": 8,
+  "seed": 20261022,
+  "primary": "Mean completed-build-job seconds, including storage setup and cache persistence; excluding queue time.",
+  "secondary": [
+    "Median job seconds",
+    "Cargo seconds",
+    "Step durations",
+    "Results by CPU model, storage bus and runner image"
+  ],
+  "analysis": "10000 nominal-block bootstrap resamples; blocks do not pair physical hosts.",
+  "sampling": "Fixed 16 jobs; no performance-dependent top-ups or hardware-dependent exclusion.",
+  "scope": "Combined ReFS/workspace/Cargo/temp relocation versus stock NTFS, not filesystem-only attribution.",
+  "cache": "Cold keys isolated by run ID, attempt, block and variant; verify API persistence.",
+  "unchanged": [
+    "NASM installation",
+    "Source revision",
+    "Release flags except common --timings",
+    "Pagefile settings",
+    "Security settings"
+  ],
+  "limitations": [
+    "Ordinary ReFS, not Dev Drive",
+    "Heterogeneous CPU and disk hardware",
+    "Cold agent builds only; viewer covered by separate correctness checks",
+    "Literal NTFS minimum restricts pagefile growth on hosts paging to D"
+  ],
+  "matrix": [
+    {
+      "block": 1,
+      "storage": "baseline",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 1,
+      "storage": "refs",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 2,
+      "storage": "baseline",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 2,
+      "storage": "refs",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 3,
+      "storage": "refs",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 3,
+      "storage": "baseline",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 4,
+      "storage": "refs",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 4,
+      "storage": "baseline",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 5,
+      "storage": "refs",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 5,
+      "storage": "baseline",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 6,
+      "storage": "refs",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 6,
+      "storage": "baseline",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 7,
+      "storage": "refs",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 7,
+      "storage": "baseline",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 8,
+      "storage": "refs",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    },
+    {
+      "block": 8,
+      "storage": "baseline",
+      "target": "x86_64-pc-windows-msvc",
+      "os_arch": "windows-x64",
+      "macos_deployment_target": ""
+    }
+  ]
+}

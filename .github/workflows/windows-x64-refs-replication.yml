@@ -1,0 +1,395 @@
+name: Windows x64 NTFS versus resized ReFS
+'on':
+  push:
+    branches:
+    - perf/windows-x64-refs-replication
+  workflow_dispatch: {}
+permissions:
+  contents: read
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+  RUST_BACKTRACE: short
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+jobs:
+  build:
+    name: ${{ matrix.block }} / ${{ matrix.storage }}
+    runs-on: windows-2022
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        include:
+        - block: 1
+          storage: baseline
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 1
+          storage: refs
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 2
+          storage: baseline
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 2
+          storage: refs
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 3
+          storage: refs
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 3
+          storage: baseline
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 4
+          storage: refs
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 4
+          storage: baseline
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 5
+          storage: refs
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 5
+          storage: baseline
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 6
+          storage: refs
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 6
+          storage: baseline
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 7
+          storage: refs
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 7
+          storage: baseline
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 8
+          storage: refs
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+        - block: 8
+          storage: baseline
+          target: x86_64-pc-windows-msvc
+          os_arch: windows-x64
+          macos_deployment_target: ''
+    steps:
+    - name: Shrink NTFS and prepare ReFS storage
+      if: matrix.storage == 'refs'
+      shell: pwsh
+      env:
+        STORAGE_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+        if ($env:GITHUB_ACTIONS -ne 'true' -or
+            $env:STORAGE_RUNNER_ENVIRONMENT -ne 'github-hosted' -or
+            $env:RUNNER_OS -ne 'Windows' -or $env:RUNNER_ARCH -ne 'X64' -or
+            [Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'X64') {
+            throw 'storage experiment requires a GitHub-hosted Windows x64 runner'
+        }
+
+        $partitions = @(Get-Partition)
+        $volumes = @(Get-Volume)
+        $drives = @(Get-PSDrive -PSProvider FileSystem)
+        if (($partitions | Where-Object DriveLetter -eq 'R') -or
+            ($volumes | Where-Object DriveLetter -eq 'R') -or
+            ($drives | Where-Object Name -eq 'R')) {
+            throw 'R is already assigned'
+        }
+        $partition = @($partitions | Where-Object DriveLetter -eq 'D')
+        if ($partition.Count -ne 1) { throw 'expected exactly one D partition' }
+        $partition = $partition[0]
+        $disk = Get-Disk -Number $partition.DiskNumber
+        $volume = Get-Volume -DriveLetter D
+        $otherPartitions = @($partitions | Where-Object {
+            $_.DiskNumber -eq $disk.Number -and $_.PartitionNumber -ne $partition.PartitionNumber
+        })
+        $eligibleLayout = $otherPartitions.Count -eq 0 -or (
+            $disk.PartitionStyle -eq 'GPT' -and $otherPartitions.Count -eq 1 -and
+            $otherPartitions[0].Type -eq 'Reserved' -and
+            -not $otherPartitions[0].IsBoot -and -not $otherPartitions[0].IsSystem -and
+            [string]$otherPartitions[0].DriveLetter -notmatch '[A-Za-z]' -and
+            $otherPartitions[0].Offset + $otherPartitions[0].Size -le $partition.Offset
+        )
+        $eligibility = [ordered]@{
+            disk_not_boot = -not $disk.IsBoot
+            disk_not_system = -not $disk.IsSystem
+            disk_online = -not $disk.IsOffline
+            disk_writable = -not $disk.IsReadOnly
+            partition_not_boot = -not $partition.IsBoot
+            partition_not_system = -not $partition.IsSystem
+            supported_style = $disk.PartitionStyle -in @('MBR', 'GPT')
+            supported_layout = $eligibleLayout
+            ntfs = $volume.FileSystem -eq 'NTFS'
+            healthy = $volume.HealthStatus -eq 'Healthy'
+            fixed = $volume.DriveType -eq 'Fixed'
+        }
+        $eligibility | ConvertTo-Json | Write-Host
+        $disk | Select-Object Number, PartitionStyle, IsBoot, IsSystem, IsOffline, IsReadOnly |
+            ConvertTo-Json | Write-Host
+        $volume | Select-Object DriveLetter, FileSystem, HealthStatus, DriveType |
+            ConvertTo-Json | Write-Host
+        Write-Host "PartitionStyle type: $($disk.PartitionStyle.GetType().FullName)"
+        if ($disk.IsBoot -or $disk.IsSystem -or $disk.IsOffline -or $disk.IsReadOnly -or
+            $partition.IsBoot -or $partition.IsSystem -or
+            $disk.PartitionStyle -notin @('MBR', 'GPT') -or
+            -not $eligibleLayout -or
+            $volume.FileSystem -ne 'NTFS' -or $volume.HealthStatus -ne 'Healthy' -or
+            $volume.DriveType -ne 'Fixed') {
+            throw 'D is not an eligible standalone non-system NTFS data partition'
+        }
+
+        $cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }
+        $relocations = @(
+            @{ Source = $env:RUNNER_TEMP; Destination = 'R:\runner-temp' }
+            @{ Source = $env:GITHUB_WORKSPACE; Destination = 'R:\workspace' }
+            @{ Source = $cargoHome; Destination = 'R:\cargo-home' }
+        )
+        foreach ($entry in $relocations) {
+            $source = Get-Item -LiteralPath $entry.Source -Force
+            if (-not $source.PSIsContainer -or $null -eq $source.Parent -or
+                ($source.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                throw "source is not an ordinary directory: $($entry.Source)"
+            }
+            $entry.Source = $source.FullName.TrimEnd('\')
+        }
+        for ($i = 0; $i -lt $relocations.Count; $i++) {
+            for ($j = 0; $j -lt $relocations.Count; $j++) {
+                if ($i -ne $j -and ($relocations[$i].Source -eq $relocations[$j].Source -or
+                    $relocations[$i].Source.StartsWith(
+                        $relocations[$j].Source + '\', [StringComparison]::OrdinalIgnoreCase))) {
+                    throw 'relocation sources overlap'
+                }
+            }
+        }
+        if (-not $env:GITHUB_WORKSPACE.StartsWith('D:\', [StringComparison]::OrdinalIgnoreCase) -or
+            -not $env:RUNNER_TEMP.StartsWith('D:\', [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'expected workspace and runner temporary directory on D'
+        }
+
+        $limits = $partition | Get-PartitionSupportedSize
+        if ($limits.SizeMin -le 0 -or $limits.SizeMin -ge $partition.Size -or
+            $partition.Size - $limits.SizeMin -lt 50GB) {
+            throw 'insufficient reclaimable space at the supported NTFS minimum'
+        }
+        $before = @{
+            disk_number = $disk.Number
+            partition_number = $partition.PartitionNumber
+            original_size = $partition.Size
+            supported_minimum = $limits.SizeMin
+            paging_files = @(Get-CimInstance Win32_PageFileUsage |
+                Select-Object Name, AllocatedBaseSize, CurrentUsage)
+            paging_settings = @(Get-CimInstance Win32_PageFileSetting |
+                Select-Object Name, InitialSize, MaximumSize)
+            automatic_pagefile = (Get-CimInstance Win32_ComputerSystem).AutomaticManagedPagefile
+        }
+        $clock = [Diagnostics.Stopwatch]::StartNew()
+        Resize-Partition -InputObject $partition -Size $limits.SizeMin
+        $resizeSeconds = $clock.Elapsed.TotalSeconds
+        $newPartition = New-Partition -DiskNumber $disk.Number -UseMaximumSize -DriveLetter R
+        $newVolume = $newPartition | Format-Volume -FileSystem ReFS -NewFileSystemLabel Build -Confirm:$false
+        if ($newVolume.FileSystem -ne 'ReFS' -or $newVolume.DriveLetter -ne 'R') {
+            throw 'new partition is not ReFS on R'
+        }
+
+        Set-Location -LiteralPath $env:SystemRoot
+        [Environment]::CurrentDirectory = $env:SystemRoot
+        foreach ($entry in $relocations) {
+            New-Item -ItemType Directory -Path $entry.Destination | Out-Null
+            robocopy $entry.Source $entry.Destination /E /COPY:DAT /DCOPY:DAT /SL /SJ /R:2 /W:1 /NP /NFL /NDL
+            if ($LASTEXITCODE -ge 8) { throw "directory copy failed with robocopy exit code $LASTEXITCODE" }
+            $LASTEXITCODE = 0
+            $entry.Backup = "$($entry.Source).before-refs-$([guid]::NewGuid())"
+            Move-Item -LiteralPath $entry.Source -Destination $entry.Backup
+            New-Item -ItemType Junction -Path $entry.Source -Target $entry.Destination | Out-Null
+        }
+        New-Item -ItemType Directory -Path 'R:\build-temp' | Out-Null
+        "CARGO_HOME=R:\cargo-home" >> $env:GITHUB_ENV
+        "TEMP=R:\build-temp" >> $env:GITHUB_ENV
+        "TMP=R:\build-temp" >> $env:GITHUB_ENV
+        "X64_REFS_FILE_COMMAND_OK=true" >> $env:GITHUB_ENV
+        $clock.Stop()
+
+        $afterPartition = Get-Partition -DriveLetter D
+        if ($afterPartition.Size -ne $limits.SizeMin -or
+            (Get-Volume -DriveLetter D).FileSystem -ne 'NTFS') {
+            throw 'D does not retain NTFS at the requested supported minimum'
+        }
+        @{
+            before = $before
+            after_d_size = $afterPartition.Size
+            after_d_free_bytes = (Get-Volume -DriveLetter D).SizeRemaining
+            refs_partition = @{
+                disk_number = $newPartition.DiskNumber
+                partition_number = $newPartition.PartitionNumber
+                size = $newPartition.Size
+                filesystem = $newVolume.FileSystem
+                allocation_unit_size = $newVolume.AllocationUnitSize
+            }
+            relocations = $relocations
+            resize_seconds = $resizeSeconds
+            preparation_seconds = $clock.Elapsed.TotalSeconds
+        } | ConvertTo-Json -Depth 8 | Set-Content "$env:RUNNER_TEMP\x64-storage-preparation.json"
+        Write-Host 'D remains NTFS; workspace, Cargo home and temporary files now use the new ReFS partition'
+    - name: Checkout release tag
+      uses: actions/checkout@v6
+      with:
+        repository: Devolutions/IronRDP
+        ref: b9d140003323f3ae3cd22f91be556e58ed43322e
+    - name: Install build dependencies
+      uses: ./.github/actions/install-build-deps
+    - name: Rust cache
+      uses: Swatinem/rust-cache@v2.9.1
+      with:
+        prefix-key: x64-refs-rep-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.block }}-${{ matrix.storage }}
+    - name: Build release binary
+      shell: pwsh
+      run: |
+        if ($env:RUNNER_OS -eq 'Windows') {
+          $env:RUSTFLAGS = '-C target-feature=+crt-static'
+        }
+
+        if ($env:RUNNER_OS -eq 'macOS') {
+          $env:MACOSX_DEPLOYMENT_TARGET = '${{ matrix.macos_deployment_target }}'
+        }
+
+        rustup target add '${{ matrix.target }}'
+        cargo build --timings --locked --release --target '${{ matrix.target }}' --package 'ironrdp-agent'
+    - name: Package binary
+      shell: pwsh
+      env:
+        PACKAGE: ironrdp-agent
+        VERSION: storage-benchmark
+        TARGET: ${{ matrix.target }}
+        OS_ARCH: ${{ matrix.os_arch }}
+      run: |
+        $extension = if ($env:RUNNER_OS -eq 'Windows') { '.exe' } else { '' }
+        $binary = Join-Path (Join-Path (Join-Path 'target' $env:TARGET) 'release') "$env:PACKAGE$extension"
+        $assetName = "$env:PACKAGE-$env:VERSION-$env:OS_ARCH.tar.gz"
+        $assetDirectory = 'release-assets'
+
+        New-Item -ItemType Directory -Force -Path $assetDirectory | Out-Null
+        Copy-Item $binary (Join-Path $assetDirectory "$env:PACKAGE$extension")
+
+        Push-Location $assetDirectory
+        tar -czf $assetName "$env:PACKAGE$extension"
+        $hash = (Get-FileHash -Algorithm SHA256 $assetName).Hash.ToLowerInvariant()
+        "$hash  $assetName" | Set-Content -NoNewline -Encoding ascii "$assetName.sha256"
+        Remove-Item "$env:PACKAGE$extension"
+        Pop-Location
+    - name: Upload release asset
+      uses: actions/upload-artifact@v7
+      with:
+        name: release-${{ matrix.block }}-${{ matrix.storage }}
+        path: release-assets/*
+        if-no-files-found: error
+        retention-days: 1
+        overwrite: true
+    - name: Verify release and storage
+      shell: pwsh
+      env:
+        STORAGE_VARIANT: ${{ matrix.storage }}
+      run: |2
+
+        $ErrorActionPreference = 'Stop'
+        $sidecars = @(Get-ChildItem release-assets -Filter '*.sha256')
+        if ($sidecars.Count -ne 1) { throw 'expected one release archive checksum' }
+        $archive = $sidecars[0].FullName.Substring(0, $sidecars[0].FullName.Length - 7)
+        if ((Get-FileHash $archive).Hash.ToLowerInvariant() -ne (Get-Content $sidecars[0].FullName).Split(' ')[0]) {
+            throw 'archive checksum mismatch'
+        }
+        tar -tzf $archive
+        if ($LASTEXITCODE -ne 0) { throw 'archive verification failed' }
+        & '.\target\x86_64-pc-windows-msvc\release\ironrdp-agent.exe' --help
+        if ($LASTEXITCODE -ne 0) { throw 'executable smoke check failed' }
+        if ($env:STORAGE_VARIANT -eq 'refs') {
+            $report = Get-Content "$env:RUNNER_TEMP\x64-storage-preparation.json" -Raw | ConvertFrom-Json
+            if ($env:CARGO_HOME -ne 'R:\cargo-home' -or $env:TEMP -ne 'R:\build-temp' -or
+                $env:TMP -ne 'R:\build-temp' -or (Get-Volume -DriveLetter R).FileSystem -ne 'ReFS' -or
+                (Get-Partition -DriveLetter D).Size -ne $report.before.supported_minimum) {
+                throw 'incorrect ReFS storage configuration'
+            }
+            foreach ($entry in $report.relocations) {
+                if ((Get-Item -LiteralPath $entry.Source).Target -ne $entry.Destination -or
+                    -not (Test-Path -LiteralPath $entry.Backup -PathType Container)) {
+                    throw 'relocation junction or preserved backup missing'
+                }
+            }
+        }
+    - name: Record host and storage
+      if: always()
+      shell: pwsh
+      run: |2
+
+        $ErrorActionPreference = 'Stop'
+        $sourceCommit = $null
+        $nasmVersion = $null
+        if (Test-Path "$env:GITHUB_WORKSPACE\.git") {
+            $sourceCommit = git rev-parse HEAD
+            if ($LASTEXITCODE -ne 0) { throw 'source revision query failed' }
+        }
+        if (Get-Command nasm -ErrorAction SilentlyContinue) {
+            $nasmVersion = nasm -v
+            if ($LASTEXITCODE -ne 0) { throw 'NASM version query failed' }
+        }
+        @{
+            source_commit = $sourceCommit
+            nasm_version = $nasmVersion
+            image = $env:ImageVersion
+            cpu = @(Get-CimInstance Win32_Processor | Select-Object Name, NumberOfLogicalProcessors)
+            disks = @(Get-Disk | Select-Object Number, BusType, PartitionStyle, Size, IsBoot, IsSystem)
+            partitions = @(Get-Partition | Select-Object DiskNumber, PartitionNumber, DriveLetter, Offset, Size, Type)
+            volumes = @(Get-Volume | Select-Object DriveLetter, FileSystem, Size, SizeRemaining, AllocationUnitSize)
+            paging = @(Get-CimInstance Win32_PageFileUsage | Select-Object Name, AllocatedBaseSize, CurrentUsage, PeakUsage)
+            paging_settings = @(Get-CimInstance Win32_PageFileSetting | Select-Object Name, InitialSize, MaximumSize)
+            memory = Get-CimInstance Win32_OperatingSystem |
+                Select-Object TotalVisibleMemorySize, FreePhysicalMemory, TotalVirtualMemorySize, FreeVirtualMemory
+            cargo_home = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }
+            workspace_target = (Get-Item $env:GITHUB_WORKSPACE).Target
+            runner_temp_target = (Get-Item $env:RUNNER_TEMP).Target
+            temp = $env:TEMP
+            tmp = $env:TMP
+            defender = Get-MpComputerStatus | Select-Object RealTimeProtectionEnabled, AntivirusEnabled
+            power_plan = powercfg /getactivescheme
+        } | ConvertTo-Json -Depth 8 | Set-Content "$env:RUNNER_TEMP\x64-host.json"
+        if ($LASTEXITCODE -ne 0) { throw 'power plan query failed' }
+    - name: Upload measurements
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: measurements-${{ matrix.block }}-${{ matrix.storage }}
+        path: |-
+          ${{ runner.temp }}/x64-host.json
+          ${{ runner.temp }}/x64-storage-preparation.json
+          ${{ github.workspace }}/target/cargo-timings/cargo-timing.html
+        if-no-files-found: error
+        retention-days: 30
