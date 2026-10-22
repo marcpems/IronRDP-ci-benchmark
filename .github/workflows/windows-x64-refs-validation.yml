@@ -1,0 +1,357 @@
+name: Windows x64 resized ReFS validation
+'on':
+  push:
+    branches:
+    - perf/windows-x64-refs-canary
+  workflow_dispatch: {}
+permissions:
+  contents: read
+env:
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
+  RUST_BACKTRACE: short
+  CARGO_REGISTRIES_CRATES_IO_PROTOCOL: sparse
+jobs:
+  build:
+    name: ${{ matrix.package }} / ${{ matrix.storage }}
+    runs-on: windows-2022
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        package:
+        - ironrdp-agent
+        - ironrdp-viewer
+        storage:
+        - baseline
+        - refs
+        target:
+        - x86_64-pc-windows-msvc
+        os_arch:
+        - windows-x64
+        macos_deployment_target:
+        - ''
+    steps:
+    - name: Create preservation fixtures
+      shell: pwsh
+      run: |2
+
+        $ErrorActionPreference = 'Stop'
+        $root = "D:\storage-fixture-$([guid]::NewGuid())"
+        New-Item -ItemType Directory -Path $root | Out-Null
+        Set-Content "$root\keep.txt" 'existing NTFS data must survive'
+        $cargo = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }
+        $files = @(
+            "$root\keep.txt",
+            "$env:GITHUB_WORKSPACE\prejob.txt",
+            "$env:RUNNER_TEMP\prejob-temp.txt",
+            "$cargo\prejob-cargo.txt"
+        )
+        foreach ($file in $files[1..3]) { Set-Content $file "preserve:$file" }
+        (Get-Item "$env:GITHUB_WORKSPACE\prejob.txt").Attributes = 'Hidden'
+        New-Item -ItemType Junction -Path "$env:GITHUB_WORKSPACE\prejob-junction" -Target $root | Out-Null
+        New-Item -ItemType SymbolicLink -Path "$env:GITHUB_WORKSPACE\prejob-symlink.txt" -Target "$root\keep.txt" | Out-Null
+        @{
+            files = @($files | ForEach-Object { @{ path = $_; hash = (Get-FileHash -LiteralPath $_).Hash } })
+            external_directory = $root
+            d_size = (Get-Partition -DriveLetter D).Size
+            system_partitions = @(Get-Partition | Where-Object { $_.DiskNumber -eq (Get-Partition -DriveLetter C).DiskNumber } |
+                Sort-Object PartitionNumber | Select-Object DiskNumber, PartitionNumber, DriveLetter, Offset, Size)
+            paging_settings = @(Get-CimInstance Win32_PageFileSetting | Select-Object Name, InitialSize, MaximumSize)
+        } | ConvertTo-Json -Depth 6 | Set-Content "$env:RUNNER_TEMP\storage-fixtures.json"
+    - name: Shrink NTFS and prepare ReFS storage
+      if: matrix.storage == 'refs'
+      shell: pwsh
+      env:
+        STORAGE_RUNNER_ENVIRONMENT: ${{ runner.environment }}
+      run: |
+        $ErrorActionPreference = 'Stop'
+        if ($env:GITHUB_ACTIONS -ne 'true' -or
+            $env:STORAGE_RUNNER_ENVIRONMENT -ne 'github-hosted' -or
+            $env:RUNNER_OS -ne 'Windows' -or $env:RUNNER_ARCH -ne 'X64' -or
+            [Runtime.InteropServices.RuntimeInformation]::OSArchitecture -ne 'X64') {
+            throw 'storage experiment requires a GitHub-hosted Windows x64 runner'
+        }
+
+        $partitions = @(Get-Partition)
+        $volumes = @(Get-Volume)
+        $drives = @(Get-PSDrive -PSProvider FileSystem)
+        if (($partitions | Where-Object DriveLetter -eq 'R') -or
+            ($volumes | Where-Object DriveLetter -eq 'R') -or
+            ($drives | Where-Object Name -eq 'R')) {
+            throw 'R is already assigned'
+        }
+        $partition = @($partitions | Where-Object DriveLetter -eq 'D')
+        if ($partition.Count -ne 1) { throw 'expected exactly one D partition' }
+        $partition = $partition[0]
+        $disk = Get-Disk -Number $partition.DiskNumber
+        $volume = Get-Volume -DriveLetter D
+        if ($disk.IsBoot -or $disk.IsSystem -or $disk.IsOffline -or $disk.IsReadOnly -or
+            $partition.IsBoot -or $partition.IsSystem -or
+            $disk.PartitionStyle -notin @('MBR', 'GPT') -or
+            @($partitions | Where-Object DiskNumber -eq $disk.Number).Count -ne 1 -or
+            $volume.FileSystem -ne 'NTFS' -or $volume.HealthStatus -ne 'Healthy' -or
+            $volume.DriveType -ne 'Fixed') {
+            throw 'D is not an eligible standalone non-system NTFS data partition'
+        }
+
+        $cargoHome = if ($env:CARGO_HOME) { $env:CARGO_HOME } else { Join-Path $HOME '.cargo' }
+        $relocations = @(
+            @{ Source = $env:RUNNER_TEMP; Destination = 'R:\runner-temp' }
+            @{ Source = $env:GITHUB_WORKSPACE; Destination = 'R:\workspace' }
+            @{ Source = $cargoHome; Destination = 'R:\cargo-home' }
+        )
+        foreach ($entry in $relocations) {
+            $source = Get-Item -LiteralPath $entry.Source -Force
+            if (-not $source.PSIsContainer -or $null -eq $source.Parent -or
+                ($source.Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                throw "source is not an ordinary directory: $($entry.Source)"
+            }
+            $entry.Source = $source.FullName.TrimEnd('\')
+        }
+        for ($i = 0; $i -lt $relocations.Count; $i++) {
+            for ($j = 0; $j -lt $relocations.Count; $j++) {
+                if ($i -ne $j -and ($relocations[$i].Source -eq $relocations[$j].Source -or
+                    $relocations[$i].Source.StartsWith(
+                        $relocations[$j].Source + '\', [StringComparison]::OrdinalIgnoreCase))) {
+                    throw 'relocation sources overlap'
+                }
+            }
+        }
+        if (-not $env:GITHUB_WORKSPACE.StartsWith('D:\', [StringComparison]::OrdinalIgnoreCase) -or
+            -not $env:RUNNER_TEMP.StartsWith('D:\', [StringComparison]::OrdinalIgnoreCase)) {
+            throw 'expected workspace and runner temporary directory on D'
+        }
+
+        $limits = $partition | Get-PartitionSupportedSize
+        if ($limits.SizeMin -le 0 -or $limits.SizeMin -ge $partition.Size -or
+            $partition.Size - $limits.SizeMin -lt 50GB) {
+            throw 'insufficient reclaimable space at the supported NTFS minimum'
+        }
+        $before = @{
+            disk_number = $disk.Number
+            partition_number = $partition.PartitionNumber
+            original_size = $partition.Size
+            supported_minimum = $limits.SizeMin
+            paging_files = @(Get-CimInstance Win32_PageFileUsage |
+                Select-Object Name, AllocatedBaseSize, CurrentUsage)
+            paging_settings = @(Get-CimInstance Win32_PageFileSetting |
+                Select-Object Name, InitialSize, MaximumSize)
+            automatic_pagefile = (Get-CimInstance Win32_ComputerSystem).AutomaticManagedPagefile
+        }
+        $clock = [Diagnostics.Stopwatch]::StartNew()
+        Resize-Partition -InputObject $partition -Size $limits.SizeMin
+        $resizeSeconds = $clock.Elapsed.TotalSeconds
+        $newPartition = New-Partition -DiskNumber $disk.Number -UseMaximumSize -DriveLetter R
+        $newVolume = $newPartition | Format-Volume -FileSystem ReFS -NewFileSystemLabel Build -Confirm:$false
+        if ($newVolume.FileSystem -ne 'ReFS' -or $newVolume.DriveLetter -ne 'R') {
+            throw 'new partition is not ReFS on R'
+        }
+
+        Set-Location -LiteralPath $env:SystemRoot
+        [Environment]::CurrentDirectory = $env:SystemRoot
+        foreach ($entry in $relocations) {
+            New-Item -ItemType Directory -Path $entry.Destination | Out-Null
+            robocopy $entry.Source $entry.Destination /E /COPY:DAT /DCOPY:DAT /SL /SJ /R:2 /W:1 /NP /NFL /NDL
+            if ($LASTEXITCODE -ge 8) { throw "directory copy failed with robocopy exit code $LASTEXITCODE" }
+            $LASTEXITCODE = 0
+            $entry.Backup = "$($entry.Source).before-refs-$([guid]::NewGuid())"
+            Move-Item -LiteralPath $entry.Source -Destination $entry.Backup
+            New-Item -ItemType Junction -Path $entry.Source -Target $entry.Destination | Out-Null
+        }
+        New-Item -ItemType Directory -Path 'R:\build-temp' | Out-Null
+        "CARGO_HOME=R:\cargo-home" >> $env:GITHUB_ENV
+        "TEMP=R:\build-temp" >> $env:GITHUB_ENV
+        "TMP=R:\build-temp" >> $env:GITHUB_ENV
+        "X64_REFS_FILE_COMMAND_OK=true" >> $env:GITHUB_ENV
+        $clock.Stop()
+
+        $afterPartition = Get-Partition -DriveLetter D
+        if ($afterPartition.Size -ne $limits.SizeMin -or
+            (Get-Volume -DriveLetter D).FileSystem -ne 'NTFS') {
+            throw 'D does not retain NTFS at the requested supported minimum'
+        }
+        @{
+            before = $before
+            after_d_size = $afterPartition.Size
+            after_d_free_bytes = (Get-Volume -DriveLetter D).SizeRemaining
+            refs_partition = @{
+                disk_number = $newPartition.DiskNumber
+                partition_number = $newPartition.PartitionNumber
+                size = $newPartition.Size
+                filesystem = $newVolume.FileSystem
+                allocation_unit_size = $newVolume.AllocationUnitSize
+            }
+            relocations = $relocations
+            resize_seconds = $resizeSeconds
+            preparation_seconds = $clock.Elapsed.TotalSeconds
+        } | ConvertTo-Json -Depth 8 | Set-Content "$env:RUNNER_TEMP\x64-storage-preparation.json"
+        Write-Host 'D remains NTFS; workspace, Cargo home and temporary files now use the new ReFS partition'
+    - name: Verify storage preservation and runner commands
+      shell: pwsh
+      env:
+        STORAGE_VARIANT: ${{ matrix.storage }}
+      run: |2
+
+        $ErrorActionPreference = 'Stop'
+        $fixture = Get-Content "$env:RUNNER_TEMP\storage-fixtures.json" -Raw | ConvertFrom-Json
+        foreach ($file in $fixture.files) {
+            if ((Get-FileHash -LiteralPath $file.path).Hash -ne $file.hash) { throw "preserved file mismatch: $($file.path)" }
+        }
+        if (-not ((Get-Item "$env:GITHUB_WORKSPACE\prejob.txt" -Force).Attributes -band [IO.FileAttributes]::Hidden)) {
+            throw 'hidden attribute was lost'
+        }
+        foreach ($name in @('prejob-junction', 'prejob-symlink.txt')) {
+            if (-not ((Get-Item "$env:GITHUB_WORKSPACE\$name" -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+                throw 'pre-job link was expanded instead of preserved'
+            }
+        }
+        $systemPartitions = @(Get-Partition | Where-Object { $_.DiskNumber -eq (Get-Partition -DriveLetter C).DiskNumber } |
+            Sort-Object PartitionNumber | Select-Object DiskNumber, PartitionNumber, DriveLetter, Offset, Size)
+        if (($systemPartitions | ConvertTo-Json -Compress) -ne ($fixture.system_partitions | ConvertTo-Json -Compress)) {
+            throw 'system-disk partition layout changed'
+        }
+        $pagingSettings = @(Get-CimInstance Win32_PageFileSetting | Select-Object Name, InitialSize, MaximumSize)
+        if (($pagingSettings | ConvertTo-Json -Compress) -ne ($fixture.paging_settings | ConvertTo-Json -Compress)) {
+            throw 'pagefile configuration changed'
+        }
+        if ($env:STORAGE_VARIANT -eq 'refs') {
+            $report = Get-Content "$env:RUNNER_TEMP\x64-storage-preparation.json" -Raw | ConvertFrom-Json
+            if ($env:X64_REFS_FILE_COMMAND_OK -ne 'true' -or $env:CARGO_HOME -ne 'R:\cargo-home' -or
+                $env:TEMP -ne 'R:\build-temp' -or $env:TMP -ne 'R:\build-temp') {
+                throw 'runner file commands or relocated environment did not survive'
+            }
+            foreach ($entry in $report.relocations) {
+                if ((Get-Item -LiteralPath $entry.Source).Target -ne $entry.Destination -or
+                    -not (Test-Path -LiteralPath $entry.Backup -PathType Container)) {
+                    throw 'relocation junction or preserved backup is missing'
+                }
+            }
+            if ((Get-Volume -DriveLetter R).FileSystem -ne 'ReFS' -or
+                (Get-Partition -DriveLetter D).Size -ne $report.before.supported_minimum) {
+                throw 'incorrect filesystem or shrink size'
+            }
+        } elseif ((Get-Partition -DriveLetter D).Size -ne $fixture.d_size) {
+            throw 'baseline D partition changed'
+        }
+        $probe = Join-Path $env:RUNNER_TEMP 'storage-capacity-probe.bin'
+        $stream = [IO.File]::Create($probe)
+        try {
+            $buffer = [byte[]]::new(1MB)
+            for ($i = 0; $i -lt 512; $i++) { $stream.Write($buffer, 0, $buffer.Length) }
+        } finally {
+            $stream.Dispose()
+        }
+        if ((Get-Item $probe).Length -ne 512MB) { throw 'runner temporary directory capacity check failed' }
+        if ($env:STORAGE_VARIANT -eq 'refs' -and
+            (Get-Item 'R:\runner-temp\storage-capacity-probe.bin').Length -ne 512MB) {
+            throw 'runner temporary writes did not reach ReFS'
+        }
+        Write-Host 'Existing files, links, hidden attributes, pagefile configuration and system partitions preserved'
+    - name: Checkout release tag
+      uses: actions/checkout@v6
+      with:
+        repository: Devolutions/IronRDP
+        ref: b9d140003323f3ae3cd22f91be556e58ed43322e
+    - name: Install build dependencies
+      uses: ./.github/actions/install-build-deps
+    - name: Rust cache
+      uses: Swatinem/rust-cache@v2.9.1
+      with:
+        prefix-key: x64-refs-check-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.package }}-${{ matrix.storage
+          }}
+    - name: Build release binary
+      shell: pwsh
+      run: |
+        if ($env:RUNNER_OS -eq 'Windows') {
+          $env:RUSTFLAGS = '-C target-feature=+crt-static'
+        }
+
+        if ($env:RUNNER_OS -eq 'macOS') {
+          $env:MACOSX_DEPLOYMENT_TARGET = '${{ matrix.macos_deployment_target }}'
+        }
+
+        rustup target add '${{ matrix.target }}'
+        cargo build --locked --release --target '${{ matrix.target }}' --package '${{ matrix.package }}'
+    - name: Package binary
+      shell: pwsh
+      env:
+        PACKAGE: ${{ matrix.package }}
+        VERSION: storage-check
+        TARGET: ${{ matrix.target }}
+        OS_ARCH: ${{ matrix.os_arch }}
+      run: |
+        $extension = if ($env:RUNNER_OS -eq 'Windows') { '.exe' } else { '' }
+        $binary = Join-Path (Join-Path (Join-Path 'target' $env:TARGET) 'release') "$env:PACKAGE$extension"
+        $assetName = "$env:PACKAGE-$env:VERSION-$env:OS_ARCH.tar.gz"
+        $assetDirectory = 'release-assets'
+
+        New-Item -ItemType Directory -Force -Path $assetDirectory | Out-Null
+        Copy-Item $binary (Join-Path $assetDirectory "$env:PACKAGE$extension")
+
+        Push-Location $assetDirectory
+        tar -czf $assetName "$env:PACKAGE$extension"
+        $hash = (Get-FileHash -Algorithm SHA256 $assetName).Hash.ToLowerInvariant()
+        "$hash  $assetName" | Set-Content -NoNewline -Encoding ascii "$assetName.sha256"
+        Remove-Item "$env:PACKAGE$extension"
+        Pop-Location
+    - name: Upload release asset
+      uses: actions/upload-artifact@v7
+      with:
+        name: release-${{ matrix.package }}-${{ matrix.storage }}
+        path: release-assets/*
+        if-no-files-found: error
+        retention-days: 1
+        overwrite: true
+    - name: Verify release output and remaining NTFS data
+      shell: pwsh
+      env:
+        PACKAGE: ${{ matrix.package }}
+        STORAGE_VARIANT: ${{ matrix.storage }}
+      run: |2
+
+        $ErrorActionPreference = 'Stop'
+        foreach ($sidecar in Get-ChildItem release-assets -Filter '*.sha256') {
+            $archive = $sidecar.FullName.Substring(0, $sidecar.FullName.Length - 7)
+            if ((Get-FileHash $archive).Hash.ToLowerInvariant() -ne (Get-Content $sidecar.FullName).Split(' ')[0]) {
+                throw 'archive checksum mismatch'
+            }
+            tar -tzf $archive
+            if ($LASTEXITCODE -ne 0) { throw 'archive verification failed' }
+        }
+        & ".\target\x86_64-pc-windows-msvc\release\$env:PACKAGE.exe" --help
+        if ($LASTEXITCODE -ne 0) { throw 'executable smoke check failed' }
+        $fixture = Get-Content "$env:RUNNER_TEMP\storage-fixtures.json" -Raw | ConvertFrom-Json
+        if ((Get-FileHash "$($fixture.external_directory)\keep.txt").Hash -ne $fixture.files[0].hash) {
+            throw 'checkout or build damaged data outside the workspace'
+        }
+        if ($env:STORAGE_VARIANT -eq 'refs' -and
+            (Get-Item $env:GITHUB_WORKSPACE).Target -ne 'R:\workspace') {
+            throw 'checkout removed the workspace junction'
+        }
+    - name: Record storage and paging observations
+      if: always()
+      shell: pwsh
+      run: |2
+
+        $ErrorActionPreference = 'Stop'
+        @{
+            image = $env:ImageVersion
+            cpu = @(Get-CimInstance Win32_Processor | Select-Object Name, NumberOfLogicalProcessors)
+            volumes = @(Get-Volume | Select-Object DriveLetter, FileSystem, Size, SizeRemaining)
+            paging = @(Get-CimInstance Win32_PageFileUsage | Select-Object Name, AllocatedBaseSize, CurrentUsage, PeakUsage)
+            memory = Get-CimInstance Win32_OperatingSystem |
+                Select-Object TotalVisibleMemorySize, FreePhysicalMemory, TotalVirtualMemorySize, FreeVirtualMemory
+        } | ConvertTo-Json -Depth 6 | Set-Content "$env:RUNNER_TEMP\x64-storage-result.json"
+    - name: Upload storage observations
+      if: always()
+      uses: actions/upload-artifact@v7
+      with:
+        name: storage-${{ matrix.package }}-${{ matrix.storage }}
+        path: |-
+          ${{ runner.temp }}/x64-storage-*.json
+          ${{ runner.temp }}/storage-fixtures.json
+        if-no-files-found: error
+        retention-days: 30
