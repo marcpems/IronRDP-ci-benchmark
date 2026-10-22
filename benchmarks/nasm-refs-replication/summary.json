@@ -1,0 +1,904 @@
+{
+  "variants": {
+    "baseline": {
+      "metrics": {
+        "job_seconds": {
+          "n": 8,
+          "mean": 469.0,
+          "median": 463.5,
+          "minimum": 458.0,
+          "maximum": 490.0
+        },
+        "cargo_seconds": {
+          "n": 8,
+          "mean": 332.0875,
+          "median": 332.0,
+          "minimum": 315.5,
+          "maximum": 351.1
+        },
+        "pre_compile_seconds": {
+          "n": 8,
+          "mean": 8.9275,
+          "median": 8.895,
+          "minimum": 8.67,
+          "maximum": 9.36
+        },
+        "cpu_busy_percent": {
+          "n": 8,
+          "mean": 94.0673933474667,
+          "median": 93.95627148889,
+          "minimum": 93.22183721094689,
+          "maximum": 95.45779355493062
+        },
+        "Set up job": {
+          "n": 8,
+          "mean": 2.375,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 4.0
+        },
+        "Prepare Windows Arm build storage": {
+          "n": 8,
+          "mean": 17.875,
+          "median": 18.5,
+          "minimum": 13.0,
+          "maximum": 22.0
+        },
+        "Checkout release tag": {
+          "n": 8,
+          "mean": 10.625,
+          "median": 9.5,
+          "minimum": 9.0,
+          "maximum": 14.0
+        },
+        "Record pre-treatment uptime": {
+          "n": 8,
+          "mean": 0.375,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "Install build dependencies": {
+          "n": 8,
+          "mean": 29.875,
+          "median": 29.0,
+          "minimum": 27.0,
+          "maximum": 38.0
+        },
+        "Wait instead of installing NASM": {
+          "n": 8,
+          "mean": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "Verify target-specific NASM selection": {
+          "n": 8,
+          "mean": 2.0,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 3.0
+        },
+        "Rust cache": {
+          "n": 8,
+          "mean": 15.125,
+          "median": 14.5,
+          "minimum": 13.0,
+          "maximum": 19.0
+        },
+        "Build release binary": {
+          "n": 8,
+          "mean": 337.75,
+          "median": 337.5,
+          "minimum": 324.0,
+          "maximum": 356.0
+        },
+        "Package binary": {
+          "n": 8,
+          "mean": 1.5,
+          "median": 1.5,
+          "minimum": 1.0,
+          "maximum": 2.0
+        },
+        "Upload release asset": {
+          "n": 8,
+          "mean": 2.125,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 3.0
+        },
+        "Verify release archive, executable, and ReFS paths": {
+          "n": 8,
+          "mean": 2.125,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 4.0
+        },
+        "Record host configuration": {
+          "n": 8,
+          "mean": 12.5,
+          "median": 9.0,
+          "minimum": 9.0,
+          "maximum": 36.0
+        },
+        "Upload timing evidence": {
+          "n": 8,
+          "mean": 1.5,
+          "median": 1.5,
+          "minimum": 1.0,
+          "maximum": 2.0
+        },
+        "Post Rust cache": {
+          "n": 8,
+          "mean": 25.5,
+          "median": 23.0,
+          "minimum": 22.0,
+          "maximum": 44.0
+        },
+        "Post Checkout release tag": {
+          "n": 8,
+          "mean": 5.0,
+          "median": 5.0,
+          "minimum": 5.0,
+          "maximum": 5.0
+        },
+        "Complete job": {
+          "n": 8,
+          "mean": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "unit:aws-lc-sys build script (run)": {
+          "n": 8,
+          "mean": 131.33125,
+          "median": 132.425,
+          "minimum": 121.76,
+          "maximum": 138.39
+        },
+        "unit:windows": {
+          "n": 8,
+          "mean": 49.74,
+          "median": 49.36,
+          "minimum": 46.41,
+          "maximum": 54.54
+        },
+        "unit:sspi": {
+          "n": 8,
+          "mean": 67.04125,
+          "median": 66.82499999999999,
+          "minimum": 64.23,
+          "maximum": 70.76
+        },
+        "unit:ironrdp-agent": {
+          "n": 8,
+          "mean": 31.335,
+          "median": 31.47,
+          "minimum": 26.34,
+          "maximum": 34.03
+        },
+        "unit:ironrdp-agent bin \"ironrdp-agent\"": {
+          "n": 8,
+          "mean": 18.58125,
+          "median": 17.975,
+          "minimum": 17.45,
+          "maximum": 22.12
+        }
+      },
+      "images": {
+        "20261018.189.1": 5,
+        "20261013.183.4": 3
+      },
+      "cpus": {
+        "Cobalt 100": 8
+      },
+      "power_plans": {
+        "Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)": 8
+      }
+    },
+    "without-nasm": {
+      "metrics": {
+        "job_seconds": {
+          "n": 8,
+          "mean": 428.75,
+          "median": 427.5,
+          "minimum": 400.0,
+          "maximum": 462.0
+        },
+        "cargo_seconds": {
+          "n": 8,
+          "mean": 327.58750000000003,
+          "median": 322.8,
+          "minimum": 309.1,
+          "maximum": 360.1
+        },
+        "pre_compile_seconds": {
+          "n": 8,
+          "mean": 9.02375,
+          "median": 8.955,
+          "minimum": 8.53,
+          "maximum": 9.56
+        },
+        "cpu_busy_percent": {
+          "n": 8,
+          "mean": 93.80890901765494,
+          "median": 93.9588591222579,
+          "minimum": 92.33025353288276,
+          "maximum": 94.68851725765971
+        },
+        "Set up job": {
+          "n": 8,
+          "mean": 2.125,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 3.0
+        },
+        "Prepare Windows Arm build storage": {
+          "n": 8,
+          "mean": 17.5,
+          "median": 18.0,
+          "minimum": 14.0,
+          "maximum": 20.0
+        },
+        "Checkout release tag": {
+          "n": 8,
+          "mean": 10.375,
+          "median": 10.0,
+          "minimum": 8.0,
+          "maximum": 15.0
+        },
+        "Record pre-treatment uptime": {
+          "n": 8,
+          "mean": 0.75,
+          "median": 1.0,
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "Install build dependencies": {
+          "n": 8,
+          "mean": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "Wait instead of installing NASM": {
+          "n": 8,
+          "mean": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "Verify target-specific NASM selection": {
+          "n": 8,
+          "mean": 1.875,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 2.0
+        },
+        "Rust cache": {
+          "n": 8,
+          "mean": 15.25,
+          "median": 14.5,
+          "minimum": 11.0,
+          "maximum": 20.0
+        },
+        "Build release binary": {
+          "n": 8,
+          "mean": 333.0,
+          "median": 328.0,
+          "minimum": 314.0,
+          "maximum": 365.0
+        },
+        "Package binary": {
+          "n": 8,
+          "mean": 1.25,
+          "median": 1.0,
+          "minimum": 1.0,
+          "maximum": 2.0
+        },
+        "Upload release asset": {
+          "n": 8,
+          "mean": 2.375,
+          "median": 2.0,
+          "minimum": 2.0,
+          "maximum": 3.0
+        },
+        "Verify release archive, executable, and ReFS paths": {
+          "n": 8,
+          "mean": 1.75,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 2.0
+        },
+        "Record host configuration": {
+          "n": 8,
+          "mean": 9.5,
+          "median": 9.0,
+          "minimum": 7.0,
+          "maximum": 13.0
+        },
+        "Upload timing evidence": {
+          "n": 8,
+          "mean": 1.625,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 2.0
+        },
+        "Post Rust cache": {
+          "n": 8,
+          "mean": 23.875,
+          "median": 23.0,
+          "minimum": 22.0,
+          "maximum": 29.0
+        },
+        "Post Checkout release tag": {
+          "n": 8,
+          "mean": 4.75,
+          "median": 5.0,
+          "minimum": 4.0,
+          "maximum": 5.0
+        },
+        "Complete job": {
+          "n": 8,
+          "mean": 0.125,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "unit:aws-lc-sys build script (run)": {
+          "n": 8,
+          "mean": 127.2275,
+          "median": 125.895,
+          "minimum": 117.17,
+          "maximum": 143.09
+        },
+        "unit:windows": {
+          "n": 8,
+          "mean": 49.33625,
+          "median": 48.47,
+          "minimum": 46.47,
+          "maximum": 54.85
+        },
+        "unit:sspi": {
+          "n": 8,
+          "mean": 67.25,
+          "median": 67.085,
+          "minimum": 61.65,
+          "maximum": 71.81
+        },
+        "unit:ironrdp-agent": {
+          "n": 8,
+          "mean": 30.42,
+          "median": 31.295,
+          "minimum": 23.26,
+          "maximum": 38.33
+        },
+        "unit:ironrdp-agent bin \"ironrdp-agent\"": {
+          "n": 8,
+          "mean": 18.69875,
+          "median": 18.064999999999998,
+          "minimum": 16.24,
+          "maximum": 24.36
+        }
+      },
+      "images": {
+        "20261018.189.1": 4,
+        "20261013.183.4": 4
+      },
+      "cpus": {
+        "Cobalt 100": 8
+      },
+      "power_plans": {
+        "Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)": 8
+      }
+    },
+    "without-nasm-wait": {
+      "metrics": {
+        "job_seconds": {
+          "n": 8,
+          "mean": 452.125,
+          "median": 450.0,
+          "minimum": 443.0,
+          "maximum": 464.0
+        },
+        "cargo_seconds": {
+          "n": 8,
+          "mean": 322.875,
+          "median": 320.9,
+          "minimum": 313.2,
+          "maximum": 333.4
+        },
+        "pre_compile_seconds": {
+          "n": 8,
+          "mean": 8.63625,
+          "median": 8.78,
+          "minimum": 8.08,
+          "maximum": 9.15
+        },
+        "cpu_busy_percent": {
+          "n": 8,
+          "mean": 94.02487680764942,
+          "median": 93.9296236582413,
+          "minimum": 93.33382116200791,
+          "maximum": 94.58838842772238
+        },
+        "Set up job": {
+          "n": 8,
+          "mean": 1.875,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 3.0
+        },
+        "Prepare Windows Arm build storage": {
+          "n": 8,
+          "mean": 18.5,
+          "median": 18.5,
+          "minimum": 16.0,
+          "maximum": 20.0
+        },
+        "Checkout release tag": {
+          "n": 8,
+          "mean": 11.0,
+          "median": 9.0,
+          "minimum": 9.0,
+          "maximum": 16.0
+        },
+        "Record pre-treatment uptime": {
+          "n": 8,
+          "mean": 0.25,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "Install build dependencies": {
+          "n": 8,
+          "mean": 0.0,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 0.0
+        },
+        "Wait instead of installing NASM": {
+          "n": 8,
+          "mean": 30.5,
+          "median": 30.5,
+          "minimum": 30.0,
+          "maximum": 31.0
+        },
+        "Verify target-specific NASM selection": {
+          "n": 8,
+          "mean": 1.75,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 2.0
+        },
+        "Rust cache": {
+          "n": 8,
+          "mean": 14.375,
+          "median": 14.0,
+          "minimum": 13.0,
+          "maximum": 16.0
+        },
+        "Build release binary": {
+          "n": 8,
+          "mean": 328.125,
+          "median": 326.0,
+          "minimum": 318.0,
+          "maximum": 339.0
+        },
+        "Package binary": {
+          "n": 8,
+          "mean": 1.0,
+          "median": 1.0,
+          "minimum": 1.0,
+          "maximum": 1.0
+        },
+        "Upload release asset": {
+          "n": 8,
+          "mean": 2.125,
+          "median": 2.0,
+          "minimum": 2.0,
+          "maximum": 3.0
+        },
+        "Verify release archive, executable, and ReFS paths": {
+          "n": 8,
+          "mean": 1.875,
+          "median": 2.0,
+          "minimum": 1.0,
+          "maximum": 3.0
+        },
+        "Record host configuration": {
+          "n": 8,
+          "mean": 9.25,
+          "median": 9.0,
+          "minimum": 9.0,
+          "maximum": 10.0
+        },
+        "Upload timing evidence": {
+          "n": 8,
+          "mean": 1.25,
+          "median": 1.0,
+          "minimum": 1.0,
+          "maximum": 2.0
+        },
+        "Post Rust cache": {
+          "n": 8,
+          "mean": 22.75,
+          "median": 23.0,
+          "minimum": 22.0,
+          "maximum": 24.0
+        },
+        "Post Checkout release tag": {
+          "n": 8,
+          "mean": 4.875,
+          "median": 5.0,
+          "minimum": 4.0,
+          "maximum": 5.0
+        },
+        "Complete job": {
+          "n": 8,
+          "mean": 0.125,
+          "median": 0.0,
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "unit:aws-lc-sys build script (run)": {
+          "n": 8,
+          "mean": 127.41875,
+          "median": 128.125,
+          "minimum": 118.26,
+          "maximum": 135.47
+        },
+        "unit:windows": {
+          "n": 8,
+          "mean": 49.37125,
+          "median": 49.0,
+          "minimum": 45.17,
+          "maximum": 56.95
+        },
+        "unit:sspi": {
+          "n": 8,
+          "mean": 65.81375,
+          "median": 65.525,
+          "minimum": 63.89,
+          "maximum": 67.92
+        },
+        "unit:ironrdp-agent": {
+          "n": 8,
+          "mean": 30.732499999999998,
+          "median": 30.810000000000002,
+          "minimum": 25.62,
+          "maximum": 34.61
+        },
+        "unit:ironrdp-agent bin \"ironrdp-agent\"": {
+          "n": 8,
+          "mean": 18.021250000000002,
+          "median": 17.41,
+          "minimum": 16.91,
+          "maximum": 22.17
+        }
+      },
+      "images": {
+        "20261013.183.4": 5,
+        "20261018.189.1": 3
+      },
+      "cpus": {
+        "Cobalt 100": 8
+      },
+      "power_plans": {
+        "Power Scheme GUID: 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c  (High performance)": 8
+      }
+    }
+  },
+  "comparisons": {
+    "without-nasm_minus_baseline": {
+      "job_seconds": {
+        "mean": {
+          "difference": -40.25,
+          "bootstrap_95_interval": [
+            -57.0,
+            -26.0
+          ]
+        },
+        "median": {
+          "difference": -36.0,
+          "bootstrap_95_interval": [
+            -66.0,
+            -16.5
+          ]
+        }
+      },
+      "cargo_seconds": {
+        "mean": {
+          "difference": -4.499999999999943,
+          "bootstrap_95_interval": [
+            -17.337500000000034,
+            8.399999999999977
+          ]
+        },
+        "median": {
+          "difference": -9.199999999999989,
+          "bootstrap_95_interval": [
+            -22.94999999999999,
+            9.100000000000023
+          ]
+        }
+      },
+      "Rust cache": {
+        "mean": {
+          "difference": 0.125,
+          "bootstrap_95_interval": [
+            -2.0,
+            2.0
+          ]
+        },
+        "median": {
+          "difference": 0.0,
+          "bootstrap_95_interval": [
+            -2.5,
+            3.0
+          ]
+        }
+      },
+      "pre_compile_seconds": {
+        "mean": {
+          "difference": 0.0962499999999995,
+          "bootstrap_95_interval": [
+            -0.2475312500000005,
+            0.4350000000000005
+          ]
+        },
+        "median": {
+          "difference": 0.0600000000000005,
+          "bootstrap_95_interval": [
+            -0.4400000000000013,
+            0.6050000000000004
+          ]
+        }
+      }
+    },
+    "without-nasm-wait_minus_without-nasm": {
+      "job_seconds": {
+        "mean": {
+          "difference": 23.375,
+          "bootstrap_95_interval": [
+            9.75,
+            37.0
+          ]
+        },
+        "median": {
+          "difference": 22.5,
+          "bootstrap_95_interval": [
+            5.5,
+            45.0
+          ]
+        }
+      },
+      "cargo_seconds": {
+        "mean": {
+          "difference": -4.712500000000034,
+          "bootstrap_95_interval": [
+            -15.425000000000015,
+            5.051249999999955
+          ]
+        },
+        "median": {
+          "difference": -1.900000000000034,
+          "bootstrap_95_interval": [
+            -20.300000000000068,
+            11.699999999999989
+          ]
+        }
+      },
+      "Rust cache": {
+        "mean": {
+          "difference": -0.875,
+          "bootstrap_95_interval": [
+            -2.875,
+            1.125
+          ]
+        },
+        "median": {
+          "difference": -0.5,
+          "bootstrap_95_interval": [
+            -3.0,
+            1.5
+          ]
+        }
+      },
+      "pre_compile_seconds": {
+        "mean": {
+          "difference": -0.3874999999999993,
+          "bootstrap_95_interval": [
+            -0.7637499999999999,
+            -0.07499999999999929
+          ]
+        },
+        "median": {
+          "difference": -0.1750000000000007,
+          "bootstrap_95_interval": [
+            -0.9550000000000001,
+            0.10999999999999943
+          ]
+        }
+      }
+    },
+    "without-nasm-wait_minus_baseline": {
+      "job_seconds": {
+        "mean": {
+          "difference": -16.875,
+          "bootstrap_95_interval": [
+            -27.125,
+            -7.5
+          ]
+        },
+        "median": {
+          "difference": -13.5,
+          "bootstrap_95_interval": [
+            -35.5,
+            -4.0
+          ]
+        }
+      },
+      "cargo_seconds": {
+        "mean": {
+          "difference": -9.212499999999977,
+          "bootstrap_95_interval": [
+            -17.975000000000023,
+            -0.8000000000000114
+          ]
+        },
+        "median": {
+          "difference": -11.100000000000023,
+          "bootstrap_95_interval": [
+            -18.600000000000023,
+            -0.10000000000002274
+          ]
+        }
+      },
+      "Rust cache": {
+        "mean": {
+          "difference": -0.75,
+          "bootstrap_95_interval": [
+            -2.5,
+            0.75
+          ]
+        },
+        "median": {
+          "difference": -0.5,
+          "bootstrap_95_interval": [
+            -4.0,
+            1.5
+          ]
+        }
+      },
+      "pre_compile_seconds": {
+        "mean": {
+          "difference": -0.2912499999999998,
+          "bootstrap_95_interval": [
+            -0.5437499999999993,
+            -0.006250000000001421
+          ]
+        },
+        "median": {
+          "difference": -0.11500000000000021,
+          "bootstrap_95_interval": [
+            -0.6600000000000001,
+            0.08000000000000007
+          ]
+        }
+      }
+    }
+  },
+  "image_subsets": {
+    "20261013.183.4": {
+      "baseline": {
+        "job_seconds": {
+          "n": 3,
+          "mean": 471.0,
+          "median": 462.0,
+          "minimum": 461.0,
+          "maximum": 490.0
+        },
+        "cargo_seconds": {
+          "n": 3,
+          "mean": 330.6333333333333,
+          "median": 331.1,
+          "minimum": 323.5,
+          "maximum": 337.3
+        }
+      },
+      "without-nasm": {
+        "job_seconds": {
+          "n": 4,
+          "mean": 442.25,
+          "median": 445.5,
+          "minimum": 416.0,
+          "maximum": 462.0
+        },
+        "cargo_seconds": {
+          "n": 4,
+          "mean": 338.625,
+          "median": 340.20000000000005,
+          "minimum": 314.0,
+          "maximum": 360.1
+        }
+      },
+      "without-nasm-wait": {
+        "job_seconds": {
+          "n": 5,
+          "mean": 452.2,
+          "median": 452.0,
+          "minimum": 443.0,
+          "maximum": 464.0
+        },
+        "cargo_seconds": {
+          "n": 5,
+          "mean": 323.74,
+          "median": 321.1,
+          "minimum": 313.2,
+          "maximum": 333.4
+        }
+      }
+    },
+    "20261018.189.1": {
+      "baseline": {
+        "job_seconds": {
+          "n": 5,
+          "mean": 467.8,
+          "median": 465.0,
+          "minimum": 458.0,
+          "maximum": 489.0
+        },
+        "cargo_seconds": {
+          "n": 5,
+          "mean": 332.96,
+          "median": 332.9,
+          "minimum": 315.5,
+          "maximum": 351.1
+        }
+      },
+      "without-nasm": {
+        "job_seconds": {
+          "n": 4,
+          "mean": 415.25,
+          "median": 413.0,
+          "minimum": 400.0,
+          "maximum": 435.0
+        },
+        "cargo_seconds": {
+          "n": 4,
+          "mean": 316.55,
+          "median": 313.75,
+          "minimum": 309.1,
+          "maximum": 329.6
+        }
+      },
+      "without-nasm-wait": {
+        "job_seconds": {
+          "n": 3,
+          "mean": 452.0,
+          "median": 448.0,
+          "minimum": 447.0,
+          "maximum": 461.0
+        },
+        "cargo_seconds": {
+          "n": 3,
+          "mean": 321.43333333333334,
+          "median": 319.9,
+          "minimum": 317.7,
+          "maximum": 326.7
+        }
+      }
+    }
+  },
+  "verification": {
+    "successful_jobs": 24,
+    "verified_refs_jobs": 24,
+    "api_confirmed_caches": 24,
+    "same_compilation_units_and_features": true,
+    "compilation_units_per_job": 427,
+    "fresh_units_per_job": 0,
+    "verified_native_clang_jobs": 24,
+    "defender_enabled_jobs": 24
+  }
+}
