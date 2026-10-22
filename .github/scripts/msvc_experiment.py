@@ -124,9 +124,11 @@ def environment(output, clang):
         "WINDOWSSDKBINPATH", "WINDOWSSDKVERBINPATH", "VCTOOLSVERSION", "VISUALSTUDIOVERSION",
     }
     env = {k: v for k, v in os.environ.items() if k.upper() in allowed}
-    home, temp = output / "home", output / "scratch"
-    for p in (home, temp, home / "AppData/Local", home / "AppData/Roaming"):
+    home, temp, hooks = output / "home", output / "scratch", output / "git-hooks"
+    for p in (home, temp, hooks, home / "AppData/Local", home / "AppData/Roaming"):
         p.mkdir(parents=True, exist_ok=True)
+    if any(hooks.iterdir()):
+        raise RuntimeError("Experiment Git hook directory must be empty")
     env.update({
         "PATH": str(clang) + os.pathsep + env["PATH"],
         "HOME": str(home), "USERPROFILE": str(home),
@@ -134,9 +136,10 @@ def environment(output, clang):
         "TEMP": str(temp), "TMP": str(temp), "CARGO_HOME": str(output / "cargo-home"),
         "CARGO_INCREMENTAL": "0", "RUST_BACKTRACE": "1", "RUSTC_BOOTSTRAP": "1",
         "PYTHONDONTWRITEBYTECODE": "1", "MSBUILDDISABLENODEREUSE": "1",
-        "GIT_CONFIG_COUNT": "2", "GIT_CONFIG_KEY_0": "core.longpaths",
+        "GIT_CONFIG_COUNT": "3", "GIT_CONFIG_KEY_0": "core.longpaths",
         "GIT_CONFIG_VALUE_0": "true", "GIT_CONFIG_KEY_1": "core.autocrlf",
         "GIT_CONFIG_VALUE_1": "false",
+        "GIT_CONFIG_KEY_2": "core.hooksPath", "GIT_CONFIG_VALUE_2": str(hooks),
     })
     return env
 

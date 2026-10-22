@@ -41,7 +41,7 @@ jobs:
           $root = "D:\n$suffix"
           if ($env:PROFILE_PHASE -eq 'train') {
             if (Test-Path -LiteralPath $root) { throw 'Refusing an existing root' }
-            New-Item -ItemType Directory "$root\inputs" | Out-Null
+            New-Item -ItemType Directory "$root\inputs","$root\git-hooks" | Out-Null
             "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT" | Set-Content "$root\owner-run.txt"
           } elseif ((Get-Content "$root\owner-run.txt").Trim() -ne "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT") {
             throw 'Wrong experiment owner'
@@ -51,11 +51,13 @@ jobs:
           New-Item -ItemType Directory "$root\e\$env:PROFILE_PHASE",$correctness | Out-Null
           "PROFILE_ROOT=$root" >> $env:GITHUB_ENV
           "CORRECTNESS_TEMP=$correctness" >> $env:GITHUB_ENV
-          "GIT_CONFIG_COUNT=2" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=3" >> $env:GITHUB_ENV
           "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
           "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
           "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
           "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_2=core.hooksPath" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_2=$root\git-hooks" >> $env:GITHUB_ENV
       - name: Inspect runner readiness
         shell: powershell
         run: harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:PROFILE_ROOT\e\$env:PROFILE_PHASE\readiness.json"
@@ -65,6 +67,8 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $protocol = Get-Content -Raw harness\ci-benchmark\x64-profile-1991-protocol.json | ConvertFrom-Json
           $source = "$env:PROFILE_ROOT\r"
+          if ((git config --get core.hooksPath) -ne "$env:PROFILE_ROOT\git-hooks") { throw 'Checkout hook isolation failed' }
+          if (@(Get-ChildItem -Force "$env:PROFILE_ROOT\git-hooks").Count) { throw 'Isolated hook directory is not empty' }
           git init --quiet $source
           if ($LASTEXITCODE) { throw 'Source init failed' }
           git -C $source remote add origin https://github.com/rust-lang/rust.git
