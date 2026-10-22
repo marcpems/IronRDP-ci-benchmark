@@ -1,0 +1,60 @@
+name: Inspect retained LLVM 23 checkout bytes
+on:
+  push:
+    branches: [experiment/x64-pgo-1991-checkout]
+permissions:
+  contents: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  inspect:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 10
+    steps:
+      - name: Preserve and compare the failed source guard inputs without altering checkout
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Wrong runner' }
+          @'
+          from pathlib import Path
+          import difflib, hashlib, json, os, subprocess
+          root = Path(r"D:\n690312821")
+          if (root / "owner-run.txt").read_text().strip() != "39769031282/1":
+              raise RuntimeError("Wrong retained source owner")
+          source = root / "r/src/llvm-project"
+          relative = "llvm/utils/release/build_llvm_release.bat"
+          def git(*args):
+              return subprocess.check_output(["git", "-C", str(source), *args])
+          revision = git("rev-parse", "HEAD").decode().strip()
+          if revision != "1b9c0d5ff9bbe7634aead059efe6b11a7eeba145":
+              raise RuntimeError("Wrong retained LLVM revision")
+          original = git("show", "HEAD:" + relative)
+          checkout = (source / relative).read_bytes()
+          output = Path(os.environ["RUNNER_TEMP"]) / ("llvm-checkout-" + os.environ["GITHUB_RUN_ID"])
+          output.mkdir()
+          (output / "original.bin").write_bytes(original)
+          (output / "checkout.bin").write_bytes(checkout)
+          def describe(data):
+              return {"bytes": len(data), "sha256": hashlib.sha256(data).hexdigest(),
+                      "crlf": data.count(b"\r\n"), "crcrlf": data.count(b"\r\r\n"),
+                      "cr": data.count(b"\r"), "lf": data.count(b"\n"), "prefix": repr(data[:80])}
+          result = {"llvm_sha": revision, "original": describe(original), "checkout": describe(checkout),
+                    "attributes": git("check-attr", "-a", "--", relative).decode(),
+                    "status": git("status", "--short", "--", relative).decode(),
+                    "diff": list(difflib.unified_diff(original.decode().splitlines(),
+                                                     checkout.decode().splitlines()))[:100]}
+          (output / "diagnostic.json").write_text(json.dumps(result, indent=2))
+          print(json.dumps(result, indent=2))
+          with open(os.environ["GITHUB_ENV"], "a") as env:
+              env.write("CHECKOUT_DIAGNOSTIC=" + str(output) + "\n")
+          '@ | python -
+          if ($LASTEXITCODE) { throw 'Checkout inspection failed' }
+      - uses: actions/upload-artifact@v6
+        with:
+          name: llvm-checkout-diagnostic
+          path: ${{ env.CHECKOUT_DIAGNOSTIC }}
+          if-no-files-found: error
+          retention-days: 30
