@@ -56,8 +56,8 @@ jobs:
             files = @($files | ForEach-Object { @{ path = $_; hash = (Get-FileHash -LiteralPath $_).Hash } })
             external_directory = $root
             d_size = (Get-Partition -DriveLetter D).Size
-            system_partitions = @(Get-Partition | Where-Object { $_.DiskNumber -eq (Get-Partition -DriveLetter C).DiskNumber } |
-                Sort-Object PartitionNumber | Select-Object DiskNumber, PartitionNumber, DriveLetter, Offset, Size)
+            protected_partitions = @(Get-Partition | Where-Object DriveLetter -ne D |
+                Sort-Object DiskNumber, PartitionNumber | Select-Object DiskNumber, PartitionNumber, DriveLetter, Offset, Size)
             paging_settings = @(Get-CimInstance Win32_PageFileSetting | Select-Object Name, InitialSize, MaximumSize)
         } | ConvertTo-Json -Depth 6 | Set-Content "$env:RUNNER_TEMP\storage-fixtures.json"
     - name: Shrink NTFS and prepare ReFS storage
@@ -87,6 +87,16 @@ jobs:
         $partition = $partition[0]
         $disk = Get-Disk -Number $partition.DiskNumber
         $volume = Get-Volume -DriveLetter D
+        $otherPartitions = @($partitions | Where-Object {
+            $_.DiskNumber -eq $disk.Number -and $_.PartitionNumber -ne $partition.PartitionNumber
+        })
+        $eligibleLayout = $otherPartitions.Count -eq 0 -or (
+            $disk.PartitionStyle -eq 'GPT' -and $otherPartitions.Count -eq 1 -and
+            $otherPartitions[0].Type -eq 'Reserved' -and
+            -not $otherPartitions[0].IsBoot -and -not $otherPartitions[0].IsSystem -and
+            [string]$otherPartitions[0].DriveLetter -notmatch '[A-Za-z]' -and
+            $otherPartitions[0].Offset + $otherPartitions[0].Size -le $partition.Offset
+        )
         $eligibility = [ordered]@{
             disk_not_boot = -not $disk.IsBoot
             disk_not_system = -not $disk.IsSystem
@@ -95,7 +105,7 @@ jobs:
             partition_not_boot = -not $partition.IsBoot
             partition_not_system = -not $partition.IsSystem
             supported_style = $disk.PartitionStyle -in @('MBR', 'GPT')
-            single_partition = @($partitions | Where-Object DiskNumber -eq $disk.Number).Count -eq 1
+            supported_layout = $eligibleLayout
             ntfs = $volume.FileSystem -eq 'NTFS'
             healthy = $volume.HealthStatus -eq 'Healthy'
             fixed = $volume.DriveType -eq 'Fixed'
@@ -109,7 +119,7 @@ jobs:
         if ($disk.IsBoot -or $disk.IsSystem -or $disk.IsOffline -or $disk.IsReadOnly -or
             $partition.IsBoot -or $partition.IsSystem -or
             $disk.PartitionStyle -notin @('MBR', 'GPT') -or
-            @($partitions | Where-Object DiskNumber -eq $disk.Number).Count -ne 1 -or
+            -not $eligibleLayout -or
             $volume.FileSystem -ne 'NTFS' -or $volume.HealthStatus -ne 'Healthy' -or
             $volume.DriveType -ne 'Fixed') {
             throw 'D is not an eligible standalone non-system NTFS data partition'
@@ -226,10 +236,10 @@ jobs:
                 throw 'pre-job link was expanded instead of preserved'
             }
         }
-        $systemPartitions = @(Get-Partition | Where-Object { $_.DiskNumber -eq (Get-Partition -DriveLetter C).DiskNumber } |
-            Sort-Object PartitionNumber | Select-Object DiskNumber, PartitionNumber, DriveLetter, Offset, Size)
-        if (($systemPartitions | ConvertTo-Json -Compress) -ne ($fixture.system_partitions | ConvertTo-Json -Compress)) {
-            throw 'system-disk partition layout changed'
+        $protectedPartitions = @(Get-Partition | Where-Object { $_.DriveLetter -notin @('D', 'R') } |
+            Sort-Object DiskNumber, PartitionNumber | Select-Object DiskNumber, PartitionNumber, DriveLetter, Offset, Size)
+        if (($protectedPartitions | ConvertTo-Json -Compress) -ne ($fixture.protected_partitions | ConvertTo-Json -Compress)) {
+            throw 'a protected partition changed'
         }
         $pagingSettings = @(Get-CimInstance Win32_PageFileSetting | Select-Object Name, InitialSize, MaximumSize)
         if (($pagingSettings | ConvertTo-Json -Compress) -ne ($fixture.paging_settings | ConvertTo-Json -Compress)) {
@@ -359,6 +369,8 @@ jobs:
             image = $env:ImageVersion
             cpu = @(Get-CimInstance Win32_Processor | Select-Object Name, NumberOfLogicalProcessors)
             volumes = @(Get-Volume | Select-Object DriveLetter, FileSystem, Size, SizeRemaining)
+            disks = @(Get-Disk | Select-Object Number, BusType, PartitionStyle, Size, IsBoot, IsSystem)
+            partitions = @(Get-Partition | Select-Object DiskNumber, PartitionNumber, DriveLetter, Offset, Size, Type)
             paging = @(Get-CimInstance Win32_PageFileUsage | Select-Object Name, AllocatedBaseSize, CurrentUsage, PeakUsage)
             memory = Get-CimInstance Win32_OperatingSystem |
                 Select-Object TotalVisibleMemorySize, FreePhysicalMemory, TotalVirtualMemorySize, FreeVirtualMemory

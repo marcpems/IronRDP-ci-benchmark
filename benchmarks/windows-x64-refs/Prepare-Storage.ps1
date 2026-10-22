@@ -19,6 +19,16 @@ if ($partition.Count -ne 1) { throw 'expected exactly one D partition' }
 $partition = $partition[0]
 $disk = Get-Disk -Number $partition.DiskNumber
 $volume = Get-Volume -DriveLetter D
+$otherPartitions = @($partitions | Where-Object {
+    $_.DiskNumber -eq $disk.Number -and $_.PartitionNumber -ne $partition.PartitionNumber
+})
+$eligibleLayout = $otherPartitions.Count -eq 0 -or (
+    $disk.PartitionStyle -eq 'GPT' -and $otherPartitions.Count -eq 1 -and
+    $otherPartitions[0].Type -eq 'Reserved' -and
+    -not $otherPartitions[0].IsBoot -and -not $otherPartitions[0].IsSystem -and
+    [string]$otherPartitions[0].DriveLetter -notmatch '[A-Za-z]' -and
+    $otherPartitions[0].Offset + $otherPartitions[0].Size -le $partition.Offset
+)
 $eligibility = [ordered]@{
     disk_not_boot = -not $disk.IsBoot
     disk_not_system = -not $disk.IsSystem
@@ -27,7 +37,7 @@ $eligibility = [ordered]@{
     partition_not_boot = -not $partition.IsBoot
     partition_not_system = -not $partition.IsSystem
     supported_style = $disk.PartitionStyle -in @('MBR', 'GPT')
-    single_partition = @($partitions | Where-Object DiskNumber -eq $disk.Number).Count -eq 1
+    supported_layout = $eligibleLayout
     ntfs = $volume.FileSystem -eq 'NTFS'
     healthy = $volume.HealthStatus -eq 'Healthy'
     fixed = $volume.DriveType -eq 'Fixed'
@@ -41,7 +51,7 @@ Write-Host "PartitionStyle type: $($disk.PartitionStyle.GetType().FullName)"
 if ($disk.IsBoot -or $disk.IsSystem -or $disk.IsOffline -or $disk.IsReadOnly -or
     $partition.IsBoot -or $partition.IsSystem -or
     $disk.PartitionStyle -notin @('MBR', 'GPT') -or
-    @($partitions | Where-Object DiskNumber -eq $disk.Number).Count -ne 1 -or
+    -not $eligibleLayout -or
     $volume.FileSystem -ne 'NTFS' -or $volume.HealthStatus -ne 'Healthy' -or
     $volume.DriveType -ne 'Fixed') {
     throw 'D is not an eligible standalone non-system NTFS data partition'
