@@ -1,0 +1,72 @@
+name: Windows x64 storage inventory
+
+on:
+  push:
+    branches: [perf/windows-x64-refs-layout]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  inventory:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        sample: [1, 2]
+    steps:
+      - name: Inspect hosted storage without modifying partitions
+        if: runner.os == 'Windows' && runner.arch == 'X64' && runner.environment == 'github-hosted'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $partition = @(Get-Partition -DriveLetter D)
+          if ($partition.Count -ne 1) { throw 'expected exactly one D partition' }
+          $limits = $partition[0] | Get-PartitionSupportedSize
+          $volume = Get-Volume -DriveLetter D
+          $report = [ordered]@{
+            image = $env:ImageVersion
+            image_os = $env:ImageOS
+            os = [Environment]::OSVersion.VersionString
+            cpu = @(Get-CimInstance Win32_Processor |
+              Select-Object Name, NumberOfLogicalProcessors)
+            workspace = $env:GITHUB_WORKSPACE
+            runner_temp = $env:RUNNER_TEMP
+            runner_tool_cache = $env:RUNNER_TOOL_CACHE
+            cargo_home = $env:CARGO_HOME
+            default_cargo_home = Join-Path $HOME '.cargo'
+            temp = $env:TEMP
+            tmp = $env:TMP
+            disks = @(Get-Disk | Select-Object Number, FriendlyName, BusType,
+              PartitionStyle, Size, LargestFreeExtent, IsBoot, IsSystem,
+              IsOffline, IsReadOnly)
+            partitions = @(Get-Partition | Select-Object DiskNumber,
+              PartitionNumber, DriveLetter, Offset, Size, Type, IsBoot, IsSystem)
+            volumes = @(Get-Volume | Select-Object DriveLetter, FileSystem,
+              FileSystemLabel, Size, SizeRemaining, HealthStatus, DriveType)
+            d_shrink = @{
+              current_size = $partition[0].Size
+              minimum_size = $limits.SizeMin
+              maximum_size = $limits.SizeMax
+              reclaimable_bytes = $partition[0].Size - $limits.SizeMin
+              filesystem_used_bytes = $volume.Size - $volume.SizeRemaining
+            }
+            d_root = @(Get-ChildItem -LiteralPath 'D:\' -Force |
+              Select-Object Name, Attributes, Length)
+            paging_files = @(Get-CimInstance Win32_PageFileUsage |
+              Select-Object Name, AllocatedBaseSize, CurrentUsage)
+            format_volume_has_dev_drive = (Get-Command Format-Volume).Parameters.ContainsKey('DevDrive')
+          }
+          $report | ConvertTo-Json -Depth 8 |
+            Set-Content "$env:RUNNER_TEMP\x64-storage.json"
+          $report | ConvertTo-Json -Depth 8
+
+      - name: Upload storage inventory
+        uses: actions/upload-artifact@v7
+        with:
+          name: x64-storage-${{ matrix.sample }}
+          path: ${{ runner.temp }}/x64-storage.json
+          if-no-files-found: error
+          retention-days: 30
