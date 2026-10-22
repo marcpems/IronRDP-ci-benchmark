@@ -1,0 +1,910 @@
+{
+  "variants": {
+    "baseline": {
+      "metrics": {
+        "job_seconds": {
+          "n": 8,
+          "mean": 563.625,
+          "median": 585.0,
+          "minimum": 412.0,
+          "maximum": 678.0
+        },
+        "cargo_seconds": {
+          "n": 8,
+          "mean": 462.95,
+          "median": 459.7,
+          "minimum": 333.3,
+          "maximum": 578.6
+        },
+        "Install build dependencies": {
+          "n": 8,
+          "mean": 14.0,
+          "median": 14.0,
+          "minimum": 12.0,
+          "maximum": 17.0
+        },
+        "Rust cache": {
+          "n": 8,
+          "mean": 18.375,
+          "median": 18.5,
+          "minimum": 15.0,
+          "maximum": 21.0
+        },
+        "Post Rust cache": {
+          "n": 8,
+          "mean": 43.625,
+          "median": 40.5,
+          "minimum": 30.0,
+          "maximum": 76.0
+        }
+      },
+      "cpus": {
+        "AMD EPYC 9V45 96-Core Processor": 1,
+        "AMD EPYC 7763 64-Core Processor": 3,
+        "AMD EPYC 9V74 80-Core Processor": 4
+      },
+      "buses": {
+        "NVMe": 4,
+        "SAS": 4
+      },
+      "images": {
+        "20261012.333.1": 8
+      }
+    },
+    "refs": {
+      "metrics": {
+        "job_seconds": {
+          "n": 8,
+          "mean": 526.625,
+          "median": 564.0,
+          "minimum": 379.0,
+          "maximum": 612.0
+        },
+        "cargo_seconds": {
+          "n": 8,
+          "mean": 442.275,
+          "median": 480.5,
+          "minimum": 312.4,
+          "maximum": 520.0
+        },
+        "Install build dependencies": {
+          "n": 8,
+          "mean": 13.875,
+          "median": 12.5,
+          "minimum": 11.0,
+          "maximum": 19.0
+        },
+        "Rust cache": {
+          "n": 8,
+          "mean": 14.125,
+          "median": 14.5,
+          "minimum": 12.0,
+          "maximum": 16.0
+        },
+        "Post Rust cache": {
+          "n": 8,
+          "mean": 22.0,
+          "median": 24.0,
+          "minimum": 14.0,
+          "maximum": 27.0
+        }
+      },
+      "cpus": {
+        "AMD EPYC 7763 64-Core Processor": 4,
+        "AMD EPYC 9V74 80-Core Processor": 2,
+        "AMD EPYC 9V45 96-Core Processor": 2
+      },
+      "buses": {
+        "SAS": 4,
+        "NVMe": 4
+      },
+      "images": {
+        "20261012.333.1": 8
+      }
+    }
+  },
+  "refs_minus_baseline": {
+    "job_seconds": {
+      "mean": {
+        "difference": -37.0,
+        "bootstrap_95_interval": [
+          -125.378125,
+          38.125
+        ]
+      },
+      "median": {
+        "difference": -21.0,
+        "bootstrap_95_interval": [
+          -167.5,
+          96.0
+        ]
+      }
+    },
+    "cargo_seconds": {
+      "mean": {
+        "difference": -20.67500000000001,
+        "bootstrap_95_interval": [
+          -102.35000000000002,
+          46.42500000000001
+        ]
+      },
+      "median": {
+        "difference": 20.80000000000001,
+        "bootstrap_95_interval": [
+          -146.10000000000002,
+          100.75
+        ]
+      }
+    },
+    "Install build dependencies": {
+      "mean": {
+        "difference": -0.125,
+        "bootstrap_95_interval": [
+          -2.75,
+          2.75
+        ]
+      },
+      "median": {
+        "difference": -1.5,
+        "bootstrap_95_interval": [
+          -4.0,
+          4.0
+        ]
+      }
+    },
+    "Rust cache": {
+      "mean": {
+        "difference": -4.25,
+        "bootstrap_95_interval": [
+          -6.5,
+          -1.875
+        ]
+      },
+      "median": {
+        "difference": -4.0,
+        "bootstrap_95_interval": [
+          -7.5,
+          0.0
+        ]
+      }
+    },
+    "Post Rust cache": {
+      "mean": {
+        "difference": -21.625,
+        "bootstrap_95_interval": [
+          -31.125,
+          -14.375
+        ]
+      },
+      "median": {
+        "difference": -16.5,
+        "bootstrap_95_interval": [
+          -22.0,
+          -12.0
+        ]
+      }
+    }
+  },
+  "hardware_subsets": {
+    "20261012.333.1 / AMD EPYC 7763 64-Core Processor / SAS": {
+      "baseline": {
+        "job_seconds": {
+          "n": 3,
+          "mean": 652.3333333333334,
+          "median": 647.0,
+          "minimum": 632.0,
+          "maximum": 678.0
+        },
+        "cargo_seconds": {
+          "n": 3,
+          "mean": 553.6,
+          "median": 550.0,
+          "minimum": 532.2,
+          "maximum": 578.6
+        }
+      },
+      "refs": {
+        "job_seconds": {
+          "n": 4,
+          "mean": 580.25,
+          "median": 582.0,
+          "minimum": 547.0,
+          "maximum": 610.0
+        },
+        "cargo_seconds": {
+          "n": 4,
+          "mean": 491.5,
+          "median": 496.20000000000005,
+          "minimum": 465.2,
+          "maximum": 508.4
+        }
+      }
+    },
+    "20261012.333.1 / AMD EPYC 9V45 96-Core Processor / NVMe": {
+      "baseline": {
+        "job_seconds": {
+          "n": 1,
+          "mean": 412.0,
+          "median": 412.0,
+          "minimum": 412.0,
+          "maximum": 412.0
+        },
+        "cargo_seconds": {
+          "n": 1,
+          "mean": 333.3,
+          "median": 333.3,
+          "minimum": 333.3,
+          "maximum": 333.3
+        }
+      },
+      "refs": {
+        "job_seconds": {
+          "n": 2,
+          "mean": 403.0,
+          "median": 403.0,
+          "minimum": 379.0,
+          "maximum": 427.0
+        },
+        "cargo_seconds": {
+          "n": 2,
+          "mean": 333.04999999999995,
+          "median": 333.04999999999995,
+          "minimum": 312.4,
+          "maximum": 353.7
+        }
+      }
+    },
+    "20261012.333.1 / AMD EPYC 9V74 80-Core Processor / NVMe": {
+      "baseline": {
+        "job_seconds": {
+          "n": 3,
+          "mean": 509.0,
+          "median": 497.0,
+          "minimum": 473.0,
+          "maximum": 557.0
+        },
+        "cargo_seconds": {
+          "n": 3,
+          "mean": 402.3333333333333,
+          "median": 397.8,
+          "minimum": 392.3,
+          "maximum": 416.9
+        }
+      },
+      "refs": {
+        "job_seconds": {
+          "n": 2,
+          "mean": 543.0,
+          "median": 543.0,
+          "minimum": 474.0,
+          "maximum": 612.0
+        },
+        "cargo_seconds": {
+          "n": 2,
+          "mean": 453.05,
+          "median": 453.05,
+          "minimum": 386.1,
+          "maximum": 520.0
+        }
+      }
+    },
+    "20261012.333.1 / AMD EPYC 9V74 80-Core Processor / SAS": {
+      "baseline": {
+        "job_seconds": {
+          "n": 1,
+          "mean": 613.0,
+          "median": 613.0,
+          "minimum": 613.0,
+          "maximum": 613.0
+        },
+        "cargo_seconds": {
+          "n": 1,
+          "mean": 502.5,
+          "median": 502.5,
+          "minimum": 502.5,
+          "maximum": 502.5
+        }
+      },
+      "refs": {
+        "job_seconds": {
+          "n": 0
+        },
+        "cargo_seconds": {
+          "n": 0
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "block": 2,
+      "variant": "baseline",
+      "metrics": {
+        "job_seconds": 412.0,
+        "cargo_seconds": 333.3,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 0.0,
+        "Checkout release tag": 5.0,
+        "Install build dependencies": 12.0,
+        "Rust cache": 15.0,
+        "Build release binary": 334.0,
+        "Package binary": 1.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 1.0,
+        "Record host and storage": 4.0,
+        "Upload measurements": 2.0,
+        "Post Rust cache": 30.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V45 96-Core Processor",
+      "bus": "NVMe",
+      "partition_style": "GPT",
+      "paging": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 234698305536,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 4,
+      "variant": "refs",
+      "metrics": {
+        "job_seconds": 583.0,
+        "cargo_seconds": 495.8,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 9.0,
+        "Checkout release tag": 5.0,
+        "Install build dependencies": 12.0,
+        "Rust cache": 14.0,
+        "Build release binary": 497.0,
+        "Package binary": 1.0,
+        "Upload release asset": 4.0,
+        "Verify release and storage": 2.0,
+        "Record host and storage": 5.0,
+        "Upload measurements": 2.0,
+        "Post Rust cache": 25.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "bus": "SAS",
+      "partition_style": "MBR",
+      "paging": [
+        {
+          "Name": "D:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 57241600,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 5,
+      "variant": "refs",
+      "metrics": {
+        "job_seconds": 547.0,
+        "cargo_seconds": 465.2,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 8.0,
+        "Checkout release tag": 6.0,
+        "Install build dependencies": 12.0,
+        "Rust cache": 13.0,
+        "Build release binary": 466.0,
+        "Package binary": 1.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 2.0,
+        "Record host and storage": 4.0,
+        "Upload measurements": 2.0,
+        "Post Rust cache": 24.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "bus": "SAS",
+      "partition_style": "MBR",
+      "paging": [
+        {
+          "Name": "D:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 57241600,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 6,
+      "variant": "refs",
+      "metrics": {
+        "job_seconds": 612.0,
+        "cargo_seconds": 520.0,
+        "Set up job": 1.0,
+        "Shrink NTFS and prepare ReFS storage": 10.0,
+        "Checkout release tag": 7.0,
+        "Install build dependencies": 16.0,
+        "Rust cache": 16.0,
+        "Build release binary": 521.0,
+        "Package binary": 1.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 2.0,
+        "Record host and storage": 6.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 24.0,
+        "Post Checkout release tag": 3.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "bus": "NVMe",
+      "partition_style": "GPT",
+      "paging": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 3144351744,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 2,
+      "variant": "refs",
+      "metrics": {
+        "job_seconds": 474.0,
+        "cargo_seconds": 386.1,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 8.0,
+        "Checkout release tag": 8.0,
+        "Install build dependencies": 19.0,
+        "Rust cache": 15.0,
+        "Build release binary": 386.0,
+        "Package binary": 2.0,
+        "Upload release asset": 3.0,
+        "Verify release and storage": 1.0,
+        "Record host and storage": 5.0,
+        "Upload measurements": 2.0,
+        "Post Rust cache": 18.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "bus": "NVMe",
+      "partition_style": "GPT",
+      "paging": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 3144351744,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 3,
+      "variant": "baseline",
+      "metrics": {
+        "job_seconds": 678.0,
+        "cargo_seconds": 578.6,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 0.0,
+        "Checkout release tag": 6.0,
+        "Install build dependencies": 13.0,
+        "Rust cache": 21.0,
+        "Build release binary": 580.0,
+        "Package binary": 1.0,
+        "Upload release asset": 3.0,
+        "Verify release and storage": 0.0,
+        "Record host and storage": 7.0,
+        "Upload measurements": 2.0,
+        "Post Rust cache": 40.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "bus": "SAS",
+      "partition_style": "MBR",
+      "paging": [
+        {
+          "Name": "D:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 156465856512,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 4,
+      "variant": "baseline",
+      "metrics": {
+        "job_seconds": 613.0,
+        "cargo_seconds": 502.5,
+        "Set up job": 1.0,
+        "Shrink NTFS and prepare ReFS storage": 0.0,
+        "Checkout release tag": 9.0,
+        "Install build dependencies": 16.0,
+        "Rust cache": 21.0,
+        "Build release binary": 503.0,
+        "Package binary": 2.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 0.0,
+        "Record host and storage": 8.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 45.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "bus": "SAS",
+      "partition_style": "MBR",
+      "paging": [
+        {
+          "Name": "D:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 156465856512,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 5,
+      "variant": "baseline",
+      "metrics": {
+        "job_seconds": 557.0,
+        "cargo_seconds": 416.9,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 0.0,
+        "Checkout release tag": 7.0,
+        "Install build dependencies": 17.0,
+        "Rust cache": 20.0,
+        "Build release binary": 418.0,
+        "Package binary": 1.0,
+        "Upload release asset": 4.0,
+        "Verify release and storage": 1.0,
+        "Record host and storage": 5.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 76.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "bus": "NVMe",
+      "partition_style": "GPT",
+      "paging": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 234698276864,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 1,
+      "variant": "baseline",
+      "metrics": {
+        "job_seconds": 497.0,
+        "cargo_seconds": 397.8,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 0.0,
+        "Checkout release tag": 7.0,
+        "Install build dependencies": 14.0,
+        "Rust cache": 19.0,
+        "Build release binary": 399.0,
+        "Package binary": 1.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 1.0,
+        "Record host and storage": 4.0,
+        "Upload measurements": 2.0,
+        "Post Rust cache": 41.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "bus": "NVMe",
+      "partition_style": "GPT",
+      "paging": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 234698301440,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 7,
+      "variant": "refs",
+      "metrics": {
+        "job_seconds": 581.0,
+        "cargo_seconds": 496.6,
+        "Set up job": 1.0,
+        "Shrink NTFS and prepare ReFS storage": 9.0,
+        "Checkout release tag": 6.0,
+        "Install build dependencies": 13.0,
+        "Rust cache": 15.0,
+        "Build release binary": 497.0,
+        "Package binary": 2.0,
+        "Upload release asset": 1.0,
+        "Verify release and storage": 2.0,
+        "Record host and storage": 5.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 25.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "bus": "SAS",
+      "partition_style": "MBR",
+      "paging": [
+        {
+          "Name": "D:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 57241600,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 8,
+      "variant": "refs",
+      "metrics": {
+        "job_seconds": 610.0,
+        "cargo_seconds": 508.4,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 9.0,
+        "Checkout release tag": 6.0,
+        "Install build dependencies": 17.0,
+        "Rust cache": 15.0,
+        "Build release binary": 509.0,
+        "Package binary": 2.0,
+        "Upload release asset": 9.0,
+        "Verify release and storage": 2.0,
+        "Record host and storage": 5.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 27.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "bus": "SAS",
+      "partition_style": "MBR",
+      "paging": [
+        {
+          "Name": "D:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 57241600,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 1,
+      "variant": "refs",
+      "metrics": {
+        "job_seconds": 427.0,
+        "cargo_seconds": 353.7,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 9.0,
+        "Checkout release tag": 5.0,
+        "Install build dependencies": 11.0,
+        "Rust cache": 13.0,
+        "Build release binary": 354.0,
+        "Package binary": 2.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 1.0,
+        "Record host and storage": 5.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 19.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V45 96-Core Processor",
+      "bus": "NVMe",
+      "partition_style": "GPT",
+      "paging": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 3144351744,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 7,
+      "variant": "baseline",
+      "metrics": {
+        "job_seconds": 632.0,
+        "cargo_seconds": 532.2,
+        "Set up job": 1.0,
+        "Shrink NTFS and prepare ReFS storage": 0.0,
+        "Checkout release tag": 6.0,
+        "Install build dependencies": 14.0,
+        "Rust cache": 18.0,
+        "Build release binary": 533.0,
+        "Package binary": 1.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 1.0,
+        "Record host and storage": 7.0,
+        "Upload measurements": 0.0,
+        "Post Rust cache": 44.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "bus": "SAS",
+      "partition_style": "MBR",
+      "paging": [
+        {
+          "Name": "D:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 156465819648,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 3,
+      "variant": "refs",
+      "metrics": {
+        "job_seconds": 379.0,
+        "cargo_seconds": 312.4,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 8.0,
+        "Checkout release tag": 5.0,
+        "Install build dependencies": 11.0,
+        "Rust cache": 12.0,
+        "Build release binary": 313.0,
+        "Package binary": 1.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 2.0,
+        "Record host and storage": 4.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 14.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V45 96-Core Processor",
+      "bus": "NVMe",
+      "partition_style": "GPT",
+      "paging": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 3144351744,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 8,
+      "variant": "baseline",
+      "metrics": {
+        "job_seconds": 647.0,
+        "cargo_seconds": 550.0,
+        "Set up job": 1.0,
+        "Shrink NTFS and prepare ReFS storage": 0.0,
+        "Checkout release tag": 6.0,
+        "Install build dependencies": 14.0,
+        "Rust cache": 18.0,
+        "Build release binary": 551.0,
+        "Package binary": 1.0,
+        "Upload release asset": 2.0,
+        "Verify release and storage": 0.0,
+        "Record host and storage": 8.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 40.0,
+        "Post Checkout release tag": 2.0,
+        "Complete job": 1.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 7763 64-Core Processor",
+      "bus": "SAS",
+      "partition_style": "MBR",
+      "paging": [
+        {
+          "Name": "D:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 156465836032,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    },
+    {
+      "block": 6,
+      "variant": "baseline",
+      "metrics": {
+        "job_seconds": 473.0,
+        "cargo_seconds": 392.3,
+        "Set up job": 2.0,
+        "Shrink NTFS and prepare ReFS storage": 0.0,
+        "Checkout release tag": 5.0,
+        "Install build dependencies": 12.0,
+        "Rust cache": 15.0,
+        "Build release binary": 393.0,
+        "Package binary": 1.0,
+        "Upload release asset": 3.0,
+        "Verify release and storage": 0.0,
+        "Record host and storage": 5.0,
+        "Upload measurements": 1.0,
+        "Post Rust cache": 33.0,
+        "Post Checkout release tag": 1.0,
+        "Complete job": 0.0
+      },
+      "image": "20261012.333.1",
+      "cpu": "AMD EPYC 9V74 80-Core Processor",
+      "bus": "NVMe",
+      "partition_style": "GPT",
+      "paging": [
+        {
+          "Name": "C:\\pagefile.sys",
+          "AllocatedBaseSize": 2944,
+          "CurrentUsage": 0,
+          "PeakUsage": 0
+        }
+      ],
+      "d_free_bytes": 234698276864,
+      "nasm_version": "NASM version 3.02 compiled on Jun 28 2026"
+    }
+  ],
+  "verification": {
+    "successful_jobs": 16,
+    "api_confirmed_caches": 16,
+    "refs_jobs": 8,
+    "identical_compilation_units_and_features": 434,
+    "fresh_units_per_job": 0,
+    "nasm_versions": [
+      "NASM version 3.02 compiled on Jun 28 2026"
+    ],
+    "common_reported_defender_state": {
+      "RealTimeProtectionEnabled": false,
+      "AntivirusEnabled": true
+    }
+  }
+}

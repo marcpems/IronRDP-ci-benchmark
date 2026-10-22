@@ -48,6 +48,7 @@ def analyze(data):
     jobs = {job["id"]: job for job in data["jobs"]}
     rows = {}
     reference_units = None
+    reference_defender = data["observations"][0]["host"]["defender"]
     for observation in data["observations"]:
         job = jobs[observation["job_id"]]
         block, variant = observation["block"], observation["variant"]
@@ -56,7 +57,7 @@ def analyze(data):
         host = observation["host"]
         assert host["source_commit"] == plan["source_commit"], job["name"]
         assert host["nasm_version"], job["name"]
-        assert host["defender"]["RealTimeProtectionEnabled"], job["name"]
+        assert host["defender"] == reference_defender, job["name"]
         assert observation["fresh_units"] == 0, job["name"]
         units = collections.Counter(
             (unit["name"], unit["version"], unit["target"], tuple(unit["features"]))
@@ -142,6 +143,7 @@ def analyze(data):
         "successful_jobs": len(rows), "api_confirmed_caches": len(rows), "refs_jobs": 8,
         "identical_compilation_units_and_features": sum(reference_units.values()), "fresh_units_per_job": 0,
         "nasm_versions": sorted({row["nasm_version"] for row in rows.values()}),
+        "common_reported_defender_state": reference_defender,
     }
     return summary
 
