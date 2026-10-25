@@ -30,15 +30,20 @@ computing base/test effects across machines. Each scenario family also gets
 an equal-project geometric-mean ratio, so the largest project cannot dominate.
 Bootstrap draws preserve base/test pairing and all scenarios within a project's
 machine; machines for different projects are independently sampled because
-those jobs are physically separate. Intervals are pointwise, conditional on
+those jobs use separate runner VMs. Intervals are pointwise, conditional on
 these fixed compiler artifacts, not simultaneous guarantees or PGO retraining
 uncertainty. There is no combined full-build/incremental headline and no
 post-result corpus selection, failed-row removal or slow-sample trimming.
 
 The [paired workflow](../../.github/workflows/breadth-paired.yml) is separate
-from the custom-runner pilot and does not consume its machine. The final report
-will present the hypothesis, wall-clock findings and conclusion first, then
-original correctness results and a scope-limited summary.
+from the custom-runner pilot and does not consume its machine.
+[The completed report](PAIRED-BREADTH-REPORT.md) presents the hypothesis,
+wall-clock findings and conclusion first, then correctness and a scope-limited
+summary. All 15 VMs, 450 measured cells and 350 original correctness commands
+passed. Equal-project wall-clock reductions were **4.56% for check, 9.45% for
+debug and 14.32% for release**; incremental-family effects were inconclusive.
+These paired 1.94.1 results supersede the lack of comparative evidence for that
+recipe, not the separate limitations of the newer 1.101 candidate-only pilot.
 
 ## Earlier candidate-only preparation
 

@@ -111,9 +111,15 @@ jobs:
         with:
           name: breadth-paired-${{ matrix.project }}-${{ matrix.replicate }}
           path: |
-            ${{ env.BENCHMARK_ROOT }}/e/**/*.json
-            ${{ env.BENCHMARK_ROOT }}/e/**/*.stdout
-            ${{ env.BENCHMARK_ROOT }}/e/**/*.stderr
+            ${{ env.BENCHMARK_ROOT }}/e/*.json
+            ${{ env.BENCHMARK_ROOT }}/e/*.stdout
+            ${{ env.BENCHMARK_ROOT }}/e/*.stderr
+            ${{ env.BENCHMARK_ROOT }}/e/r*/*.json
+            ${{ env.BENCHMARK_ROOT }}/e/r*/*.stdout
+            ${{ env.BENCHMARK_ROOT }}/e/r*/*.stderr
+            ${{ env.BENCHMARK_ROOT }}/e/meter-validation/**/*.json
+            ${{ env.BENCHMARK_ROOT }}/e/meter-validation/**/*.stdout
+            ${{ env.BENCHMARK_ROOT }}/e/meter-validation/**/*.stderr
           if-no-files-found: error
           compression-level: 1
           retention-days: 30
