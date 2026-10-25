@@ -22,7 +22,13 @@ paths and the existing dedicated-runner concurrency guard. It runs only fd
 full-check, incremental no-op and incremental comment-edit. Each cell retains
 the original unfiltered debug/release correctness commands outside measurement.
 Dependencies are fetched and checksum-verified before offline commands;
-candidate Cargo, rustdoc and standard libraries are explicit and hashed.
+official Cargo 1.99.1 and candidate rustc/rustdoc/standard libraries are explicit
+and hashed. The original attempt using candidate Cargo 1.101 passed full-check
+and all 125 unit tests, but integration tests could not find `fd.exe`: the pinned
+fd helper assumes the old `debug/deps` test location, whereas Cargo stabilized a
+new build layout in 1.100. The pilot uses pinned official Cargo 1.99.1 rather than
+patching the workload, relocating test binaries or skipping tests. This is an
+explicit common-tool choice, not a hidden fallback or a rustc codegen regression.
 Actual successful Cargo JSON artifacts are reconciled with the current training
 audit. Failures and source-restoration evidence are retained.
 

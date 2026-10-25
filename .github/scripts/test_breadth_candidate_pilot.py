@@ -130,9 +130,12 @@ class CandidatePilotTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "missing"):
             package_inventory(source, self.root / "cargo")
 
-    def test_metadata_uses_utf8_even_with_windows_legacy_default_encoding(self):
+    @unittest.skipUnless(os.name == "nt", "Windows pilot entry point")
+    def test_metadata_uses_utf8_and_selected_common_cargo(self):
         selection = {**self.selection, "host": "host", "logical_processors": 16,
-                     "pilot_scenarios": []}
+                     "pilot_scenarios": [], "common_cargo": {
+                         "name": "common-cargo.tar.xz", "url": "https://example.invalid/cargo",
+                         "sha256": "expected-archive", "version": "1.99.1"}}
         manifest = {"cores": 16, "host": "host", "rust_version": "version",
                     "training": {"rust_sha": "source", "rustc_perf_sha": "perf"},
                     "projects": [{"id": "fd", "revision": "fd-sha", "lock_sha256": "lock",
@@ -168,21 +171,25 @@ class CandidatePilotTests(unittest.TestCase):
         with patch.object(sys, "argv", argv), \
                 patch.dict(os.environ, {"RUNNER_NAME": "runner", "RUNNER_ENVIRONMENT": "self-hosted",
                                         "GITHUB_RUN_ID": "test", "GITHUB_RUN_ATTEMPT": "1"}), \
-                patch("breadth_candidate_pilot.os.name", "nt"), \
                 patch("breadth_candidate_pilot.os.cpu_count", return_value=16), \
                 patch("breadth_candidate_pilot.checked_candidate", return_value=({}, {})), \
+                patch("breadth_candidate_pilot.download") as fetched, \
                 patch("breadth_candidate_pilot.install_components",
-                      return_value=tuple(tools / name for name in ("rustc.exe", "cargo.exe", "rustdoc.exe"))), \
+                      return_value=tuple(tools / name for name in ("rustc.exe", "cargo.exe", "rustdoc.exe"))) as installed, \
                 patch("breadth_candidate_pilot.verify_source"), \
                 patch("breadth_candidate_pilot.compiler_environment", return_value={}), \
                 patch("breadth_candidate_pilot.subprocess.check_output",
-                      return_value="host: host\nrelease: version\ncommit-hash: source\n"), \
+                      side_effect=["host: host\nrelease: version\ncommit-hash: source\n",
+                                   "cargo 1.99.1 (fixture)\n"]), \
                 patch("breadth_candidate_pilot.validate_meter"), \
                 patch("breadth_candidate_pilot.run_logged", side_effect=logged), \
                 patch("breadth_candidate_pilot.package_inventory", return_value=[]), \
                 patch("breadth_candidate_pilot.telemetry_executables", return_value=[]), \
                 patch.object(Path, "read_text", windows_read):
             main()
+        fetched.assert_called_once_with("https://example.invalid/cargo",
+                                        pilot / "downloads/common-cargo.tar.xz", "expected-archive")
+        self.assertEqual(installed.call_args.args[0]["cargo"], pilot / "downloads/common-cargo.tar.xz")
         self.assertEqual(json.loads((pilot / "e/pilot.json").read_text())["status"],
                          "passed-candidate-only-pilot-not-comparative-qualification")
 

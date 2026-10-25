@@ -39,10 +39,18 @@
     }
   ],
   "pilot_scenarios": ["full-check", "incremental-noop", "incremental-comment-edit"],
+  "common_cargo": {
+    "version": "1.99.1",
+    "name": "cargo-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+    "url": "https://static.rust-lang.org/dist/cargo-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+    "sha256": "4adb46c3707dee790682f7769d86983841148111695f561c843c33daa2af0c9b",
+    "reason": "fd v10.2.0 integration tests derive fd.exe from the pre-1.100 Cargo test-binary layout. Use pinned official Cargo without changing or filtering the workload tests.",
+    "layout_reference": "https://github.com/rust-lang/cargo/blob/29c5daa1afc262323364e039bb70c83372cc702c/doc/book/src/reference/unstable.md#build-dir-new-layout"
+  },
   "control": null,
   "official_comparator": null,
   "limits": [
-    "Use candidate-built Cargo, rustdoc and std for candidate correctness only; not a common-tool matched comparison.",
+    "Use pinned official Cargo 1.99.1 with candidate rustc, rustdoc and std; this remains a candidate-only pilot, not a matched comparison.",
     "The newer candidate also trains rustdoc, clippy and Cranelift; historical LLVM-only treatment claims do not apply.",
     "Original retained build directories are read-only inputs; install archives into fresh pilot-owned paths.",
     "No runtime-speed, code-size, multi-VM confidence interval or shipping qualification is implied."

@@ -12,6 +12,7 @@ import tomllib
 
 from breadth_probe import compiler_environment, run_scenario, save, verify_source
 from compiler_probe import validate_meter
+from install_optimized_rust import download
 from native_ci_probe import telemetry_executables
 
 
@@ -131,6 +132,13 @@ def main():
                "cores": manifest["cores"], "scenarios": []}
     try:
         result, archives = checked_candidate(args.retained.resolve(), selection)
+        common_cargo = selection.get("common_cargo")
+        if common_cargo:
+            downloads = root / "downloads"
+            downloads.mkdir(exist_ok=False)
+            archive = downloads / common_cargo["name"]
+            download(common_cargo["url"], archive, common_cargo["sha256"])
+            archives = {**archives, "cargo": archive}
         compiler, cargo, rustdoc = install_components(archives, root / "toolchain", manifest["host"])
         verify_source(source, project)
         base = dict(os.environ)
@@ -147,8 +155,10 @@ def main():
                          f"commit-hash: {selection['source_revision']}"):
             if expected not in version.splitlines():
                 raise ValueError(f"candidate executable identity mismatch: {expected}")
-        identity = {"rustc_verbose_version": version, "cargo_version": subprocess.check_output(
-            [cargo, "-V"], env=env, text=True).strip(), "selection": selection,
+        cargo_version = subprocess.check_output([cargo, "-V"], env=env, text=True).strip()
+        if common_cargo and cargo_version.split()[1] != common_cargo["version"]:
+            raise ValueError("common Cargo executable version mismatch")
+        identity = {"rustc_verbose_version": version, "cargo_version": cargo_version, "selection": selection,
             "executables": {p.name: digest(p) for p in (compiler, cargo, rustdoc)},
             "installed_files": {p.relative_to(root / "toolchain").as_posix(): digest(p)
                                 for p in sorted((root / "toolchain").rglob("*")) if p.is_file()},
