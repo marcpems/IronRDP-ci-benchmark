@@ -27,7 +27,7 @@ def checked_candidate(retained, selection):
                       ("dist-manifest.json", "dist_manifest_sha256")):
         if digest(evidence / name) != selection[key]:
             raise ValueError(f"candidate evidence checksum mismatch: {name}")
-    result = json.loads((evidence / "result.json").read_text())
+    result = json.loads((evidence / "result.json").read_text(encoding="utf-8"))
     expected = {
         "complete": True, "run_id": selection["run_id"], "attempt": selection["attempt"],
         "rust_sha": selection["source_revision"], "llvm_sha": selection["llvm_revision"],
@@ -43,7 +43,7 @@ def checked_candidate(retained, selection):
         path = evidence / f"{name}-pgo.profdata"
         if digest(path) != profile["sha256"] or path.stat().st_size != profile["bytes"]:
             raise ValueError(f"candidate profile checksum mismatch: {name}")
-    manifest = json.loads((evidence / "dist-manifest.json").read_text())
+    manifest = json.loads((evidence / "dist-manifest.json").read_text(encoding="utf-8"))
     archives = {}
     for row in selection["components"]:
         entries = [item for item in manifest if item["name"] == row["name"]]
@@ -92,7 +92,7 @@ def run_logged(command, source, env, prefix):
 
 
 def package_inventory(source, cargo_home):
-    lock = tomllib.loads((source / "Cargo.lock").read_text())
+    lock = tomllib.loads((source / "Cargo.lock").read_text(encoding="utf-8"))
     expected = {f"{p['name']}-{p['version']}.crate": p["checksum"]
                 for p in lock["package"] if "checksum" in p}
     rows = []
@@ -113,8 +113,8 @@ def main():
     args = parser.parse_args()
     root, source = args.root.resolve(), args.root.resolve() / "source"
     output = root / "e"
-    selection = json.loads(args.selection.read_text())
-    manifest = json.loads(args.manifest.read_text())
+    selection = json.loads(args.selection.read_text(encoding="utf-8"))
+    manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     project = next(p for p in manifest["projects"] if p["id"] == "fd")
     if (os.name != "nt" or os.environ.get("RUNNER_NAME") != selection["runner"]
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"
@@ -168,7 +168,7 @@ def main():
         metadata_receipt.update({"filter_platform": manifest["host"],
                                  "source_revision": project["revision"],
                                  "lock_sha256": project["lock_sha256"], "source_status": ""})
-        metadata = json.loads((output / "metadata.stdout").read_text())
+        metadata = json.loads((output / "metadata.stdout").read_text(encoding="utf-8"))
         roots = [p["id"] for p in metadata["packages"]
                  if p["name"] in project["selected_packages"] and p["source"] is None]
         background = telemetry_executables()

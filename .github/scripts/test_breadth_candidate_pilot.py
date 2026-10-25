@@ -1,12 +1,15 @@
 import copy
 import io
 import json
+import os
 from pathlib import Path
+import sys
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
-from breadth_candidate_pilot import checked_candidate, digest, install_components, package_inventory
+from breadth_candidate_pilot import checked_candidate, digest, install_components, main, package_inventory
 
 
 class CandidatePilotTests(unittest.TestCase):
@@ -126,6 +129,62 @@ class CandidatePilotTests(unittest.TestCase):
         package.unlink()
         with self.assertRaisesRegex(ValueError, "missing"):
             package_inventory(source, self.root / "cargo")
+
+    def test_metadata_uses_utf8_even_with_windows_legacy_default_encoding(self):
+        selection = {**self.selection, "host": "host", "logical_processors": 16,
+                     "pilot_scenarios": []}
+        manifest = {"cores": 16, "host": "host", "rust_version": "version",
+                    "training": {"rust_sha": "source", "rustc_perf_sha": "perf"},
+                    "projects": [{"id": "fd", "revision": "fd-sha", "lock_sha256": "lock",
+                                  "selected_packages": ["fd-find"]}]}
+        pilot = self.root / "pilot"
+        (pilot / "e").mkdir(parents=True)
+        tools = pilot / "toolchain"
+        tools.mkdir()
+        for name in ("rustc.exe", "cargo.exe", "rustdoc.exe"):
+            (tools / name).write_bytes(b"fixture")
+        files = {}
+        for name, value in (("selection", selection), ("manifest", manifest),
+                            ("training-audit", {})):
+            files[name] = self.root / f"{name}.json"
+            files[name].write_text(json.dumps(value), encoding="utf-8")
+        argv = ["pilot", "--root", str(pilot), "--retained", str(self.root / "retained"),
+                "--perf", str(self.root / "perf")]
+        for name, path in files.items():
+            argv.extend((f"--{name}", str(path)))
+        original_read = Path.read_text
+
+        def windows_read(path, *args, **kwargs):
+            kwargs.setdefault("encoding", "cp1252")
+            return original_read(path, *args, **kwargs)
+
+        def logged(command, source, env, prefix):
+            if prefix.name == "metadata":
+                prefix.with_suffix(".stdout").write_text(json.dumps(
+                    {"packages": [{"id": "root", "name": "fd-find", "source": None,
+                                   "description": "\u0141"}]}, ensure_ascii=False), encoding="utf-8")
+            return {"command": command, "exit_code": 0}
+
+        with patch.object(sys, "argv", argv), \
+                patch.dict(os.environ, {"RUNNER_NAME": "runner", "RUNNER_ENVIRONMENT": "self-hosted",
+                                        "GITHUB_RUN_ID": "test", "GITHUB_RUN_ATTEMPT": "1"}), \
+                patch("breadth_candidate_pilot.os.name", "nt"), \
+                patch("breadth_candidate_pilot.os.cpu_count", return_value=16), \
+                patch("breadth_candidate_pilot.checked_candidate", return_value=({}, {})), \
+                patch("breadth_candidate_pilot.install_components",
+                      return_value=tuple(tools / name for name in ("rustc.exe", "cargo.exe", "rustdoc.exe"))), \
+                patch("breadth_candidate_pilot.verify_source"), \
+                patch("breadth_candidate_pilot.compiler_environment", return_value={}), \
+                patch("breadth_candidate_pilot.subprocess.check_output",
+                      return_value="host: host\nrelease: version\ncommit-hash: source\n"), \
+                patch("breadth_candidate_pilot.validate_meter"), \
+                patch("breadth_candidate_pilot.run_logged", side_effect=logged), \
+                patch("breadth_candidate_pilot.package_inventory", return_value=[]), \
+                patch("breadth_candidate_pilot.telemetry_executables", return_value=[]), \
+                patch.object(Path, "read_text", windows_read):
+            main()
+        self.assertEqual(json.loads((pilot / "e/pilot.json").read_text())["status"],
+                         "passed-candidate-only-pilot-not-comparative-qualification")
 
 
 if __name__ == "__main__":
