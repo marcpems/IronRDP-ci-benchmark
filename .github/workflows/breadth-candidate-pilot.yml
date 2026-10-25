@@ -62,7 +62,7 @@ jobs:
         shell: powershell
         run: |
           $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\harness\.github\scripts"
-          python -m unittest test_breadth test_breadth_candidate_pilot test_breadth_selectors -v
+          python -m unittest test_breadth test_breadth_candidate_pilot test_breadth_candidate_report test_breadth_selectors -v
           if ($LASTEXITCODE) { throw 'Pilot helper tests failed' }
       - name: Fetch pinned project and current training fixtures
         shell: powershell

@@ -4,7 +4,7 @@
 The ADO item is Started as of 25 October 2026; progress is recorded in comments,
 not by rewriting its acceptance criteria. This branch was isolated from reporting
 commit `e0941523`. The original preparation launched no runner workloads;
-the separately scoped custom-runner pilot below is the next execution step.
+the separately scoped custom-runner candidate matrix below has now executed.
 
 ## Current-source custom-runner pilot
 
@@ -56,9 +56,86 @@ Local checks for the pilot:
 ```powershell
 $env:PYTHONDONTWRITEBYTECODE = '1'
 $env:PYTHONPATH = '.github\scripts'
-python -m unittest test_breadth test_breadth_candidate_pilot test_breadth_selectors -v
+python -m unittest test_breadth test_breadth_candidate_pilot test_breadth_candidate_report test_breadth_selectors -v
 actionlint .github\workflows\breadth-candidate-pilot.yml
 ```
+
+For a complete multi-project run, download all three `breadth-candidate-pilot-*`
+artifacts into separate same-named subdirectories, then reproduce the compact
+report:
+
+```powershell
+python .github\scripts\breadth_candidate_report.py `
+  --evidence <download-root> --output <candidate-observations.json>
+```
+
+The report requires every selected project/scenario, identical frozen manifests
+and installed tool hashes, matching cell evidence and the exact successful
+original correctness commands. Missing/failed evidence is an error, not a partial
+success report. It preserves every input file hash and distinguishes artifact
+records from distinct packages. Comparative effects, confidence intervals and
+aggregate weights are explicitly null: a single-candidate matrix cannot estimate
+them. A complete candidate report still recommends **no-go for broad performance
+or shipping qualification** until the external qualification gates are met.
+
+### Completed candidate matrix and recommendation
+
+[Run 40185924144](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40185924144)
+executed revision `230fb1df4ec02a7118447dc76f3131d3fd8ca97b` on 25 October 2026.
+All **15 cells and 35 original correctness commands passed**, serialized on
+`MARCPE-TEST01-X64` (8 physical cores, 16 logical processors). No hosted feasibility
+result was needed. Project jobs took 6m27s (fd), 9m57s (Alacritty) and 13m51s
+(Nushell); these include setup and correctness, not just measured compilation.
+
+[Raw evidence](raw-40185924144.zip) contains all 276 captured files, including
+stdout/stderr, source and tool identities, package inventories, measurements and
+resolved artifact audits. Its SHA-256 is
+`68670f899006561e0c6ab7574515ccf0ca650b6167f86598bf69da5430c59a4c`.
+The [reproducible compact report](candidate-observations-40185924144.json) binds
+each raw file by hash. Extract the archive and run the report command above to
+reproduce it. Raw evidence is committed here, independent of Actions retention.
+
+Single-run wall seconds, **not speedups or qualified comparative estimates**:
+
+| Project | Check | Debug build | Release build | Incremental no-op | Comment edit |
+|---|---:|---:|---:|---:|---:|
+| fd | 5.892 | 8.740 | 27.787 | 0.161 | 1.635 |
+| Alacritty workspace | 15.577 | 22.962 | 32.764 | 0.294 | 3.103 |
+| Nushell `nu-parser` | 31.212 | 35.982 | 36.807 | 0.354 | 0.834 |
+
+All no-op cells compiled zero artifacts; each comment edit compiled exactly one
+artifact. The report also records command-tree CPU and fresh-Job peak committed
+memory for every cell. There is no rustc-exclusive CPU or RSS claim.
+
+fd ran 213 tests per debug/release command. Alacritty ran 259 workspace debug,
+128 terminal no-default-feature and 258 workspace release tests, including
+doctests. Nushell ran 258 tests per debug/release command; **two upstream-ignored
+tests remain ignored**, `multi_test_parse_number` and `test_parse_any`. No new
+filter or ignore was introduced. Thus "original correctness passed" does not
+mean every upstream-ignored test was executed, nor that full Nushell or Alacritty
+GUI behavior was validated.
+
+Full-check observed/compiled distinct-package counts were 64 (fd), 130
+(Alacritty) and 111 (Nushell), with exact backend/frontend training fixture-lock
+overlap of 33/24, 63/53 and 42/35 respectively. These are not whole-lock or
+artifact-record counts and do not prove dependency-disjointness.
+
+**Recommendation: no-go for broad performance or shipping qualification; go only
+for progressing this frozen candidate corpus to an approved paired study.**
+The candidate passed the declared build and original-test coverage, but there
+are no matched-control or official-comparator measurements, no independent-runner
+effect estimates, and no runtime-throughput or code-size regression bounds.
+No aggregate, confidence interval or maintainer-approved threshold is invented.
+
+The exact candidate production recipe at `adfdd487` unconditionally trains and
+requires five PGO profiles; it has no no-PGO control mode or dispatch parameter.
+A matched control needs a separately implemented and qualified production path.
+The actual [official nightly dated 2026-10-25](https://static.rust-lang.org/dist/2026-10-25/channel-rust-nightly.toml)
+uses Rust `12433c307b5a497388ffe2f4e49dbf1ab8c71fa0`, not candidate
+`4da678aada4683607acbd67a8da37a320c791f93`; treating it as a same-revision control
+would confound source changes. Maintainer agreement on root-only holdout,
+shipping treatment and runtime/size thresholds remains a prerequisite. No
+training-corpus tuning was performed, and the ADO research item remains Started.
 
 The accepted existing result is the
 [fresh IronRDP replay](../X64-PGO-FRESH-REPLAY.md): 18.019% lower offline wall time

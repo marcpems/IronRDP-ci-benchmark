@@ -1,0 +1,1317 @@
+{
+  "schema": 1,
+  "status": "complete-candidate-only-observations",
+  "recommendation": "no-go-for-broad-performance-or-shipping-qualification",
+  "run_id": "40185924144",
+  "attempt": "1",
+  "runner": "MARCPE-TEST01-X64",
+  "logical_processors": 16,
+  "selection": {
+    "schema": 1,
+    "role": "candidate-only correctness and harness pilot; not a matched performance comparator",
+    "run_id": "40170434889",
+    "attempt": "1",
+    "repository": "marcpems/IronRDP-ci-benchmark",
+    "source_revision": "4da678aada4683607acbd67a8da37a320c791f93",
+    "source_patch_sha256": "53364984309444cb355762cbda91a8fecba755b9c5a8fb77df3e5ec4a03ddad5",
+    "llvm_revision": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+    "rustc_perf_revision": "208d929efe770996eb02cd3d2712623ea48b7646",
+    "host": "x86_64-pc-windows-msvc",
+    "runner": "MARCPE-TEST01-X64",
+    "logical_processors": 16,
+    "result_sha256": "9cca3f391cc4307a7c06a2d9fc648f6992296c79b85bbc52bc36667d60f7a7b9",
+    "dist_manifest_sha256": "7eedc3fffe083bd45468f6b1bf50751ffa396be36116e28bb0d47b85096fe914",
+    "distribution_artifact": {
+      "id": 12594860714,
+      "name": "pr164707-qualified-distribution",
+      "sha256": "1e448c4acf40d73064cb7fc6a7c43c78b68f784ffa98392b738c5be9b253f553"
+    },
+    "components": [
+      {
+        "component": "rustc",
+        "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+        "bytes": 93144184,
+        "sha256": "f32a5a7bce18cfaf5e80eca1418b42b17387d1067741e5c7db14d34df474cb8f"
+      },
+      {
+        "component": "cargo",
+        "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+        "bytes": 10035004,
+        "sha256": "8e217e0e6de5670f56179f9e337d046eda477c5945fb96d0c4240f4773169526"
+      },
+      {
+        "component": "rust-std",
+        "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+        "bytes": 24566668,
+        "sha256": "04a78982d7715f31f19eedde4b784ded080f776b660f23df8f85a5fe108edbc2"
+      }
+    ],
+    "pilot_scenarios": [
+      "full-check",
+      "full-debug",
+      "full-release",
+      "incremental-noop",
+      "incremental-comment-edit"
+    ],
+    "common_cargo": {
+      "version": "1.99.1",
+      "name": "cargo-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+      "url": "https://static.rust-lang.org/dist/cargo-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+      "sha256": "4adb46c3707dee790682f7769d86983841148111695f561c843c33daa2af0c9b",
+      "reason": "fd v10.2.0 integration tests derive fd.exe from the pre-1.100 Cargo test-binary layout. Use pinned official Cargo without changing or filtering the workload tests.",
+      "layout_reference": "https://github.com/rust-lang/cargo/blob/29c5daa1afc262323364e039bb70c83372cc702c/doc/book/src/reference/unstable.md#build-dir-new-layout"
+    },
+    "control": null,
+    "official_comparator": null,
+    "limits": [
+      "Use pinned official Cargo 1.99.1 with candidate rustc, rustdoc and std; this remains a candidate-only pilot, not a matched comparison.",
+      "The newer candidate also trains rustdoc, clippy and Cranelift; historical LLVM-only treatment claims do not apply.",
+      "Original retained build directories are read-only inputs; install archives into fresh pilot-owned paths.",
+      "No runtime-speed, code-size, multi-VM confidence interval or shipping qualification is implied."
+    ]
+  },
+  "tool_identity": {
+    "rustc_verbose_version": "rustc 1.101.0-nightly (4da678aad 2026-10-24)\nbinary: rustc\ncommit-hash: 4da678aada4683607acbd67a8da37a320c791f93\ncommit-date: 2026-10-24\nhost: x86_64-pc-windows-msvc\nrelease: 1.101.0-nightly\nLLVM version: 23.1.3\n",
+    "cargo_version": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "executables": {
+      "rustc.exe": "6e0220c83ef789ac8a3c9569cd2583d062ecb61a65fa51e154a5a352e598b544",
+      "cargo.exe": "aa5b8980be3681899fde765ba47e2ed361463ae9dd8ee7cd1963c18d23743a0f",
+      "rustdoc.exe": "453f7c826bc008274a8c44de49540e6d80aa8ddd63ff2a369110cc3f0b149cea"
+    }
+  },
+  "rows": [
+    {
+      "project": "alacritty",
+      "scenario": "full-check",
+      "wall_seconds": 15.576632600044832,
+      "command_tree_cpu_seconds": 111.921875,
+      "peak_job_committed_bytes": 3480629248,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 171,
+      "passed_correctness_commands": 3,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--workspace"
+          ],
+          "passed": 259,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "alacritty_terminal",
+            "--no-default-features"
+          ],
+          "passed": 128,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--workspace",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 132,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 64,
+            "rustc": 54
+          }
+        },
+        "observed_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "alacritty",
+      "scenario": "full-debug",
+      "wall_seconds": 22.961762399994768,
+      "command_tree_cpu_seconds": 180.8125,
+      "peak_job_committed_bytes": 3573047296,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 166,
+      "passed_correctness_commands": 3,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--workspace"
+          ],
+          "passed": 259,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "alacritty_terminal",
+            "--no-default-features"
+          ],
+          "passed": 128,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--workspace",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 132,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 64,
+            "rustc": 54
+          }
+        },
+        "observed_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "alacritty",
+      "scenario": "full-release",
+      "wall_seconds": 32.764488099957816,
+      "command_tree_cpu_seconds": 336.390625,
+      "peak_job_committed_bytes": 3256389632,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 167,
+      "passed_correctness_commands": 3,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--workspace"
+          ],
+          "passed": 259,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "alacritty_terminal",
+            "--no-default-features"
+          ],
+          "passed": 128,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--workspace",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 132,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 64,
+            "rustc": 54
+          }
+        },
+        "observed_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "alacritty",
+      "scenario": "incremental-noop",
+      "wall_seconds": 0.29411229997640476,
+      "command_tree_cpu_seconds": 0.265625,
+      "peak_job_committed_bytes": 80613376,
+      "fresh_artifact_records": 166,
+      "compiled_artifact_records": 0,
+      "passed_correctness_commands": 3,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--workspace"
+          ],
+          "passed": 259,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "alacritty_terminal",
+            "--no-default-features"
+          ],
+          "passed": 128,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--workspace",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 132,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 64,
+            "rustc": 54
+          }
+        },
+        "observed_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        }
+      }
+    },
+    {
+      "project": "alacritty",
+      "scenario": "incremental-comment-edit",
+      "wall_seconds": 3.103154899959918,
+      "command_tree_cpu_seconds": 3.625,
+      "peak_job_committed_bytes": 712663040,
+      "fresh_artifact_records": 165,
+      "compiled_artifact_records": 1,
+      "passed_correctness_commands": 3,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--workspace"
+          ],
+          "passed": 259,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "alacritty_terminal",
+            "--no-default-features"
+          ],
+          "passed": 128,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--workspace",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 132,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 64,
+            "rustc": 54
+          }
+        },
+        "observed_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 1,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 130,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 63,
+            "rustc": 53
+          }
+        }
+      }
+    },
+    {
+      "project": "fd",
+      "scenario": "full-check",
+      "wall_seconds": 5.892060099984519,
+      "command_tree_cpu_seconds": 30.703125,
+      "peak_job_committed_bytes": 1954566144,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 73,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--all-features"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--all-features",
+            "--release"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 73,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "observed_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "fd",
+      "scenario": "full-debug",
+      "wall_seconds": 8.739647099981084,
+      "command_tree_cpu_seconds": 55.828125,
+      "peak_job_committed_bytes": 2188496896,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 73,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--all-features"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--all-features",
+            "--release"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 73,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "observed_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "fd",
+      "scenario": "full-release",
+      "wall_seconds": 27.786642700026277,
+      "command_tree_cpu_seconds": 80.25,
+      "peak_job_committed_bytes": 2168426496,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 73,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--all-features"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--all-features",
+            "--release"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 73,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "observed_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "fd",
+      "scenario": "incremental-noop",
+      "wall_seconds": 0.16098749998491257,
+      "command_tree_cpu_seconds": 0.140625,
+      "peak_job_committed_bytes": 59367424,
+      "fresh_artifact_records": 73,
+      "compiled_artifact_records": 0,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--all-features"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--all-features",
+            "--release"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 73,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "observed_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        }
+      }
+    },
+    {
+      "project": "fd",
+      "scenario": "incremental-comment-edit",
+      "wall_seconds": 1.634985200013034,
+      "command_tree_cpu_seconds": 1.96875,
+      "peak_job_committed_bytes": 425529344,
+      "fresh_artifact_records": 72,
+      "compiled_artifact_records": 1,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "--all-features"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        },
+        {
+          "command": [
+            "test",
+            "--all-features",
+            "--release"
+          ],
+          "passed": 213,
+          "upstream_ignored": 0
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 73,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "observed_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 1,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 64,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 33,
+            "rustc": 24
+          }
+        }
+      }
+    },
+    {
+      "project": "nushell",
+      "scenario": "full-check",
+      "wall_seconds": 31.212484800023958,
+      "command_tree_cpu_seconds": 114.671875,
+      "peak_job_committed_bytes": 2595282944,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 129,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 156,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 54,
+            "rustc": 44
+          }
+        },
+        "observed_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "nushell",
+      "scenario": "full-debug",
+      "wall_seconds": 35.98241810000036,
+      "command_tree_cpu_seconds": 173.984375,
+      "peak_job_committed_bytes": 3458674688,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 129,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 156,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 54,
+            "rustc": 44
+          }
+        },
+        "observed_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "nushell",
+      "scenario": "full-release",
+      "wall_seconds": 36.806962899980135,
+      "command_tree_cpu_seconds": 177.0625,
+      "peak_job_committed_bytes": 2912727040,
+      "fresh_artifact_records": 0,
+      "compiled_artifact_records": 129,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 156,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 54,
+            "rustc": 44
+          }
+        },
+        "observed_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        }
+      }
+    },
+    {
+      "project": "nushell",
+      "scenario": "incremental-noop",
+      "wall_seconds": 0.353704699955415,
+      "command_tree_cpu_seconds": 0.34375,
+      "peak_job_committed_bytes": 83345408,
+      "fresh_artifact_records": 129,
+      "compiled_artifact_records": 0,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 156,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 54,
+            "rustc": 44
+          }
+        },
+        "observed_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 0,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        }
+      }
+    },
+    {
+      "project": "nushell",
+      "scenario": "incremental-comment-edit",
+      "wall_seconds": 0.834282899973914,
+      "command_tree_cpu_seconds": 0.765625,
+      "peak_job_committed_bytes": 492568576,
+      "fresh_artifact_records": 128,
+      "compiled_artifact_records": 1,
+      "passed_correctness_commands": 2,
+      "test_counts": [
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        },
+        {
+          "command": [
+            "test",
+            "-p",
+            "nu-parser",
+            "--release"
+          ],
+          "passed": 258,
+          "upstream_ignored": 2
+        }
+      ],
+      "audit_scopes": {
+        "selected_resolve": {
+          "packages": 156,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 54,
+            "rustc": 44
+          }
+        },
+        "observed_artifacts": {
+          "packages": 111,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        },
+        "compiled_artifacts": {
+          "packages": 1,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 0,
+            "rustc": 0
+          }
+        },
+        "fresh_artifacts": {
+          "packages": 110,
+          "exact_training_fixture_lock_overlap": {
+            "llvm": 42,
+            "rustc": 35
+          }
+        }
+      }
+    }
+  ],
+  "comparative_effects": null,
+  "confidence_intervals": null,
+  "aggregate_weighting": null,
+  "limitations": [
+    "One candidate on one machine; no matched controls or official comparator observations.",
+    "No runtime-throughput or code-size regression measurements.",
+    "No maintainer-approved thresholds or strict dependency-disjointness established.",
+    "CPU is whole-command-tree; peak memory is committed Job memory, not RSS.",
+    "Package overlap is fixture-lock identity reuse, not measured training-profile contribution."
+  ],
+  "evidence_sha256": {
+    "breadth-candidate-pilot-alacritty/candidate-result.json": "9cca3f391cc4307a7c06a2d9fc648f6992296c79b85bbc52bc36667d60f7a7b9",
+    "breadth-candidate-pilot-alacritty/current-candidate-corpus.json": "d0194d808773abc2cc3a5ee989a8ac6094c154152b33d015dc69e12d908ee4b5",
+    "breadth-candidate-pilot-alacritty/current-candidate-training-audit.json": "0a4f10b4ac79492402ad29bef68356923cc8016b728d4bc059b82dde2ab09381",
+    "breadth-candidate-pilot-alacritty/custom-candidate.json": "9597127238bbe1a7855c252ddd6c046092edbd2f37d4da0504f72e12342245ef",
+    "breadth-candidate-pilot-alacritty/fetch.json": "d8c5be54011a4a9a6088d2731a73931478a558efb2b00e0ecd0279585c7b7135",
+    "breadth-candidate-pilot-alacritty/fetch.stderr": "f9342817ba600f7c488aee960f25da75a987a286091b81bce4de650f1cb97e09",
+    "breadth-candidate-pilot-alacritty/fetch.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-alacritty/full-check/capture.json": "f7a43c470ff88f48f1f3eb93b557b1b40ea69e0218a88a3b773a39a9ae3944df",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-0.measurement.json": "e36252bb0af99838a912d342b5f808e5a1a612b4a92b5cf9b98502809f69426f",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-0.stderr": "3e7d25d71ea3d41f504798d1682aa4aa4555866e804de030fdbe68c4d06139be",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-0.stdout": "437a14b66dca979c98bcf2ba5d8430056cabb9c56cfede10e9a0d7b312df4cf7",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-1.measurement.json": "f70903376b7db5a57bc87f331083504a9e9648ff3c7e237b5dfe38bb0e272114",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-1.stderr": "fd3ac44658998ea684e79f8ef5b8d0fca5f4c237a0e8a7b3eebe5240894f759b",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-1.stdout": "5c2f55ee9e08fb0945d890641ad477a7191a46606081d6b731996672f240bd12",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-2.measurement.json": "2fb6e3cf8c043ef1460260ce9a184e205a56d2621e4a603aa0a2c7ae31a1de0f",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-2.stderr": "eb715d1f3e865fc67f8441e6870fbf89592b6c759bf628cded47164df86d666b",
+    "breadth-candidate-pilot-alacritty/full-check/correctness-2.stdout": "0a3e18b8efd253551576b0b7868ec85527312832c2e206cb857d26403f0227aa",
+    "breadth-candidate-pilot-alacritty/full-check/measured.measurement.json": "81ee13963ad87b1daddaf77ccb5d415e50633cad26cd7b87b680e48523915b3d",
+    "breadth-candidate-pilot-alacritty/full-check/measured.stderr": "490dca9e99a1751cb1bb34229808c68b956ee9fdbc4d37580061d52b6e9dcb5b",
+    "breadth-candidate-pilot-alacritty/full-check/measured.stdout": "195147a5c27387a7f8969b6e97fbb1522e02cdf21975cc01229f1af72208bccf",
+    "breadth-candidate-pilot-alacritty/full-check/resolved-audit.json": "7f43e935c46b153a9c2b29d284fb7bab1de14d6dff1cb07490a86412c613784e",
+    "breadth-candidate-pilot-alacritty/full-check/results.json": "11b9ff09d72097ed0f402dfef89aa3d13dc702299c0d2a4f387a0a70703182f1",
+    "breadth-candidate-pilot-alacritty/full-debug/capture.json": "29c4d40b25218db501714f8e607df87e65ca498d87914804c8691137a29d28dd",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-0.measurement.json": "44c565d21c17553f4403c6f89ace87fff021edc9c7772e9e2b29540fd517ff7f",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-0.stderr": "ec3f433f2b120112f94a195cd263a34e7abdd1051089b4346b52d1ff87eaa3f2",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-0.stdout": "2276884a731367f0dd0b04a61de6411cbf83ec1ebf67c020d1fd03bffe41f76a",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-1.measurement.json": "4aa6640ceaefe195247ff367cc90f29e59a5f5ae0d2d4d85f089c1a1f4c61e2e",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-1.stderr": "ebb12c61675ef0ce443422f57c2e5e4b9c6faa7b25a4c4c2eddba2b789d66a82",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-1.stdout": "903559109e147a33d5fcb571b71b84a784df806427ef443f2c3e82f52197f59e",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-2.measurement.json": "b76e43992197c6ab45f2cd67f4fe974e50d31cf9cb6c16f4b1359a3523aa6595",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-2.stderr": "f63825a4373bbed13bbe7e9ded7430724b463bc47396f256ae20d5884ff70a7c",
+    "breadth-candidate-pilot-alacritty/full-debug/correctness-2.stdout": "a56fae2050e869887e9da6baf011d19209444e2038f74c2f02b852e98b7b9f87",
+    "breadth-candidate-pilot-alacritty/full-debug/measured.measurement.json": "08eb717ae89988b13b9cc197760b6e9f73bfe1d567f74acbe722ba16c7ef7aa0",
+    "breadth-candidate-pilot-alacritty/full-debug/measured.stderr": "e2afe5a3869dfdde21b189fa01e41b6cd38d8d5c1c8c9baa56492e4d5b6095e8",
+    "breadth-candidate-pilot-alacritty/full-debug/measured.stdout": "2916c06198dcfc7aeab135add5c66d39bf6d144db07e06076fc754862889b045",
+    "breadth-candidate-pilot-alacritty/full-debug/resolved-audit.json": "7056b3e6ea3f6916f91c7592fa72c81d96f169123a1cf474e4fd839ce4fbe670",
+    "breadth-candidate-pilot-alacritty/full-debug/results.json": "60eae7fa128cc6c4a2050b24afc762b7e1ba910456305fb674398a4a3a6c5447",
+    "breadth-candidate-pilot-alacritty/full-release/capture.json": "cdc927e0654daf011faf8a492f5940e416b4428f7e8766b5d4b29835ae6939a9",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-0.measurement.json": "a54c559a75d9b6d3b6df23ed0855f37fbc2dadfba8f0a8d9d867ab2740363d7e",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-0.stderr": "dbd869a1cae40d3944c034c7d0874694061dd19db80c62e7a157cdc495f99773",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-0.stdout": "5710275039c1664e1c810d95184d730d809dfb666eabc7856cc8477d0dc9592f",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-1.measurement.json": "0cb2a8762cee6a51efb6deec48d7f98b1020d7d304d7a704d2e360d79e3b54ff",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-1.stderr": "bc1677827c10ce652f8f68f6c6bf27455e499b0ba9ca27680bf0bd0923bb0b2f",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-1.stdout": "9a3a401e966c20a65b474fb6153058520f4b4c615fd17fe680cfc36dfdf33671",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-2.measurement.json": "b0f09cae8d3dfdb6c51760d94b3ce66f82cb20718f77bdccca8019def770aed1",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-2.stderr": "f5524501d20c453ad983ddbc9b7451ecab8a5bcf8fb1cb70eefefe9ed83f0343",
+    "breadth-candidate-pilot-alacritty/full-release/correctness-2.stdout": "26335dd00e25db382b3f8a6e54bc59e27e4193e238719abaac74bb79e9711bbc",
+    "breadth-candidate-pilot-alacritty/full-release/measured.measurement.json": "a6025c68616a93c0d5b0a562d1a42069055e0a5028bd6f5f89f0cee4816ee112",
+    "breadth-candidate-pilot-alacritty/full-release/measured.stderr": "bdb1dc273e1aad9fe51c4ce2e89d853e2b21ec2e9b1ac363742aef4247f52b56",
+    "breadth-candidate-pilot-alacritty/full-release/measured.stdout": "e5483ad1a1f180e6ac42ddffdf95e07e34c569206d1bca2d5c35eb4f8601d6d5",
+    "breadth-candidate-pilot-alacritty/full-release/resolved-audit.json": "0ddd36820ecd458ad4b3230e176fa4473865a857a6615650e105ffa6f9a977b7",
+    "breadth-candidate-pilot-alacritty/full-release/results.json": "66911e977b59a01c7e018e282fdbfc5846236bb5907a1f4fec45d25d0cc443a1",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/capture.json": "3d22006059189925f1e8ef5c71f317cd4fc184c1a6eb9a5ae91c389fc37a19ab",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-0.measurement.json": "5e8b8aa11476b5e77f0dafb733db0849798afe3d2a04fccd7ca8b51a9fa00046",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-0.stderr": "be6bc11e0aa26b011f42e7cf7039b99823c3bfc81758a0a733ea8a8a18adf7c3",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-0.stdout": "d1adb08aa6c4680afa900724f64f7e34d5321bc3577da4933c95f2749ebcd34a",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-1.measurement.json": "320f2812dc52433f43eae36a97b2fd28c0f431c4d16e40a32fb3bb644dd602ee",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-1.stderr": "131c6d735f51710a8a2ea8b394fe3909bafabd055a3a1dd621e6aa06d20c2144",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-1.stdout": "16ccbba634793ff4bf665db6d64a78ed0a626b3cd1efbb76b4b2b0c4b628e8be",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-2.measurement.json": "aff9f41b171b5c772988eb0fafb19ac880498ba457b4aa2b0e8d61654ba76ef5",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-2.stderr": "1f053008ae9354d968eec83266ebb366f2ae31fdc01a91fa95449d8ba2cd3874",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/correctness-2.stdout": "8bb28cd344739c96fde2a3df90225ff8fef8d8735a5fadb4a3419bb97effc7f5",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/measured.measurement.json": "5d2fde8016bea2760a5e82717b1e0ef83d47726cf23abc1b2384383b499791bb",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/measured.stderr": "7e63a6c5830ecca65bed2a938651e908cb1086e3562fe80cffaf574b07b70cf6",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/measured.stdout": "24d8095c94336dc26b27ade2a1818fb5311c7f7d270bedf6b56e7961cb71da01",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/resolved-audit.json": "0a7c91118308b71c1016a51042b67ad1cefa1c2fa4c5e3809629b70ba25560fa",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/results.json": "c2ea168f460b6a3549e9832564978fc193c4e69d1e32677b5af37e3eb02d7cac",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/seed.measurement.json": "5a469170ec011236126a5ea6ea2bdef07b1ae9b8b24a6f1ca65a6de560a55162",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/seed.stderr": "71bf1cb476f46205923e8ae2459496dc7645b7ad510271fdea86945bbdcfc97f",
+    "breadth-candidate-pilot-alacritty/incremental-comment-edit/seed.stdout": "12436006cb9dc5f4e868ad821e89647c35cd63717bda3611144c0f100de02414",
+    "breadth-candidate-pilot-alacritty/incremental-noop/capture.json": "6025ee5b0b082b5d3443945f32d36f3ea9f6a60b210fcba3ff78761a8273d2df",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-0.measurement.json": "0849619852d8cea58653efaa24d6ede7cdd0b553dab3cf9e7a968d3549dd3617",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-0.stderr": "b9a51500fe2defc71ce86499fedfbd853e707c9a2db33bef67e5fcb77a0b1862",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-0.stdout": "8a5d93eeadafafd9fe15a9a32382ba079051e0970b148274bcbed6457f7853b8",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-1.measurement.json": "253102e8f5b8fb5349af5be65d3d05bccd621063ddbb2ea4c8914310af68c084",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-1.stderr": "9aa8940fe016febac24594fadc7520d0f1338aafe594225cf9846feed1c81c6f",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-1.stdout": "ebe2a1ab409704b6990b605b541bd765950b67acb9fb983a9d178fac317e271f",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-2.measurement.json": "e307fe5e8d9d5921404bb329d3032e99dffd8f4e07cced205a33cf8d4b34b7dc",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-2.stderr": "4ed511afa4ba66add76ae8549fb50fa5364bca3056cff78300e05774fb2640bd",
+    "breadth-candidate-pilot-alacritty/incremental-noop/correctness-2.stdout": "9b7752cc55d0ab6360755c5d1d0102e036f6824569dff33dc357cc5d7264b7cb",
+    "breadth-candidate-pilot-alacritty/incremental-noop/measured.measurement.json": "93dcacbf81a176c3979f8e50f2c939d4d3253fe821f1f89dd13c3f035a37b31e",
+    "breadth-candidate-pilot-alacritty/incremental-noop/measured.stderr": "2461b00c8697c4189b2de92ca6fb05b5d72273c78a0a47b1ce4e83ccca077b70",
+    "breadth-candidate-pilot-alacritty/incremental-noop/measured.stdout": "0963ddb4a272bb20ddbac87d2c142e28d8b104788c45c206ac4ef1efe5601344",
+    "breadth-candidate-pilot-alacritty/incremental-noop/resolved-audit.json": "9fe4e9fc219e4da6659f901af575c223897cdee377e1f3455962abeddc9c8188",
+    "breadth-candidate-pilot-alacritty/incremental-noop/results.json": "504a73df1c9eb2616b1e5b1ed256dd9c6de1b9ee49891f675001f10286979882",
+    "breadth-candidate-pilot-alacritty/incremental-noop/seed.measurement.json": "ba9d7e7b62d46d04e46fde6b5f64a41296d6bca74c0ca7e86072c974922cbce2",
+    "breadth-candidate-pilot-alacritty/incremental-noop/seed.stderr": "d8f312012885e0fc780277e72a7f012943563454200112a03c436dca52b2b14e",
+    "breadth-candidate-pilot-alacritty/incremental-noop/seed.stdout": "8d2034c804e643e75c5735ccfde65de8cbdd55008234ceec0326acc3858d1cc0",
+    "breadth-candidate-pilot-alacritty/metadata.json": "f19e99c24d066ffbd9af4adb1f79e83e4e728c96a7a82c0bdd7bce9b00c4f945",
+    "breadth-candidate-pilot-alacritty/metadata.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-alacritty/metadata.stdout": "6d48f7061e5d503380d92122e1f34986d591aacf19e7060a8037d649916073a8",
+    "breadth-candidate-pilot-alacritty/meter-validation/affinity.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-alacritty/meter-validation/affinity.stdout": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+    "breadth-candidate-pilot-alacritty/meter-validation/busy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-alacritty/meter-validation/busy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-alacritty/meter-validation/self-test.json": "f4c2543471eab3e73b737ae37441c2a69e105e9dd3723722c3b582cd082e4c6e",
+    "breadth-candidate-pilot-alacritty/meter-validation/sleep.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-alacritty/meter-validation/sleep.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-alacritty/package-inventory.json": "4be8c076d3700db973d03bfddd03dd199b412e6a11742f68e3ca05578e1b6f76",
+    "breadth-candidate-pilot-alacritty/pilot.json": "da8b2b3f54f95fd474d40f903e7e84e0020f6bc980a2b57f05e308e98ea01b60",
+    "breadth-candidate-pilot-alacritty/readiness.json": "e9b5ba09389b075a905318c8c9b35bfef0ca949b32bcc7f015a79fa845df8f64",
+    "breadth-candidate-pilot-alacritty/toolchain.json": "9311c1f4ae45f6f4361f7043e7c940e88d8a44912ebfc05ca6cc6dd7fe6ac013",
+    "breadth-candidate-pilot-fd/candidate-result.json": "9cca3f391cc4307a7c06a2d9fc648f6992296c79b85bbc52bc36667d60f7a7b9",
+    "breadth-candidate-pilot-fd/current-candidate-corpus.json": "d0194d808773abc2cc3a5ee989a8ac6094c154152b33d015dc69e12d908ee4b5",
+    "breadth-candidate-pilot-fd/current-candidate-training-audit.json": "0a4f10b4ac79492402ad29bef68356923cc8016b728d4bc059b82dde2ab09381",
+    "breadth-candidate-pilot-fd/custom-candidate.json": "9597127238bbe1a7855c252ddd6c046092edbd2f37d4da0504f72e12342245ef",
+    "breadth-candidate-pilot-fd/fetch.json": "57f0141bc2003c134c5021ed91ab106e65c4549e1696f6af6c33b7cef0b8a2db",
+    "breadth-candidate-pilot-fd/fetch.stderr": "3f9eca05e601f38d6452ec16baa416f7b469afb409076ae2b52ec0a236d77b3b",
+    "breadth-candidate-pilot-fd/fetch.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-fd/full-check/capture.json": "5887d805bc106005c4e4613f2a1514e2004957478e6a0b35072ed4c33353bf2f",
+    "breadth-candidate-pilot-fd/full-check/correctness-0.measurement.json": "a034e21c4e20124c741731fba4f6e75ef42d3cddbadaea8b8f690c3ef895980a",
+    "breadth-candidate-pilot-fd/full-check/correctness-0.stderr": "3d3bf45504db667d21867412d686174dc45674dc1df03f380b72740d15e05442",
+    "breadth-candidate-pilot-fd/full-check/correctness-0.stdout": "551803f8a82cece43dc6906ac1b41fb8d669f070a6f0d754a9f264b9bd9bb6e2",
+    "breadth-candidate-pilot-fd/full-check/correctness-1.measurement.json": "05ebf58b12cc65ca13f9488a5c7c306800de2861b757c032cbb7243c5ea95012",
+    "breadth-candidate-pilot-fd/full-check/correctness-1.stderr": "ea646d8f006d66c1222ed84d2fbca2e58623ab517fe4da11534d276136580719",
+    "breadth-candidate-pilot-fd/full-check/correctness-1.stdout": "1b186fd7b9e33a3888b5a3d553bd96f02f1d5e19ab8ee6189444f9f1abc0d095",
+    "breadth-candidate-pilot-fd/full-check/measured.measurement.json": "71683e89814844f780162155ce08a21ee8639504d4abadb0308de986b073cde4",
+    "breadth-candidate-pilot-fd/full-check/measured.stderr": "a91fa0cb7ac3458e90a4b7b9325f75a961dda044e49fe18325ef732c29f5fcb4",
+    "breadth-candidate-pilot-fd/full-check/measured.stdout": "4089d90c4d7354b183da9f4a35edfa7298797bab9e80403a2d1b860eef772f2d",
+    "breadth-candidate-pilot-fd/full-check/resolved-audit.json": "fd2bce6291e1891473e1b12706f996b6882ac640559470c9252901332565ec64",
+    "breadth-candidate-pilot-fd/full-check/results.json": "42a4cf9f16a4d12d396c350b17851dd3a0780b0c4435d073831ed00bc3744810",
+    "breadth-candidate-pilot-fd/full-debug/capture.json": "36c1b16574a4230cdf3f146df0d13854961164b3001e596645fdd1647af77259",
+    "breadth-candidate-pilot-fd/full-debug/correctness-0.measurement.json": "ba289b5cc9651df41ed9b19880bb2beb245e87bb20ebfa225472ffe5030a65e6",
+    "breadth-candidate-pilot-fd/full-debug/correctness-0.stderr": "1de0b8ede1562311c975d1a3c5fa02d1a85d95295a4a8fef73ed6ecf2b8e28f2",
+    "breadth-candidate-pilot-fd/full-debug/correctness-0.stdout": "c713ebc8b16afd60872b5bcb49f4b63a36b08b360dad7c47a325b65189a0b78e",
+    "breadth-candidate-pilot-fd/full-debug/correctness-1.measurement.json": "2733355db4d8fdae7682acf82ec9baa2b03c264986e1b551da6c263d9fd3521e",
+    "breadth-candidate-pilot-fd/full-debug/correctness-1.stderr": "aa4f33b6068c4bebf5ae7122a128e3db5ee6075fc4721b6f1060276a49b881be",
+    "breadth-candidate-pilot-fd/full-debug/correctness-1.stdout": "e8964a11657ef90b38bdebf1060352dd2bb76fd0e28e605ba54297d9ae11bcff",
+    "breadth-candidate-pilot-fd/full-debug/measured.measurement.json": "bb4ecb8f9f019dd5362cd5992902fb8966529362bb641b9d1d1aaea3f2636e7c",
+    "breadth-candidate-pilot-fd/full-debug/measured.stderr": "1cf5055b325d33e05f1babba3daad968b5b1993b4ae16a6f1477784c1fc76aa4",
+    "breadth-candidate-pilot-fd/full-debug/measured.stdout": "cdfba0b7790997d7924fd401b1aee1f20c48a6e38dad09163064d5c07a81796f",
+    "breadth-candidate-pilot-fd/full-debug/resolved-audit.json": "4ad9fc97d0a16685f75e9531fe89a670573373882148eee637f50d2698c6b9df",
+    "breadth-candidate-pilot-fd/full-debug/results.json": "8a073b1c6dddde683d5c427f0e8ab21c0217f3cd34016e9aa200581ae5054782",
+    "breadth-candidate-pilot-fd/full-release/capture.json": "1bd154f43979fe24b7284698768aceadf948f84348d5a2503be480154c33bb97",
+    "breadth-candidate-pilot-fd/full-release/correctness-0.measurement.json": "fcd1afcb48b7b46af3357c422635c5fce0ee833cc6b6cbca386735884bb4f255",
+    "breadth-candidate-pilot-fd/full-release/correctness-0.stderr": "ea77acdaa4f4913c2009957561a0f6df7278c43c43bf9da82c37daedd58cf43a",
+    "breadth-candidate-pilot-fd/full-release/correctness-0.stdout": "381f74727ed6d04b991b5758cbf8a92a4cca3ec5c55aa6ee8bcd3ef0d5ed778c",
+    "breadth-candidate-pilot-fd/full-release/correctness-1.measurement.json": "5ee9bfb0b9be84c1167085cdfb54de5f47f34a225d194a08613c0052f0fe82e7",
+    "breadth-candidate-pilot-fd/full-release/correctness-1.stderr": "97a4d86ae38fc08b4fcec31b2ef92e1415af961edb352428adbfa2e9e6a5469c",
+    "breadth-candidate-pilot-fd/full-release/correctness-1.stdout": "057ef786a9d5677baedd52c0d5a78827d38ea6d559ad4fcd225c42940377ea92",
+    "breadth-candidate-pilot-fd/full-release/measured.measurement.json": "20b65e9120bd56faf675e8871ca0e6cede16eb44cd38645109395ff61ec488c8",
+    "breadth-candidate-pilot-fd/full-release/measured.stderr": "4f4a48635583daae507b9c37d1afa7be70e7c52431b6c0241dbda0e10b1528f7",
+    "breadth-candidate-pilot-fd/full-release/measured.stdout": "3f57a986dbb5cde78892b8ce87f2e9d724644637a6d00ac69d238a257133408f",
+    "breadth-candidate-pilot-fd/full-release/resolved-audit.json": "1a27893431ac9b59c1b5bc0433fb8a679b8f7b9fb919753a654c94dcd2f8bcbf",
+    "breadth-candidate-pilot-fd/full-release/results.json": "7f67a372c9fd30eb697d2412b2c53399bb39641b98edc3e2a28ddb4f640adb9f",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/capture.json": "6ebc287c2a6dcdb56de90c0a600a0a0c9cf2da224e1fc0c9024e21914ef42dd4",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/correctness-0.measurement.json": "139d36e151bbfb6acb19f29f696b4d0a793e802f0c89dc90f5a8863b8830f39f",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/correctness-0.stderr": "32da2887e34f63142be1abaeb7d920457556189924248e8236c5d93b4e5bff8a",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/correctness-0.stdout": "892925bc56731dbaa9d9a94cf1dadcdc20e5021a6281ee2fc2f250526b437b36",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/correctness-1.measurement.json": "4fef1878e850ef724573379707959279b5aaf5d1dcb00119e1b275af57f8794b",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/correctness-1.stderr": "8f7e5b8a26fce3c1ee97f4673a4c8704e50130b343348a0cc306bca31f051d94",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/correctness-1.stdout": "ccc5068dd0c31d55eaf9ec2d0e2deee3940c38432caad39c802a825479f5ec58",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/measured.measurement.json": "bbe424f4956b4e61a761a7cc306f166085d34af8a8193ed88610b82dfb3c505e",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/measured.stderr": "2b7e32b24c838b5683882d268cb3c62a6957f7548079158973d7988eb9e93ca0",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/measured.stdout": "b46f48024922d7721487726397e0b811516b51949291aa90e6ea89f80a816395",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/resolved-audit.json": "96a90f972b55013b49d6b24aaffd0d087eaae35a9cd19b509fb41c08dcb5f282",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/results.json": "38060a64b2ad8fbb77f32bf085e495abd226e293747750e6fb86251ac86bacb3",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/seed.measurement.json": "f13b406d3fb961ef5915b388106954e7f6b3875da625477342ca6c0d9fdfa544",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/seed.stderr": "6e49e28b21c7a07e3cf56c31dcef462fb930a1f5f03c2060474a0747692152cb",
+    "breadth-candidate-pilot-fd/incremental-comment-edit/seed.stdout": "397df963192aaa67f836155e18ce4f0680c04ce99f4574c233ea413ecaf6277f",
+    "breadth-candidate-pilot-fd/incremental-noop/capture.json": "7b5cd0b79e782b45bc69d30ab724b3ef34cdb1008d6977c874579c434c6e5e18",
+    "breadth-candidate-pilot-fd/incremental-noop/correctness-0.measurement.json": "88a5014d0aab3dddd559bb3043f34ae2f2c77bdcb5d64a54028f4987680ff1d6",
+    "breadth-candidate-pilot-fd/incremental-noop/correctness-0.stderr": "5179f256a40cafeb0502840dc26a67fb34445e5a27b26e114e8670d7afb1bd5a",
+    "breadth-candidate-pilot-fd/incremental-noop/correctness-0.stdout": "673d127b76b1a79a3bb3f76780ca1d26fed34a79888653f253313dd1414c57e6",
+    "breadth-candidate-pilot-fd/incremental-noop/correctness-1.measurement.json": "3f84dbe45435abd7b28639d97ddac6d1bee4e7a17709ded9d0a9e18df48f981f",
+    "breadth-candidate-pilot-fd/incremental-noop/correctness-1.stderr": "72b74206ab03eb5b253711220f20d3c1fbd08acb393ad84e0c665629f8d28be9",
+    "breadth-candidate-pilot-fd/incremental-noop/correctness-1.stdout": "ff010d5464542ba2a2bfc22d52fb4d4cfd45742c8429de2d0a0608ad3bd09bd5",
+    "breadth-candidate-pilot-fd/incremental-noop/measured.measurement.json": "d679d407f63a6026248bc1f336d8f77802f425ac9426f317e2a3b17a250a39c6",
+    "breadth-candidate-pilot-fd/incremental-noop/measured.stderr": "fecede7c2157efe2f16c8c8b9dce94b0fb4dd384dca8207046c8bf7636eb0ffe",
+    "breadth-candidate-pilot-fd/incremental-noop/measured.stdout": "b384cd7174fb23bbd735f25f44afa0fad0518030dd90f6b68a1ad110e254a2a1",
+    "breadth-candidate-pilot-fd/incremental-noop/resolved-audit.json": "5a2066d88cf37f075a804e8f6e269d1073c36fa9215e85d84d0309508e786571",
+    "breadth-candidate-pilot-fd/incremental-noop/results.json": "97ee0547cce8130a6411994a8abec5cf2b769cd9faf90a30545b6904bcbb6c49",
+    "breadth-candidate-pilot-fd/incremental-noop/seed.measurement.json": "074286af316ecc0deb6083cbbdda5a80ac37ae4ca431ea0f2e3e0a99fc3994be",
+    "breadth-candidate-pilot-fd/incremental-noop/seed.stderr": "939bd78ce25daab283722d370883fecfece92207e86011ea752fa0a2d4b7b501",
+    "breadth-candidate-pilot-fd/incremental-noop/seed.stdout": "d9296478b4bff905a88ea91d82ea832b84862b3c402a339103cec02073a02587",
+    "breadth-candidate-pilot-fd/metadata.json": "37264f4acbd47309ec5c6fbc84ff6f2672176c07a79deacf865ddd4f0df86901",
+    "breadth-candidate-pilot-fd/metadata.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-fd/metadata.stdout": "ce18e94b06496f7a5210c39d74135cb9b98777409921633d4853c6d4414b9105",
+    "breadth-candidate-pilot-fd/meter-validation/affinity.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-fd/meter-validation/affinity.stdout": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+    "breadth-candidate-pilot-fd/meter-validation/busy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-fd/meter-validation/busy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-fd/meter-validation/self-test.json": "be84412713cfadf3f36fd0546156846cd6cb84a514a17afdf63a235eb25579e1",
+    "breadth-candidate-pilot-fd/meter-validation/sleep.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-fd/meter-validation/sleep.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-fd/package-inventory.json": "562d0b47dc3dbeaccc4c99aa2314d70975804de659d9819c4366374151e7277e",
+    "breadth-candidate-pilot-fd/pilot.json": "f0480489b690d2cfef0e70ed2b8fe1bf32919433df584c774f1f94f8d46de592",
+    "breadth-candidate-pilot-fd/readiness.json": "9be5101fed77379965f6f208979385fe6c640a89d2b4f28a306b0e4064939359",
+    "breadth-candidate-pilot-fd/toolchain.json": "9311c1f4ae45f6f4361f7043e7c940e88d8a44912ebfc05ca6cc6dd7fe6ac013",
+    "breadth-candidate-pilot-nushell/candidate-result.json": "9cca3f391cc4307a7c06a2d9fc648f6992296c79b85bbc52bc36667d60f7a7b9",
+    "breadth-candidate-pilot-nushell/current-candidate-corpus.json": "d0194d808773abc2cc3a5ee989a8ac6094c154152b33d015dc69e12d908ee4b5",
+    "breadth-candidate-pilot-nushell/current-candidate-training-audit.json": "0a4f10b4ac79492402ad29bef68356923cc8016b728d4bc059b82dde2ab09381",
+    "breadth-candidate-pilot-nushell/custom-candidate.json": "9597127238bbe1a7855c252ddd6c046092edbd2f37d4da0504f72e12342245ef",
+    "breadth-candidate-pilot-nushell/fetch.json": "5505b0844044adfc41e775ad74c0727f01e523bc29f320ddb9a1b1d156ab4014",
+    "breadth-candidate-pilot-nushell/fetch.stderr": "6890bac8dfcf45a212d0961ce82ba918ee34b0b6f40525d54dc21a3da019c1df",
+    "breadth-candidate-pilot-nushell/fetch.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-nushell/full-check/capture.json": "e353af20f1cbddab153207e391e9a8f5a8662be466e9696daeb971395221ca99",
+    "breadth-candidate-pilot-nushell/full-check/correctness-0.measurement.json": "28f4646544a1cb1c3e5efb1fa9bfa02e9d6073ff3defd2f0f6035bf84bd6b5a4",
+    "breadth-candidate-pilot-nushell/full-check/correctness-0.stderr": "42e5bffa6b747a0a310009a905d6aec576d9e5942668621e555c75272b128f7e",
+    "breadth-candidate-pilot-nushell/full-check/correctness-0.stdout": "2f9821de7f4e36a5088850f5bd56f3a2ea3357e3896824d499bee92b71854a00",
+    "breadth-candidate-pilot-nushell/full-check/correctness-1.measurement.json": "9969c2e5dd95a5138a01d2ca8f321971d8232fccc906463bf38a81f335807fe9",
+    "breadth-candidate-pilot-nushell/full-check/correctness-1.stderr": "3d84ea5fce5c114b9630b3b4d0c42e48f04ecf7f9508ea591d4db0a07159a19d",
+    "breadth-candidate-pilot-nushell/full-check/correctness-1.stdout": "5886b70ac09b905c4e88585101614fd85cf57959cffac30ec7db5a3a1f852692",
+    "breadth-candidate-pilot-nushell/full-check/measured.measurement.json": "38b932cd6cc4b42bebed904ff170c744dfcd10db0ff86711af14c3298e94f0fb",
+    "breadth-candidate-pilot-nushell/full-check/measured.stderr": "3c09d52dda21631b31e37632268745dedfd486eb2b2a4ed2e4f4f9e020cb2807",
+    "breadth-candidate-pilot-nushell/full-check/measured.stdout": "fc206836ba680aa72c3624a978bffd5d045c52d31f864537fb889da502d84974",
+    "breadth-candidate-pilot-nushell/full-check/resolved-audit.json": "6ec81c3aa56cc2bad8cc6fc1736e4fe64468a72e2248cd68c6c9e8b044491795",
+    "breadth-candidate-pilot-nushell/full-check/results.json": "cbeaf5ee75d1fab2c2c38421e9ba5784974f8efe08c4f6ada24b4af653c086fc",
+    "breadth-candidate-pilot-nushell/full-debug/capture.json": "cb16219210f246f31896424cfe381f303d49df02ea0489d1f3f440d5e4b22934",
+    "breadth-candidate-pilot-nushell/full-debug/correctness-0.measurement.json": "4979972fe1c36af901fa76adf930ed016c4c1aa9d6aec5bc53405c99879430cc",
+    "breadth-candidate-pilot-nushell/full-debug/correctness-0.stderr": "7cb407e4e78654a30c0d761888ff448eb479226298afe00975a79ac018d5a60a",
+    "breadth-candidate-pilot-nushell/full-debug/correctness-0.stdout": "ea9a7b9d51ee2a0cfe85bcc274f1880666465403aa4849e5fc9932e8d22a13ed",
+    "breadth-candidate-pilot-nushell/full-debug/correctness-1.measurement.json": "d154c096c522f60d2f3e3b79757c43a340f6da489b8e67d700ef3dc0ae6b49a3",
+    "breadth-candidate-pilot-nushell/full-debug/correctness-1.stderr": "9ede0db79d94d79467c9ba6c403d60849a551b3c44389c482e9fb76a67374212",
+    "breadth-candidate-pilot-nushell/full-debug/correctness-1.stdout": "169f2297d841033c5d3517a65e35735401203e0b660595932a45608f6507686f",
+    "breadth-candidate-pilot-nushell/full-debug/measured.measurement.json": "93c882dc248a008bfbf84c4bd02679810b316284a4d6f65771edd39bd0f9eca7",
+    "breadth-candidate-pilot-nushell/full-debug/measured.stderr": "f958095721f548940bd57ef45636be9ef370ece61101c16ba7cb35ffd9ee9b8f",
+    "breadth-candidate-pilot-nushell/full-debug/measured.stdout": "962e685ab6e1cf93106e8b373d7b2b6001dec9e2be61f2eb95148ca89ed674ce",
+    "breadth-candidate-pilot-nushell/full-debug/resolved-audit.json": "721ed05b81499d0474ccae4ee06d0231a92115a0541dcc1c06b6d3851f013975",
+    "breadth-candidate-pilot-nushell/full-debug/results.json": "333f000dbc461626e7015c6dbb0b71b07b0b47a3a228bf090f06083565c8b31d",
+    "breadth-candidate-pilot-nushell/full-release/capture.json": "e939988fdaeb2f26a7a0689ad1eeaf11adbda046834fead4ed3b80caa35e0a42",
+    "breadth-candidate-pilot-nushell/full-release/correctness-0.measurement.json": "23132fdb41f579c15db98754158ab79e16d8f2c97ed6ac480b62b153bbee72ae",
+    "breadth-candidate-pilot-nushell/full-release/correctness-0.stderr": "80a0a9802c475377c629125f5f28f16c64f264e7b77b186701f9b900e871b9e0",
+    "breadth-candidate-pilot-nushell/full-release/correctness-0.stdout": "ed0e89e2f0cbe40bc2280227cf927e0365f9f570351c25fe5a84db8bb95b383f",
+    "breadth-candidate-pilot-nushell/full-release/correctness-1.measurement.json": "245f3b6fd7542ccbab27116c0f909ab483fd8866649532f89ca8b43cc4f54703",
+    "breadth-candidate-pilot-nushell/full-release/correctness-1.stderr": "6329ceb629b19326d635a73a332bc769396c77a7a8246bba2bf096e7618f7b25",
+    "breadth-candidate-pilot-nushell/full-release/correctness-1.stdout": "6d4a2f0f4939552277004f83b52846afb6ba11f28ad1c9dbc19adace931e6995",
+    "breadth-candidate-pilot-nushell/full-release/measured.measurement.json": "2c86b0578d4a5fca62cef0cb9443993b0480163e27b5467291cf5a7bbfa75595",
+    "breadth-candidate-pilot-nushell/full-release/measured.stderr": "83915d15d7e662e268ed21a6655060c66a6638c3e4993da4f3c96c80d0e5d46c",
+    "breadth-candidate-pilot-nushell/full-release/measured.stdout": "4ff67b6a222106ad2693cfd242176f85799516ab6cff2da4b8ecc2ab79c2d5e6",
+    "breadth-candidate-pilot-nushell/full-release/resolved-audit.json": "7e5275291122de2eb5015a42c13edf3bea97a90c83bccd0108efbf2aa22ca0cd",
+    "breadth-candidate-pilot-nushell/full-release/results.json": "e262fc29f6698cbbc2b529dd861394f2bff38b7d8580a0bb5d7e99414f78b195",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/capture.json": "471a712764d860e9dc0e2bb68efd487db6947bcc8f47c9cfaf7efd5d627c21b3",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/correctness-0.measurement.json": "1c5eeacb0631261ab835dd41d167d4083230499dc18b88eac18c78007b57e28c",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/correctness-0.stderr": "086a822cb754391d643700de07d7ea8920538ff0073f3df116f87deaa9e42807",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/correctness-0.stdout": "668ecb041a29d135814ed407991a593fd7038a9da25d03b78376b6a00a298259",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/correctness-1.measurement.json": "a995333ac8fc0a0afca99ed7442c8cfd186ed3205ec7d0208068849be92d34b7",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/correctness-1.stderr": "12f067693795c8311999b26da3af8fd7ef192bff23f557b9546b318b5d649fb9",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/correctness-1.stdout": "8831c4853e55e840a7ca4c6618a23fa3d5fb1ec6cb306771ba5accf1ceafb574",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/measured.measurement.json": "6244d35db97b1f01caa59547325f7a49f5c26fafbb5bf6b05a0a1a8d8b3a8d2b",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/measured.stderr": "87aae5b23d1e35c75a3ab6b6514aa30792cdbb5d7cd2e4411a7637af669927b8",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/measured.stdout": "8f00bfacd5533e851081b4da68be7a7a69c5339d43a689256522cca7ebcf46a7",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/resolved-audit.json": "6a97ac2c6f75b0da6b11cc590c9bbfe15fc1021151bca4bfa622602d0fce7be3",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/results.json": "770ff3d462a81d0317722f0f5ee0532fb9ad8195a9dd55107e4f8d9e9497cf58",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/seed.measurement.json": "4006a42f2ab9a91be7a7ef3806f4e3061a78c2dfd0c8dbdd0debdd60f310416d",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/seed.stderr": "df74a955fc945329b61bcc7db6607fcc930fd26f9213b8545d88a646281b4acc",
+    "breadth-candidate-pilot-nushell/incremental-comment-edit/seed.stdout": "f7ab5f9d5cacbf0a0e2c91f6616ca5c3de0afe9451436079194fdbb83d5398d6",
+    "breadth-candidate-pilot-nushell/incremental-noop/capture.json": "02ed9683a8cebe34c4571ff5c82394428b4a82e7f2d693d465ffcd069f70b288",
+    "breadth-candidate-pilot-nushell/incremental-noop/correctness-0.measurement.json": "416cf5a9798479c7812dc674595736e3f2ba215f4ce195d921ae4c0ff8b76d8d",
+    "breadth-candidate-pilot-nushell/incremental-noop/correctness-0.stderr": "af1d8e05fd79e2f567e00c7fa36bc33a5b8dabbae58158e60515e71ad1c3e6dc",
+    "breadth-candidate-pilot-nushell/incremental-noop/correctness-0.stdout": "839546e708cc3e114c4791d3ada44b56a31903769e86d3596abfd4db28d8229a",
+    "breadth-candidate-pilot-nushell/incremental-noop/correctness-1.measurement.json": "3f30a8a0f7d56e48cd52a7bb1cda40153bdcf62b2157f1986de10dd11b7e82cc",
+    "breadth-candidate-pilot-nushell/incremental-noop/correctness-1.stderr": "46e53875ea677fc3a6e7b86883cecb7680b3b24724204f77cd78c9fd5025dbb7",
+    "breadth-candidate-pilot-nushell/incremental-noop/correctness-1.stdout": "a9d064088259563826f06d70f44e2d3ad5fac88fd4404b388eb8cfbdac427f76",
+    "breadth-candidate-pilot-nushell/incremental-noop/measured.measurement.json": "7cb40e88c9c5aff631a33c1083d214f329303c9dc9a02815fcd24503de57f3e1",
+    "breadth-candidate-pilot-nushell/incremental-noop/measured.stderr": "7f0eef68649acf0402a0e08c494d055cbec8eb78a2651f3dcce0d3d4c0175aaa",
+    "breadth-candidate-pilot-nushell/incremental-noop/measured.stdout": "508747bdaadd9739eb8fb5b81c1a84054b86820dd963cfc7e72bacf54c41b642",
+    "breadth-candidate-pilot-nushell/incremental-noop/resolved-audit.json": "548429a9c9a380bdfbf41b833d86865e86be349276734df3b774886e78287abd",
+    "breadth-candidate-pilot-nushell/incremental-noop/results.json": "46cb40ae5b5e2c0bc083cc0410073e8a31a46a2a32a65d8d7d907930bd3b36c2",
+    "breadth-candidate-pilot-nushell/incremental-noop/seed.measurement.json": "f3fb1402917b0c6358a16b4b33c4f406bbe6ab44e4015ad61726245d69c33c6a",
+    "breadth-candidate-pilot-nushell/incremental-noop/seed.stderr": "341712d90e564ceee76ed6fd9b8808828defaec23b7a41687c29fc13331d7ff5",
+    "breadth-candidate-pilot-nushell/incremental-noop/seed.stdout": "db48433d9f9abc62db2e05951c7aa3fdbb9940753b9664feca022e88fa7d4388",
+    "breadth-candidate-pilot-nushell/metadata.json": "a3e5330f4e8b27ba045272be8803f21109377b57b90b681514a77557fcd22469",
+    "breadth-candidate-pilot-nushell/metadata.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-nushell/metadata.stdout": "eda509923032fd43496a68da5b58c6072eb36058b639ad6ab5d56c8a4889ff54",
+    "breadth-candidate-pilot-nushell/meter-validation/affinity.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-nushell/meter-validation/affinity.stdout": "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+    "breadth-candidate-pilot-nushell/meter-validation/busy.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-nushell/meter-validation/busy.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-nushell/meter-validation/self-test.json": "f14ba3a8e416d1a994fd21e676855eebb6a1d2b79e001c08851dd9373d15c627",
+    "breadth-candidate-pilot-nushell/meter-validation/sleep.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-nushell/meter-validation/sleep.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "breadth-candidate-pilot-nushell/package-inventory.json": "42cf59cf426f5e1bb6f25ba6fe311980f87f6373b90f070c4401752841894be0",
+    "breadth-candidate-pilot-nushell/pilot.json": "f7f126e791d71f16bcc698221c323c19f2b00bda4301aa5f0d8c9fb8a2e2e340",
+    "breadth-candidate-pilot-nushell/readiness.json": "01c3f4a4fe6c725bbbaa3f6017af433cfcaa678a31a1769f9041a4b1bc46c933",
+    "breadth-candidate-pilot-nushell/toolchain.json": "9311c1f4ae45f6f4361f7043e7c940e88d8a44912ebfc05ca6cc6dd7fe6ac013"
+  }
+}
