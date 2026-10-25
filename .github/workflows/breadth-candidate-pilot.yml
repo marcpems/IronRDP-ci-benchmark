@@ -1,0 +1,102 @@
+name: Validate held-out fd with the qualified custom compiler
+on:
+  push:
+    branches: [research/64766704-heldout-breadth]
+    paths:
+      - .github/workflows/breadth-candidate-pilot.yml
+      - .github/scripts/breadth*.py
+      - .github/scripts/test_breadth*.py
+      - ci-benchmark/breadth/**
+permissions:
+  contents: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  pilot:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 120
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Reserve isolated pilot paths without touching retained compiler work
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64' -or [Environment]::ProcessorCount -ne 16) {
+            throw 'Unexpected custom pilot runner'
+          }
+          if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Pilot requires NTFS correctness paths' }
+          if ((Get-Volume -DriveLetter C).SizeRemaining -lt 15GB) { throw 'Insufficient pilot disk capacity' }
+          $root = "C:\bp$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          if (Test-Path -LiteralPath $root) { throw 'Refusing existing pilot root' }
+          New-Item -ItemType Directory "$root\e","$root\temp","$root\hooks" | Out-Null
+          "PILOT_ROOT=$root" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=3" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_2=core.hooksPath" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_2=$root\hooks" >> $env:GITHUB_ENV
+      - name: Check dedicated machine readiness
+        shell: powershell
+        run: harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:PILOT_ROOT\e\readiness.json"
+      - name: Check exact pilot helpers
+        shell: powershell
+        run: |
+          $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\harness\.github\scripts"
+          python -m unittest test_breadth test_breadth_candidate_pilot test_breadth_selectors -v
+          if ($LASTEXITCODE) { throw 'Pilot helper tests failed' }
+      - name: Fetch pinned fd and current training fixtures
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $manifest = Get-Content harness\ci-benchmark\breadth\current-candidate-corpus.json -Raw | ConvertFrom-Json
+          $fd = $manifest.projects | Where-Object id -eq fd
+          $sources = @(
+            @{Path="$env:PILOT_ROOT\source"; Repo=$fd.repository; Revision=$fd.revision},
+            @{Path="$env:PILOT_ROOT\perf"; Repo='https://github.com/rust-lang/rustc-perf.git'; Revision=$manifest.training.rustc_perf_sha}
+          )
+          foreach ($source in $sources) {
+            git init --quiet $source.Path
+            if ($LASTEXITCODE) { throw 'Source init failed' }
+            git -C $source.Path remote add origin $source.Repo
+            if ($LASTEXITCODE) { throw 'Source remote failed' }
+            git -C $source.Path fetch --quiet --depth 1 origin $source.Revision
+            if ($LASTEXITCODE) { throw 'Pinned source fetch failed' }
+            git -C $source.Path checkout --quiet --detach FETCH_HEAD
+            if ($LASTEXITCODE) { throw 'Pinned source checkout failed' }
+          }
+      - name: Run offline candidate-only fd pilot and original correctness
+        shell: powershell
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 `
+            -Script harness\.github\scripts\breadth_candidate_pilot.py `
+            --root $env:PILOT_ROOT --retained D:\v704348891 `
+            --selection harness\ci-benchmark\breadth\custom-candidate.json `
+            --manifest harness\ci-benchmark\breadth\current-candidate-corpus.json `
+            --training-audit harness\ci-benchmark\breadth\current-candidate-training-audit.json `
+            --perf "$env:PILOT_ROOT\perf"
+      - name: Preserve pilot evidence including failed attempts
+        if: always() && env.PILOT_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: breadth-candidate-pilot
+          path: |
+            ${{ env.PILOT_ROOT }}/e/**/*.json
+            ${{ env.PILOT_ROOT }}/e/**/*.stdout
+            ${{ env.PILOT_ROOT }}/e/**/*.stderr
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 1

@@ -1,17 +1,63 @@
 # Windows breadth preparation — OS64766704
 
 **Preparation, not broad-speedup evidence or a shipping recommendation.**
-The ADO item remains Proposed. This branch was isolated from reporting commit
-`e0941523`; no workflows, builds on shared runners, pushes or ADO edits were made.
+The ADO item is Started as of 25 October 2026; progress is recorded in comments,
+not by rewriting its acceptance criteria. This branch was isolated from reporting
+commit `e0941523`. The original preparation launched no runner workloads;
+the separately scoped custom-runner pilot below is the next execution step.
+
+## Current-source custom-runner pilot
+
+The user authorized progressing with the completed custom-runner artifacts
+without waiting for the separate hosted-runner feasibility experiment.
+[`custom-candidate.json`](custom-candidate.json) pins the completed
+[PR validation run 40170434889](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40170434889),
+its exact source plus prerequisite patch, result/manifest identities, and
+rustc/Cargo/std archive hashes. The original build directory is read-only;
+the pilot installs fresh copies of the validated components.
+
+The [pilot workflow](../../.github/workflows/breadth-candidate-pilot.yml) uses
+`MARCPE-TEST01-X64`, sixteen logical processors, isolated NTFS source/build/test
+paths and the existing dedicated-runner concurrency guard. It runs only fd
+full-check, incremental no-op and incremental comment-edit. Each cell retains
+the original unfiltered debug/release correctness commands outside measurement.
+Dependencies are fetched and checksum-verified before offline commands;
+candidate Cargo, rustdoc and standard libraries are explicit and hashed.
+Actual successful Cargo JSON artifacts are reconciled with the current training
+audit. Failures and source-restoration evidence are retained.
+
+This is **candidate-only correctness and harness validation**, not a paired
+performance study or continuation of the old four-processor timing series.
+The original 1.94.1 manifest below remains historical; the current candidate uses
+a separate current-source corpus/audit. It also trains additional tools, so the
+old LLVM-only treatment description does not apply. No accepted matched control
+or exact-revision official compiler is currently pinned. In particular,
+cancelled storage run 40036080644 has no qualified control distribution, and its
+"control" label is a filesystem control, not a PGO treatment contrast.
+Runtime throughput, code-size gates and a broad shipping decision remain outside
+this initial pilot.
+
+Local checks for the pilot:
+
+```powershell
+$env:PYTHONDONTWRITEBYTECODE = '1'
+$env:PYTHONPATH = '.github\scripts'
+python -m unittest test_breadth test_breadth_candidate_pilot test_breadth_selectors -v
+actionlint .github\workflows\breadth-candidate-pilot.yml
+```
 
 The accepted existing result is the
 [fresh IronRDP replay](../X64-PGO-FRESH-REPLAY.md): 18.019% lower offline wall time
 (95% 14.958–20.842%) on five independent Windows VMs. It combines training repair
 and native linking changes, adds no ThinLTO, and is not a generated-code runtime
 or arbitrary-project guarantee. The selected shipping candidate is **unset**.
+The [historical profile-only comparison](https://github.com/marcpems/IronRDP-ci-benchmark/blob/experiment/x64-pgo-comparison/ci-benchmark/X64-PROFILE-ONLY.md)
+has since completed with a 13.73% IronRDP-only result. It does not qualify the
+current upstream candidate or demonstrate benefit on these held-out projects.
 Failed profile-only run
 [39584578532](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/39584578532)
-is not an eligible source. A replacement must independently complete qualification.
+is not an eligible source. Candidate distributions for this study still need
+explicit selection and qualification.
 
 ## Concrete candidate corpus
 
@@ -110,6 +156,67 @@ The audit rejects changed revisions, dirty sources and changed pinned locks.
 Sparse rustc-perf needs all 15 selected fixture directories. No submodule updates
 or modifications in the shared Rust source checkout are necessary.
 
+### Resolved dependency reconciliation
+
+[`breadth_resolved_audit.py`](../../.github/scripts/breadth_resolved_audit.py)
+adds an opt-in audit of captured Cargo metadata and, when available, Cargo JSON
+artifact records. It keeps selected-root graph reachability, observed artifacts,
+newly compiled artifacts and reused fresh artifacts separate. It pins input
+hashes and reconciles identities against the frozen source lock and all pinned
+training fixture locks, rather than comparing names or parsing opaque Cargo IDs.
+Malformed, failed or incomplete artifact captures fail closed.
+
+The 25 October fd metadata-only run selected **73 reachable packages including
+the root**, with exact identity reuse of **33 LLVM fixture-lock packages and
+24 rustc fixture-lock packages**. These differ from the original entire-lock
+53/45 counts because reachability excludes unused locked packages. They are
+still conservative resolution counts: dev edges, host build dependencies and
+workspace feature unification are not a command's compilation-unit graph.
+No compilation records were captured; observed/compiled scopes are **null**,
+not zero. Neither set of counts proves actual contributions to training profiles,
+dependency-disjointness, buildability or a performance benefit.
+
+To reproduce from retained inputs, use the pinned rustc-perf checkout and a new
+output path. `capture.json` identifies project/scenario/source/target, exact
+selected root package IDs and the successful metadata command receipt, including
+its declared `filter_platform`. Its tool identities and preparation-only status
+are preserved. Hashes bind supplied bytes; they do not authenticate the receipt's
+execution history.
+
+```powershell
+python .github\scripts\breadth_resolved_audit.py `
+  --manifest ci-benchmark\breadth\corpus.json `
+  --training-audit ci-benchmark\breadth\training-audit.json `
+  --perf <pinned-rustc-perf-checkout> `
+  --lock <pinned-fd-checkout>\Cargo.lock `
+  --metadata <study-root>\input-preparation-20261025\metadata-complete.stdout `
+  --capture <study-root>\input-preparation-20261025\capture.json `
+  --resolved-only --output <new-audit.json>
+```
+
+`--resolved-only` is explicit and produces `resolved-not-observed`; missing
+build evidence never silently becomes successful build evidence. For an eventual
+qualified run, regenerate metadata with the accepted common Cargo and supply
+the corresponding successful build capture rather than reusing these 1.93.0
+input-preparation receipts.
+
+For artifact mode, replace `--resolved-only` with `--messages <Cargo-JSON-stdout>`.
+The capture must additionally contain the matching Cargo command and successful
+exit status, for example:
+
+```json
+"cargo": {
+  "command": ["cargo", "check", "--all-features", "--frozen", "--message-format=json", "--target", "x86_64-pc-windows-msvc"],
+  "exit_code": 0
+}
+```
+
+Record the actual scenario/project argument order. The metadata receipt needs
+its `command`, `exit_code: 0` and declared `filter_platform`; preserve tool versions
+and hashes too. Optional receipt source revision, lock hash, source status and
+stdout hash are checked when supplied. Fresh artifacts are not new compilations,
+and a package can have both fresh and newly compiled targets in the same capture.
+
 ## Smoke harness and validation
 
 [`breadth_probe.py`](../../.github/scripts/breadth_probe.py) is a **single-cell,
@@ -144,7 +251,10 @@ python -m unittest test_breadth -v
 The tests cover no-op artifact semantics, failed/missing Cargo completion,
 lock identity distinctions, full/edit cache rejection, source restoration after
 failure, correctness failure, existing target/output rejection and environment
-overrides. A real local Windows smoke runs two tiny Python processes and verifies
+overrides. Resolved-audit tests additionally cover selected-root reachability,
+registry/Git/path identities, pinned training blobs, capture provenance and
+resolved-only versus observed/fresh/compiled scopes. A real local Windows smoke
+runs two tiny Python processes and verifies
 that the 64 MiB command's peak is not carried into the next fresh Job.
 No Rust project was built: Rust/Cargo were unavailable on PATH. These tests
 validate harness behavior, **not** the proposed corpus's Windows buildability.
@@ -154,6 +264,8 @@ order/environment-control tests. A separate persisted meter smoke observed
 commands respectively; these values are diagnostic meter evidence, not Rust
 performance. A second complete audit reproduced byte-identical JSON
 (`efba3b3c321c86b279a0844cd0745eece22da1d0e33d3c8f7f5243d1a1074d9b`).
+On 25 October, the extended breadth suite and existing native probe suite passed
+all **36 tests** together (`python -m unittest test_breadth test_native_ci_probe -v`).
 
 Before a coordinated smoke, prepare offline dependencies **outside timing** in
 a dedicated per-study Cargo home. With a vetted direct Cargo executable:
@@ -172,7 +284,23 @@ their SHA-256 manifest. Preserve `.cargo` configuration files and ensure inherit
 user/ancestor config does not silently inject flags. Verify all frozen scenario
 commands offline during a pilot; `fetch` success is not that verification.
 No fetch, tool installation or artifact extraction belongs inside measurement.
-The local proposal did **not** execute these preparation commands.
+The initial proposal did **not** execute these preparation commands. On
+25 October, fd's exact pinned lock was fetched into a dedicated study Cargo home
+and `metadata --locked --offline --format-version 1 --filter-platform
+x86_64-pc-windows-msvc --all-features` completed with the source and lock unchanged.
+Existing ARM64 Cargo/rustc 1.93.0 were used for this **input preparation only**;
+they are not the study's x64 Rust 1.94.1 compilers. No workload was built or tested.
+The first offline attempt failed on missing `anyhow`; a target-filtered fetch
+then still left metadata needing `windows_aarch64_msvc 0.48.5`. An unfiltered
+`fetch --locked` supplied the remaining manifests and the offline retry passed.
+Both failed attempts are retained, not discarded. Thus target-filtered fetch
+success alone must not be treated as complete metadata preparation.
+Alacritty and Nushell have not yet received the equivalent preparation.
+[`fd-input-preparation.json`](fd-input-preparation.json) pins the exact commands,
+tool/executable identities, metadata hash and the 113 cached crate archives'
+34,203,510-byte input inventory hash. All archives were matched against the exact
+`Cargo.lock` checksums, with none missing or extra. Raw receipts, metadata and archive hashes
+are retained under the recorded local study root, not remotely published.
 
 Example single-cell invocation after qualified-artifact selection and coordination:
 
@@ -200,15 +328,17 @@ doctests. Normal test binaries use the explicitly selected rustc.
 
 ## Proposed interpretation and next bounded execution
 
-Maintainer decisions, the causal comparison and reviewed static-LLVM repair are
-still prerequisites. Runtime/code-size benchmarks and all regression thresholds
+Maintainer decisions, accepted candidate artifacts and reviewed static-LLVM repair
+are still prerequisites. The historical causal comparison is complete but is not
+automatic qualification of the current source or this corpus.
+Runtime/code-size benchmarks and all regression thresholds
 require explicit agreement; **no numeric acceptance thresholds are invented**.
 Exact treated components and PGO configuration must be explicit: newer opt-dist
 can also treat tools, so “PGO candidate” is not sufficiently precise.
 
 1. Agree these roots/versions/features, overlap policy and correctness scope.
    Decide semantic-edit, runtime, binary-size and compatibility cases separately.
-2. After a successful causal run and repair qualification, pin actual official,
+2. After candidate selection and repair qualification, pin actual official,
    same-revision control and candidate distributions, profiles and provenance;
    validate common Cargo/std and native tooling. Preserve failed attempts.
 3. Prepare/freeze dependency inputs and reconcile target-resolved overlap.

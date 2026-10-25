@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "status": "input-preparation-only-not-qualification",
+  "date": "2026-10-25",
+  "project": "fd",
+  "revision": "b19136871310b01500b4f09eadd7387b8476be47",
+  "lock_sha256": "dbe6158dbf001a489a53617a531d11dbee22daed2529f87790547ee65d1018d4",
+  "source_status": "clean",
+  "target_filter": "x86_64-pc-windows-msvc",
+  "features": "all-features",
+  "tools": {
+    "host": "aarch64-pc-windows-msvc",
+    "rustc_version": "1.93.0",
+    "rustc_commit": "254b59607d4417e9dffbc307138ae5c86280fe4c",
+    "cargo_version": "1.93.0 (083ac5135 2025-12-15)",
+    "rustc_exe_sha256": "884e28f246788d411f79221b64daa236a40071afad1ad54c130060bba2030408",
+    "cargo_exe_sha256": "a261b3e3a6816ed9ea88fce8cc1ea2c98cc0a1dcf7e94dd80dc40083ad780876"
+  },
+  "attempts": [
+    {
+      "command": ["metadata", "--format-version", "1", "--locked", "--offline", "--filter-platform", "x86_64-pc-windows-msvc", "--all-features"],
+      "exit_code": 101,
+      "failure": "missing anyhow in isolated Cargo home"
+    },
+    {
+      "command": ["fetch", "--locked", "--target", "x86_64-pc-windows-msvc"],
+      "exit_code": 0
+    },
+    {
+      "command": ["metadata", "--format-version", "1", "--locked", "--offline", "--filter-platform", "x86_64-pc-windows-msvc", "--all-features"],
+      "exit_code": 101,
+      "failure": "offline metadata still needed windows_aarch64_msvc 0.48.5"
+    },
+    {
+      "command": ["fetch", "--locked"],
+      "exit_code": 0
+    },
+    {
+      "command": ["metadata", "--format-version", "1", "--locked", "--offline", "--filter-platform", "x86_64-pc-windows-msvc", "--all-features"],
+      "exit_code": 0
+    }
+  ],
+  "retained_evidence": {
+    "study_root": "D:\\copilot\\.work\\rust-followups\\64766704",
+    "directory": "input-preparation-20261025",
+    "metadata_file": "metadata-complete.stdout",
+    "metadata_sha256": "59188f4856520b40098c9b43aa5ebad9a926ead5fc383725b10b88b0503ba3cd",
+    "input_manifest_file": "input-manifest.json",
+    "input_manifest_sha256": "d12b73230060041d4ea771523cec99f8ede3eb7e9c53373a49ce951820348f59",
+    "cached_crate_archives": 113,
+    "cached_crate_bytes": 34203510,
+    "archive_integrity": "all 113 registry archives match exact Cargo.lock checksums; none missing or extra"
+  },
+  "resolved_audit": {
+    "file": "input-preparation-20261025\\fd-resolved-audit.json",
+    "sha256": "925fc42756c31ecd784dcdbe2457d9ed11e63bbba928d0b74abfd3dcbc097081",
+    "observation_status": "resolved-not-observed",
+    "selected_root_reachable_packages_including_root": 73,
+    "exact_llvm_fixture_lock_reuse": 33,
+    "exact_rustc_fixture_lock_reuse": 24,
+    "observed_artifacts": null,
+    "compiled_artifacts": null,
+    "scope": "platform-filtered selected-root graph reachability; dev edges and workspace feature unification may overapproximate the actual command; not a compilation-unit graph or executed training evidence"
+  },
+  "limits": [
+    "Metadata inputs only; no build, test, source-edit pilot, compiler comparison or runtime/code-size measurement.",
+    "Preparation tools differ from the study's required Rust 1.94.1 x64 compiler; regenerate with accepted common Cargo before qualification.",
+    "Cargo metadata's package inventory is not the selected root's compiled closure; use graph reachability and actual compiler-artifact records separately.",
+    "No training-dependency disjointness or actual training profile contribution is established.",
+    "Evidence and cache are retained locally, not published as a remotely retrievable bundle."
+  ]
+}

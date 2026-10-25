@@ -1,0 +1,405 @@
+{
+  "schema": 1,
+  "study": "64766704-current-candidate-windows-breadth-pilot",
+  "status": "candidate-only-non-qualifying-pilot-not-measured",
+  "training": {
+    "rust_sha": "4da678aada4683607acbd67a8da37a320c791f93",
+    "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+    "rustc_perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
+    "rustc_profiles": [
+      "Check",
+      "Debug",
+      "Opt"
+    ],
+    "rustc_scenarios": [
+      "All"
+    ],
+    "llvm_profiles": [
+      "Debug",
+      "Opt"
+    ],
+    "llvm_scenarios": [
+      "Full"
+    ],
+    "selector_url": "https://github.com/rust-lang/rust/blob/4da678aada4683607acbd67a8da37a320c791f93/src/build_helper/src/lib.rs",
+    "driver_url": "https://github.com/rust-lang/rust/blob/4da678aada4683607acbd67a8da37a320c791f93/src/tools/opt-dist/src/training.rs",
+    "selector_source_sha256": "8bcafc31ea5402efaa25aecaee6172b46d51e58678552c38149b2d621d3d2059",
+    "driver_source_sha256": "d0ce5ca3a6c48b14e39dcd54527873fc82f2ac132c8f238f01a257628bba35a6",
+    "selector_constants": {
+      "llvm": "BACKEND_PGO_CRATES",
+      "rustc": "RUSTC_PGO_CRATES"
+    },
+    "additional_tool_pgo": {
+      "rustdoc": {
+        "selector_constant": "RUSTC_PGO_CRATES",
+        "profiles": [
+          "Doc"
+        ],
+        "scenarios": [
+          "Full"
+        ]
+      },
+      "clippy": {
+        "selector_constant": "RUSTC_PGO_CRATES",
+        "profiles": [
+          "Clippy"
+        ],
+        "scenarios": [
+          "All"
+        ]
+      },
+      "cranelift": {
+        "selector_constant": "BACKEND_PGO_CRATES",
+        "profiles": [
+          "Debug"
+        ],
+        "scenarios": [
+          "Full"
+        ],
+        "backends": [
+          "Cranelift"
+        ]
+      }
+    },
+    "selector_scope": "LLVM and Cranelift share the backend list; rustc, rustdoc and Clippy share the frontend list. All five profile files are present in the completed custom-runner evidence. Two audit phase keys retain the existing llvm/rustc schema and describe shared selector membership, not exclusive per-tool execution.",
+    "selectors_reused_from_prior_audit": true,
+    "selector_reuse_basis": {
+      "prior_rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+      "prior_rustc_perf_sha": "c0301bc44d175b9b2c5442b25049475c39d7700c",
+      "note": "Ordered selector lists are identical; fixture bytes and lock identities are independently refreshed at the new rustc-perf revision."
+    },
+    "fixture_lock_migration": {
+      "fixture": "token-stream-stress",
+      "path": "collector/compile-benchmarks/token-stream-stress/Cargo.lock",
+      "patch": {
+        "file": "training-fixture.patch",
+        "sha256": "46d8947b2f2194e6d96982a58309bbcfd6277c8faef9e63714a5c4dedf974b67"
+      },
+      "record": {
+        "file": "training-lockfile-migration.json",
+        "sha256": "63d9abb3e660a451294596996adcb2516eaa5733afb86350926c8b738e570332"
+      },
+      "before_sha256": "c864cd5fdc21e47859509310232355c775d3c98b9eeba171a37842518f702178",
+      "after_sha256": "af3d36ba060cad6b5a1c8ce2a8f311d8885d6347cbd64ff8b518e3d932f61196",
+      "package_graph_unchanged": true,
+      "package_records_independently_verified_equal": true,
+      "package_count": 1,
+      "change": "Only top-level Cargo lock format version=4 and whitespace; package records, including dependencies, are identical.",
+      "audit_lock_policy": "Fixture lock_sha256 pins the pristine git blob for reproducibility and resolved-audit compatibility. Actual training used the separately pinned migrated bytes; identical parsed package records yield identical intersections."
+    }
+  },
+  "host": "x86_64-pc-windows-msvc",
+  "rust_version": "1.101.0-nightly",
+  "cores": 16,
+  "projects": [
+    {
+      "id": "fd",
+      "repository": "https://github.com/sharkdp/fd.git",
+      "tag": "v10.2.0",
+      "revision": "b19136871310b01500b4f09eadd7387b8476be47",
+      "lock_sha256": "dbe6158dbf001a489a53617a531d11dbee22daed2529f87790547ee65d1018d4",
+      "selected_packages": [
+        "fd-find"
+      ],
+      "cargo_args": [
+        "--all-features"
+      ],
+      "source_edit": "src/main.rs",
+      "roles": [
+        "Windows CLI",
+        "clap derive consumer",
+        "release fat LTO and one codegen unit"
+      ],
+      "correctness": [
+        [
+          "test",
+          "--all-features"
+        ],
+        [
+          "test",
+          "--all-features",
+          "--release"
+        ]
+      ],
+      "correctness_basis": "Pinned CICD.yml MSRV test uses --all-features; candidate-only pilot retains the same unfiltered debug/release tests on the exact candidate compiler. Not Windows 7 compatibility validation.",
+      "profile_note": "Preserve upstream release lto=true, strip=true, codegen-units=1; these are workload settings, not compiler production changes."
+    },
+    {
+      "id": "alacritty",
+      "repository": "https://github.com/alacritty/alacritty.git",
+      "tag": "v0.15.1",
+      "revision": "0c405d53e74ace2980fc5e6c6d5b710c144bc075",
+      "lock_sha256": "b2c51114f460c4a45fe77d0f84be8f559e931f9893a7f9de7ad2708332a42bac",
+      "selected_packages": [
+        "alacritty",
+        "alacritty_terminal",
+        "alacritty_config",
+        "alacritty_config_derive"
+      ],
+      "cargo_args": [
+        "--workspace"
+      ],
+      "source_edit": "alacritty/src/main.rs",
+      "roles": [
+        "Windows desktop",
+        "local proc-macro producer and consumer",
+        "graphics/terminal codegen"
+      ],
+      "correctness": [
+        [
+          "test",
+          "--workspace"
+        ],
+        [
+          "test",
+          "-p",
+          "alacritty_terminal",
+          "--no-default-features"
+        ],
+        [
+          "test",
+          "--workspace",
+          "--release"
+        ]
+      ],
+      "correctness_basis": "Pinned ci.yml Windows stable cargo test and terminal no-default-features test, plus proposed release tests. No GUI/display/input runtime test is implied.",
+      "profile_note": "Preserve upstream release lto=thin and debug=1; full scenario CARGO_INCREMENTAL=0 agrees with upstream release incremental=false."
+    },
+    {
+      "id": "nushell",
+      "repository": "https://github.com/nushell/nushell.git",
+      "tag": "0.103.0",
+      "revision": "c98642647878b4f66fb7e38388a3973071b0e27b",
+      "lock_sha256": "8d741b5c8d78b2ecf7584fd4f99a17b4854b4368e2a33a2fd06c6cd51ece0876",
+      "selected_packages": [
+        "nu-parser"
+      ],
+      "cargo_args": [
+        "-p",
+        "nu-parser"
+      ],
+      "source_edit": "crates/nu-parser/src/lib.rs",
+      "roles": [
+        "Windows shell ecosystem",
+        "large parser and protocol types",
+        "rstest proc-macro correctness suite"
+      ],
+      "correctness": [
+        [
+          "test",
+          "-p",
+          "nu-parser"
+        ],
+        [
+          "test",
+          "-p",
+          "nu-parser",
+          "--release"
+        ]
+      ],
+      "correctness_basis": "All tests and doctests of the selected package, unfiltered. Deliberately not the full Nushell product or plugin/interactive correctness suite.",
+      "profile_note": "Preserve checked-in workspace profiles; default package features, no plugin feature added."
+    }
+  ],
+  "reserves": [
+    {
+      "id": "windows-rs",
+      "repository": "https://github.com/microsoft/windows-rs.git",
+      "tag": "0.61.0",
+      "revision": "5888c8c472ab9b35c3159c2912bb045dc3020a82",
+      "selected_packages": [
+        "windows-core",
+        "windows-implement",
+        "windows-interface"
+      ],
+      "blocked": "No committed root Cargo.lock; sparse inspection only. Requires agreed package/features, complete checkout, generated frozen lock and refreshed overlap audit before inclusion."
+    },
+    {
+      "id": "image",
+      "repository": "https://github.com/image-rs/image.git",
+      "tag": "v0.25.6",
+      "revision": "f337e27aadaae8b86484429bc6020fef8a019c95",
+      "selected_packages": [
+        "image"
+      ],
+      "blocked": "No committed root Cargo.lock. Codec codegen/runtime reserve only; requires frozen dependency resolution, Windows pilot and agreed test inputs before inclusion."
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "full-check",
+      "mode": "full",
+      "cargo_command": [
+        "check"
+      ],
+      "incremental": "0",
+      "family": "full-check"
+    },
+    {
+      "id": "full-debug",
+      "mode": "full",
+      "cargo_command": [
+        "build"
+      ],
+      "incremental": "0",
+      "family": "full-debug"
+    },
+    {
+      "id": "full-release",
+      "mode": "full",
+      "cargo_command": [
+        "build",
+        "--release"
+      ],
+      "incremental": "0",
+      "family": "full-release"
+    },
+    {
+      "id": "incremental-noop",
+      "mode": "noop",
+      "cargo_command": [
+        "build"
+      ],
+      "incremental": "1",
+      "family": "incremental-noop"
+    },
+    {
+      "id": "incremental-comment-edit",
+      "mode": "edit",
+      "cargo_command": [
+        "build"
+      ],
+      "incremental": "1",
+      "family": "incremental-comment-edit"
+    }
+  ],
+  "measurement": {
+    "cold_definition": "Empty unique target directory, not an OS page-cache flush. No network in timed commands.",
+    "incremental_definition": "Fresh unique target seeded by the identical compiler, environment and command outside timing. No-op expects zero rebuilt artifacts; comment edit expects at least one. Neither is a semantic-edit or compiler-cache-hit guarantee.",
+    "edit": "Append one Rust comment to the exact tracked source_edit file; restore original bytes in finally. Baseline revision/clean tree and lock hash are required before and after.",
+    "cpu": "Total command process-tree CPU, including Cargo, rustc, linker and build scripts; not rustc-only CPU.",
+    "memory": "Fresh Windows Job Object per command: peak aggregate committed Job memory and largest process committed-memory peak. Not RSS, not sum of process peaks. Existing shared-session peaks are cumulative and cannot be differenced.",
+    "runtime": "Unfiltered selected correctness commands are outside the compile clock. Runtime throughput/latency and output code size are not implemented or measured here."
+  },
+  "proposed_design": {
+    "approval": "User authorized remaining candidate-only breadth validation from completed custom-runner artifacts. No performance comparison or broad qualification approved.",
+    "variants": [
+      "current-candidate"
+    ],
+    "pilot": "fd only on MARCPE-TEST01-X64 custom runner, one round, full-check plus both incremental scenarios, existing run_scenario unfiltered debug/release correctness outside timing. Sixteen worker/affinity slots make this a diagnostic, not a comparison with historical standard four-core VM measurements. This manifest does not assert artifact capture or execution.",
+    "runner": "MARCPE-TEST01-X64",
+    "runner_class": "custom-x64-not-standard-hosted",
+    "worker_slots": 16,
+    "affinity_slots": 16,
+    "pilot_project": "fd",
+    "pilot_scenarios": [
+      "full-check",
+      "incremental-noop",
+      "incremental-comment-edit"
+    ],
+    "measured_rounds": 1,
+    "independent_runner_instances": 1,
+    "approved_comparisons": [],
+    "aggregation": "None. Candidate-only smoke/pilot rows cannot estimate compiler speedup or qualify the held-out suite.",
+    "retained_roots": "All three original validation roots and both reserves remain pinned for a representative lock audit. Only fd is selected for the initial pilot; other roots are not claimed measured."
+  },
+  "blockers": [
+    "The three retained compiler/Cargo/std archives are pinned from dist-manifest.json; actual remote archive bytes, candidate rustc -vV, Cargo/std identity and extracted-tool hashes still require verification/capture.",
+    "No candidate fd metadata, build-artifact messages, correctness runs or full/incremental pilot rows have been captured here.",
+    "Existing fd metadata used ARM64 Rust/Cargo 1.93.0 to prepare an x64-filtered graph only; reprocessing it does not qualify the 1.101.0-nightly candidate or establish observed compilation.",
+    "The local static-LLVM helper prerequisite remains part of this candidate's identity; custom-runner success does not establish unpatched upstream or standard-hosted feasibility.",
+    "No matched current-revision control/official comparison or common Cargo/std/native-tool pairing is approved by this pilot manifest.",
+    "Root holdout is not dependency disjointness. Lock intersections include unused/dev/non-Windows dependencies; shared selectors do not prove package contributions to any of the five PGO profiles.",
+    "Alacritty/Nushell still require active-target offline preparation and pilot validation; windows-rs/image reserves lack pinned root lockfiles.",
+    "Maintainer agreement on broad suite, overlap policy, runtime/size cases, release cost, compatibility and thresholds remains outstanding."
+  ],
+  "candidate_evidence": {
+    "run_id": "40170434889",
+    "attempt": "1",
+    "receipt": {
+      "file": "result.json",
+      "sha256": "9cca3f391cc4307a7c06a2d9fc648f6992296c79b85bbc52bc36667d60f7a7b9"
+    },
+    "runner": "MARCPE-TEST01-X64",
+    "runner_class": "custom-x64-not-standard-hosted",
+    "complete": true,
+    "scope": "Current PR plus exact local prerequisite; full fresh windows-ci pipeline, not a timing comparison",
+    "upstream_distribution_tests": "Unmodified upstream extracted-distribution tests passed in the full pipeline",
+    "local_helper_patch_sha256": "53364984309444cb355762cbda91a8fecba755b9c5a8fb77df3e5ec4a03ddad5",
+    "original_input_patch": {
+      "path": "ci-benchmark/bootstrap-clang-runtime.patch",
+      "harness_revision_prefix": "adfdd487",
+      "sha256": "53364984309444cb355762cbda91a8fecba755b9c5a8fb77df3e5ec4a03ddad5",
+      "verification": "Parent verified original harness patch bytes from GitHub against result.patch_sha256."
+    },
+    "local_helper_patch": {
+      "file": "tested-source.patch",
+      "sha256": "9e1ed420763c8fb5724c532984384aad97c1c14334a8bb72995e72ccf52db088"
+    },
+    "local_helper_patch_verification": {
+      "effective_helper_git_blob_verified": "6aa5fc0bf36a9de34e4ae88ec7da4aef333273f6",
+      "status": "resolved-distinct-patch-representations",
+      "note": "result.patch_sha256 identifies the original harness input patch; tested-source.patch is the generated applied git diff and has its own SHA-256. The generated diff reproduces fixed_helper_git_blob. Distinct patch representations explain the different digests; this is not a candidate validity blocker."
+    },
+    "fixed_helper_git_blob": "6aa5fc0bf36a9de34e4ae88ec7da4aef333273f6",
+    "test_module_git_blob": "e0e2c487db4c5445f033409de4e774b41c22a26e",
+    "fresh_profiles": {
+      "rustc": {
+        "sha256": "4ec2e78c722c9967d367e3a8d95c78e6f74d0acf0c98b4de631af43bf8ec38c2",
+        "bytes": 56496888
+      },
+      "rustdoc": {
+        "sha256": "d1cae078d0410692ddf2d60e0104a9dff8d17df66721eef280164d7df01a4c81",
+        "bytes": 60573272
+      },
+      "clippy": {
+        "sha256": "5ae935dddceb48f7c53e5622f4e7d1bfaf39f7306749e297b188399eb909c14e",
+        "bytes": 62711392
+      },
+      "cranelift": {
+        "sha256": "fc6d8db0d560b6fb9ce98a3078573a7576684486bda18aa880d494ebecbaf0eb",
+        "bytes": 61650120
+      },
+      "llvm": {
+        "sha256": "37a69d1e0a186b2ccdccc816d6f739cfce266dd848035fc98d72dd3f1f2fe53d",
+        "bytes": 54575792
+      }
+    },
+    "profile_receipts_verified_locally": true,
+    "distribution": {
+      "receipt": {
+        "file": "dist-manifest.json",
+        "sha256": "7eedc3fffe083bd45468f6b1bf50751ffa396be36116e28bb0d47b85096fe914"
+      },
+      "retained_remote_directory": "D:\\v704348891\\r\\build\\dist",
+      "archives": [
+        {
+          "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10035004,
+          "sha256": "8e217e0e6de5670f56179f9e337d046eda477c5945fb96d0c4240f4773169526"
+        },
+        {
+          "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24566668,
+          "sha256": "04a78982d7715f31f19eedde4b784ded080f776b660f23df8f85a5fe108edbc2"
+        },
+        {
+          "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 93144184,
+          "sha256": "f32a5a7bce18cfaf5e80eca1418b42b17387d1067741e5c7db14d34df474cb8f"
+        }
+      ],
+      "verification": "Receipt-pinned retained archives; remote pilot must verify bytes before installation and capture installed compiler/Cargo/std identities."
+    },
+    "version_provenance": {
+      "url": "https://github.com/rust-lang/rust/blob/4da678aada4683607acbd67a8da37a320c791f93/src/version",
+      "source_sha256": "f5e4ace3ef5df22e892ed5e7e0b0ebc5b6b2bdf20a73305258e645df9ccec6fc",
+      "source_version": "1.101.0",
+      "configuration_channel": "nightly",
+      "expected_rustc_vv_release": "1.101.0-nightly",
+      "binary_rustc_vv_captured": false,
+      "note": "Release value derived from exact source plus run configuration, not an executed binary receipt. Remote pilot must verify rustc -vV."
+    },
+    "qualification_boundary": "Authorizes candidate-only breadth preparation/pilot from completed custom-runner artifacts, not a same-revision comparison, hosted feasibility result, release decision or broad qualification."
+  }
+}

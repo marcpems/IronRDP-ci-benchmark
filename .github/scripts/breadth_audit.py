@@ -19,8 +19,17 @@ def sha256(data):
 
 def selectors(source):
     result = {}
-    for phase, constant in (("llvm", "LLVM_PGO_CRATES"), ("rustc", "RUSTC_PGO_CRATES")):
-        match = re.search(rf"pub const {constant}:.*?= &\[(.*?)\];", source, re.S)
+    for phase, constants in (("llvm", ("LLVM_PGO_CRATES", "BACKEND_PGO_CRATES")),
+                             ("rustc", ("RUSTC_PGO_CRATES",))):
+        declared = [
+            constant for constant in constants
+            for _ in re.finditer(rf"pub const {constant}\s*:", source)
+        ]
+        if len(declared) != 1:
+            problem = "missing" if not declared else "ambiguous"
+            raise ValueError(f"{problem} training selector for {phase}: {constants}")
+        constant = declared[0]
+        match = re.search(rf"pub const {constant}\s*:[^;=]*=\s*&\[(.*?)\];", source, re.S)
         if not match:
             raise ValueError(f"missing training selector {constant}")
         result[phase] = re.findall(r'"([^"]+)"', match[1])

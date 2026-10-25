@@ -76,24 +76,27 @@ def metered(command, source, env, cores, prefix, background):
 
 
 def run_scenario(source, output, project, scenario, cargo, compiler, env, cores,
-                 background=(), identity=None):
+                 background=(), identity=None, target=None):
     if scenario["mode"] not in ("full", "noop", "edit"):
         raise ValueError("unknown scenario mode")
     if source == output or source in output.parents:
         raise ValueError("output must be outside the source tree")
     input_identity = verify_source(source, project)
     output.mkdir(exist_ok=False, parents=True)
-    target = output / "target"
-    if target.exists():
+    target_directory = output / "target"
+    if target_directory.exists():
         raise ValueError("scenario requires a fresh target")
     command = [str(cargo), *scenario["cargo_command"], *project["cargo_args"],
                "--frozen", "--message-format=json"]
-    child_env = {**env, "CARGO_TARGET_DIR": str(target)}
+    target_args = ["--target", target] if target else []
+    command.extend(target_args)
+    child_env = {**env, "CARGO_TARGET_DIR": str(target_directory)}
     result = {
         "schema": 1, "status": "non-qualifying-smoke", "project": project["id"],
         "scenario": scenario, "source_revision": project["revision"],
         "lock_sha256": project["lock_sha256"], "git_index_sha256": input_identity,
-        "compiler": str(compiler), "cargo": str(cargo), "setup": [], "correctness": [],
+        "compiler": str(compiler), "cargo": str(cargo), "target": target,
+        "setup": [], "correctness": [],
         "tool_identity": identity or {},
         "environment": {key: env.get(key) for key in (
             "CARGO_INCREMENTAL", "CARGO_NET_OFFLINE", "CARGO_BUILD_JOBS",
@@ -122,7 +125,7 @@ def run_scenario(source, output, project, scenario, cargo, compiler, env, cores,
                                    scenario["mode"]))
         result["measurement"] = row
         for index, args in enumerate(project["correctness"]):
-            check = metered([str(cargo), *args, "--frozen"], source,
+            check = metered([str(cargo), *args, "--frozen", *target_args], source,
                             {**env, "CARGO_TARGET_DIR": str(output / "correctness-target")},
                             cores, output / f"correctness-{index}", background)
             result["correctness"].append(check)

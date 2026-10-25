@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "role": "candidate-only correctness and harness pilot; not a matched performance comparator",
+  "run_id": "40170434889",
+  "attempt": "1",
+  "repository": "marcpems/IronRDP-ci-benchmark",
+  "source_revision": "4da678aada4683607acbd67a8da37a320c791f93",
+  "source_patch_sha256": "53364984309444cb355762cbda91a8fecba755b9c5a8fb77df3e5ec4a03ddad5",
+  "llvm_revision": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+  "rustc_perf_revision": "208d929efe770996eb02cd3d2712623ea48b7646",
+  "host": "x86_64-pc-windows-msvc",
+  "runner": "MARCPE-TEST01-X64",
+  "logical_processors": 16,
+  "result_sha256": "9cca3f391cc4307a7c06a2d9fc648f6992296c79b85bbc52bc36667d60f7a7b9",
+  "dist_manifest_sha256": "7eedc3fffe083bd45468f6b1bf50751ffa396be36116e28bb0d47b85096fe914",
+  "distribution_artifact": {
+    "id": 12594860714,
+    "name": "pr164707-qualified-distribution",
+    "sha256": "1e448c4acf40d73064cb7fc6a7c43c78b68f784ffa98392b738c5be9b253f553"
+  },
+  "components": [
+    {
+      "component": "rustc",
+      "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+      "bytes": 93144184,
+      "sha256": "f32a5a7bce18cfaf5e80eca1418b42b17387d1067741e5c7db14d34df474cb8f"
+    },
+    {
+      "component": "cargo",
+      "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+      "bytes": 10035004,
+      "sha256": "8e217e0e6de5670f56179f9e337d046eda477c5945fb96d0c4240f4773169526"
+    },
+    {
+      "component": "rust-std",
+      "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+      "bytes": 24566668,
+      "sha256": "04a78982d7715f31f19eedde4b784ded080f776b660f23df8f85a5fe108edbc2"
+    }
+  ],
+  "pilot_scenarios": ["full-check", "incremental-noop", "incremental-comment-edit"],
+  "control": null,
+  "official_comparator": null,
+  "limits": [
+    "Use candidate-built Cargo, rustdoc and std for candidate correctness only; not a common-tool matched comparison.",
+    "The newer candidate also trains rustdoc, clippy and Cranelift; historical LLVM-only treatment claims do not apply.",
+    "Original retained build directories are read-only inputs; install archives into fresh pilot-owned paths.",
+    "No runtime-speed, code-size, multi-VM confidence interval or shipping qualification is implied."
+  ]
+}

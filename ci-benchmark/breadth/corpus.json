@@ -107,10 +107,10 @@
   },
   "blockers": [
     "Maintainers have not agreed the suite, overlap policy, runtime/size cases or thresholds.",
-    "Causal profile-only comparison is not qualified. Failed run 39584578532 cannot supply accepted candidates; any replacement must independently qualify.",
+    "The historical profile-only IronRDP comparison is qualified, but does not automatically qualify the current upstream candidate or this held-out suite. Failed run 39584578532 remains ineligible.",
     "Static-LLVM repair review/landing prerequisite remains open.",
     "Exact candidate/control/official archive, profile, provenance, common Cargo/std and native tool hashes must be pinned after successful qualification.",
-    "No local Rust/Cargo executable was available on PATH; no real project build/test, offline dependency completeness or source-edit pilot has been run.",
+    "fd offline x64-filtered Cargo metadata was captured using existing ARM64 Rust/Cargo 1.93.0 as input preparation only. No study-version compiler, real project build/test or source-edit pilot has been qualified; the other roots still need offline preparation.",
     "Lock audit is conservative; active Windows feature/target dependency closure and executed training reuse need metadata/artifact or training-log reconciliation.",
     "Release-cost, compatibility, runtime performance and code-size gates require independent explicit maintainer decisions."
   ]
