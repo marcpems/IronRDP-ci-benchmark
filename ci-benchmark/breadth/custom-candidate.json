@@ -38,7 +38,7 @@
       "sha256": "04a78982d7715f31f19eedde4b784ded080f776b660f23df8f85a5fe108edbc2"
     }
   ],
-  "pilot_scenarios": ["full-check", "incremental-noop", "incremental-comment-edit"],
+  "pilot_scenarios": ["full-check", "full-debug", "full-release", "incremental-noop", "incremental-comment-edit"],
   "common_cargo": {
     "version": "1.99.1",
     "name": "cargo-1.99.1-x86_64-pc-windows-msvc.tar.xz",

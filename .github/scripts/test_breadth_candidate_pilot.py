@@ -132,15 +132,24 @@ class CandidatePilotTests(unittest.TestCase):
 
     @unittest.skipUnless(os.name == "nt", "Windows pilot entry point")
     def test_metadata_uses_utf8_and_selected_common_cargo(self):
+        for project_id, cargo_args, package_name in (
+                ("fd", ["--all-features"], "fd-find"),
+                ("alacritty", ["--workspace"], "alacritty"),
+                ("nushell", ["-p", "nu-parser"], "nu-parser")):
+            with self.subTest(project=project_id):
+                self.check_project_metadata(project_id, cargo_args, package_name)
+
+    def check_project_metadata(self, project_id, cargo_args, package_name):
         selection = {**self.selection, "host": "host", "logical_processors": 16,
-                     "pilot_scenarios": [], "common_cargo": {
+                     "pilot_scenarios": ["full-check"], "common_cargo": {
                          "name": "common-cargo.tar.xz", "url": "https://example.invalid/cargo",
                          "sha256": "expected-archive", "version": "1.99.1"}}
         manifest = {"cores": 16, "host": "host", "rust_version": "version",
                     "training": {"rust_sha": "source", "rustc_perf_sha": "perf"},
-                    "projects": [{"id": "fd", "revision": "fd-sha", "lock_sha256": "lock",
-                                  "selected_packages": ["fd-find"]}]}
-        pilot = self.root / "pilot"
+                    "projects": [{"id": project_id, "revision": "project-sha", "lock_sha256": "lock",
+                                  "cargo_args": cargo_args, "selected_packages": [package_name]}],
+                    "scenarios": [{"id": "full-check", "incremental": "0"}]}
+        pilot = self.root / project_id
         (pilot / "e").mkdir(parents=True)
         tools = pilot / "toolchain"
         tools.mkdir()
@@ -152,7 +161,7 @@ class CandidatePilotTests(unittest.TestCase):
             files[name] = self.root / f"{name}.json"
             files[name].write_text(json.dumps(value), encoding="utf-8")
         argv = ["pilot", "--root", str(pilot), "--retained", str(self.root / "retained"),
-                "--perf", str(self.root / "perf")]
+                "--perf", str(self.root / "perf"), "--project", project_id]
         for name, path in files.items():
             argv.extend((f"--{name}", str(path)))
         original_read = Path.read_text
@@ -163,10 +172,17 @@ class CandidatePilotTests(unittest.TestCase):
 
         def logged(command, source, env, prefix):
             if prefix.name == "metadata":
+                self.assertEqual(command[8:], ["--all-features"] if project_id == "fd" else [])
                 prefix.with_suffix(".stdout").write_text(json.dumps(
-                    {"packages": [{"id": "root", "name": "fd-find", "source": None,
+                    {"packages": [{"id": "root", "name": package_name, "source": None,
                                    "description": "\u0141"}]}, ensure_ascii=False), encoding="utf-8")
             return {"command": command, "exit_code": 0}
+
+        def scenario(source, folder, project, *args, **kwargs):
+            self.assertEqual(project["id"], project_id)
+            folder.mkdir()
+            return {"status": "non-qualifying-smoke", "measurement": {
+                "command": ["cargo", "check", *cargo_args], "wall_seconds": 1}, "correctness": []}
 
         with patch.object(sys, "argv", argv), \
                 patch.dict(os.environ, {"RUNNER_NAME": "runner", "RUNNER_ENVIRONMENT": "self-hosted",
@@ -183,6 +199,8 @@ class CandidatePilotTests(unittest.TestCase):
                                    "cargo 1.99.1 (fixture)\n"]), \
                 patch("breadth_candidate_pilot.validate_meter"), \
                 patch("breadth_candidate_pilot.run_logged", side_effect=logged), \
+                patch("breadth_candidate_pilot.run_scenario", side_effect=scenario), \
+                patch("breadth_candidate_pilot.subprocess.run") as audited, \
                 patch("breadth_candidate_pilot.package_inventory", return_value=[]), \
                 patch("breadth_candidate_pilot.telemetry_executables", return_value=[]), \
                 patch.object(Path, "read_text", windows_read):
@@ -192,6 +210,10 @@ class CandidatePilotTests(unittest.TestCase):
         self.assertEqual(installed.call_args.args[0]["cargo"], pilot / "downloads/common-cargo.tar.xz")
         self.assertEqual(json.loads((pilot / "e/pilot.json").read_text())["status"],
                          "passed-candidate-only-pilot-not-comparative-qualification")
+        capture = json.loads((pilot / "e/full-check/capture.json").read_text())
+        self.assertEqual(capture["project"], project_id)
+        self.assertEqual(capture["selected_package_ids"], ["root"])
+        audited.assert_called_once()
 
 
 if __name__ == "__main__":

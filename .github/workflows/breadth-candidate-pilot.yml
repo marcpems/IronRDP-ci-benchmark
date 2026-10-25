@@ -1,4 +1,4 @@
-name: Validate held-out fd with the qualified custom compiler
+name: Validate held-out breadth with the qualified custom compiler
 on:
   push:
     branches: [research/64766704-heldout-breadth]
@@ -17,9 +17,15 @@ jobs:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
     runs-on: [self-hosted, Windows, X64]
     timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        project: [fd, alacritty, nushell]
     env:
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"
+      PILOT_PROJECT: ${{ matrix.project }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -37,8 +43,8 @@ jobs:
             throw 'Unexpected custom pilot runner'
           }
           if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Pilot requires NTFS correctness paths' }
-          if ((Get-Volume -DriveLetter C).SizeRemaining -lt 15GB) { throw 'Insufficient pilot disk capacity' }
-          $root = "C:\bp$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          if ((Get-Volume -DriveLetter C).SizeRemaining -lt 50GB) { throw 'Insufficient pilot disk capacity' }
+          $root = "C:\bp$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT-$env:PILOT_PROJECT"
           if (Test-Path -LiteralPath $root) { throw 'Refusing existing pilot root' }
           New-Item -ItemType Directory "$root\e","$root\temp","$root\hooks" | Out-Null
           "PILOT_ROOT=$root" >> $env:GITHUB_ENV
@@ -58,14 +64,15 @@ jobs:
           $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\harness\.github\scripts"
           python -m unittest test_breadth test_breadth_candidate_pilot test_breadth_selectors -v
           if ($LASTEXITCODE) { throw 'Pilot helper tests failed' }
-      - name: Fetch pinned fd and current training fixtures
+      - name: Fetch pinned project and current training fixtures
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
           $manifest = Get-Content harness\ci-benchmark\breadth\current-candidate-corpus.json -Raw | ConvertFrom-Json
-          $fd = $manifest.projects | Where-Object id -eq fd
+          $project = @($manifest.projects | Where-Object id -eq $env:PILOT_PROJECT)
+          if ($project.Count -ne 1) { throw 'Unknown or ambiguous frozen project' }
           $sources = @(
-            @{Path="$env:PILOT_ROOT\source"; Repo=$fd.repository; Revision=$fd.revision},
+            @{Path="$env:PILOT_ROOT\source"; Repo=$project[0].repository; Revision=$project[0].revision},
             @{Path="$env:PILOT_ROOT\perf"; Repo='https://github.com/rust-lang/rustc-perf.git'; Revision=$manifest.training.rustc_perf_sha}
           )
           foreach ($source in $sources) {
@@ -78,12 +85,12 @@ jobs:
             git -C $source.Path checkout --quiet --detach FETCH_HEAD
             if ($LASTEXITCODE) { throw 'Pinned source checkout failed' }
           }
-      - name: Run offline candidate-only fd pilot and original correctness
+      - name: Run offline candidate-only project scenarios and original correctness
         shell: powershell
         run: |
           harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 `
             -Script harness\.github\scripts\breadth_candidate_pilot.py `
-            --root $env:PILOT_ROOT --retained D:\v704348891 `
+            --root $env:PILOT_ROOT --retained D:\v704348891 --project $env:PILOT_PROJECT `
             --selection harness\ci-benchmark\breadth\custom-candidate.json `
             --manifest harness\ci-benchmark\breadth\current-candidate-corpus.json `
             --training-audit harness\ci-benchmark\breadth\current-candidate-training-audit.json `
@@ -92,7 +99,7 @@ jobs:
         if: always() && env.PILOT_ROOT != ''
         uses: actions/upload-artifact@v6
         with:
-          name: breadth-candidate-pilot
+          name: breadth-candidate-pilot-${{ matrix.project }}
           path: |
             ${{ env.PILOT_ROOT }}/e/**/*.json
             ${{ env.PILOT_ROOT }}/e/**/*.stdout

@@ -18,9 +18,16 @@ the pilot installs fresh copies of the validated components.
 
 The [pilot workflow](../../.github/workflows/breadth-candidate-pilot.yml) uses
 `MARCPE-TEST01-X64`, sixteen logical processors, isolated NTFS source/build/test
-paths and the existing dedicated-runner concurrency guard. It runs only fd
-full-check, incremental no-op and incremental comment-edit. Each cell retains
-the original unfiltered debug/release correctness commands outside measurement.
+paths and the existing dedicated-runner concurrency guard. The initial fd
+full-check, incremental no-op and incremental comment-edit passed in
+[run 40185382041](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40185382041),
+including 125 unit and 88 integration tests in both debug and release per cell.
+The workflow now covers all three frozen projects and all five scenarios below,
+with one project at a time to avoid competing for the shared 16-slot machine.
+Project failures do not cancel the other projects. Each cell retains the original
+unfiltered correctness commands outside measurement; Alacritty additionally runs
+its terminal no-default-features check. Nushell remains `nu-parser` only.
+Each project has a separate fresh root, Cargo cache and named evidence artifact.
 Dependencies are fetched and checksum-verified before offline commands;
 official Cargo 1.99.1 and candidate rustc/rustdoc/standard libraries are explicit
 and hashed. The original attempt using candidate Cargo 1.101 passed full-check
@@ -30,7 +37,8 @@ new build layout in 1.100. The pilot uses pinned official Cargo 1.99.1 rather th
 patching the workload, relocating test binaries or skipping tests. This is an
 explicit common-tool choice, not a hidden fallback or a rustc codegen regression.
 Actual successful Cargo JSON artifacts are reconciled with the current training
-audit. Failures and source-restoration evidence are retained.
+audit. Metadata preserves each project's feature flags rather than enabling
+all workspace features. Failures and source-restoration evidence are retained.
 
 This is **candidate-only correctness and harness validation**, not a paired
 performance study or continuation of the old four-processor timing series.

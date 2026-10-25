@@ -1,4 +1,4 @@
-"""Run the bounded fd pilot from a pinned, already-qualified custom distribution."""
+"""Run one frozen breadth project with a pinned, already-qualified custom distribution."""
 
 import argparse
 import json
@@ -11,6 +11,7 @@ import tarfile
 import tomllib
 
 from breadth_probe import compiler_environment, run_scenario, save, verify_source
+from breadth_resolved_audit import feature_args
 from compiler_probe import validate_meter
 from install_optimized_rust import download
 from native_ci_probe import telemetry_executables
@@ -111,12 +112,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for key in ("root", "retained", "selection", "manifest", "training-audit", "perf"):
         parser.add_argument(f"--{key}", type=Path, required=True)
+    parser.add_argument("--project", default="fd")
     args = parser.parse_args()
     root, source = args.root.resolve(), args.root.resolve() / "source"
     output = root / "e"
     selection = json.loads(args.selection.read_text(encoding="utf-8"))
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
-    project = next(p for p in manifest["projects"] if p["id"] == "fd")
+    projects = [p for p in manifest["projects"] if p["id"] == args.project]
+    if len(projects) != 1:
+        raise ValueError(f"project must identify exactly one frozen manifest entry: {args.project}")
+    project = projects[0]
     if (os.name != "nt" or os.environ.get("RUNNER_NAME") != selection["runner"]
             or os.environ.get("RUNNER_ENVIRONMENT") != "self-hosted"
             or os.cpu_count() != selection["logical_processors"]
@@ -129,7 +134,7 @@ def main():
     output.mkdir(exist_ok=True)
     summary = {"status": "in-progress-non-qualifying-pilot", "selection": selection,
                "run_id": os.environ["GITHUB_RUN_ID"], "attempt": os.environ["GITHUB_RUN_ATTEMPT"],
-               "cores": manifest["cores"], "scenarios": []}
+               "project": project["id"], "cores": manifest["cores"], "scenarios": []}
     try:
         result, archives = checked_candidate(args.retained.resolve(), selection)
         common_cargo = selection.get("common_cargo")
@@ -173,7 +178,7 @@ def main():
         save(output / "package-inventory.json", package_inventory(source, root / "cargo"))
         verify_source(source, project)
         metadata_command = [str(cargo), "metadata", "--format-version", "1", "--locked", "--offline",
-                            "--filter-platform", manifest["host"], "--all-features"]
+                            "--filter-platform", manifest["host"], *feature_args(project["cargo_args"])]
         metadata_receipt = run_logged(metadata_command, source, env, output / "metadata")
         metadata_receipt.update({"filter_platform": manifest["host"],
                                  "source_revision": project["revision"],
@@ -188,7 +193,7 @@ def main():
             folder = output / name
             row = run_scenario(source, folder, project, scenario, cargo, compiler, scenario_env,
                                manifest["cores"], background, identity, target=manifest["host"])
-            capture = {"schema": 1, "project": "fd", "scenario": name,
+            capture = {"schema": 1, "project": project["id"], "scenario": name,
                        "source_revision": project["revision"], "target": manifest["host"],
                        "selected_package_ids": roots, "metadata": metadata_receipt,
                        "cargo": {"command": row["measurement"]["command"], "exit_code": 0}}
