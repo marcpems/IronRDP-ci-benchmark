@@ -114,6 +114,19 @@ class BreadthTests(unittest.TestCase):
         for row in [*result["setup"], result["measurement"], *result["correctness"]]:
             self.assertEqual(row["command"][-2:], ["--target", target])
 
+    def test_paired_measured_cell_can_explicitly_defer_correctness_to_warmup(self):
+        with patch("breadth_probe.verify_source", return_value="index"), \
+                patch("breadth_probe.metered", side_effect=self.fake_meter) as measured:
+            result = run_scenario(
+                self.source, self.root / "output", self.project, self.scenario,
+                Path("cargo"), Path("rustc"), {}, 1, run_correctness=False,
+            )
+        self.assertEqual(result["correctness"], [])
+        self.assertEqual(result["correctness_policy"], "not-run-in-this-cell")
+        self.assertEqual([call.args[4].name for call in measured.call_args_list], ["seed", "measured"])
+        self.assertEqual(result["measurement"]["compiled_artifacts"], 0)
+        self.assertEqual((self.source / "lib.rs").read_bytes(), self.original)
+
     def test_comment_edit_is_restored_even_on_measured_failure(self):
         self.scenario["mode"] = "edit"
 

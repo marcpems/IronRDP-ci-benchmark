@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "study": "64766704-paired-breadth-translation",
+  "hypothesis": "The PGO-improved Rust toolchain that reduced IronRDP build time also reduces wall-clock compilation time across the frozen broader corpus.",
+  "contrast": "Exact IronRDP 1.94.1 toolchain replacement: official shipping base versus qualified local PGO-repair/native-linking test; not PGO-on versus PGO-off or pure profile causality.",
+  "host": "x86_64-pc-windows-msvc",
+  "rust_version": "1.94.1",
+  "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+  "cores": 4,
+  "independent_vms": 5,
+  "warmup_rounds": 1,
+  "measured_rounds": 3,
+  "variants": ["base", "test"],
+  "projects": ["fd", "alacritty", "nushell"],
+  "scenarios": ["full-check", "full-debug", "full-release", "incremental-noop", "incremental-comment-edit"],
+  "corpus_sha256": "d634472b1d1b13568fc0114e4c998b5929b07bd9a000eda216249826b984ad9e",
+  "release_protocol_sha256": "448b953c29576e2911d30b1a8810b2fb7e837f0f9af9d3a6ba7e9f4e8bbcf256",
+  "reference_index_member": "x64-pgo-fresh-replay-1/index.json",
+  "reference_index_sha256": "45484afbf804350af86411197426be470cd9a570e97f4d887f5430a920610055",
+  "rustdoc_sha256": "690a67b29a1e495f129331187ec879d24ab7138be0645f66f03b6cf7c6f6514f",
+  "rustdoc_pin_basis": "New explicit hash from the verified official 1.94.1 rustc archive whose rustc/driver match the historical baseline; historical replay indexes did not record rustdoc hashes.",
+  "compiler_pins": {
+    "base": {
+      "rustc_sha256": "21256c9767416cbc70120e7987449c6cc5a66e3e9f843d05392ee4fd5e617261",
+      "driver_sha256": {
+        "rustc_driver-0dc43f0c45b6ecb3.dll": "5c8db70956191848b46f571c9cbed4beb7ed9a6174941fd6c2c89490c4bcf079"
+      }
+    },
+    "test": {
+      "rustc_sha256": "b5ee2a2b9bdab9b5f15c05c63918987aee2372cc68e9b5e283778837ac06ce6a",
+      "driver_sha256": {
+        "rustc_driver-bb41a76dc7d4e9cb.dll": "1fb32dc4eba6b2566bc5bc127245ea4e48197216bdafbe9ba0f082e0fc874be6"
+      }
+    }
+  },
+  "artifact_source": {
+    "run_id": "39506872211",
+    "name": "fresh-compiler-inputs",
+    "id": 12303397508,
+    "sha256": "7f6056412a5f9ec5754562f596f33e10e7b4405bd5d00f331dcb0a8afe8d993c",
+    "release_run": "39456859889"
+  },
+  "measurement": {
+    "pairing": "round, scenario, adjacent base/test variants; native_ci_probe.paired_order by replicate and round",
+    "machine_scope": "Five independent windows-2025 jobs per project; different projects do not share machines. Both variants and all scenarios run on each project's machine.",
+    "cold": "Unique empty target directory for every cell, not an OS page-cache flush. Cargo fetch and metadata outside timing.",
+    "incremental": "Fresh target seeded by that variant outside timing; no-op and comment-only edit are separate endpoints.",
+    "correctness": "Every original command, unfiltered, for each variant/scenario in the warmup round outside timing. Measured rows link to their exact successful warmup evidence; no tests are claimed for those rows.",
+    "cleanup": "Only each successful cell's target and correctness-target directories, after evidence/source verification and outside timing. Retain all result/log files and failed evidence.",
+    "profiles": "Preserve workload profiles/features; common official Cargo/rustdoc/std, offline frozen inputs, four workers and four-CPU affinity.",
+    "memory_cpu": "Whole command-tree CPU and fresh Windows Job peak committed memory are secondary diagnostics, not rustc-only CPU or RSS."
+  },
+  "analysis": {
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 1012026,
+    "confidence": 0.95,
+    "primary_families": ["full-check", "full-debug", "full-release"],
+    "secondary_families": ["incremental-noop", "incremental-comment-edit"],
+    "cell_estimate": "Average three measured rounds within each machine/variant, then ratio of equally weighted machine means; reduction = 1 - test/base.",
+    "family_estimate": "Equal-project geometric mean of the three project ratios for each scenario family; no combined full/incremental headline.",
+    "resampling": "Paired whole-machine bootstrap within each project; preserve both variants and every scenario for a selected machine. Sample independently across projects because their machines are distinct.",
+    "interpretation": "95% pointwise percentile intervals. A wholly positive reduction interval supports an improvement for that endpoint; wholly negative supports a slowdown; otherwise inconclusive. Report all cells/families and mixed outcomes.",
+    "exclusions": "Only the one preplanned warmup round. Incomplete/failed/mixed-attempt matrices fail validation; preserve failure evidence. No slow-sample trimming or post-result project selection.",
+    "limits": "Conditional on fixed compiler artifacts and selected roots; not retraining uncertainty, simultaneous intervals, strict dependency-disjointness, runtime/code-size safety or a shipping threshold."
+  }
+}

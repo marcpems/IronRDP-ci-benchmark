@@ -1,5 +1,47 @@
 # Windows breadth preparation — OS64766704
 
+## Paired wall-clock hypothesis test
+
+The requested follow-up tests this hypothesis: **the PGO-improved Rust toolchain
+that reduced IronRDP build time also reduces wall-clock compilation time across
+the frozen broader corpus**. The base is actual official Rust 1.94.1; the test
+is the exact qualified local Rust 1.94.1 compiler used in the earlier repeated
+IronRDP replay, not the newer 1.101 candidate-only pilot below.
+
+Both use the same official Cargo and byte-identical official standard libraries.
+This tests transfer of the demonstrated toolchain-replacement improvement:
+the local production recipe combines PGO training repair with native-linking
+changes. Official Rust already includes upstream optimizations; the contrast
+must not be described as "PGO enabled versus PGO disabled" or as an isolated
+causal estimate of profile quality.
+
+The [frozen paired protocol](paired-protocol.json) uses five independent hosted
+Windows jobs per project, four CPU/worker slots per job, and adjacent base/test
+pairs in counterbalanced order for every scenario. One warmup round is excluded
+by design; three measured rounds are retained. Original correctness runs for
+both compilers in every warmup scenario outside the compile clock, with explicit
+coverage required before measured rows are accepted. Source identities are
+verified and comment edits restored in every cell. Successful cell target
+directories are removed only after evidence is recorded, outside timing, to
+bound disk usage; evidence is never removed.
+
+Per-cell estimates average the three repetitions within each machine before
+computing base/test effects across machines. Each scenario family also gets
+an equal-project geometric-mean ratio, so the largest project cannot dominate.
+Bootstrap draws preserve base/test pairing and all scenarios within a project's
+machine; machines for different projects are independently sampled because
+those jobs are physically separate. Intervals are pointwise, conditional on
+these fixed compiler artifacts, not simultaneous guarantees or PGO retraining
+uncertainty. There is no combined full-build/incremental headline and no
+post-result corpus selection, failed-row removal or slow-sample trimming.
+
+The [paired workflow](../../.github/workflows/breadth-paired.yml) is separate
+from the custom-runner pilot and does not consume its machine. The final report
+will present the hypothesis, wall-clock findings and conclusion first, then
+original correctness results and a scope-limited summary.
+
+## Earlier candidate-only preparation
+
 **Preparation, not broad-speedup evidence or a shipping recommendation.**
 The ADO item is Started as of 25 October 2026; progress is recorded in comments,
 not by rewriting its acceptance criteria. This branch was isolated from reporting

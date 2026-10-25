@@ -76,7 +76,7 @@ def metered(command, source, env, cores, prefix, background):
 
 
 def run_scenario(source, output, project, scenario, cargo, compiler, env, cores,
-                 background=(), identity=None, target=None):
+                 background=(), identity=None, target=None, run_correctness=True):
     if scenario["mode"] not in ("full", "noop", "edit"):
         raise ValueError("unknown scenario mode")
     if source == output or source in output.parents:
@@ -97,6 +97,7 @@ def run_scenario(source, output, project, scenario, cargo, compiler, env, cores,
         "lock_sha256": project["lock_sha256"], "git_index_sha256": input_identity,
         "compiler": str(compiler), "cargo": str(cargo), "target": target,
         "setup": [], "correctness": [],
+        "correctness_policy": "original-commands" if run_correctness else "not-run-in-this-cell",
         "tool_identity": identity or {},
         "environment": {key: env.get(key) for key in (
             "CARGO_INCREMENTAL", "CARGO_NET_OFFLINE", "CARGO_BUILD_JOBS",
@@ -124,7 +125,7 @@ def run_scenario(source, output, project, scenario, cargo, compiler, env, cores,
         row.update(cargo_artifacts((output / "measured.stdout").read_text(encoding="utf-8"),
                                    scenario["mode"]))
         result["measurement"] = row
-        for index, args in enumerate(project["correctness"]):
+        for index, args in enumerate(project["correctness"] if run_correctness else []):
             check = metered([str(cargo), *args, "--frozen", *target_args], source,
                             {**env, "CARGO_TARGET_DIR": str(output / "correctness-target")},
                             cores, output / f"correctness-{index}", background)

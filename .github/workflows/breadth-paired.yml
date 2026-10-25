@@ -1,0 +1,119 @@
+name: Paired breadth wall-clock comparison
+on:
+  push:
+    branches: [research/64766704-paired-breadth]
+    paths:
+      - .github/workflows/breadth-paired.yml
+      - .github/scripts/breadth_probe.py
+      - .github/scripts/breadth_paired_probe.py
+      - .github/scripts/test_breadth*.py
+      - ci-benchmark/breadth/paired-protocol.json
+      - ci-benchmark/breadth/corpus.json
+      - ci-benchmark/x64-pgo-replay-protocol.json
+permissions:
+  contents: read
+  actions: read
+jobs:
+  paired:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: windows-2025
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 15
+      matrix:
+        project: [fd, alacritty, nushell]
+        replicate: [1, 2, 3, 4, 5]
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+      BREADTH_PROJECT: ${{ matrix.project }}
+      BENCHMARK_REPLICATE: ${{ matrix.replicate }}
+      BENCHMARK_HOST: x86_64-pc-windows-msvc
+      BENCHMARK_PLATFORM: windows-x64
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Reserve fresh short paths and isolate Git configuration
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $drive = [IO.Path]::GetPathRoot($env:GITHUB_WORKSPACE)
+          $volume = Get-Volume -DriveLetter $drive.Substring(0,1)
+          if ($volume.FileSystem -ne 'NTFS' -or $volume.SizeRemaining -lt 25GB) {
+            throw 'Require NTFS and at least 25GiB available'
+          }
+          if ([Environment]::ProcessorCount -lt 4) { throw 'Require four logical processors' }
+          $root = Join-Path $drive 'bp'
+          if (Test-Path -LiteralPath $root) { throw 'Refusing existing benchmark root' }
+          New-Item -ItemType Directory "$root\t","$root\cargo","$root\hooks" | Out-Null
+          "BENCHMARK_ROOT=$root" >> $env:GITHUB_ENV
+          "CARGO_HOME=$root\cargo" >> $env:GITHUB_ENV
+          "RUSTUP_HOME=$root\rustup" >> $env:GITHUB_ENV
+          "TEMP=$root\t" >> $env:GITHUB_ENV
+          "TMP=$root\t" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=3" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_2=core.hooksPath" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_2=$root\hooks" >> $env:GITHUB_ENV
+      - name: Validate paired execution helpers
+        run: |
+          $env:PYTHONPATH = "$env:GITHUB_WORKSPACE\harness\.github\scripts;$env:GITHUB_WORKSPACE\harness\ci-benchmark"
+          python -m unittest test_breadth test_breadth_paired_probe test_analyze_breadth_pairs -q
+          if ($LASTEXITCODE) { throw 'Paired helper tests failed' }
+      - name: Fetch exact frozen workload
+        run: |
+          $manifest = Get-Content harness\ci-benchmark\breadth\corpus.json -Raw | ConvertFrom-Json
+          $project = @($manifest.projects | Where-Object id -eq $env:BREADTH_PROJECT)
+          if ($project.Count -ne 1) { throw 'Unknown or ambiguous frozen project' }
+          git init --quiet "$env:BENCHMARK_ROOT\s"
+          if ($LASTEXITCODE) { throw 'Source init failed' }
+          git -C "$env:BENCHMARK_ROOT\s" remote add origin $project[0].repository
+          if ($LASTEXITCODE) { throw 'Source remote failed' }
+          git -C "$env:BENCHMARK_ROOT\s" fetch --quiet --depth 1 origin $project[0].revision
+          if ($LASTEXITCODE) { throw 'Pinned source fetch failed' }
+          git -C "$env:BENCHMARK_ROOT\s" checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Pinned source checkout failed' }
+      - uses: actions/download-artifact@v6
+        with:
+          name: fresh-compiler-inputs
+          path: ${{ env.BENCHMARK_ROOT }}/a
+          run-id: "39506872211"
+          github-token: ${{ github.token }}
+      - name: Install common official Rust 1.94.1 tools
+        run: |
+          rustup toolchain install 1.94.1 --profile minimal
+          if ($LASTEXITCODE) { throw 'Official toolchain installation failed' }
+      - name: Run frozen counterbalanced base and test pairs
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 `
+            -Script harness\.github\scripts\breadth_paired_probe.py `
+            --source "$env:BENCHMARK_ROOT\s" --artifacts "$env:BENCHMARK_ROOT\a" `
+            --output "$env:BENCHMARK_ROOT\e" --project $env:BREADTH_PROJECT `
+            --replicate $env:BENCHMARK_REPLICATE `
+            --corpus harness\ci-benchmark\breadth\corpus.json `
+            --protocol harness\ci-benchmark\breadth\paired-protocol.json `
+            --release-protocol harness\ci-benchmark\x64-pgo-replay-protocol.json
+      - name: Preserve all paired evidence including failures and warmups
+        if: always() && env.BENCHMARK_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: breadth-paired-${{ matrix.project }}-${{ matrix.replicate }}
+          path: |
+            ${{ env.BENCHMARK_ROOT }}/e/**/*.json
+            ${{ env.BENCHMARK_ROOT }}/e/**/*.stdout
+            ${{ env.BENCHMARK_ROOT }}/e/**/*.stderr
+          if-no-files-found: error
+          compression-level: 1
+          retention-days: 30
