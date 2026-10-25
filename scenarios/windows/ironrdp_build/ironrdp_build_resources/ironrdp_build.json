@@ -1,0 +1,44 @@
+{
+    "source": "https://github.com/Devolutions/IronRDP.git",
+    "revision": "0c5419eca6bf53563056ed252f537bca67862705",
+    "rust_version": "1.94.1",
+    "rustup_version": "1.28.2",
+    "rustup_sha256": {
+        "aarch64-pc-windows-msvc": "de9f7d29ccd39efa59a3dda3ec363b396e09b92681229b9b8f6aaa4c84285e9c",
+        "x86_64-pc-windows-msvc": "88d8258dcf6ae4f7a80c7d1088e1f36fa7025a1cfd1343731b4ee6f385121fc0"
+    },
+    "native_tools": {
+        "arm64": [
+            {
+                "name": "cmake",
+                "version": "4.1.1",
+                "url": "https://github.com/Kitware/CMake/releases/download/v4.1.1/cmake-4.1.1-windows-arm64.zip",
+                "sha256": "1d968879344bcdd29ddeaa3480ea6e7716db0de518b220743b82c7f1750b5c9b",
+                "executable": "cmake-4.1.1-windows-arm64\\bin\\cmake.exe"
+            },
+            {
+                "name": "ninja",
+                "version": "1.13.1",
+                "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.1/ninja-winarm64.zip",
+                "sha256": "fb959b674970e36a7c9a23191524b80fb5298fc71fc98bfa42456bcc0a8dfb2f",
+                "executable": "ninja.exe"
+            }
+        ],
+        "x64": [
+            {
+                "name": "cmake",
+                "version": "4.1.1",
+                "url": "https://github.com/Kitware/CMake/releases/download/v4.1.1/cmake-4.1.1-windows-x86_64.zip",
+                "sha256": "6f531bd4ba31a7aa0c3511082b544d306df50e7aecfbeef8bdbc1dd770736993",
+                "executable": "cmake-4.1.1-windows-x86_64\\bin\\cmake.exe"
+            },
+            {
+                "name": "ninja",
+                "version": "1.13.1",
+                "url": "https://github.com/ninja-build/ninja/releases/download/v1.13.1/ninja-win.zip",
+                "sha256": "26a40fa8595694dec2fad4911e62d29e10525d2133c9a4230b66397774ae25bf",
+                "executable": "ninja.exe"
+            }
+        ]
+    }
+}
