@@ -155,6 +155,10 @@ function Get-IronRdpNativeTools {
     return $tools
 }
 
+function New-IronRdpStopwatch {
+    return [Diagnostics.Stopwatch]::StartNew()
+}
+
 function Invoke-IronRdpProcess {
     param(
         [string]$Executable, [string[]]$Arguments, [string]$Directory,
@@ -179,17 +183,23 @@ function Invoke-IronRdpProcess {
     $process.StartInfo = $start
     $started = $false
     try {
-        $watch = [Diagnostics.Stopwatch]::StartNew()
+        $watch = New-IronRdpStopwatch
         $started = $process.Start()
         if (-not $started) { throw "Could not start $Executable" }
         $outTask = $process.StandardOutput.BaseStream.CopyToAsync($stdout)
         $errTask = $process.StandardError.BaseStream.CopyToAsync($stderr)
-        if (-not $process.WaitForExit($TimeoutSeconds * 1000)) {
-            throw "Command timed out after ${TimeoutSeconds}s: $Executable"
+        # Windows process waits exclude suspended time; enforce the measurement clock too.
+        while (-not $process.WaitForExit(1000)) {
+            if ($watch.Elapsed.TotalSeconds -ge $TimeoutSeconds) {
+                throw "Command timed out at the ${TimeoutSeconds}s wall-clock deadline: $Executable"
+            }
         }
         $watch.Stop()
         $null = $outTask.GetAwaiter().GetResult()
         $null = $errTask.GetAwaiter().GetResult()
+        if ($watch.Elapsed.TotalSeconds -gt $TimeoutSeconds) {
+            throw "Command exceeded the ${TimeoutSeconds}s wall-clock deadline: $Executable"
+        }
         if ($process.ExitCode -ne 0) {
             throw "Command exited $($process.ExitCode): $Executable. See $OutputPrefix.stderr.log"
         }

@@ -28,6 +28,8 @@ On an already provisioned, dedicated HOBL DUT:
 Cargo parallelism; keep it identical when comparing machines or toolchains.
 Each build has a 40-minute timeout. Increase loops for repeated or rundown
 measurements; the workload is otherwise unchanged.
+The elapsed-time limit is also checked after process exit. A machine pause or
+suspend cannot turn an over-budget build into a successful timing sample.
 
 ## Preparation and isolation
 

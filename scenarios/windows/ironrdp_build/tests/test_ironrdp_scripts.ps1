@@ -89,6 +89,20 @@ try {
     } 'exited 19'
     $passed++
 
+    & {
+        function New-IronRdpStopwatch {
+            $clock = [pscustomobject]@{ Elapsed = [TimeSpan]::FromSeconds(30) }
+            $clock | Add-Member -MemberType ScriptMethod -Name Stop -Value {}
+            return $clock
+        }
+        Assert-Throws {
+            Invoke-IronRdpProcess $pwsh @('-NoProfile', '-NonInteractive', '-Command',
+                '[Console]::Write("completed")') $testRoot @{} "$testRoot\resumed" 10
+        } 'wall-clock deadline'
+        Assert-Test ([IO.File]::ReadAllText("$testRoot\resumed.stdout.log") -eq 'completed') 'completed process over the elapsed deadline was not rejected'
+    }
+    $passed++
+
     $childFile = Join-Path $testRoot 'child.txt'
     $scriptText = '$child = Start-Process -FilePath "' + $pwsh + '" -ArgumentList "-NoProfile -NonInteractive -Command Start-Sleep 120" -PassThru; ' +
         'Set-Content -LiteralPath "' + $childFile + '" -Value $child.Id; Start-Sleep 120'
