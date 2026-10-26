@@ -1,0 +1,65 @@
+name: Finish the interrupted upstream compiler comparison
+on:
+  push:
+    branches: [experiment/upstream-51dae-finish]
+permissions:
+  contents: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  finish:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 45
+    env:
+      BENCHMARK_HOST: x86_64-pc-windows-msvc
+      BENCHMARK_PLATFORM: windows-x64-selfhosted-refs
+      BENCHMARK_REPLICATE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Reserve fresh output paths without changing the original experiment
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Wrong runner' }
+          $volume = Get-Volume -DriveLetter D
+          $disk = Get-Disk -Number (Get-Partition -DriveLetter D).DiskNumber
+          if ($volume.FileSystem -ne 'ReFS' -or $disk.FriendlyName -ne 'NVMe HFS002TFM9X189N-SKhynix') { throw 'Build storage changed' }
+          if ($volume.SizeRemaining -lt 30GB) { throw 'Insufficient capacity' }
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
+          $root = "D:\f$suffix"
+          if (Test-Path -LiteralPath $root) { throw 'Refusing existing paths' }
+          New-Item -ItemType Directory "$root\t","$root\git-hooks" | Out-Null
+          "REPLAY_ROOT=$root" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=3" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_2=core.hooksPath" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_2=$root\git-hooks" >> $env:GITHUB_ENV
+      - name: Check runner readiness
+        shell: powershell
+        run: harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:REPLAY_ROOT\readiness.json"
+      - name: Repeat the interrupted parent block with unchanged compiler and dependencies
+        shell: powershell
+        run: harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\finish_upstream_51dae.py
+      - name: Preserve the completed comparison and original failure evidence
+        if: always() && env.REPLAY_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: upstream-51dae-performance
+          path: ${{ env.REPLAY_ROOT }}/e
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 1
