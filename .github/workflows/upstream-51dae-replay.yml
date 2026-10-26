@@ -1,0 +1,96 @@
+name: Spot-check upstream PR 164707 compiler performance
+on:
+  push:
+    branches: [experiment/upstream-51dae-perf]
+permissions:
+  contents: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  replay:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 180
+    env:
+      BENCHMARK_HOST: x86_64-pc-windows-msvc
+      BENCHMARK_PLATFORM: windows-x64-selfhosted-refs
+      BENCHMARK_REPLICATE: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Reserve isolated benchmark paths
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Wrong runner' }
+          $volume = Get-Volume -DriveLetter D
+          $disk = Get-Disk -Number (Get-Partition -DriveLetter D).DiskNumber
+          if ($volume.FileSystem -ne 'ReFS' -or $disk.FriendlyName -ne 'NVMe HFS002TFM9X189N-SKhynix') { throw 'Build storage changed' }
+          if ($volume.SizeRemaining -lt 60GB) { throw 'Insufficient benchmark capacity' }
+          if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Correctness requires NTFS' }
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT
+          $root = "D:\u$suffix"
+          $correctness = "C:\ut$suffix"
+          if ((Test-Path -LiteralPath $root) -or (Test-Path -LiteralPath $correctness)) { throw 'Refusing existing paths' }
+          New-Item -ItemType Directory "$root\e","$root\t","$root\cargo","$root\git-hooks",$correctness | Out-Null
+          "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT" | Set-Content "$root\owner-run.txt"
+          "REPLAY_ROOT=$root" >> $env:GITHUB_ENV
+          "CORRECTNESS_TEMP=$correctness" >> $env:GITHUB_ENV
+          "CARGO_HOME=$root\cargo" >> $env:GITHUB_ENV
+          "TEMP=$root\t" >> $env:GITHUB_ENV
+          "TMP=$root\t" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=3" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_2=core.hooksPath" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_2=$root\git-hooks" >> $env:GITHUB_ENV
+      - name: Check dedicated runner readiness
+        shell: powershell
+        run: harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:REPLAY_ROOT\readiness.json"
+      - name: Fetch the fixed IronRDP workload and required assembler
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (!(Get-Command nasm.exe -ErrorAction SilentlyContinue)) {
+            curl.exe --fail --location --retry 3 https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/win64/nasm-2.16.03-win64.zip --output "$env:REPLAY_ROOT\nasm.zip"
+            if ($LASTEXITCODE) { throw 'NASM download failed' }
+            Expand-Archive "$env:REPLAY_ROOT\nasm.zip" "$env:REPLAY_ROOT\nasm"
+            "$env:REPLAY_ROOT\nasm\nasm-2.16.03" >> $env:GITHUB_PATH
+          }
+          git init --quiet "$env:REPLAY_ROOT\s"
+          if ($LASTEXITCODE) { throw 'Source init failed' }
+          git -C "$env:REPLAY_ROOT\s" remote add origin https://github.com/Devolutions/IronRDP.git
+          if ($LASTEXITCODE) { throw 'Source remote failed' }
+          git -C "$env:REPLAY_ROOT\s" fetch --quiet --depth 1 origin 0c5419eca6bf53563056ed252f537bca67862705
+          if ($LASTEXITCODE) { throw 'Source fetch failed' }
+          git -C "$env:REPLAY_ROOT\s" checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Source checkout failed' }
+      - name: Compare the parent and try-build compiler archives
+        shell: powershell
+        run: |
+          $env:RUNNER_TEMP = "$env:REPLAY_ROOT\t"
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\upstream_51dae_replay.py --root $env:REPLAY_ROOT --correctness-temp $env:CORRECTNESS_TEMP
+      - name: Preserve measurements and compiler identities
+        if: always() && env.REPLAY_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: upstream-51dae-performance
+          path: |
+            ${{ env.REPLAY_ROOT }}/readiness.json
+            ${{ env.REPLAY_ROOT }}/e/*.json
+            ${{ env.REPLAY_ROOT }}/e/meter-validation
+            ${{ env.REPLAY_ROOT }}/e/round-*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 1
