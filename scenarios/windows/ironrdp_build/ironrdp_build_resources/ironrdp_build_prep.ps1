@@ -13,13 +13,15 @@ try {
     if (Test-Path -LiteralPath $context.Receipt) { Remove-Item -LiteralPath $context.Receipt }
     $environment = Get-IronRdpEnvironment $context
     Set-Content -LiteralPath $environment.GIT_CONFIG_GLOBAL -Value '' -Encoding ascii
-    foreach ($dependency in @(@('git', 'Git.Git'), @('nasm', 'NASM.NASM'))) {
+    foreach ($dependency in @(@('git', 'Git.Git'), @('nasm', 'NASM.NASM'), @('clang-cl', 'LLVM.LLVM'))) {
         if ($dependency[0] -eq 'nasm' -and $context.Architecture -eq 'arm64') { continue }
+        if ($dependency[0] -eq 'clang-cl' -and $context.Architecture -ne 'arm64') { continue }
         $command = Get-Command $dependency[0] -ErrorAction SilentlyContinue
         if (-not $command) {
             if ($SkipSystemInstall) { throw "Missing $($dependency[0]); system installation is disabled." }
             $winget = Get-Command winget -ErrorAction Stop
-            & $winget.Source install --exact --id $dependency[1] --silent --accept-package-agreements --accept-source-agreements --disable-interactivity
+            $architectureArgument = if ($dependency[0] -eq 'clang-cl') { @('--architecture', 'arm64') } else { @() }
+            & $winget.Source install --exact --id $dependency[1] --silent --accept-package-agreements --accept-source-agreements --disable-interactivity @architectureArgument
             if ($LASTEXITCODE -ne 0) { throw "Installing $($dependency[1]) failed ($LASTEXITCODE)." }
             $env:Path = [Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
                 [Environment]::GetEnvironmentVariable('Path', 'User') + ';' + $env:Path
@@ -69,6 +71,10 @@ try {
     foreach ($tool in $nativeTools.Keys) {
         $tools[$tool] = $nativeTools[$tool]
         $null = Invoke-IronRdpProcess $tools[$tool] @('--version') $context.Root $environment (Join-Path $context.Data "ironrdp_build_${tool}_identity")
+    }
+    if ($context.Architecture -eq 'arm64') {
+        $tools['clang-cl'] = (Get-Command clang-cl -ErrorAction Stop).Source
+        $null = Invoke-IronRdpProcess $tools['clang-cl'] @('--version') $context.Root $environment (Join-Path $context.Data 'ironrdp_build_clang_identity')
     }
     $environment.RUSTC = $tools.rustc
     $environment.RUSTDOC = $tools.rustdoc

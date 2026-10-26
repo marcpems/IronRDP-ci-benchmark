@@ -258,7 +258,8 @@ function Get-IronRdpVsEnvironment {
     log "Native compiler: $cl"
     # Only import the developer environment changes, not inherited compiler overrides.
     $result = @{}
-    foreach ($key in @('Path', 'INCLUDE', 'LIB', 'LIBPATH', 'VSINSTALLDIR', 'VCINSTALLDIR', 'WindowsSdkDir', 'WindowsSDKVersion')) {
+    foreach ($key in @('Path', 'INCLUDE', 'LIB', 'LIBPATH', 'VSINSTALLDIR', 'VCINSTALLDIR', 'WindowsSdkDir', 'WindowsSDKVersion',
+        'VSCMD_ARG_HOST_ARCH', 'VSCMD_ARG_TGT_ARCH')) {
         if ($environment.ContainsKey($key)) { $result[$key] = $environment[$key] }
     }
     $nativeTools = Get-IronRdpNativeTools $Context
@@ -268,8 +269,6 @@ function Get-IronRdpVsEnvironment {
     # The pinned cmake crate otherwise requests host=x64 even on native ARM64.
     $result.CMAKE_GENERATOR = 'Ninja'
     $result.CMAKE = $cmake
-    $result.CC = $cl
-    $result.CXX = $cl
     $result.Path = (Split-Path $ninja) + ';' + (Split-Path $cmake) + ';' + $result.Path
     return $result
 }

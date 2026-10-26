@@ -39,12 +39,15 @@ shared Rust/CMake/Ninja installation, Python environment, or persistent PATH.
 The standalone Rustup executable is used without running `rustup-init`.
 
 Git and native Visual C++ tools with a Windows SDK are system prerequisites;
-x64 also requires NASM. Prep discovers installed tools and uses `vswhere` to
+x64 also requires NASM, and ARM64 requires LLVM's `clang-cl` for the AWS-LC
+cryptography dependency. Prep discovers installed tools and uses `vswhere` to
 locate Visual Studio. On dedicated DUTs it installs missing prerequisites using
 winget (Visual Studio 2022 Build Tools on x64, Community on ARM64).
 It does not disable services or alter power/security settings.
-Native dependencies use the Ninja CMake generator and explicitly selected native
-`cl.exe` for C/C++. This avoids the pinned CMake Rust crate's x64-host default on
+Native dependencies use the Ninja CMake generator and a native Visual Studio
+developer environment. Crates retain their own compiler selection (including
+AWS-LC's required `clang-cl` on ARM64); no global `CC`/`CXX` override is forced.
+This avoids the pinned CMake Rust crate's x64-host default on
 ARM64 and avoids depending on CMake support for a particular Visual Studio
 generator version.
 The CMake/Ninja binaries match the native architecture; an emulated CMake from
