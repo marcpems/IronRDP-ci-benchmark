@@ -13,11 +13,11 @@ def save(path, value):
     path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
 
 
-def identity(run, run_id, head, attempt):
+def identity(run, run_id, head, attempt, branch="experiment/x64-rust-thin-incremental",
+             workflow=".github/workflows/x64-rust-thin-incremental.yml"):
     if (str(run["id"]) != run_id or run["head_sha"] != head
             or run["run_attempt"] != attempt
-            or run["head_branch"] != "experiment/x64-rust-thin-incremental"
-            or run["path"] != ".github/workflows/x64-rust-thin-incremental.yml"):
+            or run["head_branch"] != branch or run["path"] != workflow):
         raise RuntimeError("Run/head/attempt/workflow identity changed; refusing to follow it")
 
 
@@ -55,6 +55,7 @@ def monitor(args):
         "repository": args.repository, "started_unix": time.time(),
         "maximum_hours": args.hours, "interval_seconds": args.interval,
         "attached": True, "read_only": True, "complete": False,
+        "branch": args.branch, "workflow": args.workflow, "producer_run": args.producer_run,
     }
     save(output / "monitor.json", expected)
 
@@ -64,7 +65,7 @@ def monitor(args):
     try:
         while True:
             run = json.loads(gh(["api", f"repos/{args.repository}/actions/runs/{args.run_id}"]))
-            identity(run, args.run_id, args.head, args.attempt)
+            identity(run, args.run_id, args.head, args.attempt, args.branch, args.workflow)
             jobs = json.loads(gh([
                 "api", f"repos/{args.repository}/actions/runs/{args.run_id}/attempts/{args.attempt}/jobs",
                 "-f", "per_page=100", "--method", "GET",
@@ -119,7 +120,18 @@ def monitor(args):
             (output / "failed-job-logs.txt").write_text(failed_log, encoding="utf-8")
             raise RuntimeError(f"Remote run concluded {run['conclusion']}; original evidence retained")
         identity(json.loads(gh(["api", f"repos/{args.repository}/actions/runs/{args.run_id}"])),
-                 args.run_id, args.head, args.attempt)
+                 args.run_id, args.head, args.attempt, args.branch, args.workflow)
+        if args.producer_run:
+            producer = json.loads(gh(["api", f"repos/{args.repository}/actions/runs/{args.producer_run}"]))
+            identity(producer, args.producer_run, args.producer_head, 1)
+            save(output / "producer-run.json", producer)
+            for arm in ("baseline", "rust-thin"):
+                for kind in ("evidence", "package"):
+                    name = f"thin-{arm}-{kind}"
+                    destination = output / "artifacts" / name
+                    destination.mkdir(parents=True, exist_ok=True)
+                    gh(["run", "download", args.producer_run, "--repo", args.repository,
+                        "--name", name, "--dir", str(destination)], timeout=900)
         verifier = Path(__file__).with_name("verify_x64_rust_thin.py")
         result = subprocess.run(
             [sys.executable, str(verifier), "--artifacts", str(output / "artifacts"),
@@ -153,7 +165,13 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--hours", type=float, default=12)
     parser.add_argument("--interval", type=int, default=120)
+    parser.add_argument("--branch", default="experiment/x64-rust-thin-incremental")
+    parser.add_argument("--workflow", default=".github/workflows/x64-rust-thin-incremental.yml")
+    parser.add_argument("--producer-run")
+    parser.add_argument("--producer-head")
     options = parser.parse_args()
     if not 0 < options.hours <= 12 or options.interval < 30:
         parser.error("Use a positive bound of at most twelve hours and intervals of at least thirty seconds")
+    if bool(options.producer_run) != bool(options.producer_head):
+        parser.error("Producer run and head must be supplied together")
     monitor(options)

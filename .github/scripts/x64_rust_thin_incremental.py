@@ -21,6 +21,7 @@ from msvc_experiment import (
 from native_ci_probe import build_environment, paired_order, telemetry_executables
 from offline_benchmark import NATIVE_COMMANDS
 from process_metrics import measure, measurement_session
+from stdlib_runtime_identity import compare_stdlib
 from x64_pgo_release import preserve_literal_release_batch
 from x64_profile_only import audit_profile_use
 
@@ -79,17 +80,21 @@ def verify_profiles(directory, protocol):
     return training
 
 
-def verify_pair(left, right):
+def verify_pair(left, right, packages=None):
     if (left.get("build_complete") is not True or right.get("build_complete") is not True
             or left["variant"] != "baseline" or right["variant"] != "rust-thin"):
         raise RuntimeError("Both successfully built pilot arms are required")
     for key in ("protocol", "run_id", "attempt", "harness_sha", "source_patch_sha256",
-                "native_inputs", "stage0_cargo_sha256", "stdlib", "image"):
+                "native_inputs", "stage0_cargo_sha256", "image"):
         if left[key] != right[key]:
             raise RuntimeError(f"Paired input mismatch: {key}")
     if not equivalent_tools(left["tools"], right["tools"]):
         raise RuntimeError("Paired native tool binaries differ")
     validate_configs(left["configuration"], right["configuration"])
+    if packages is not None:
+        return compare_stdlib(packages, {"baseline": left, "rust-thin": right})
+    if left["stdlib"] != right["stdlib"]:
+        raise RuntimeError("Paired input mismatch: stdlib")
 
 
 def native_inputs():
@@ -332,7 +337,7 @@ def block(source, output, compiler, cargo, protocol, env, correctness=False):
     return result
 
 
-def benchmark(root, source):
+def benchmark(root, source, continuation=False):
     hosted_only()
     protocol = read(PROTOCOL)
     output = root / "e"
@@ -340,12 +345,26 @@ def benchmark(root, source):
     if subprocess.check_output(["git", "-C", source, "rev-parse", "HEAD"], text=True).strip() != protocol["source_sha"]:
         raise RuntimeError("Wrong IronRDP source")
     subprocess.run(["git", "-C", source, "diff", "--exit-code", "HEAD"], check=True)
-    records = {arm: unpack(root / "artifacts" / arm, root / arm) for arm in protocol["variants"]}
-    verify_pair(records["baseline"], records["rust-thin"])
+    producer = read(PROTOCOL.with_name("x64-rust-thin-continuation.json")) if continuation else None
+    records = {}
+    for arm in protocol["variants"]:
+        artifact = root / "artifacts" / arm
+        if producer and (digest(artifact / "result.json") != producer["metadata_sha256"][arm]
+                         or digest(artifact / "package.zip") != producer["archive_sha256"][arm]):
+            raise RuntimeError("Continuation differs from the exact frozen original package")
+        records[arm] = unpack(artifact, root / arm)
+    stdlib_identity = verify_pair(
+        records["baseline"], records["rust-thin"],
+        {arm: root / arm for arm in protocol["variants"]} if continuation else None)
+    if stdlib_identity:
+        save(output / "stdlib-identity.json", stdlib_identity)
     for record in records.values():
-        if (record["protocol"] != protocol or record["run_id"] != os.environ["GITHUB_RUN_ID"]
-                or record["attempt"] != os.environ["GITHUB_RUN_ATTEMPT"]
-                or record["harness_sha"] != os.environ["GITHUB_SHA"]):
+        expected = producer or {"run_id": os.environ["GITHUB_RUN_ID"],
+                                "attempt": os.environ["GITHUB_RUN_ATTEMPT"],
+                                "head_sha": os.environ["GITHUB_SHA"]}
+        if (record["protocol"] != protocol or record["run_id"] != expected["run_id"]
+                or record["attempt"] != expected["attempt"]
+                or record["harness_sha"] != expected["head_sha"]):
             raise RuntimeError("Only exact same-run owned compiler packages are accepted")
     tools = tool_identity(root / "clang/bin")
     if (not equivalent_tools(records["baseline"]["tools"], tools)
@@ -366,6 +385,8 @@ def benchmark(root, source):
         "run_id": os.environ["GITHUB_RUN_ID"], "attempt": os.environ["GITHUB_RUN_ATTEMPT"],
         "compilers": records, "tools": tools, "cargo_sha256": digest(cargo),
         "workload_lock_sha256": lock, "runs": [],
+        "harness_sha": os.environ["GITHUB_SHA"], "producer": producer,
+        "stdlib_identity": stdlib_identity,
     }
     save(output / "index.json", index)
     for arm in protocol["variants"]:
@@ -398,13 +419,14 @@ if __name__ == "__main__":
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--variant", choices=("baseline", "rust-thin"))
     parser.add_argument("--source", type=Path)
+    parser.add_argument("--continuation", action="store_true")
     args = parser.parse_args()
     root = args.root.resolve()
     try:
         if args.phase == "build":
             build(root, args.variant)
         else:
-            benchmark(root, args.source.resolve())
+            benchmark(root, args.source.resolve(), continuation=args.continuation)
     except Exception as error:
         (root / "e").mkdir(parents=True, exist_ok=True)
         save(root / "e/failure.json", {

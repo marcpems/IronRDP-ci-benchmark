@@ -6,6 +6,11 @@ exists until `thin-incremental-consumer-evidence/index.json` has `complete: true
 Production receipts deliberately retain `complete: false`; `build_complete`
 means only that the compiler package passed its build/audit/smoke gates.
 
+**Continuation amendment:** run 41058649059 built both compilers successfully,
+then rejected the pair before any consumer timing because the original whole-file
+stdlib identity rule included Microsoft linker/debug metadata. The frozen
+`x64-rust-thin-continuation.json` supersedes only that rule, as detailed below.
+
 ## Fixed inputs and intervention
 
 The adjacent JSON protocol pins Rust `4da678a`, LLVM `aab11ee`, rustc-perf
@@ -132,3 +137,31 @@ python .github\scripts\monitor_x64_rust_thin.py `
 
 The destination must be new so a retry cannot overwrite original failure evidence.
 `monitor-failure.json` is an explicit rejection, never a performance result.
+
+## Metadata-only stdlib identity repair
+
+The original packages have 45 native stdlib files. All 43 rlib/import-library
+files are byte-identical. `std-e2f0fb81520f5a3a.dll` differs in exactly 24 bytes:
+COFF/debug-directory timestamps and the CodeView RSDS GUID. Zeroing only those
+specified metadata fields in an in-memory comparison produces the identical
+SHA-256 `2e005ec7c8bd1d8c104acf582451de23eb65b5c325e2c6f22d7d383bbfddf079`.
+Every remaining DLL byte, including runtime code/data and Rust metadata, matches.
+The PDBs have nondeterministic debug-stream layouts; they are not claimed
+byte-identical. Each unchanged PDB must bind to its own DLL's timestamp, GUID and
+age. PDB files are excluded only from the runtime-input equality criterion.
+
+The repair does **not** modify either DLL/PDB, transplant stdlib components,
+rebuild a compiler, change stack/source/config/profile inputs, or relax native
+tool identity. A dedicated consumer-only workflow uses SHA-pinned original
+package/metadata files. Raw package checksums remain mandatory. New tests reject
+a one-byte nonmetadata DLL change and an incorrectly bound PDB; the separate
+collector verifies the actual DLL byte differences against independently frozen
+offsets and canonical hash. This is a declared correction to an overly strict
+acceptance gate, not evidence that the first run passed.
+
+The original failure, both successful compiler receipts/packages and the exact
+runtime-identity comparison are retained under
+`D:\copilot\thin-incremental-evidence\completion-41058649059`.
+The consumer continuation branch is `experiment/x64-rust-thin-consumer`; it has
+only a standard hosted Windows consumer job and cannot rebuild compilers or
+occupy any self-hosted concurrency slot.

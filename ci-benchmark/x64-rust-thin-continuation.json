@@ -1,0 +1,23 @@
+{
+  "run_id": "41058649059",
+  "attempt": "1",
+  "head_sha": "35b5f2e6ed7eb00f73aded41eeb23a1a8a4211ab",
+  "reason": "Original consumer rejected std.dll timestamp/RSDS identity and bound non-runtime PDB differences; no timed commands ran",
+  "metadata_sha256": {
+    "baseline": "797c326561ff83a1995c6c623ac169604d317ff7d45af819f97fb87c1483d3ec",
+    "rust-thin": "3813be25635178d364b63e74e4c647e7b338404181aa012704503bdcf693cf1c"
+  },
+  "archive_sha256": {
+    "baseline": "d818155ed6f52ff92b9e39a4a21e9fa409b88eb8ecc092518c5b5110d6572851",
+    "rust-thin": "6f1ade28c1ef40c37fd8ae7d45916e885964e2277b21ae6840d0c54f176d333b"
+  },
+  "stdlib_dll": {
+    "name": "std-e2f0fb81520f5a3a.dll",
+    "canonical_sha256": "2e005ec7c8bd1d8c104acf582451de23eb65b5c325e2c6f22d7d383bbfddf079",
+    "metadata_ranges": [[272, 4], [640420, 4], [641548, 16], [640448, 4], [640476, 4]],
+    "actual_differing_bytes": 24
+  },
+  "stdlib_policy": "All 43 rlib/import-library files byte-identical; std DLL differs only in COFF/debug timestamps and RSDS GUID; each unchanged PDB must bind to its own DLL. No code bytes changed and no transplantation.",
+  "supersedes": "Only the original protocol's overly strict whole-DLL/PDB byte-identity gate",
+  "full_release_qualified": false
+}

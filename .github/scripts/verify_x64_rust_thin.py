@@ -120,16 +120,30 @@ def verify_block(directory, correctness):
 
 def verify(artifacts, run_id, head, attempt):
     protocol = read(PROTOCOL)
+    consumer = artifacts / "thin-incremental-consumer-evidence"
+    index = read(consumer / "index.json")
+    producer = index.get("producer")
+    if producer:
+        require(producer == read(PROTOCOL.with_name("x64-rust-thin-continuation.json")),
+                "Unrecognized compiler continuation")
+    build_run = producer["run_id"] if producer else run_id
+    build_head = producer["head_sha"] if producer else head
+    build_attempt = producer["attempt"] if producer else str(attempt)
     records = {}
     manifests = {}
+    std_dlls = {}
     for arm in ARMS:
         evidence = artifacts / f"thin-{arm}-evidence"
         record = read(evidence / "result.json")
         require(record["build_complete"] is True and record["complete"] is False,
                 "Build completion must not imply full qualification")
         require(record["variant"] == arm and record["protocol"] == protocol, "Wrong arm/protocol")
-        require(record["run_id"] == run_id and record["attempt"] == str(attempt)
-                and record["harness_sha"] == head, "Compiler run/head/attempt mismatch")
+        require(record["run_id"] == build_run and record["attempt"] == build_attempt
+                and record["harness_sha"] == build_head, "Compiler run/head/attempt mismatch")
+        if producer:
+            require(sha(evidence / "result.json") == producer["metadata_sha256"][arm]
+                    and record["archive_sha256"] == producer["archive_sha256"][arm],
+                    "Original successful compiler package changed")
         require(not (evidence / "failure.json").exists(), "Compiler failure evidence is present")
         require(record["cache"] == {"enabled": False, "hit_rate": None}, "Cache policy changed")
         require(record["production"]["exit_code"] == 0
@@ -189,6 +203,8 @@ def verify(artifacts, run_id, head, attempt):
                         and ".." not in Path(item.filename).parts, "Unsafe or unexpected archive member")
                 with bundle.open(item) as stream:
                     files[item.filename] = hashlib.file_digest(stream, "sha256").hexdigest()
+            if producer:
+                std_dlls[arm] = bundle.read(f"lib/rustlib/{HOST}/lib/{producer['stdlib_dll']['name']}")
         require(files == record["files"], "Package file manifest differs from actual bytes")
         require(files["bin/cargo.exe"] == record["stage0_cargo_sha256"], "Wrong actual Cargo binary")
         prefix = f"lib/rustlib/{HOST}/lib/"
@@ -197,19 +213,43 @@ def verify(artifacts, run_id, head, attempt):
         records[arm] = record
         manifests[arm] = files
     baseline, treatment = (records[arm] for arm in ARMS)
-    for key in ("source_patch_sha256", "native_inputs", "stage0_cargo_sha256", "stdlib", "image"):
+    for key in ("source_patch_sha256", "native_inputs", "stage0_cargo_sha256", "image"):
         require(baseline[key] == treatment[key], f"Unmatched compiler input: {key}")
+    if producer:
+        spec = producer["stdlib_dll"]
+        allowed = {spec["name"], spec["name"][:-4] + ".pdb"}
+        require({name: value for name, value in baseline["stdlib"].items() if name not in allowed}
+                == {name: value for name, value in treatment["stdlib"].items() if name not in allowed},
+                "Rlib/import-library bytes differ")
+        require(len(std_dlls["baseline"]) == len(std_dlls["rust-thin"]), "Std DLL lengths differ")
+        require(sum(a != b for a, b in zip(std_dlls["baseline"], std_dlls["rust-thin"]))
+                == spec["actual_differing_bytes"], "Unexpected DLL difference count")
+        proof = index["stdlib_identity"]
+        require(proof == read(consumer / "stdlib-identity.json") and proof["complete"] is True
+                and proof["binary_modifications"] is False and proof["stdlib_transplantation"] is False,
+                "Missing unmodified-stdlib runtime proof")
+        for arm in ARMS:
+            data = bytearray(std_dlls[arm])
+            for offset, length in spec["metadata_ranges"]:
+                data[offset:offset + length] = b"\0" * length
+            require(hashlib.sha256(data).hexdigest() == spec["canonical_sha256"],
+                    "Std DLL differs outside the independently frozen metadata locations")
+            require(proof["arms"][arm]["raw"] == records[arm]["stdlib"]
+                    and proof["arms"][arm]["dlls"][spec["name"]]["canonical_sha256"] == spec["canonical_sha256"],
+                    "Runtime proof does not cover the original standard library")
+    else:
+        require(baseline["stdlib"] == treatment["stdlib"], "Native stdlib bytes differ")
     require(tools(baseline["tools"]) == tools(treatment["tools"]), "Native build tool mismatch")
     left, right = (tomllib.loads(records[arm]["configuration"]) for arm in ARMS)
     right["rust"]["lto"] = "thin-local"
     require(left == right, "Additional compiler configuration intervention")
-    consumer = artifacts / "thin-incremental-consumer-evidence"
     require(not (consumer / "failure.json").exists(), "Consumer failure evidence is present")
-    index = read(consumer / "index.json")
     require(index["complete"] is True and index["pilot"] is True
             and index["full_release_qualified"] is False, "Wrong completion/qualification claim")
     require(index["protocol"] == protocol and index["run_id"] == run_id
             and index["attempt"] == str(attempt), "Consumer run/protocol mismatch")
+    if producer:
+        require(index["harness_sha"] == head, "Continuation harness head changed")
     require(index["compilers"] == records and index["cargo_sha256"] == baseline["stage0_cargo_sha256"],
             "Consumer did not use the verified packages")
     require(tools(index["tools"]) == tools(baseline["tools"]), "Consumer native tools differ")
@@ -260,6 +300,7 @@ def verify(artifacts, run_id, head, attempt):
     return {
         "complete": True, "independently_verified": True, "run_id": run_id, "head_sha": head,
         "attempt": attempt, "full_release_qualified": False, "protocol": protocol,
+        "producer": producer,
         "paired_rounds": pairs, "ratio_of_sums": totals,
         "native_correctness": correctness,
         "overhead_outside_consumer_measurements": {
@@ -286,7 +327,9 @@ def verify(artifacts, run_id, head, attempt):
         "limits": [
             "Descriptive one-build-pair, one-consumer-VM pilot; no population confidence intervals",
             "No full-release/extracted-distribution or doctest qualification",
-            "Common stage0 Cargo, each compiler's own byte-identical native stdlib",
+            "Common stage0 Cargo, each compiler's own native stdlib; continuation permits only "
+            "independently proven linker timestamp/debug identifiers and bound non-runtime PDB differences"
+            if producer else "Common stage0 Cargo, each compiler's own byte-identical native stdlib",
             "Compiler production, package transfer, dependency fetch and correctness excluded from consumer totals",
         ],
     }

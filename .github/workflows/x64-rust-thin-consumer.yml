@@ -1,0 +1,108 @@
+name: Incremental Rust-only ThinLTO verified consumer continuation
+on:
+  push:
+    branches: [experiment/x64-rust-thin-consumer]
+    paths:
+      - .github/workflows/x64-rust-thin-consumer.yml
+      - .github/scripts/x64_rust_thin_incremental.py
+      - .github/scripts/stdlib_runtime_identity.py
+      - .github/scripts/test_stdlib_runtime_identity.py
+      - ci-benchmark/x64-rust-thin-continuation.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: hosted-x64-rust-thin-consumer
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: pwsh
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  VSCMD_SKIP_SENDTELEMETRY: "1"
+  GIT_CONFIG_COUNT: "2"
+  GIT_CONFIG_KEY_0: core.longpaths
+  GIT_CONFIG_VALUE_0: "true"
+  GIT_CONFIG_KEY_1: core.autocrlf
+  GIT_CONFIG_VALUE_1: "false"
+jobs:
+  consumer:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: windows-2022
+    timeout-minutes: 360
+    steps:
+      - name: Require independent standard hosted allocation
+        run: |
+          if ($env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:RUNNER_ARCH -ne 'X64') { throw 'Hosted X64 only' }
+          if (Test-Path D:\ri) { throw 'Consumer path already exists' }
+          New-Item -ItemType Directory D:\ri\e | Out-Null
+          @{
+            Runner=$env:RUNNER_NAME; Image=$env:ImageVersion
+            Cpu=@(Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors)
+            System=Get-CimInstance Win32_ComputerSystem | Select-Object NumberOfLogicalProcessors,TotalPhysicalMemory
+          } | ConvertTo-Json -Depth 6 | Set-Content D:\ri\e\hardware.json
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: marcpems/IronRDP-ci-benchmark
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Test narrow stdlib identity repair
+        run: |
+          python -m unittest discover -s harness\.github\scripts -p test_stdlib_runtime_identity.py -v
+          if ($LASTEXITCODE) { throw 'Stdlib identity tests failed' }
+          python -m unittest discover -s harness\.github\scripts -p test_x64_rust_thin_incremental.py -v
+          if ($LASTEXITCODE) { throw 'Pilot gates failed' }
+      - uses: actions/download-artifact@v6
+        with:
+          github-token: ${{ github.token }}
+          run-id: 41058649059
+          name: thin-baseline-package
+          path: D:\ri\artifacts\baseline
+      - uses: actions/download-artifact@v6
+        with:
+          github-token: ${{ github.token }}
+          run-id: 41058649059
+          name: thin-rust-thin-package
+          path: D:\ri\artifacts\rust-thin
+      - name: Restore exact original manifests and checksum-pinned Clang
+        timeout-minutes: 15
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($arm in @('baseline','rust-thin')) {
+            Move-Item "D:\ri\artifacts\$arm\e\result.json" "D:\ri\artifacts\$arm\result.json"
+          }
+          [IO.Directory]::Move((Resolve-Path workload).Path, 'D:\ri\workload')
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-win64.exe -o D:\ri\LLVM-20.1.3-win64.exe
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          if ((Get-FileHash D:\ri\LLVM-20.1.3-win64.exe).Hash.ToLowerInvariant() -ne '0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af') { throw 'Clang checksum mismatch' }
+          7z x -y -bd -bso0 -oD:\ri\clang D:\ri\LLVM-20.1.3-win64.exe
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+      - name: Verify unchanged packages and runtime identity; qualify and measure
+        timeout-minutes: 315
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\x64_rust_thin_incremental.py benchmark --root D:\ri --source D:\ri\workload --continuation
+      - name: Preserve complete or failed consumer receipts
+        if: always()
+        uses: actions/upload-artifact@v6
+        timeout-minutes: 15
+        with:
+          name: thin-incremental-consumer-evidence
+          path: |
+            D:\ri\e\**\*.json
+            D:\ri\e\**\*.stdout
+            D:\ri\e\**\*.stderr
+            D:\ri\e\**\*.timings.html
+            !D:\ri\e\**\target\**
+            !D:\ri\e\cargo-home\**
+            !D:\ri\e\home\**
+          retention-days: 30
+          compression-level: 1
