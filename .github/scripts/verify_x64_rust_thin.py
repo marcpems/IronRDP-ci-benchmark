@@ -223,10 +223,11 @@ def verify(artifacts, run_id, head, attempt):
         ["git", "-C", PROTOCOL.parents[1], "show", f"{protocol['source_sha']}:Cargo.lock"])
     require(hashlib.sha256(workload_lock).hexdigest() == index["workload_lock_sha256"],
             "Consumer lockfile differs from the exact pinned IronRDP Git blob")
-    correctness = {
-        arm: verify_block(consumer / f"correctness-{arm}", correctness=True)["native_test_counts"]
+    correctness_blocks = {
+        arm: verify_block(consumer / f"correctness-{arm}", correctness=True)
         for arm in ARMS
     }
+    correctness = {arm: result["native_test_counts"] for arm, result in correctness_blocks.items()}
     require(correctness["baseline"] == correctness["rust-thin"], "Native test populations differ")
     rounds = protocol["warmup_rounds"] + protocol["measured_rounds"]
     require(len(index["runs"]) == rounds * 2, "Incomplete round count")
@@ -261,6 +262,22 @@ def verify(artifacts, run_id, head, attempt):
         "attempt": attempt, "full_release_qualified": False, "protocol": protocol,
         "paired_rounds": pairs, "ratio_of_sums": totals,
         "native_correctness": correctness,
+        "overhead_outside_consumer_measurements": {
+            "compiler_build": {
+                arm: {key: records[arm]["production"][key] for key in ("wall_seconds", "cpu_seconds")}
+                for arm in ARMS
+            },
+            "package_wall_seconds": {arm: records[arm]["packaging_seconds"] for arm in ARMS},
+            "native_correctness": {
+                arm: {key: str(correctness_blocks[arm][key]) for key in ("wall_seconds", "cpu_seconds")}
+                for arm in ARMS
+            },
+            "dependency_fetch": {
+                key: read(consumer / "fetch-outside-measurement.json")[key]
+                for key in ("wall_seconds", "cpu_seconds")
+            },
+            "scope": "Compiler-only build and native correctness; not full-release production/qualification",
+        },
         "paired_mean_reduction_percent": {
             key: str(sum(number(pair[key]["reduction_percent_decimal"]) for pair in pairs) / len(pairs))
             for key in ("wall_seconds", "cpu_seconds")
