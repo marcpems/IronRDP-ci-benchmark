@@ -1,0 +1,235 @@
+name: Fixed-PGO Rust and LLVM ThinLTO factorial (hosted)
+on:
+  push:
+    branches: [experiment/x64-factorial-thin]
+    paths:
+      - .github/workflows/x64-factorial-thin.yml
+      - .github/scripts/x64_factorial_thin.py
+      - .github/scripts/x64_rust_thin_incremental.py
+      - .github/scripts/verify_x64_factorial_thin.py
+      - .github/scripts/test_x64_factorial_thin.py
+      - ci-benchmark/x64-factorial-thin.json
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: hosted-x64-factorial-thin
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: pwsh
+env:
+  PYTHONDONTWRITEBYTECODE: "1"
+  VSCMD_SKIP_SENDTELEMETRY: "1"
+  GIT_CONFIG_COUNT: "2"
+  GIT_CONFIG_KEY_0: core.longpaths
+  GIT_CONFIG_VALUE_0: "true"
+  GIT_CONFIG_KEY_1: core.autocrlf
+  GIT_CONFIG_VALUE_1: "false"
+jobs:
+  compiler:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: windows-2022
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        arm: [baseline, rust-thin, llvm-thin, both-thin]
+    steps:
+      - name: Reserve fresh hosted paths and record resources
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:RUNNER_ARCH -ne 'X64') { throw 'Hosted X64 only' }
+          "THIN_JOB_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
+          if (Test-Path D:\ri) { throw 'Build path already exists' }
+          New-Item -ItemType Directory D:\ri\e | Out-Null
+          @{
+            Runner=$env:RUNNER_NAME; Image=$env:ImageVersion
+            Cpu=@(Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors)
+            System=Get-CimInstance Win32_ComputerSystem | Select-Object NumberOfLogicalProcessors,TotalPhysicalMemory
+            Drive=[IO.DriveInfo]::new('D:') | Select-Object TotalSize,AvailableFreeSpace
+          } | ConvertTo-Json -Depth 6 | Set-Content D:\ri\e\hardware.json
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Validate intervention and consumer gates
+        run: |
+          python -m unittest discover -s harness\.github\scripts -p test_x64_factorial_thin.py
+          if ($LASTEXITCODE) { throw 'Factorial tests failed' }
+      - uses: actions/download-artifact@v6
+        timeout-minutes: 10
+        with:
+          github-token: ${{ github.token }}
+          run-id: 40170434889
+          artifact-ids: 12593394360
+          merge-multiple: true
+          path: D:\ri\profiles
+      - name: Fetch pinned Rust and submodules
+        timeout-minutes: 20
+        run: |
+          git init --quiet D:\ri\r
+          if ($LASTEXITCODE) { throw 'Source init failed' }
+          git -C D:\ri\r remote add origin https://github.com/marcpems/rust-arm64-compiler-ab.git
+          if ($LASTEXITCODE) { throw 'Source remote failed' }
+          git -C D:\ri\r fetch --quiet --depth 1 origin 4da678aada4683607acbd67a8da37a320c791f93
+          if ($LASTEXITCODE) { throw 'Source fetch failed' }
+          git -C D:\ri\r checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Source checkout failed' }
+          git -C D:\ri\r submodule update --init --recursive --depth 1 --jobs 4
+          if ($LASTEXITCODE) { throw 'Submodule checkout failed' }
+      - name: Extract checksum-pinned Clang and LLD
+        timeout-minutes: 10
+        run: |
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-win64.exe -o D:\ri\LLVM-20.1.3-win64.exe
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          if ((Get-FileHash D:\ri\LLVM-20.1.3-win64.exe).Hash.ToLowerInvariant() -ne '0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af') { throw 'Clang checksum mismatch' }
+          7z x -y -bd -bso0 -oD:\ri\clang D:\ri\LLVM-20.1.3-win64.exe
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+      - name: Build fresh fixed-PGO compiler with declared LTO factors
+        timeout-minutes: 335
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\x64_factorial_thin.py build --root D:\ri --variant ${{ matrix.arm }}
+      - name: Preserve producer evidence including failures
+        if: always()
+        uses: actions/upload-artifact@v6
+        timeout-minutes: 10
+        with:
+          name: factorial-${{ matrix.arm }}-evidence
+          path: |
+            D:\ri\e\*.json
+            D:\ri\e\*.stdout
+            D:\ri\e\*.stderr
+            D:\ri\e\*.toml
+            D:\ri\e\*.cmake
+            D:\ri\e\*.patch
+            D:\ri\e\*.txt
+          retention-days: 30
+          compression-level: 1
+      - name: Transfer completed compiler package and manifest
+        uses: actions/upload-artifact@v6
+        timeout-minutes: 15
+        with:
+          name: factorial-${{ matrix.arm }}-package
+          path: |
+            D:\ri\package.zip
+            D:\ri\e\result.json
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+  consumer:
+    needs: compiler
+    runs-on: windows-2022
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        vm: [1, 2, 3, 4]
+    steps:
+      - name: Require independent hosted allocation
+        run: |
+          if ($env:RUNNER_ENVIRONMENT -ne 'github-hosted' -or $env:RUNNER_ARCH -ne 'X64') { throw 'Hosted X64 only' }
+          if (Test-Path D:\ri) { throw 'Consumer path already exists' }
+          New-Item -ItemType Directory D:\ri\e | Out-Null
+          @{
+            Runner=$env:RUNNER_NAME; Image=$env:ImageVersion
+            Cpu=@(Get-CimInstance Win32_Processor | Select-Object Name,NumberOfCores,NumberOfLogicalProcessors)
+            System=Get-CimInstance Win32_ComputerSystem | Select-Object NumberOfLogicalProcessors,TotalPhysicalMemory
+          } | ConvertTo-Json -Depth 6 | Set-Content D:\ri\e\hardware.json
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: marcpems/IronRDP-ci-benchmark
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: factorial-*-package
+          path: D:\ri\artifacts
+      - name: Restore manifests and pinned native tools
+        timeout-minutes: 15
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($arm in @('baseline','rust-thin','llvm-thin','both-thin')) {
+            Move-Item "D:\ri\artifacts\factorial-$arm-package\e\result.json" "D:\ri\artifacts\factorial-$arm-package\result.json"
+          }
+          [IO.Directory]::Move((Resolve-Path workload).Path, 'D:\ri\workload')
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-win64.exe -o D:\ri\LLVM-20.1.3-win64.exe
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          if ((Get-FileHash D:\ri\LLVM-20.1.3-win64.exe).Hash.ToLowerInvariant() -ne '0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af') { throw 'Clang checksum mismatch' }
+          7z x -y -bd -bso0 -oD:\ri\clang D:\ri\LLVM-20.1.3-win64.exe
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+      - name: Prove loaded drivers, qualify all arms, measure balanced offline blocks
+        timeout-minutes: 330
+        run: |
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\x64_factorial_thin.py benchmark --root D:\ri --source D:\ri\workload --vm ${{ matrix.vm }}
+      - name: Preserve complete or failed consumer receipts
+        if: always()
+        uses: actions/upload-artifact@v6
+        timeout-minutes: 15
+        with:
+          name: factorial-consumer-${{ matrix.vm }}
+          path: |
+            D:\ri\e\*.json
+            D:\ri\e\*.stdout
+            D:\ri\e\*.stderr
+            D:\ri\e\identity-*\*.json
+            D:\ri\e\identity-*\*.stdout
+            D:\ri\e\identity-*\*.stderr
+            D:\ri\e\correctness-*\*.json
+            D:\ri\e\correctness-*\*.stdout
+            D:\ri\e\correctness-*\*.stderr
+            D:\ri\e\round-*\*.json
+            D:\ri\e\round-*\*.stdout
+            D:\ri\e\round-*\*.stderr
+            D:\ri\e\round-*\*.timings.html
+            D:\ri\e\meter-validation\*.json
+            D:\ri\e\meter-validation\*.stdout
+            D:\ri\e\meter-validation\*.stderr
+          retention-days: 30
+          compression-level: 1
+  analyze:
+    needs: consumer
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: factorial-consumer-*
+          path: evidence
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: factorial-*-evidence
+          path: evidence
+      - name: Independently verify all raw receipts and calculate paired factorial contrasts
+        run: |
+          python .github/scripts/verify_x64_factorial_thin.py --artifacts evidence \
+            --run-id "$GITHUB_RUN_ID" --head "$GITHUB_SHA" --attempt "$GITHUB_RUN_ATTEMPT" \
+            --output factorial-results.json
+      - uses: actions/upload-artifact@v6
+        with:
+          name: factorial-verified-summary
+          path: factorial-results.json
+          retention-days: 30
+          if-no-files-found: error

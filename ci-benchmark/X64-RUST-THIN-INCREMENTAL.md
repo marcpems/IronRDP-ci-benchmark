@@ -1,5 +1,51 @@
 # Incremental Rust-only ThinLTO: hosted pilot
 
+## Separate four-way follow-up authorized 30 October
+
+The completed two-arm result and its discrepancy audit are published on the
+[canonical report branch](https://github.com/marcpems/IronRDP-ci-benchmark/blob/experiment/x64-pgo-1991/ci-benchmark/X64-RUST-THIN-INCREMENTAL.md).
+This branch now adds the distinct
+[`x64-factorial-thin.json`](x64-factorial-thin.json) experiment:
+
+| Arm | Rust cross-crate ThinLTO | Native LLVM ThinLTO |
+|---|---|---|
+| baseline | Off | Off |
+| rust-thin | On | Off |
+| llvm-thin | Off | On |
+| both-thin | On | On |
+
+All four use the **same pinned source, frozen repaired PGO profiles,
+Clang 20.1.3, LLD and llvm-lib**. CMake linker/librarian paths are explicitly
+pinned in every arm; `llvm.use-linker` is intentionally omitted because
+LLVM rejects it together with the `LLVM_ENABLE_LLD` implied by ThinLTO.
+No custom-runner work or compiler caches are used.
+
+Four fresh hosted compiler builds feed four independent hosted Windows-2022
+consumer VMs. Each consumer qualifies all four compilers, excludes one warmup
+per arm, and measures three rounds of the original five-command offline
+workload. A four-sequence Williams design balances positions and preceding
+arms across VMs. Actual loaded driver DLL paths/hashes are checked outside
+timing; each timed block records the selected compiler's unchanged hashes.
+
+**Explicit isolation boundary:** original packages are verified first, then
+all arms use the baseline native standard libraries and common stage0 Cargo.
+This removes stdlib code-generation differences from the compiler comparison.
+Original manifests, controlled replacements and evaluated manifests remain
+recorded; compiler drivers are never transplanted. This is not an
+untouched-package deployment test or full-release qualification.
+
+The verifier requires all four producer/consumer identities, native correctness
+counts, raw command receipts and predeclared rounds before reporting Rust-only,
+LLVM-only, conditional and combined effects. The multiplicative interaction is
+`100 * (both * baseline / (rust * llvm) - 1)`; negative means additional benefit
+beyond independent multiplicative gains. Intervals resample whole paired VMs,
+not commands or rounds. Four VMs and one build per arm do not estimate
+build-to-build variability. Historical and Microsoft-linked results are
+references, not samples to pool into this matrix.
+
+The remaining sections describe the earlier two-arm method and its recovery,
+not the new four-way protocol.
+
 This is a **limited experimental compiler/sysroot pilot**, not a qualified full
 release or an actual rebuilt combined-PR shipped artifact. No performance result
 exists until `thin-incremental-consumer-evidence/index.json` has `complete: true`.

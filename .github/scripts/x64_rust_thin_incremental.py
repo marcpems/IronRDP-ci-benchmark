@@ -33,7 +33,7 @@ def read(path):
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def configuration(clang, tools, variant, profiles):
+def configuration(clang, tools, variant, profiles, *, llvm_thin=False, native_tools="msvc"):
     if variant not in ("baseline", "rust-thin"):
         raise ValueError("Unknown compiler arm")
     config = compiler_configuration(
@@ -41,8 +41,16 @@ def configuration(clang, tools, variant, profiles):
         Path(tools["files"]["lib.exe"]["path"]),
         "pgo" if variant == "baseline" else "pgo-rust-thin", profiles,
     )
-    return config.replace("lld = true", "lld = false").replace(
+    config = config.replace("lld = true", "lld = false").replace(
         "llvm-tools = true", "llvm-tools = false")
+    if native_tools == "lld":
+        config = config.replace('linker = "link.exe"', 'linker = "lld-link.exe"')
+        config = config.replace(
+            Path(tools["files"]["lib.exe"]["path"]).as_posix(), (clang / "llvm-lib.exe").as_posix())
+        config = config.replace("thin-lto = false", f"thin-lto = {str(llvm_thin).lower()}")
+    elif native_tools != "msvc" or llvm_thin:
+        raise ValueError("Native LLVM ThinLTO requires the declared LLD tool stack")
+    return config
 
 
 def validate_configs(left, right):
@@ -147,9 +155,12 @@ def verify_source(source, protocol, patched=False):
         raise RuntimeError("Bootstrap prerequisite differs from the qualified exact blob")
 
 
-def build(root, variant):
+def build(root, variant, protocol_path=PROTOCOL):
     hosted_only()
-    protocol = read(PROTOCOL)
+    protocol = read(protocol_path)
+    factorial = protocol.get("lto_factors")
+    rust_thin, llvm_thin = (factorial[variant] if factorial else (variant == "rust-thin", False))
+    native_tools = "lld" if factorial else "msvc"
     source, output, profiles = root / "r", root / "e", root / "profiles"
     if root != Path(r"D:\ri") or (source / "build").exists():
         raise RuntimeError("Build requires the same clean, short hosted path in both arms")
@@ -158,7 +169,7 @@ def build(root, variant):
     training = verify_profiles(profiles, protocol)
     save(output / "checkout.json", preserve_literal_release_batch(source / "src/llvm-project"))
     verify_source(source, protocol)
-    patch = PROTOCOL.parent / "bootstrap-clang-runtime.patch"
+    patch = protocol_path.parent / "bootstrap-clang-runtime.patch"
     subprocess.run(["git", "-C", source, "apply", "--check", "--ignore-space-change", patch], check=True)
     subprocess.run(["git", "-C", source, "apply", "--ignore-space-change", patch], check=True)
     verify_source(source, protocol, patched=True)
@@ -168,16 +179,27 @@ def build(root, variant):
     if digest(root / "LLVM-20.1.3-win64.exe") != protocol["clang_installer_sha256"]:
         raise RuntimeError("Wrong CI Clang installer")
     tools = tool_identity(clang)
+    if factorial:
+        for name in ("lld-link.exe", "llvm-lib.exe"):
+            tools["files"][name] = {"path": str(clang / name), "sha256": digest(clang / name)}
     for name in ("clang-cl.exe", "llvm-profdata.exe"):
         if tools["files"][name]["sha256"] != training["tools"]["files"][name]["sha256"]:
             raise RuntimeError("Clang differs from the profile producer")
-    config = configuration(clang, tools, variant, profiles)
-    validate_configs(configuration(clang, tools, "baseline", profiles),
-                     configuration(clang, tools, "rust-thin", profiles))
+    config = configuration(clang, tools, "rust-thin" if rust_thin else "baseline", profiles,
+                           llvm_thin=llvm_thin, native_tools=native_tools)
+    if not factorial:
+        validate_configs(configuration(clang, tools, "baseline", profiles),
+                         configuration(clang, tools, "rust-thin", profiles))
     (source / "bootstrap.toml").write_text(config, encoding="utf-8")
     (output / "bootstrap.toml").write_text(config, encoding="utf-8")
     env = environment(output, clang)
-    env.update(MATCHED_BUILD_CORES="4", CMAKE_TOOLCHAIN_FILE=str(cmake_toolchain(output, tools)))
+    toolchain = cmake_toolchain(output, tools)
+    if factorial:
+        # LLVM_ENABLE_LLD (set by ThinLTO) rejects LLVM_USE_LINKER; pin CMake tools directly.
+        toolchain.write_text("".join(
+            f'set({key} "{(clang / name).as_posix()}" CACHE FILEPATH "" FORCE)\n'
+            for key, name in (("CMAKE_LINKER", "lld-link.exe"), ("CMAKE_AR", "llvm-lib.exe"))))
+    env.update(MATCHED_BUILD_CORES="4", CMAKE_TOOLCHAIN_FILE=str(toolchain))
     record = {
         "complete": False, "build_complete": False, "variant": variant, "protocol": protocol,
         "run_id": os.environ["GITHUB_RUN_ID"], "attempt": os.environ["GITHUB_RUN_ATTEMPT"],
@@ -214,10 +236,12 @@ def build(root, variant):
         if line and not line.startswith(("#", "//")) and ":" in line and "=" in line:
             key, value = line.split("=", 1)
             cache[key.split(":", 1)[0]] = value
-    for key, name in (("CMAKE_LINKER", "link.exe"), ("CMAKE_AR", "lib.exe")):
+    link_tools = (("CMAKE_LINKER", "lld-link.exe"), ("CMAKE_AR", "llvm-lib.exe")) if factorial else (
+        ("CMAKE_LINKER", "link.exe"), ("CMAKE_AR", "lib.exe"))
+    for key, name in link_tools:
         if digest(Path(cache[key])) != tools["files"][name]["sha256"]:
-            raise RuntimeError("Native LLVM did not use Microsoft linking tools")
-    if (cache.get("LLVM_ENABLE_LTO", "OFF").upper() not in ("OFF", "")
+            raise RuntimeError("Native LLVM did not use the declared linking tools")
+    if (cache.get("LLVM_ENABLE_LTO", "OFF").upper() not in (("THIN",) if llvm_thin else ("OFF", ""))
             or cache.get("LLVM_BUILD_INSTRUMENTED", "OFF") not in ("OFF", "")
             or digest(Path(cache["LLVM_PROFDATA_FILE"])) != protocol["profiles"]["llvm"]):
         raise RuntimeError("Native LLVM LTO/instrumentation/profile mismatch")
@@ -228,12 +252,22 @@ def build(root, variant):
     log = "\n".join((output / f"fixed-profile-dist.{ext}").read_text(errors="replace")
                     for ext in ("stdout", "stderr"))
     thin = re.compile(r"-Clto=thin(?:[\s'\"`]|$)")
-    audit["driver_thin_flag"] = any(
-        "rustc_driver" in line and thin.search(line) for line in log.splitlines())
+    driver_commands = [line for line in log.splitlines()
+                       if "--crate-name rustc_driver " in line and "-Cprofile-use=" in line]
+    if len(driver_commands) != 1:
+        raise RuntimeError("Expected one final profile-use driver invocation")
+    driver_command = driver_commands[0]
+    audit["driver_thin_flag"] = bool(thin.search(driver_command))
+    audit["driver_dylib_lto_flag"] = "-Zdylib-lto" in driver_command
+    audit["driver_embedded_bitcode"] = "-Cembed-bitcode=yes" in driver_command
+    audit["driver_suffix"] = re.search(r"-C extra-filename=(-[0-9a-f]+)", driver_command).group(1)
+    audit["llvm_native_lto"] = cache.get("LLVM_ENABLE_LTO", "OFF")
     save(output / "profile-use-audit.json", audit)
     if (not audit["rustc_profile_use"] or audit["rejected_profile_mismatch_warnings"]
-            or audit["driver_thin_flag"] != (variant == "rust-thin")):
+            or any(audit[key] != rust_thin for key in
+                   ("driver_thin_flag", "driver_dylib_lto_flag", "driver_embedded_bitcode"))):
         raise RuntimeError("Compiler profile or cross-crate ThinLTO evidence failed")
+    record["profile_use_audit"] = audit
     verify_source(source, protocol, patched=True)
     verify_profiles(profiles, protocol)
     stage = source / "build" / HOST / "stage2"
@@ -264,6 +298,9 @@ def build(root, variant):
         raise RuntimeError("Compiler is unexpectedly instrumented")
     record["files"] = {p.relative_to(package).as_posix(): digest(p)
                        for p in sorted(package.rglob("*")) if p.is_file()}
+    record["driver"] = f"bin/rustc_driver{audit['driver_suffix']}.dll"
+    if record["driver"] not in record["files"]:
+        raise RuntimeError("Packaged driver does not match the final compiler command")
     archive = root / "package.zip"
     packaging_started = time.monotonic()
     save(output / "active-stage.json", {"phase": "package", "started_unix": time.time()})
