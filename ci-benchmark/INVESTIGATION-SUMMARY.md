@@ -11,8 +11,9 @@ on 21 October and Rust 1.99.1 revalidation on 22 October. Later work validated
 the current PR's full release on 25 October, checked the upstream artifact on
 26 October, and reproduced a native-cache invalidation defect on 27 October.
 The requested NVMe x64 4/8/16-LP timing audit on 30 October found completed
-16-LP builds but no matching 4/8-LP builds. New measurements are blocked because
-the dedicated runner is offline. Arm64 and GB300 experiments remain stopped.
+16-LP builds but no matching 4/8-LP builds. The restored runner has now passed
+readiness checks and started a [fresh sequential 16/8/4-LP comparison](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41054163612).
+No new timing results are claimed yet. Arm64 and GB300 experiments remain stopped.
 
 Presentation and document versions:
 [technical PowerPoint with linked report index](matched-release/Rust-Optimization-Summary-Published.pptx)
@@ -91,8 +92,9 @@ files are on the same reporting branch, but are earlier presentations, not
   **2h33m44s including extracted tests / 2h59m01s for the whole job**, at
   **16 logical processors (8 physical cores)**. Rust 1.94.1 and 1.99.1
   fixed-profile builds have different scopes and are listed separately below.
-  No matched NVMe x64 4/8/16 scaling curve exists; the Arm64 4/8/16 figures
-  must not be relabelled as x64 results. These custom builds used no compiler
+  No completed matched NVMe x64 4/8/16 scaling curve exists; a fresh comparison
+  is running. The Arm64 4/8/16 figures must not be relabelled as x64 results.
+  These custom builds used no compiler
   object-cache service; that is **not a measured 0% cache-hit rate**.
 - **The actual upstream try artifact did not reproduce the PGO gain.**
   `51dae839` averaged **628.71s versus 630.07s** for its parent: only **0.21%**
@@ -452,23 +454,28 @@ validation does not establish the duration of a cache-corrected hosted build.
 
 | Allocation on the custom x64 NVMe host | Available full-release timing | Status as of 30 October |
 |---|---|---|
-| 4 LP | **None for a matched NVMe scaling recipe** | Rerun required; runner offline |
-| 8 LP | **None for a matched NVMe scaling recipe** | Rerun required; runner offline |
-| 16 LP | Completed releases above | Valid individual timings; a matched new 16-LP control is needed with the 4/8-LP reruns |
+| 4 LP | **None for a matched NVMe scaling recipe** | Scheduled after the 8-LP cell succeeds |
+| 8 LP | **None for a matched NVMe scaling recipe** | Scheduled after the new 16-LP reference qualifies |
+| 16 LP | Completed releases above | Fresh matched control job started; readiness passed, setup in progress |
 
 The four-worker **IronRDP replay** is not a four-worker **Rust release build**.
 The upstream eight-processor GitHub try job is also not an eight-processor
 observation on this custom host. The completed **4/8/16 study was ordinary
 Arm64**, not the requested x64 NVMe matrix.
-The runner inventory was checked on 30 October and reported this host offline.
-No replacement timings are inferred, and no new builds are claimed to have run.
+After the user restored the runner, [run 41054163612](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41054163612)
+started on 30 October. The runner, idle-process, exact D: NVMe and free-space
+checks passed. The [recorded protocol](x64-nvme-scaling-protocol.json) runs
+**16, then 8, then 4 LP**, using the same pinned full-PGO Microsoft-tool recipe
+as the 25 October validation. Every cell starts fresh compiler objects and
+training; no compiler-cache service is enabled, so its hit rate is **N/A**,
+not an observed 0%. Lower-worker cells must match the new reference's source,
+tool hashes, normalized configuration, hardware and power scheme.
 
-The requested follow-up is sequential fresh **4/8/16-LP** production on this
-same NVMe host, one pinned same-tools recipe, full qualification, recorded
-affinity/topology, and separately reported setup, PGO, distribution, tests and
-uploads. Changing worker count must not change source, tool binaries, recipe
-or cache policy. The first set would be descriptive; repetitions would be
-needed for a stable scaling estimate.
+The study records inherited affinity and physical-core topology and separates
+production, extracted tests, phase timings and whole-job time. It measures
+**building Rust**, not IronRDP performance or incremental LTO benefit.
+This first, fixed-order pass uses freshly generated profiles per cell and
+will be descriptive; repetitions would be needed for a stable scaling estimate.
 
 Evidence: [1.94.1 D: NVMe study](X64-PROFILE-ONLY.md),
 [1.94.1 raw configuration/timing records](x64-profile-only-evidence.zip),
@@ -647,7 +654,7 @@ Evidence: [late validation, replay and cache-reproduction records](later-pgo-evi
 |---|---|---|
 | 1 | Make final Windows LLVM native-cache keys profile-aware, then validate the shipped artifact | Correct training is insufficient if stale objects are reused; require full release/correctness and downstream recovery within the runner budget |
 | 2 | Apply effective PGO while retaining Microsoft linking tools | Use isolated x64 profile evidence and explicitly labelled Arm64 no-PGO pilots; do not imply a same-tools LTO gain |
-| 3 | Complete the missing custom x64 NVMe 4/8/16-LP production matrix when the runner is online | Match source/tools/recipe/cache policy; report each phase and whole job |
+| 3 | Complete the running custom x64 NVMe 4/8/16-LP production matrix | Match source/tools/recipe/cache policy; report each phase and whole job |
 | 4 | Measure the incremental Rust-only ThinLTO benefit with Microsoft tools retained on x64 and Arm64 | Hold profiles/source/tools fixed; qualify full packages; the older LLVM-linked 7.6% result is not this estimate |
 | 5 | Optimize packaging and qualify a complete hosted production strategy | Preserve tools/docs/MSI, include training/setup/transfers/tests, and report segmented versus continuous time explicitly |
 
