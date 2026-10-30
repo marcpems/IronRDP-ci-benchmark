@@ -1,0 +1,25 @@
+name: Measure fresh Windows Rust release scaling on D NVMe
+on:
+  push:
+    branches: [experiment/x64-nvme-scaling]
+permissions:
+  contents: read
+concurrency:
+  group: matched-x64-selfhost
+  cancel-in-progress: false
+jobs:
+  sixteen:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    uses: ./.github/workflows/x64-nvme-scaling-cell.yml
+    with:
+      workers: 16
+  eight:
+    needs: sixteen
+    uses: ./.github/workflows/x64-nvme-scaling-cell.yml
+    with:
+      workers: 8
+  four:
+    needs: eight
+    uses: ./.github/workflows/x64-nvme-scaling-cell.yml
+    with:
+      workers: 4

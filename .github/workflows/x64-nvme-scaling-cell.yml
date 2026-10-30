@@ -1,0 +1,135 @@
+name: Fresh Windows Rust release scaling cell
+on:
+  workflow_call:
+    inputs:
+      workers:
+        type: number
+        required: true
+permissions:
+  contents: read
+jobs:
+  release:
+    name: Rust release on ${{ inputs.workers }} logical processors
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 1440
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+      SCALING_WORKERS: ${{ inputs.workers }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Reserve fresh D NVMe source and NTFS correctness paths
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Unexpected runner' }
+          if ([int]$env:SCALING_WORKERS -notin @(4,8,16)) { throw 'Unexpected allocation' }
+          $volume = Get-Volume -DriveLetter D
+          $disk = Get-Disk -Number (Get-Partition -DriveLetter D).DiskNumber
+          if ($volume.FileSystem -ne 'ReFS' -or $disk.FriendlyName -ne 'NVMe HFS002TFM9X189N-SKhynix') { throw 'Build storage changed' }
+          if ($volume.SizeRemaining -lt 250GB) { throw 'Insufficient build capacity' }
+          if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Correctness requires NTFS' }
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $env:GITHUB_RUN_ATTEMPT + $env:SCALING_WORKERS
+          $root = "D:\s$suffix"
+          $scratch = "C:\ps$suffix"
+          if ((Test-Path -LiteralPath $root) -or (Test-Path -LiteralPath $scratch)) { throw 'Refusing existing run paths' }
+          New-Item -ItemType Directory "$root\e","$root\git-hooks",$scratch | Out-Null
+          "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT" | Set-Content "$root\owner-run.txt"
+          "VALIDATION_ROOT=$root" >> $env:GITHUB_ENV
+          "CORRECTNESS_TEMP=$scratch" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=3" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_2=core.hooksPath" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_2=$root\git-hooks" >> $env:GITHUB_ENV
+      - name: Verify idle runner hardware and storage
+        shell: powershell
+        run: harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:VALIDATION_ROOT\e\readiness.json"
+      - name: Download the qualified same-run 16-LP identity
+        if: inputs.workers != 16
+        uses: actions/download-artifact@v6
+        with:
+          name: nvme-scaling-16-identity
+          path: ${{ env.VALIDATION_ROOT }}/reference
+      - name: Fetch pinned Rust and submodules without machine hooks
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = "$env:VALIDATION_ROOT\r"
+          if ((git config --get core.hooksPath) -ne "$env:VALIDATION_ROOT\git-hooks") { throw 'Hook isolation failed' }
+          if (@(Get-ChildItem -Force "$env:VALIDATION_ROOT\git-hooks").Count) { throw 'Hook directory is not empty' }
+          git init --quiet $source
+          if ($LASTEXITCODE) { throw 'Source init failed' }
+          git -C $source remote add origin https://github.com/marcpems/rust-arm64-compiler-ab.git
+          if ($LASTEXITCODE) { throw 'Source remote failed' }
+          git -C $source fetch --quiet --depth 1 origin 4da678aada4683607acbd67a8da37a320c791f93
+          if ($LASTEXITCODE) { throw 'Source fetch failed' }
+          git -C $source checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Source checkout failed' }
+          git -C $source submodule update --init --recursive --depth 1 --jobs 4
+          if ($LASTEXITCODE) { throw 'Submodule checkout failed' }
+      - name: Install isolated pinned Clang and WiX
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tools = "$env:VALIDATION_ROOT\r\citools"
+          New-Item -ItemType Directory "$tools\clang-rust","$env:VALIDATION_ROOT\r\wix\bin" | Out-Null
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/LLVM-20.1.3-win64.exe --output "$tools\LLVM-20.1.3-win64.exe"
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          if ((Get-FileHash "$tools\LLVM-20.1.3-win64.exe").Hash.ToLowerInvariant() -ne '0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af') { throw 'Clang checksum mismatch' }
+          7z x "-o$tools\clang-rust" "$tools\LLVM-20.1.3-win64.exe" -y | Out-Null
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          curl.exe --fail --location --retry 3 https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip --output "$tools\wix311-binaries.zip"
+          if ($LASTEXITCODE) { throw 'WiX download failed' }
+          7z x "-o$env:VALIDATION_ROOT\r\wix\bin" "$tools\wix311-binaries.zip" -y | Out-Null
+          if ($LASTEXITCODE) { throw 'WiX extraction failed' }
+      - name: Build and qualify a fresh complete PGO release at the selected allocation
+        shell: powershell
+        run: |
+          $arguments = @('--root', $env:VALIDATION_ROOT, '--correctness-temp', $env:CORRECTNESS_TEMP, '--workers', $env:SCALING_WORKERS, '--scaling')
+          if ([int]$env:SCALING_WORKERS -ne 16) { $arguments += @('--reference', "$env:VALIDATION_ROOT\reference") }
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\x64_pr164707_validation.py @arguments
+      - name: Preserve evidence and failure diagnostics
+        if: always() && env.VALIDATION_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: nvme-scaling-${{ inputs.workers }}-evidence
+          path: |
+            ${{ env.VALIDATION_ROOT }}/e/*.json
+            ${{ env.VALIDATION_ROOT }}/e/*.jsonl
+            ${{ env.VALIDATION_ROOT }}/e/*.txt
+            ${{ env.VALIDATION_ROOT }}/e/*.toml
+            ${{ env.VALIDATION_ROOT }}/e/*.cmake
+            ${{ env.VALIDATION_ROOT }}/e/*.patch
+            ${{ env.VALIDATION_ROOT }}/e/*.profdata
+            ${{ env.VALIDATION_ROOT }}/e/*.stdout
+            ${{ env.VALIDATION_ROOT }}/e/*.stderr
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 1
+      - name: Preserve the qualified complete distribution
+        uses: actions/upload-artifact@v6
+        with:
+          name: nvme-scaling-${{ inputs.workers }}-distribution
+          path: ${{ env.VALIDATION_ROOT }}/r/build/dist
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0
+      - name: Publish the qualified 16-LP reference identity
+        if: inputs.workers == 16
+        uses: actions/upload-artifact@v6
+        with:
+          name: nvme-scaling-16-identity
+          path: ${{ env.VALIDATION_ROOT }}/e/result.json
+          if-no-files-found: error
+          retention-days: 30
