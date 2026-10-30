@@ -76,6 +76,21 @@ class CollectionTests(unittest.TestCase):
             (self.root / "xtask-bootstrap.json").write_text(json.dumps(altered["rows"][0]))
             with self.subTest(field=field), self.assertRaises(RuntimeError):
                 verify_block(self.root, False)
+        result["correctness"] = True
+        for row, (name, args) in zip(rows, COMMANDS):
+            args = [arg for arg in args if arg != "--no-run"]
+            if name == "workspace-tests":
+                args += ["--lib", "--bins", "--tests"]
+            row["command"] = [r"D:\ri\baseline\bin\cargo.exe", *args, "--frozen"]
+            (self.root / f"{name}.json").write_text(json.dumps(row))
+            (self.root / f"{name}.stdout").write_text(
+                "test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out;\n")
+        (self.root / "results.json").write_text(json.dumps(result))
+        checked = verify_block(self.root, True)
+        self.assertEqual(checked["native_test_counts"]["workspace-tests"]["passed"], 2)
+        (self.root / "workspace-tests.stdout").write_text("no tests executed")
+        with self.assertRaisesRegex(RuntimeError, "Missing native test outcomes"):
+            verify_block(self.root, True)
 
 
 if __name__ == "__main__":

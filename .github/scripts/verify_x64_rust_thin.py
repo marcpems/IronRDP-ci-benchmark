@@ -5,6 +5,8 @@ from decimal import Decimal, ROUND_HALF_UP
 import hashlib
 import json
 from pathlib import Path
+import re
+import subprocess
 import tomllib
 import zipfile
 
@@ -71,6 +73,7 @@ def verify_block(directory, correctness):
     rows = result["rows"]
     require(len(rows) == len(COMMANDS), "Wrong command count")
     totals = {"wall_seconds": Decimal(0), "cpu_seconds": Decimal(0)}
+    test_counts = {}
     for row, (name, arguments) in zip(rows, COMMANDS):
         require(row["name"] == name, "Original command order changed")
         require(row == read(directory / f"{name}.json"), f"Command receipt disagreement: {name}")
@@ -90,6 +93,15 @@ def verify_block(directory, correctness):
         require((directory / f"{name}.stderr").is_file(), "Missing raw stderr")
         stdout = directory / f"{name}.stdout"
         require(stdout.is_file(), "Missing raw stdout")
+        if correctness and name != "xtask-bootstrap":
+            matches = re.findall(
+                r"test result: ok\. (\d+) passed; (\d+) failed; (\d+) ignored; "
+                r"(\d+) measured; (\d+) filtered out;", stdout.read_text(encoding="utf-8"))
+            require(matches, f"Missing native test outcomes: {name}")
+            counts = {key: sum(int(row[index]) for row in matches)
+                      for index, key in enumerate(("passed", "failed", "ignored", "measured", "filtered"))}
+            require(counts["passed"] > 0 and counts["failed"] == 0, f"No passing native tests: {name}")
+            test_counts[name] = counts
         if not correctness:
             compiled = 0
             with stdout.open(encoding="utf-8") as stream:
@@ -101,6 +113,8 @@ def verify_block(directory, correctness):
             require((directory / f"{name}.timings.html").is_file(), "Missing Cargo timing receipt")
     for key, value in totals.items():
         equal_number(result[key], value)
+    if correctness:
+        totals["native_test_counts"] = test_counts
     return totals
 
 
@@ -123,8 +137,9 @@ def verify(artifacts, run_id, head, attempt):
         require(sha(evidence / "source.patch") == record["source_patch_sha256"], "Source patch hash changed")
         patch = (evidence / "source.patch").read_text()
         additions = [line for line in patch.splitlines() if line.startswith("+") and not line.startswith("+++")]
+        deletions = [line for line in patch.splitlines() if line.startswith("-") and not line.startswith("---")]
         require(additions == ["+    builtins_locator.run_in_dry_run();"]
-                and patch.count("diff --git ") == 1
+                and not deletions and patch.count("diff --git ") == 1
                 and "src/bootstrap/src/utils/helpers.rs" in patch, "Unexpected source changes")
         require((evidence / "bootstrap.toml").read_text() == record["configuration"], "Config receipt changed")
         config = tomllib.loads(record["configuration"])
@@ -136,6 +151,19 @@ def verify(artifacts, run_id, head, attempt):
         for component in ("rustc", "llvm"):
             require(config["pgo"][component]["use"] == f"D:/ri/profiles/{component}-pgo.profdata",
                     "Wrong frozen profile path")
+        cache = {}
+        for line in (evidence / "LLVM-CMakeCache.txt").read_text().splitlines():
+            if line and not line.startswith(("#", "//")) and ":" in line and "=" in line:
+                key, value = line.split("=", 1)
+                cache[key.split(":", 1)[0]] = value
+        require(cache.get("LLVM_ENABLE_LTO", "OFF").upper() in ("", "OFF")
+                and cache.get("LLVM_BUILD_INSTRUMENTED", "OFF") in ("", "OFF")
+                and cache["LLVM_PROFDATA_FILE"].replace("\\", "/") == "D:/ri/profiles/llvm-pgo.profdata",
+                "Native LLVM CMake profile/LTO state differs")
+        for variable, name in (("CMAKE_LINKER", "link.exe"), ("CMAKE_AR", "lib.exe")):
+            require(cache[variable].replace("\\", "/").lower()
+                    == record["tools"]["files"][name]["path"].replace("\\", "/").lower(),
+                    "Native CMake linking tool differs from recorded identity")
         audit = read(evidence / "profile-use-audit.json")
         require(audit["rustc_profile_use"] is True
                 and not audit["rejected_profile_mismatch_warnings"]
@@ -191,8 +219,15 @@ def verify(artifacts, run_id, head, attempt):
             and meter["sleep"]["cpu_seconds"] <= 0.2
             and meter["affinity"]["exit_code"] == 0
             and meter["affinity"]["affinity"] == [0], "CPU meter qualification failed")
-    for arm in ARMS:
-        verify_block(consumer / f"correctness-{arm}", correctness=True)
+    workload_lock = subprocess.check_output(
+        ["git", "-C", PROTOCOL.parents[1], "show", f"{protocol['source_sha']}:Cargo.lock"])
+    require(hashlib.sha256(workload_lock).hexdigest() == index["workload_lock_sha256"],
+            "Consumer lockfile differs from the exact pinned IronRDP Git blob")
+    correctness = {
+        arm: verify_block(consumer / f"correctness-{arm}", correctness=True)["native_test_counts"]
+        for arm in ARMS
+    }
+    require(correctness["baseline"] == correctness["rust-thin"], "Native test populations differ")
     rounds = protocol["warmup_rounds"] + protocol["measured_rounds"]
     require(len(index["runs"]) == rounds * 2, "Incomplete round count")
     measured = {arm: [] for arm in ARMS}
@@ -225,6 +260,7 @@ def verify(artifacts, run_id, head, attempt):
         "complete": True, "independently_verified": True, "run_id": run_id, "head_sha": head,
         "attempt": attempt, "full_release_qualified": False, "protocol": protocol,
         "paired_rounds": pairs, "ratio_of_sums": totals,
+        "native_correctness": correctness,
         "paired_mean_reduction_percent": {
             key: str(sum(number(pair[key]["reduction_percent_decimal"]) for pair in pairs) / len(pairs))
             for key in ("wall_seconds", "cpu_seconds")
