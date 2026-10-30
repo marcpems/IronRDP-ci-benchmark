@@ -143,8 +143,21 @@ Microsoft-linked pair as the adoption reference. This separates LLVM's
 contribution from Rust's and their interaction; only then bridge versions if
 the old combined gain still does not reproduce. A repeat of the present
 Microsoft-linked pair on additional VMs can establish repeatability, but
-cannot by itself explain the historical combined effect. No additional
-benchmark has been launched for this forensic review.
+cannot by itself explain the historical combined effect.
+
+**Authorized follow-up now running:** the four-way
+[run 41116552933](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41116552933)
+started at **19:35 UTC on 30 October**, harness
+`73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0`. Four fresh hosted compiler builds
+feed four independent hosted consumers, each measuring all four arms in three
+rounds after a fixed warmup. Source, profiles and LLD tools are fixed;
+position and preceding-arm effects are counterbalanced. The
+[frozen protocol](https://github.com/marcpems/IronRDP-ci-benchmark/blob/73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0/ci-benchmark/x64-factorial-thin.json)
+explicitly uses common baseline native standard libraries and stage0 Cargo
+to isolate compiler effects, after verifying the original packages. Loaded
+driver DLL identities are observed outside timing and compiler hashes are
+recorded around every block. This is not an untouched-package comparison or
+full release. **No four-way performance result is available yet.**
 
 ## Consumer measurement and correctness
 

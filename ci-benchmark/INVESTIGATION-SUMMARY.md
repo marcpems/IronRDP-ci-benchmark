@@ -275,7 +275,11 @@ packages. It also recomputed the old gain on every VM, including two with the
 new consumer's CPU model. The old contrast changed **both LTO modes while
 retaining LLD in both arms**. Expecting that gain from Rust-only ThinLTO
 overstated the original attribution; LLVM's contribution and cross-version
-effects remain unseparated, not measured explanations.
+effects remain unseparated, not measured explanations. The authorized
+[four-way hosted follow-up](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41116552933)
+started at 19:35 UTC on 30 October: fixed profiles/source/LLD, neither mode
+versus Rust-only versus LLVM-only versus both, on four paired consumer VMs.
+Its results remain pending.
 
 Evidence: [profile-only 1.94.1](X64-PROFILE-ONLY.md),
 [profile-only 1.99.1](X64-PGO-1991.md),
@@ -473,9 +477,15 @@ validation does not establish the duration of a cache-corrected hosted build.
 
 | Allocation on the custom x64 NVMe host | Available full-release timing | Status as of 30 October |
 |---|---|---|
-| 4 LP | **None for a matched NVMe scaling recipe** | Scheduled after the 8-LP cell succeeds |
-| 8 LP | **None for a matched NVMe scaling recipe** | Scheduled after the new 16-LP reference qualifies |
-| 16 LP | **2h23m54s production; 8m58s qualification; 3h02m41s whole job** | Fresh matched reference qualified; 8-LP build is running |
+| 4 LP | **None yet for a matched NVMe scaling recipe** | Started at 18:54 UTC; build/qualification running |
+| 8 LP | **2h57m33s production; 10m00s qualification; 3h34m27s whole job** | Qualified at 18:54 UTC |
+| 16 LP | **2h23m54s production; 8m58s qualification; 3h02m41s whole job** | Fresh matched reference qualified |
+
+The qualified 16-LP cell used **18.9% less production wall** than the 8-LP
+cell (8,634.268 versus 10,652.721 seconds). This is one observation per
+allocation on an eight-physical-core/16-thread machine, with fresh profiles
+per cell; it is not a twofold throughput gain or a repeated scaling estimate.
+The 4-LP result and final Office/report synthesis remain pending.
 
 The four-worker **IronRDP replay** is not a four-worker **Rust release build**.
 The upstream eight-processor GitHub try job is also not an eight-processor
