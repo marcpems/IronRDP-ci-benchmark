@@ -165,3 +165,16 @@ runtime-identity comparison are retained under
 The consumer continuation branch is `experiment/x64-rust-thin-consumer`; it has
 only a standard hosted Windows consumer job and cannot rebuild compilers or
 occupy any self-hosted concurrency slot.
+
+Further retained pre-measurement failures:
+
+- 41069504308 failed baseline correctness, and its recursive artifact glob hit
+  protected `INetCache` directories. Raw Actions failure logs were retained, but
+  that run has no consumer artifact. Collection now names only known receipt
+  directories and prints failed command tails.
+- 41071561644 retained the actual cause: the environment allowlist dropped
+  `PUBLIC`, causing
+  `asynchronous_directory_notification_observes_an_immediate_public_documents_change`
+  to panic with `PUBLIC is set on Windows: NotPresent`. Correctness commands now
+  inherit only the actual `PUBLIC` directory in an explicitly recorded override.
+  The timed environment remains unchanged. No test is skipped or modified.

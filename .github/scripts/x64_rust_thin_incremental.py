@@ -296,12 +296,14 @@ def unpack(artifact, destination):
     return record
 
 
-def block(source, output, compiler, cargo, protocol, env, correctness=False):
+def block(source, output, compiler, cargo, protocol, env, correctness=False, correctness_env=None):
     output.mkdir()
     target = output / "target"
     target.mkdir()
     child_env = build_environment(env, compiler, protocol["cores"])
     child_env["CARGO_TARGET_DIR"] = str(target)
+    if correctness:
+        child_env.update(correctness_env or {})
     rows = []
     with measurement_session(telemetry_executables()) as session:
         for name, arguments in NATIVE_COMMANDS:
@@ -314,6 +316,7 @@ def block(source, output, compiler, cargo, protocol, env, correctness=False):
             row = measure(command, source, child_env, protocol["cores"],
                           output / name, session=session, timeout=3600)
             row["name"] = name
+            row["correctness_environment"] = (correctness_env or {}) if correctness else {}
             rows.append(row)
             save(output / f"{name}.json", row)
             save(output / "results.json", {"complete": False, "correctness": correctness, "rows": rows})
@@ -385,6 +388,9 @@ def benchmark(root, source, continuation=False):
             {**env, "RUSTC": str(compiler)}, output, "fetch-outside-measurement", timeout=1200, cores=4)
     lock = digest(source / "Cargo.lock")
     validate_meter(output / "meter-validation")
+    correctness_env = {"PUBLIC": os.environ["PUBLIC"]}
+    if not Path(correctness_env["PUBLIC"]).is_dir():
+        raise RuntimeError("The native correctness suite requires the actual Windows public-user directory")
     index = {
         "complete": False, "pilot": True, "full_release_qualified": False, "protocol": protocol,
         "run_id": os.environ["GITHUB_RUN_ID"], "attempt": os.environ["GITHUB_RUN_ATTEMPT"],
@@ -392,11 +398,12 @@ def benchmark(root, source, continuation=False):
         "workload_lock_sha256": lock, "runs": [],
         "harness_sha": os.environ["GITHUB_SHA"], "producer": producer,
         "stdlib_identity": stdlib_identity,
+        "correctness_environment": correctness_env,
     }
     save(output / "index.json", index)
     for arm in protocol["variants"]:
         block(source, output / f"correctness-{arm}", root / arm / "bin/rustc.exe",
-              cargo, protocol, env, correctness=True)
+              cargo, protocol, env, correctness=True, correctness_env=correctness_env)
     rounds = protocol["warmup_rounds"] + protocol["measured_rounds"]
     for round_index in range(rounds):
         for position, arm in enumerate(paired_order(protocol["variants"], 1, round_index)):

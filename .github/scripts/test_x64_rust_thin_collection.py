@@ -82,6 +82,7 @@ class CollectionTests(unittest.TestCase):
             if name == "workspace-tests":
                 args += ["--lib", "--bins", "--tests"]
             row["command"] = [r"D:\ri\baseline\bin\cargo.exe", *args, "--frozen"]
+            row["correctness_environment"] = {"PUBLIC": r"C:\Users\Public"}
             (self.root / f"{name}.json").write_text(json.dumps(row))
             (self.root / f"{name}.stdout").write_text(
                 "test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out;\n")

@@ -85,6 +85,9 @@ def verify_block(directory, correctness):
             expected += ["--timings", "--message-format=json"]
         require(row["command"] == expected, f"Unexpected command: {row['command']}")
         require(row["exit_code"] == 0, f"Failed command: {name}")
+        require(row.get("correctness_environment", {}) ==
+                ({"PUBLIC": r"C:\Users\Public"} if correctness else {}),
+                "Correctness-only environment changed or leaked into timing")
         require(row["affinity"] == [0, 1, 2, 3], f"Wrong affinity: {name}")
         for key in ("wall_seconds", "cpu_seconds"):
             require(number(row[key]) > 0, f"Nonpositive measurement: {name}/{key}")
@@ -252,6 +255,8 @@ def verify(artifacts, run_id, head, attempt):
         require(index["harness_sha"] == head, "Continuation harness head changed")
     require(index["compilers"] == records and index["cargo_sha256"] == baseline["stage0_cargo_sha256"],
             "Consumer did not use the verified packages")
+    require(index["correctness_environment"] == {"PUBLIC": r"C:\Users\Public"},
+            "Missing required Windows correctness environment")
     require(tools(index["tools"]) == tools(baseline["tools"]), "Consumer native tools differ")
     meter = read(consumer / "meter-validation/self-test.json")
     require(meter["busy_descendant"]["exit_code"] == meter["sleep"]["exit_code"] == 0
