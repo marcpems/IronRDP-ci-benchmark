@@ -318,6 +318,11 @@ def block(source, output, compiler, cargo, protocol, env, correctness=False):
             save(output / f"{name}.json", row)
             save(output / "results.json", {"complete": False, "correctness": correctness, "rows": rows})
             if row["exit_code"] != 0:
+                print(json.dumps(row), flush=True)
+                for suffix in ("stdout", "stderr"):
+                    log = output / f"{name}.{suffix}"
+                    if log.is_file():
+                        print(f"{log}:\n{log.read_text(errors='replace')[-16000:]}", flush=True)
                 raise RuntimeError(f"Consumer command failed: {output / name}")
             if not correctness:
                 messages = [json.loads(line) for line in (output / f"{name}.stdout").read_text().splitlines()]

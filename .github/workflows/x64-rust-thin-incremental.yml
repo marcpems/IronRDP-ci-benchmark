@@ -183,12 +183,18 @@ jobs:
         with:
           name: thin-incremental-consumer-evidence
           path: |
-            D:\ri\e\**\*.json
-            D:\ri\e\**\*.stdout
-            D:\ri\e\**\*.stderr
-            D:\ri\e\**\*.timings.html
-            !D:\ri\e\**\target\**
-            !D:\ri\e\cargo-home\**
-            !D:\ri\e\home\**
+            D:\ri\e\*.json
+            D:\ri\e\*.stdout
+            D:\ri\e\*.stderr
+            D:\ri\e\correctness-*\*.json
+            D:\ri\e\correctness-*\*.stdout
+            D:\ri\e\correctness-*\*.stderr
+            D:\ri\e\round-*\*.json
+            D:\ri\e\round-*\*.stdout
+            D:\ri\e\round-*\*.stderr
+            D:\ri\e\round-*\*.timings.html
+            D:\ri\e\meter-validation\*.json
+            D:\ri\e\meter-validation\*.stdout
+            D:\ri\e\meter-validation\*.stderr
           retention-days: 30
           compression-level: 1
