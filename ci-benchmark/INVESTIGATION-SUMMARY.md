@@ -219,6 +219,13 @@ The preferred delivery path retains **clang-cl, Microsoft `link.exe` and
 and maintenance preference, not a claim that alternative tools cannot work.
 It does not require users to transplant compiler components between releases.
 
+Open PRs (30 October): [Rust #164707](https://github.com/rust-lang/rust/pull/164707)
+repairs static-LLVM PGO training;
+[Rust #165138](https://github.com/rust-lang/rust/pull/165138) adds the
+profile-aware cache workaround;
+[sccache #2962](https://github.com/mozilla/sccache/pull/2962) fixes upstream
+clang-cl profile hashing.
+
 | Optimization, with Windows native tools unchanged | x64 IronRDP benefit / status | Arm64 IronRDP benefit / status | What can be claimed |
 |---|---|---|---|
 | Repair LLVM PGO; retain Rust-side profiles and existing LTO settings | **13.73%** less IronRDP wall on 1.94.1; **12.93%** on 1.99.1 | No equivalent profile-only estimate | Isolated x64 LLVM-profile benefit, not a linker gain |
