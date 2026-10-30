@@ -54,6 +54,12 @@ It does not measure compiler-production or whole-CI wall time.
 
 ## Additional ThinLTO versus matched effective-PGO control
 
+This adds **both Rust and native LLVM ThinLTO**. Both arms already use
+LLD/llvm-lib; the matched contrast does not switch linkers. It does not isolate
+Rust-only ThinLTO. The later [Rust-only pilot and discrepancy audit](X64-RUST-THIN-INCREMENTAL.md#why-this-differs-from-the-earlier-76-result)
+found no meaningful incremental wall benefit in a different, Microsoft-linked
+toolchain configuration.
+
 | Component | Metric | PGO control | PGO + ThinLTO | Reduction (95% interval) |
 |---|---|---:|---:|---|
 | xtask-bootstrap | wall_seconds | 3.71 | 3.54 | 4.4% (0.0% to 7.9%) |

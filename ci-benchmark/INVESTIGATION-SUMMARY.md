@@ -269,6 +269,14 @@ Native correctness passed for both arms. Full-distribution qualification,
 multiple independent consumer VMs and the Arm64 incremental comparison remain
 separate work; release-production scaling does not answer those questions.
 
+The [discrepancy audit](X64-RUST-THIN-INCREMENTAL.md#why-this-differs-from-the-earlier-76-result)
+confirmed effective DLL ThinLTO flags and different executable code in the new
+packages. It also recomputed the old gain on every VM, including two with the
+new consumer's CPU model. The old contrast changed **both LTO modes while
+retaining LLD in both arms**. Expecting that gain from Rust-only ThinLTO
+overstated the original attribution; LLVM's contribution and cross-version
+effects remain unseparated, not measured explanations.
+
 Evidence: [profile-only 1.94.1](X64-PROFILE-ONLY.md),
 [profile-only 1.99.1](X64-PGO-1991.md),
 [incremental x64 Rust-only ThinLTO](X64-RUST-THIN-INCREMENTAL.md),

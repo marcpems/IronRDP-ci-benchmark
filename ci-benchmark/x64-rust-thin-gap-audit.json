@@ -1,0 +1,351 @@
+{
+  "scope": "Read-only forensic reanalysis; no new performance samples",
+  "accepted_consumer": "41076640207",
+  "historical_consumer": "37001433534",
+  "producer_checks": {
+    "baseline": {
+      "version": "rustc 1.101.0-nightly (4da678aad 2026-10-24)\nbinary: rustc\ncommit-hash: 4da678aada4683607acbd67a8da37a320c791f93\ncommit-date: 2026-10-24\nhost: x86_64-pc-windows-msvc\nrelease: 1.101.0-nightly\nLLVM version: 23.1.3\n",
+      "archive_sha256": "d818155ed6f52ff92b9e39a4a21e9fa409b88eb8ecc092518c5b5110d6572851",
+      "log": "fixed-profile-dist.stderr",
+      "log_sha256": "778ced8f3f7da78dbee3192eb99f4c20dad3331e0d57c5a4b29413b2d15f906c",
+      "final_driver_command_line": 2671,
+      "final_driver_command_sha256": "3eda21513d3fa5967a1cc073e0f8a6d4930dc6d9e5f8852ae390cec3d2024e70",
+      "dylib_lto": false,
+      "cross_crate_thin": false,
+      "embedded_bitcode": false,
+      "codegen_units": 1,
+      "rustc_profile_use": "D:/ri/profiles/rustc-pgo.profdata",
+      "llvm_native_thin_lto": false,
+      "driver": "bin/rustc_driver-4d4a0159589fd330.dll",
+      "driver_bytes": 208229888,
+      "driver_sha256": "fb563bf10db61513ceb1827a5736051f5a7dc94649e648f6ff8985036383bbec",
+      "driver_code": {
+        "virtual_bytes": 129169044,
+        "raw_bytes": 129169408,
+        "raw_sha256": "57ac0c520a75904b938fb4ce8227bc55d2d28b40573df2027821f07265147f84"
+      },
+      "exe_driver_name_references": [
+        "rustc_driver-4d4a0159589fd330.dll"
+      ],
+      "caveat": "Static package/log proof; no loaded-module trace was captured during measured commands"
+    },
+    "rust-thin": {
+      "version": "rustc 1.101.0-nightly (4da678aad 2026-10-24)\nbinary: rustc\ncommit-hash: 4da678aada4683607acbd67a8da37a320c791f93\ncommit-date: 2026-10-24\nhost: x86_64-pc-windows-msvc\nrelease: 1.101.0-nightly\nLLVM version: 23.1.3\n",
+      "archive_sha256": "6f1ade28c1ef40c37fd8ae7d45916e885964e2277b21ae6840d0c54f176d333b",
+      "log": "fixed-profile-dist.stderr",
+      "log_sha256": "5ecfcfe8af483be540272f3f104cc3a919a4526cba04b307bbc6e75470ac1b28",
+      "final_driver_command_line": 2698,
+      "final_driver_command_sha256": "9ba7e5e6532e7754d8329385d64688b5bdb3557cfb71a80ddddfd44112f7a7e2",
+      "dylib_lto": true,
+      "cross_crate_thin": true,
+      "embedded_bitcode": true,
+      "codegen_units": 1,
+      "rustc_profile_use": "D:/ri/profiles/rustc-pgo.profdata",
+      "llvm_native_thin_lto": false,
+      "driver": "bin/rustc_driver-07ae6c6f31e26882.dll",
+      "driver_bytes": 214836736,
+      "driver_sha256": "805713b39395665c7b81c3de63dede071b73311c11b78a01c70edbd5da837d1d",
+      "driver_code": {
+        "virtual_bytes": 135284708,
+        "raw_bytes": 135284736,
+        "raw_sha256": "aef13a7ec1aad44ce7de9f6895deb9730213bd3ec8e804d3938afa34fe7badeb"
+      },
+      "exe_driver_name_references": [
+        "rustc_driver-07ae6c6f31e26882.dll"
+      ],
+      "caveat": "Static package/log proof; no loaded-module trace was captured during measured commands"
+    }
+  },
+  "components": {
+    "xtask-bootstrap": {
+      "wall_seconds": {
+        "baseline": 3.795458266667083,
+        "treatment": 3.8321512666664908,
+        "reduction_percent": -0.9667607287809465
+      },
+      "cpu_seconds": {
+        "baseline": 11.911458333333334,
+        "treatment": 11.958333333333334,
+        "reduction_percent": -0.3935286401399285
+      },
+      "compiled_artifacts_per_command": 7
+    },
+    "workspace-tests": {
+      "wall_seconds": {
+        "baseline": 625.0921867666669,
+        "treatment": 625.0176796,
+        "reduction_percent": 0.011919388570891254
+      },
+      "cpu_seconds": {
+        "baseline": 2443.75,
+        "treatment": 2435.1822916666665,
+        "reduction_percent": 0.35059676044331134
+      },
+      "compiled_artifacts_per_command": 637
+    },
+    "native-tls-tests": {
+      "wall_seconds": {
+        "baseline": 15.949433099999624,
+        "treatment": 15.95055156666634,
+        "reduction_percent": -0.007012579442178257
+      },
+      "cpu_seconds": {
+        "baseline": 47.708333333333336,
+        "treatment": 47.796875,
+        "reduction_percent": -0.18558951965064185
+      },
+      "compiled_artifacts_per_command": 15
+    },
+    "gateway-native-tls-tests": {
+      "wall_seconds": {
+        "baseline": 84.36680753333287,
+        "treatment": 84.78054433333364,
+        "reduction_percent": -0.4904023419841863
+      },
+      "cpu_seconds": {
+        "baseline": 327.3854166666667,
+        "treatment": 324.609375,
+        "reduction_percent": 0.8479429825956952
+      },
+      "compiled_artifacts_per_command": 117
+    },
+    "gateway-smartcard-tests": {
+      "wall_seconds": {
+        "baseline": 83.38183476666684,
+        "treatment": 83.37977676666651,
+        "reduction_percent": 0.0024681634868017888
+      },
+      "cpu_seconds": {
+        "baseline": 310.6197916666667,
+        "treatment": 310.515625,
+        "reduction_percent": 0.033535102868931244
+      },
+      "compiled_artifacts_per_command": 74
+    }
+  },
+  "historical_vms": [
+    {
+      "vm": 1,
+      "hardware": {
+        "Name": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "wall_seconds": {
+        "baseline": 896.5745995333345,
+        "treatment": 826.3396635999985,
+        "reduction_percent": 7.833696824546799
+      },
+      "cpu_seconds": {
+        "baseline": 3312.7916666666665,
+        "treatment": 3079.5052083333335,
+        "reduction_percent": 7.041990013457921
+      }
+    },
+    {
+      "vm": 2,
+      "hardware": {
+        "Name": "AMD EPYC 7763 64-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "wall_seconds": {
+        "baseline": 924.7978380333337,
+        "treatment": 852.652588566667,
+        "reduction_percent": 7.801191406339159
+      },
+      "cpu_seconds": {
+        "baseline": 3432.5416666666665,
+        "treatment": 3170.3177083333335,
+        "reduction_percent": 7.639352520605469
+      }
+    },
+    {
+      "vm": 3,
+      "hardware": {
+        "Name": "AMD EPYC 9V45 96-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "wall_seconds": {
+        "baseline": 558.5238583333334,
+        "treatment": 512.9307320999998,
+        "reduction_percent": 8.163147474019471
+      },
+      "cpu_seconds": {
+        "baseline": 2018.15625,
+        "treatment": 1865.21875,
+        "reduction_percent": 7.578080240318363
+      }
+    },
+    {
+      "vm": 4,
+      "hardware": {
+        "Name": "AMD EPYC 7763 64-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "wall_seconds": {
+        "baseline": 896.393707366666,
+        "treatment": 826.1672921333335,
+        "reduction_percent": 7.834327110532325
+      },
+      "cpu_seconds": {
+        "baseline": 3310.2239583333335,
+        "treatment": 3073.1927083333335,
+        "reduction_percent": 7.160580461732358
+      }
+    },
+    {
+      "vm": 5,
+      "hardware": {
+        "Name": "AMD EPYC 9V74 80-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      },
+      "wall_seconds": {
+        "baseline": 679.3013263666659,
+        "treatment": 635.1024634333316,
+        "reduction_percent": 6.5065179792505035
+      },
+      "cpu_seconds": {
+        "baseline": 2534.1666666666665,
+        "treatment": 2357.1666666666665,
+        "reduction_percent": 6.984544557711281
+      }
+    }
+  ],
+  "totals": {
+    "wall_seconds": {
+      "baseline": 812.5857204333333,
+      "treatment": 812.9607035333329,
+      "reduction_percent": -0.04614689756048396
+    },
+    "cpu_seconds": {
+      "baseline": 3141.375,
+      "treatment": 3130.0625,
+      "reduction_percent": 0.36011300783892475
+    }
+  },
+  "consumer_hardware": {
+    "Cpu": [
+      {
+        "Name": "AMD EPYC 7763 64-Core Processor                ",
+        "NumberOfCores": 2,
+        "NumberOfLogicalProcessors": 4
+      }
+    ],
+    "Runner": "GitHub Actions 1000001457",
+    "System": {
+      "NumberOfLogicalProcessors": 4,
+      "TotalPhysicalMemory": 17174360064
+    },
+    "Image": "20261026.347.1"
+  },
+  "order": [
+    {
+      "round": 0,
+      "variant": "baseline",
+      "position": 0,
+      "warmup": true
+    },
+    {
+      "round": 0,
+      "variant": "rust-thin",
+      "position": 1,
+      "warmup": true
+    },
+    {
+      "round": 1,
+      "variant": "rust-thin",
+      "position": 0,
+      "warmup": false
+    },
+    {
+      "round": 1,
+      "variant": "baseline",
+      "position": 1,
+      "warmup": false
+    },
+    {
+      "round": 2,
+      "variant": "baseline",
+      "position": 0,
+      "warmup": false
+    },
+    {
+      "round": 2,
+      "variant": "rust-thin",
+      "position": 1,
+      "warmup": false
+    },
+    {
+      "round": 3,
+      "variant": "rust-thin",
+      "position": 0,
+      "warmup": false
+    },
+    {
+      "round": 3,
+      "variant": "baseline",
+      "position": 1,
+      "warmup": false
+    }
+  ],
+  "historical_totals": {
+    "wall_seconds": {
+      "baseline": 791.1182659266667,
+      "treatment": 730.6385479666661,
+      "reduction_percent": 7.644839029112593
+    },
+    "cpu_seconds": {
+      "baseline": 2921.5760416666667,
+      "treatment": 2709.0802083333333,
+      "reduction_percent": 7.273328857533734
+    }
+  },
+  "historical_inputs": [
+    {
+      "variant": "pgo-control",
+      "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+      "llvm_sha": "00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7",
+      "rustc_perf_sha": "c0301bc44d175b9b2c5442b25049475c39d7700c",
+      "profiles": {
+        "rustc-pgo.profdata": {
+          "sha256": "a41f308a946ce0486b923962b82d3d5c077fcccffde7abc2c062211ca3422ffd",
+          "bytes": 39722816
+        },
+        "llvm-pgo.profdata": {
+          "sha256": "db08c92cc04657433e547d4e77c0fbbaa00a0dce5d87d4cdbf8e43a560ea2658",
+          "bytes": 49708040
+        }
+      },
+      "rustc_version": "rustc 1.94.1 (e408947bf 2026-03-25)\nbinary: rustc\ncommit-hash: e408947bfd200af42db322daf0fadfe7e26d3bd1\ncommit-date: 2026-03-25\nhost: x86_64-pc-windows-msvc\nrelease: 1.94.1\nLLVM version: 21.1.8\n",
+      "msvc": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\",
+      "sdk": "10.0.26100.0\\",
+      "runner": "windows-2025"
+    },
+    {
+      "variant": "optimized",
+      "rust_sha": "e408947bfd200af42db322daf0fadfe7e26d3bd1",
+      "llvm_sha": "00d23d10dc48c6bb9d57ba96d4a748d85d77d0c7",
+      "rustc_perf_sha": "c0301bc44d175b9b2c5442b25049475c39d7700c",
+      "profiles": {
+        "rustc-pgo.profdata": {
+          "sha256": "a41f308a946ce0486b923962b82d3d5c077fcccffde7abc2c062211ca3422ffd",
+          "bytes": 39722816
+        },
+        "llvm-pgo.profdata": {
+          "sha256": "db08c92cc04657433e547d4e77c0fbbaa00a0dce5d87d4cdbf8e43a560ea2658",
+          "bytes": 49708040
+        }
+      },
+      "rustc_version": "rustc 1.94.1 (e408947bf 2026-03-25)\nbinary: rustc\ncommit-hash: e408947bfd200af42db322daf0fadfe7e26d3bd1\ncommit-date: 2026-03-25\nhost: x86_64-pc-windows-msvc\nrelease: 1.94.1\nLLVM version: 21.1.8\n",
+      "msvc": "C:\\Program Files\\Microsoft Visual Studio\\18\\Enterprise\\VC\\Tools\\MSVC\\14.51.36231\\",
+      "sdk": "10.0.26100.0\\",
+      "runner": "windows-2025"
+    }
+  ],
+  "historical_linker": "lld-link.exe and llvm-lib.exe in BOTH arms; not a linker switch within the 7.6% contrast",
+  "same_workload_lock_and_source": true
+}
