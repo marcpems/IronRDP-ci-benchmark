@@ -18,6 +18,7 @@
     "actual_differing_bytes": 24
   },
   "stdlib_policy": "All 43 rlib/import-library files byte-identical; std DLL differs only in COFF/debug timestamps and RSDS GUID; each unchanged PDB must bind to its own DLL. No code bytes changed and no transplantation.",
-  "supersedes": "Only the original protocol's overly strict whole-DLL/PDB byte-identity gate",
+  "correctness_policy": "Use workspace --tests, honoring every pinned manifest test flag; exclude doctests without forcing disabled --lib/--bins targets. Keep the PUBLIC override correctness-only.",
+  "supersedes": "Original whole-DLL/PDB byte-identity gate and the harness's erroneous --lib/--bins correctness target forcing; no source or timed-command change",
   "full_release_qualified": false
 }

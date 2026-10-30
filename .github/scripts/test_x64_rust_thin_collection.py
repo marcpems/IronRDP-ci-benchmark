@@ -80,7 +80,7 @@ class CollectionTests(unittest.TestCase):
         for row, (name, args) in zip(rows, COMMANDS):
             args = [arg for arg in args if arg != "--no-run"]
             if name == "workspace-tests":
-                args += ["--lib", "--bins", "--tests"]
+                args += ["--tests"]
             row["command"] = [r"D:\ri\baseline\bin\cargo.exe", *args, "--frozen"]
             row["correctness_environment"] = {"PUBLIC": r"C:\Users\Public"}
             (self.root / f"{name}.json").write_text(json.dumps(row))

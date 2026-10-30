@@ -156,7 +156,9 @@ class IncrementalThinTests(unittest.TestCase):
         self.assertTrue(result["complete"])
         self.assertEqual(len(commands), 5)
         self.assertEqual(commands[1], ["cargo.exe", "test", "--workspace",
-                                      "--lib", "--bins", "--tests", "--frozen"])
+                                      "--tests", "--frozen"])
+        self.assertNotIn("--lib", commands[1])
+        self.assertNotIn("--bins", commands[1])
         self.assertTrue(all("--no-run" not in command for command in commands))
         self.assertIn("native-tls,smartcard", commands[-1])
         self.assertTrue(all(env["PUBLIC"] == r"C:\Users\Public" for env in environments))

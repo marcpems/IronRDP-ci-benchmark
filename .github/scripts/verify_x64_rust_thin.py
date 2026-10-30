@@ -79,7 +79,7 @@ def verify_block(directory, correctness):
         require(row == read(directory / f"{name}.json"), f"Command receipt disagreement: {name}")
         args = [arg for arg in arguments if not (correctness and arg == "--no-run")]
         if correctness and name == "workspace-tests":
-            args += ["--lib", "--bins", "--tests"]
+            args += ["--tests"]
         expected = [r"D:\ri\baseline\bin\cargo.exe", *args, "--frozen"]
         if not correctness:
             expected += ["--timings", "--message-format=json"]

@@ -309,7 +309,7 @@ def block(source, output, compiler, cargo, protocol, env, correctness=False, cor
         for name, arguments in NATIVE_COMMANDS:
             args = [arg for arg in arguments if not (correctness and arg == "--no-run")]
             if correctness and name == "workspace-tests":
-                args += ["--lib", "--bins", "--tests"]
+                args += ["--tests"]
             command = [str(cargo), *args, "--frozen"]
             if not correctness:
                 command += ["--timings", "--message-format=json"]

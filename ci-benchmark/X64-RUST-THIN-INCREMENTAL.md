@@ -9,7 +9,8 @@ means only that the compiler package passed its build/audit/smoke gates.
 **Continuation amendment:** run 41058649059 built both compilers successfully,
 then rejected the pair before any consumer timing because the original whole-file
 stdlib identity rule included Microsoft linker/debug metadata. The frozen
-`x64-rust-thin-continuation.json` supersedes only that rule, as detailed below.
+`x64-rust-thin-continuation.json` records that rule's correction and the subsequent
+native correctness target-selection repair detailed below.
 
 ## Fixed inputs and intervention
 
@@ -81,7 +82,7 @@ validated CPU meter, complete pair identities and all correctness gates permit
 `complete: true`. Failures remain uploaded; no population confidence intervals
 are claimed from this one-build-pair, one-consumer-VM pilot.
 Correctness removes `--no-run`; the workspace command additionally selects
-`--lib --bins --tests`. Doctests are explicitly excluded because this pilot has
+`--tests`. Doctests are explicitly excluded because this pilot has
 no rustdoc. Feature-specific integration-test commands retain their original
 target selection. This is native unit/integration qualification, not complete
 IronRDP documentation or full compiler-distribution qualification.
@@ -178,3 +179,11 @@ Further retained pre-measurement failures:
   to panic with `PUBLIC is set on Windows: NotPresent`. Correctness commands now
   inherit only the actual `PUBLIC` directory in an explicitly recorded override.
   The timed environment remains unchanged. No test is skipped or modified.
+- 41074036723 exposed an additional harness error: explicit `--lib --bins`
+  overrode the pinned manifests' `test = false` declarations and forced browser
+  unit tests to run natively. This was initially misclassified as a workload
+  blocker before inspecting `ironrdp-web/Cargo.toml`. The correct `--tests` option
+  selects targets with `test = true` while excluding doctests; see
+  [Cargo target selection](https://doc.rust-lang.org/cargo/commands/cargo-test.html#target-selection).
+  The fix removes only the forcing flags. It adds no package/test exclusion and
+  changes no pinned manifest, source, compiler, profile or timed command.
