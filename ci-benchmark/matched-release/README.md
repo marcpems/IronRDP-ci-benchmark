@@ -13,8 +13,10 @@ Rust-ThinLTO attribution and missing measurements are explicit in that summary.
 Download the [technical PowerPoint with linked report index](Rust-Optimization-Summary-Published.pptx)
 or the [combined Word report](Rust-Optimization-Combined-Report-30Oct2026.docx).
 Both were refreshed on 30 October with the later NVMe timings, same-tools
-PGO/LTO attribution and upstream cache findings. The new x64 16/8/4-LP study
-is running; its results are explicitly pending. The earlier Word revision is
+PGO/LTO attribution, upstream cache findings and the completed
+[incremental x64 ThinLTO pilot](../X64-RUST-THIN-INCREMENTAL.md): no meaningful
+IronRDP wall gain. The new x64 16/8/4-LP study is running; its 16-LP reference
+qualified and the remaining comparison results are pending. The earlier Word revision is
 retained unchanged as a historical version.
 
 ## Release-only Microsoft-retained PGO + Rust ThinLTO scaling

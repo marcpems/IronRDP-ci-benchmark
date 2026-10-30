@@ -13,7 +13,10 @@ the current PR's full release on 25 October, checked the upstream artifact on
 The requested NVMe x64 4/8/16-LP timing audit on 30 October found completed
 16-LP builds but no matching 4/8-LP builds. The restored runner has now passed
 readiness checks and started a [fresh sequential 16/8/4-LP comparison](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41054163612).
-No new timing results are claimed yet. Arm64 and GB300 experiments remain stopped.
+Its 16-LP release has qualified; 8/4-LP comparison results remain pending.
+A separate hosted Rust-only ThinLTO pilot completed on 30 October and found
+no meaningful incremental IronRDP wall-time gain. Arm64 and GB300 experiments
+remain stopped.
 
 Presentation and document versions:
 [technical PowerPoint with linked report index](matched-release/Rust-Optimization-Summary-Published.pptx)
@@ -36,9 +39,12 @@ See [Document locations and currency](#document-locations-and-currency).
   Matched x64 LLVM-profile-only rebuilds retained clang-cl and Microsoft
   `link.exe`/`lib.exe`, saving **13.73% on Rust 1.94.1** and **12.93% on 1.99.1**.
   Earlier same-tools fresh-PGO pilots saved **24.62% x64 / 24.44% ordinary
-  Arm64 versus no-PGO controls**, a different denominator. There is **no isolated
-  downstream Rust-ThinLTO benefit measured with Microsoft tools retained** on
-  either architecture. See the [adoption evidence matrix](#31-adoption-view-keep-the-windows-tool-stack).
+  Arm64 versus no-PGO controls**, a different denominator. A new matched x64
+  **Rust-only ThinLTO pilot found no meaningful wall gain**: **812.586 to
+  812.961s**, 0.05% slower, with 0.36% less CPU. This is one compiler/sysroot
+  build pair on one consumer VM, not full-release qualification. Arm64's
+  incremental effect remains unmeasured.
+  See the [adoption evidence matrix](#31-adoption-view-keep-the-windows-tool-stack).
 - **Historical broader optimized bundles improved the original offline IronRDP workload versus
   shipping Rust 1.94.1:** **23.7% less wall time on x64** and **16.0% on Arm64**.
   These compilers used rustc/LLVM PGO, Rust/LLVM ThinLTO and LLVM linking tools.
@@ -234,7 +240,7 @@ clang-cl profile hashing.
 |---|---|---|---|
 | Repair LLVM PGO; retain Rust-side profiles and existing LTO settings | **13.73%** less IronRDP wall on 1.94.1; **12.93%** on 1.99.1 | No equivalent profile-only estimate | Isolated x64 LLVM-profile benefit, not a linker gain |
 | Enable fresh PGO in the release recipe; no added cross-crate LTO | **24.62%**: 737.35 to 555.78s | **24.44%**: 1348.55 to 1018.93s on ordinary Arm64; GB300 **21.46%** | Same-tools PGO-recipe benefit versus controlled **no-PGO** builds; one accepted pilot per machine, not additional savings over shipping x64 Rust |
-| Add Rust-side cross-crate ThinLTO to PGO; native LLVM ThinLTO remains off | Full releases qualified; **incremental IronRDP gain not measured** | Full releases qualified; **incremental IronRDP gain not measured** | Feasibility only; no defensible same-tools LTO percentage yet |
+| Add Rust-side cross-crate ThinLTO to PGO; native LLVM ThinLTO remains off | **No meaningful wall gain in the 30 October pilot:** 812.586 to 812.961s (0.05% slower); CPU 0.36% lower | Earlier full releases qualified; **incremental IronRDP gain not measured** | New x64 result is one compiler/sysroot pair and one consumer VM, not full-distribution qualification or a population estimate |
 | Enable native LLVM ThinLTO while retaining `link.exe` | Compatibility probe rejected LLVM bitcode, including with `/LTCG` | No qualified same-tools result | Not an available drop-in change in the tested clang-cl pipeline |
 
 Rust-side ThinLTO is performed inside rustc before native objects reach
@@ -255,13 +261,17 @@ speedup. The complete distributions separately passed qualification. The
 later upstream-artifact check retained each compiler's own bundled standard
 library (and a common Cargo), but did not show the expected gain.
 
-For a future same-tools LTO estimate, compare PGO against PGO plus **Rust-only**
-ThinLTO at the same source revision, with identical frozen profiles and native
-tool hashes, then separately validate each complete distribution as shipped.
-That missing comparison is not replaced by release-production scaling times.
+The [30 October x64 pilot](X64-RUST-THIN-INCREMENTAL.md) now compares repaired
+PGO against PGO plus **Rust-only** ThinLTO at the same source revision with
+identical frozen profiles and matching native tools. Three measured pairs gave
+wall reductions of **0.69%, 0.05%, -0.88%**: no meaningful incremental gain.
+Native correctness passed for both arms. Full-distribution qualification,
+multiple independent consumer VMs and the Arm64 incremental comparison remain
+separate work; release-production scaling does not answer those questions.
 
 Evidence: [profile-only 1.94.1](X64-PROFILE-ONLY.md),
 [profile-only 1.99.1](X64-PGO-1991.md),
+[incremental x64 Rust-only ThinLTO](X64-RUST-THIN-INCREMENTAL.md),
 [same-tools full-release pilot measurements](matched-release/selfhost-pilot-results.json).
 
 ## 4. Measure optimized compilers on the original IronRDP workload
@@ -457,7 +467,7 @@ validation does not establish the duration of a cache-corrected hosted build.
 |---|---|---|
 | 4 LP | **None for a matched NVMe scaling recipe** | Scheduled after the 8-LP cell succeeds |
 | 8 LP | **None for a matched NVMe scaling recipe** | Scheduled after the new 16-LP reference qualifies |
-| 16 LP | Completed releases above | Fresh matched control job started; readiness passed, setup in progress |
+| 16 LP | **2h23m54s production; 8m58s qualification; 3h02m41s whole job** | Fresh matched reference qualified; 8-LP build is running |
 
 The four-worker **IronRDP replay** is not a four-worker **Rust release build**.
 The upstream eight-processor GitHub try job is also not an eight-processor
@@ -651,16 +661,26 @@ Evidence: [late validation, replay and cache-reproduction records](later-pgo-evi
 
 ## 9. Conclusions and prioritized follow-up
 
+The separate [30 October incremental x64 ThinLTO pilot](X64-RUST-THIN-INCREMENTAL.md)
+completed successfully: repaired-PGO versus the same compiler plus Rust-only
+ThinLTO produced **812.586 / 812.961s mean offline IronRDP wall** and
+**3141.375 / 3130.063s CPU**. The mixed sub-percent wall results do not justify
+a speedup claim. This narrow pilot retained Microsoft linking and frozen
+profiles; it did not build/qualify all release tools or measure application
+runtime. Raw receipts, recovery history and limitations are preserved in
+[compact evidence](x64-rust-thin-incremental-evidence.zip).
+
 | Priority | Action if work is resumed | Evidence / acceptance condition |
 |---|---|---|
 | 1 | Make final Windows LLVM native-cache keys profile-aware, then validate the shipped artifact | Correct training is insufficient if stale objects are reused; require full release/correctness and downstream recovery within the runner budget |
 | 2 | Apply effective PGO while retaining Microsoft linking tools | Use isolated x64 profile evidence and explicitly labelled Arm64 no-PGO pilots; do not imply a same-tools LTO gain |
 | 3 | Complete the running custom x64 NVMe 4/8/16-LP production matrix | Match source/tools/recipe/cache policy; report each phase and whole job |
-| 4 | Measure the incremental Rust-only ThinLTO benefit with Microsoft tools retained on x64 and Arm64 | Hold profiles/source/tools fixed; qualify full packages; the older LLVM-linked 7.6% result is not this estimate |
+| 4 | Reassess Rust-only ThinLTO after the null x64 pilot; Arm64 remains unmeasured | Require repeatable benefit and full-package qualification before adoption; the older LLVM-linked 7.6% result is not this estimate |
 | 5 | Optimize packaging and qualify a complete hosted production strategy | Preserve tools/docs/MSI, include training/setup/transfers/tests, and report segmented versus continuous time explicitly |
 
 The evidence does **not** establish blanket ineffectiveness of upstream x64 PGO,
-a universal OS or architecture factor, application-runtime gains, stable x64
+a universal OS or architecture factor, a useful incremental Rust-only ThinLTO
+gain on x64, application-runtime gains, stable x64
 scaling, or a completed cold, cache-corrected public x64 release duration. The compiler
 benefits are real on the measured workloads; production feasibility and
 infrastructure must be evaluated independently rather than hidden in one number.
@@ -693,13 +713,15 @@ to retrieve the PowerPoint or Word reports.
 |---|---|
 | [This investigation summary](INVESTIGATION-SUMMARY.md) | Current synthesis, updated 30 October; use this for the latest limitations |
 | [Combined detailed findings](COMBINED-REPORT.md) | Historical experiment detail; links back to this current synthesis |
-| [Technical PowerPoint and report index](matched-release/Rust-Optimization-Summary-Published.pptx) | Updated 30 October; 13 slides, current findings and pending NVMe study |
-| [Combined Word report](matched-release/Rust-Optimization-Combined-Report-30Oct2026.docx) | Updated 30 October; nine-page consolidation, current evidence and limitations |
+| [Technical PowerPoint and report index](matched-release/Rust-Optimization-Summary-Published.pptx) | Updated 30 October; 14 slides, completed ThinLTO pilot and pending NVMe matrix |
+| [Combined Word report](matched-release/Rust-Optimization-Combined-Report-30Oct2026.docx) | Updated 30 October; ten-page consolidation, current evidence and limitations |
 | [Maintainer brief](matched-release/Rust-Compiler-Optimization-Maintainer-Brief.docx) | Earlier full-release proposal and pilot interpretation |
 | [Self-hosted release pilots](matched-release/Self-Hosted-Rust-Release-Pilots.docx) | Earlier x64 / ordinary Arm64 pilots |
 | [GB300 release pilot](matched-release/GB300-Rust-Release-Pilot.docx) | Earlier GB300 result, not a completed lower-core scaling study |
 | [Original Windows performance report](Windows-Rust-Performance-Summary.docx) | Earlier OS/compiler investigation |
 | [Late compact evidence](later-pgo-evidence.zip) | 25-27 October release, artifact replay and cache diagnosis; 30 October runner availability |
+| [Incremental x64 Rust-only ThinLTO](X64-RUST-THIN-INCREMENTAL.md) | 30 October completed compiler/sysroot pilot; no meaningful IronRDP wall benefit |
+| [ThinLTO pilot evidence](x64-rust-thin-incremental-evidence.zip) | Verified inputs, raw timing/correctness outputs, failure history and reproduction scripts |
 
 The linked PowerPoint and combined Word report reflect this 30 October
 update, without inventing results for the running NVMe study. The earlier

@@ -3,6 +3,9 @@
 **30 October update:** the [current investigation summary](INVESTIGATION-SUMMARY.md)
 now includes later x64 NVMe release timings, a same-Windows-tools PGO/LTO
 evidence matrix, the upstream artifact's missing gain and the cache diagnosis.
+The completed [incremental x64 Rust-only ThinLTO pilot](X64-RUST-THIN-INCREMENTAL.md)
+found no meaningful IronRDP wall gain (0.05% slower; CPU 0.36% lower); it is
+compiler/sysroot evidence, not full-release qualification.
 The restored runner is executing a fresh x64 NVMe 16/8/4-LP comparison;
 completed matched timings remain pending. The linked PowerPoint and combined
 Word report were also refreshed on 30 October.
