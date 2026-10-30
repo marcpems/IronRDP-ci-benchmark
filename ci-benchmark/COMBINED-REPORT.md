@@ -3,8 +3,10 @@
 **30 October update:** the [current investigation summary](INVESTIGATION-SUMMARY.md)
 now includes later x64 NVMe release timings, a same-Windows-tools PGO/LTO
 evidence matrix, the upstream artifact's missing gain and the cache diagnosis.
-The custom x64 NVMe 4/8-LP release measurements remain missing and the runner
-is offline. This document retains the historical experiments below; their
+The restored runner is executing a fresh x64 NVMe 16/8/4-LP comparison;
+completed matched timings remain pending. The linked PowerPoint and combined
+Word report were also refreshed on 30 October.
+This document retains the historical experiments below; their
 LLVM-linked ThinLTO gains are not same-Microsoft-tools LTO estimates.
 
 For the end-to-end problem statement, investigation stages, compiler benefits,

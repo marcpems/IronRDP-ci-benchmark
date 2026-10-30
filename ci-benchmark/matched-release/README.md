@@ -11,9 +11,11 @@ the HDD; they are not an NVMe 4/8/16-LP matrix. The same-tools PGO versus
 Rust-ThinLTO attribution and missing measurements are explicit in that summary.
 
 Download the [technical PowerPoint with linked report index](Rust-Optimization-Summary-Published.pptx)
-or the [combined Word report](Rust-Optimization-Combined-Report-Revised.docx).
-The Word report is an earlier consolidation; use the investigation summary
-above for the complete end-to-end account.
+or the [combined Word report](Rust-Optimization-Combined-Report-30Oct2026.docx).
+Both were refreshed on 30 October with the later NVMe timings, same-tools
+PGO/LTO attribution and upstream cache findings. The new x64 16/8/4-LP study
+is running; its results are explicitly pending. The earlier Word revision is
+retained unchanged as a historical version.
 
 ## Release-only Microsoft-retained PGO + Rust ThinLTO scaling
 

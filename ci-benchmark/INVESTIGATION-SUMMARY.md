@@ -17,10 +17,11 @@ No new timing results are claimed yet. Arm64 and GB300 experiments remain stoppe
 
 Presentation and document versions:
 [technical PowerPoint with linked report index](matched-release/Rust-Optimization-Summary-Published.pptx)
-and [combined Word report](matched-release/Rust-Optimization-Combined-Report-Revised.docx).
-This Markdown summary remains the current end-to-end account. Both Office
-files are on the same reporting branch, but are earlier presentations, not
-30 October revisions. See [Document locations and currency](#document-locations-and-currency).
+and [combined Word report](matched-release/Rust-Optimization-Combined-Report-30Oct2026.docx).
+Both Office reports were refreshed on 30 October to include the same-tools
+PGO/LTO distinction, D: NVMe timings, upstream artifact/cache findings and
+explicitly pending scaling results. They are on the same reporting branch.
+See [Document locations and currency](#document-locations-and-currency).
 
 ## TL;DR
 
@@ -692,14 +693,17 @@ to retrieve the PowerPoint or Word reports.
 |---|---|
 | [This investigation summary](INVESTIGATION-SUMMARY.md) | Current synthesis, updated 30 October; use this for the latest limitations |
 | [Combined detailed findings](COMBINED-REPORT.md) | Historical experiment detail; links back to this current synthesis |
-| [Technical PowerPoint and report index](matched-release/Rust-Optimization-Summary-Published.pptx) | Earlier presentation; not regenerated with the late cache/scaling findings |
-| [Combined Word report](matched-release/Rust-Optimization-Combined-Report-Revised.docx) | Earlier consolidation; not regenerated with the late cache/scaling findings |
+| [Technical PowerPoint and report index](matched-release/Rust-Optimization-Summary-Published.pptx) | Updated 30 October; 13 slides, current findings and pending NVMe study |
+| [Combined Word report](matched-release/Rust-Optimization-Combined-Report-30Oct2026.docx) | Updated 30 October; nine-page consolidation, current evidence and limitations |
 | [Maintainer brief](matched-release/Rust-Compiler-Optimization-Maintainer-Brief.docx) | Earlier full-release proposal and pilot interpretation |
 | [Self-hosted release pilots](matched-release/Self-Hosted-Rust-Release-Pilots.docx) | Earlier x64 / ordinary Arm64 pilots |
 | [GB300 release pilot](matched-release/GB300-Rust-Release-Pilot.docx) | Earlier GB300 result, not a completed lower-core scaling study |
 | [Original Windows performance report](Windows-Rust-Performance-Summary.docx) | Earlier OS/compiler investigation |
 | [Late compact evidence](later-pgo-evidence.zip) | 25-27 October release, artifact replay and cache diagnosis; 30 October runner availability |
 
-The Office files remain historical snapshots; their embedded links and
-projections are not silently promoted to current results. The same-branch
-links above are the retrieval index for this update.
+The linked PowerPoint and combined Word report reflect this 30 October
+update, without inventing results for the running NVMe study. The earlier
+`Rust-Optimization-Combined-Report-Revised.docx` is retained unchanged as a
+historical version. Other Office reports remain historical snapshots; their
+projections are not promoted to current results. The same-branch links above
+are the retrieval index for this update.
