@@ -1,5 +1,12 @@
 # Windows compiler optimization without changing native tools
 
+**Historical study status:** this page records the earlier compiler-only
+attempt and its blockers. Subsequent full-release pilots and x64 profile-only
+experiments did produce same-tools PGO results; see the
+[30 October adoption evidence matrix](../INVESTIGATION-SUMMARY.md#31-adoption-view-keep-the-windows-tool-stack).
+An isolated downstream Rust-ThinLTO gain with Microsoft linking retained
+remains unmeasured on both x64 and Arm64.
+
 ## Question and scope
 
 Can Rust and LLVM PGO, optionally combined with Rust-side ThinLTO, improve

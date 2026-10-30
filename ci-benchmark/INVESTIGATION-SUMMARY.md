@@ -1,19 +1,25 @@
 # Windows Rust compiler performance: investigation summary
 
-Updated 22 October 2026. This is the end-to-end summary of the problem,
+Updated 30 October 2026. This is the end-to-end summary of the problem,
 investigation stages, measured results and remaining limitations. Detailed
 reports and reproducible evidence are linked throughout. All experiments were
-conducted in forks; no upstream rollout is claimed. The broad campaign stopped
+conducted in forks, followed by a check of an upstream PR try-build; no official
+release rollout is claimed. The broad campaign stopped
 at the user's request on 19 October. Only the requested x64 upstream/local-PGO
 comparison resumed on 20 October, followed by the requested profile-only test
-on 21 October and Rust 1.99.1 revalidation on 22 October; Arm64 and GB300 work
-remain stopped.
+on 21 October and Rust 1.99.1 revalidation on 22 October. Later work validated
+the current PR's full release on 25 October, checked the upstream artifact on
+26 October, and reproduced a native-cache invalidation defect on 27 October.
+The requested NVMe x64 4/8/16-LP timing audit on 30 October found completed
+16-LP builds but no matching 4/8-LP builds. New measurements are blocked because
+the dedicated runner is offline. Arm64 and GB300 experiments remain stopped.
 
 Presentation and document versions:
 [technical PowerPoint with linked report index](matched-release/Rust-Optimization-Summary-Published.pptx)
 and [combined Word report](matched-release/Rust-Optimization-Combined-Report-Revised.docx).
-This Markdown summary remains the full end-to-end account; the Word report is
-an earlier consolidation.
+This Markdown summary remains the current end-to-end account. Both Office
+files are on the same reporting branch, but are earlier presentations, not
+30 October revisions. See [Document locations and currency](#document-locations-and-currency).
 
 ## TL;DR
 
@@ -23,7 +29,14 @@ an earlier consolidation.
 - **The primary workload bottleneck was compiler execution.** On the graphics
   isolation workload, rustc accounted for **99.3-99.6% of Windows' extra CPU
   time**. This is not proof of an LLVM-specific defect.
-- **Optimized compilers improved the original offline IronRDP workload versus
+- **For adoption without changing Windows native tools, separate PGO from LTO.**
+  Matched x64 LLVM-profile-only rebuilds retained clang-cl and Microsoft
+  `link.exe`/`lib.exe`, saving **13.73% on Rust 1.94.1** and **12.93% on 1.99.1**.
+  Earlier same-tools fresh-PGO pilots saved **24.62% x64 / 24.44% ordinary
+  Arm64 versus no-PGO controls**, a different denominator. There is **no isolated
+  downstream Rust-ThinLTO benefit measured with Microsoft tools retained** on
+  either architecture. See the [adoption evidence matrix](#31-adoption-view-keep-the-windows-tool-stack).
+- **Historical broader optimized bundles improved the original offline IronRDP workload versus
   shipping Rust 1.94.1:** **23.7% less wall time on x64** and **16.0% on Arm64**.
   These compilers used rustc/LLVM PGO, Rust/LLVM ThinLTO and LLVM linking tools.
   A matched x64 comparison with identical profiles isolated a **7.6% wall-time
@@ -72,11 +85,20 @@ an earlier consolidation.
   time with PGO alone**, versus controlled no-PGO builds. Their LLVM/PGO/ThinLTO
   recipe saved **22.0-28.7%**. These percentages have a different denominator
   from the shipping-Rust results; they are not additional gains to add to them.
-- **Producing the compiler can be expensive.** Training, profile processing,
-  packaging and storage matter alongside compilation. GB300 assembly/compression
-  remained **102-103 minutes**; x64 HDD/profile effects confounded CPU scaling.
-  Arm64's observed 4/8/16-processor production times were **507.8/137.1/112.0
-  minutes**, but single observations do not establish a scaling law.
+- **The newer x64 NVMe results supersede HDD timings as the practical CI reference.**
+  The 25 October full fresh-PGO release retained Microsoft tools and took
+  **2h33m44s including extracted tests / 2h59m01s for the whole job**, at
+  **16 logical processors (8 physical cores)**. Earlier NVMe release pairs and
+  fixed-profile builds have different scopes and are listed separately below.
+  No matched NVMe x64 4/8/16 scaling curve exists; the Arm64 4/8/16 figures and
+  x64 HDD figures must not be relabelled as one.
+- **The actual upstream try artifact did not reproduce the PGO gain.**
+  `51dae839` averaged **628.71s versus 630.07s** for its parent: only **0.21%**
+  less IronRDP wall time. Its LLVM profile has active backend coverage, but its
+  producer reported **100% native C/C++ cache hits**. A local reproduction
+  confirmed that sccache 0.10.0 can reuse objects after the profile changes.
+  This strongly supports the cache explanation; a cache-corrected full build
+  and downstream replay are still required to prove recovered performance.
 - **Not every plausible optimization helped.** Controlled LLVM/LLD scheduling
   changes showed no repeatable useful gain. The final public x64 fresh-training
   reference and GB300 lower-core scaling study remained incomplete.
@@ -172,6 +194,47 @@ that link. PGO itself does not require replacing the linker.
 Evidence: [release audit and training repair](COMBINED-REPORT.md),
 [matched x64 design](WINDOWS-X64-OPTIMIZATION.md),
 [Microsoft-tool investigation](msvc-linker/README.md).
+
+### 3.1 Adoption view: keep the Windows tool stack
+
+The preferred delivery path retains **clang-cl, Microsoft `link.exe` and
+`lib.exe`**, and ships a normal complete Rust toolchain. This is an adoption
+and maintenance preference, not a claim that alternative tools cannot work.
+It does not require users to transplant compiler components between releases.
+
+| Optimization, with Windows native tools unchanged | x64 evidence | Arm64 evidence | What can be claimed |
+|---|---|---|---|
+| Repair LLVM PGO; retain Rust-side profiles and existing LTO settings | **13.73%** less IronRDP wall on 1.94.1; **12.93%** on 1.99.1 | No equivalent profile-only estimate | Isolated x64 LLVM-profile benefit, not a linker gain |
+| Enable fresh PGO in the release recipe; no added cross-crate LTO | **24.62%**: 737.35 to 555.78s | **24.44%**: 1348.55 to 1018.93s on ordinary Arm64; GB300 **21.46%** | Same-tools PGO-recipe benefit versus controlled **no-PGO** builds; one accepted pilot per machine, not additional savings over shipping x64 Rust |
+| Add Rust-side cross-crate ThinLTO to PGO; native LLVM ThinLTO remains off | Full releases qualified; **incremental IronRDP gain not measured** | Full releases qualified; **incremental IronRDP gain not measured** | Feasibility only; no defensible same-tools LTO percentage yet |
+| Enable native LLVM ThinLTO while retaining `link.exe` | Compatibility probe rejected LLVM bitcode, including with `/LTCG` | No qualified same-tools result | Not an available drop-in change in the tested clang-cl pipeline |
+
+Rust-side ThinLTO is performed inside rustc before native objects reach
+`link.exe`. LLVM-side ThinLTO needs a linker that understands LLVM bitcode;
+MSVC `/LTCG` is not a substitute. PGO uses the profile during compilation,
+so retaining Microsoft linking does not prevent the measured PGO benefit.
+
+**Do not use the historical x64 7.6% ThinLTO result as the same-tools LTO
+estimate:** that experiment used LLVM linking tools and added both Rust and
+LLVM ThinLTO. Likewise, the 23.7% x64 / 16.0% Arm64 shipping comparisons below
+measure broader bundles. Subtracting them from PGO-only percentages would mix
+different controls, sources, machines and profile inputs.
+
+The older isolation benchmarks deliberately held Cargo and the standard
+library constant across compiler variants. That is an experimental control,
+**not a deployment recipe**, and it does not establish an untouched-package
+speedup. The complete distributions separately passed qualification. The
+later upstream-artifact check retained each compiler's own bundled standard
+library (and a common Cargo), but did not show the expected gain.
+
+For a future same-tools LTO estimate, compare PGO against PGO plus **Rust-only**
+ThinLTO at the same source revision, with identical frozen profiles and native
+tool hashes, then separately validate each complete distribution as shipped.
+That missing comparison is not replaced by release-production scaling times.
+
+Evidence: [profile-only 1.94.1](X64-PROFILE-ONLY.md),
+[profile-only 1.99.1](X64-PGO-1991.md),
+[same-tools full-release pilot measurements](matched-release/selfhost-pilot-results.json).
 
 ## 4. Measure optimized compilers on the original IronRDP workload
 
@@ -269,6 +332,8 @@ replay does not erase it.
 
 ## 6. Investigate capacity, storage and CPU scaling
 
+### 6.1 Historical scaling: do not confuse HDD and NVMe results
+
 A further recipe retained Microsoft tools and fresh PGO, enabled **Rust
 ThinLTO**, and left native LLVM ThinLTO off. Six releases qualified:
 
@@ -302,6 +367,76 @@ Evidence and run identities: [scaling and diagnostics](matched-release/README.md
 Arm64 4/8/16 runs: **38756702383 / 38873093226 / 38728610658**.
 X64 4/original-16/repeat-16 runs: **38869758791 / 38716997224 / 38980060732**.
 
+### 6.2 Later x64 NVMe compiler-production and CI times
+
+The dedicated `MARCPE-TEST01-X64` has **8 physical cores / 16 logical
+processors**, not 16 physical cores. The 20-21 October releases used C: NVMe;
+after the runner reset, the 22-25 October releases used D: ReFS on the
+**2-TB SK hynix NVMe SSD**, with correctness scratch on C: NTFS. These are not
+the E: HDD observations above, and they are not a controlled filesystem study.
+
+| Study / build scope | Build allocation | Production wall | Separate extracted tests / qualification | Whole successful release job |
+|---|---:|---:|---:|---:|
+| Rust 1.94.1 rebuilt upstream recipe, two fresh releases on C: NVMe | 16 LP | Mean **2h12m53s** | Mean **6m42s** | Mean **2h45m50s** |
+| Rust 1.94.1 repaired local recipe, two fresh releases on C: NVMe | 16 LP | Mean **2h16m29s** | Mean **6m24s** | Mean **2h52m27s** |
+| Rust 1.99.1 official LLVM profile, fixed-profile distribution on D: NVMe | 16 LP | **1h12m17s** | **9m44s**, including separate helper | **1h52m42s** |
+| Rust 1.99.1 repaired LLVM profile, fixed-profile distribution on D: NVMe | 16 LP | **1h10m19s** | **9m41s**, including separate helper | **1h53m20s** |
+| PR `4da678aa` plus dry-run prerequisite, fresh full PGO on D: NVMe, 25 October | 16 LP | **2h24m37s**, derived by excluding the recorded test section | **9m07s** | **2h59m01s** |
+
+The first pair of rows changes native linking tools as well as the training
+recipe; it is **not the same-tools PGO estimate**. The next three rows retain
+Microsoft `link.exe`/`lib.exe` and do not add cross-crate ThinLTO.
+The fixed-profile rows exclude training: separate repaired training took
+**1h20m33s** (whole training job **1h34m52s**). Do not compare their approximately
+70-minute production directly with a fresh-training full release.
+
+For the 25 October validation, the measured production-plus-tests interval was
+**9,223.797s (2h33m44s)**. Its non-overlapping breakdown is:
+
+| Component | Seconds | Minutes |
+|---|---:|---:|
+| Rust-side PGO stage, including its builds and profile collection | 4066.980 | 67.78 |
+| LLVM PGO stage, including instrumented compiler and profile collection | 1435.190 | 23.92 |
+| Final distribution build, including compilation and packaging | 2959.670 | 49.33 |
+| Extracted-distribution tests | 546.800 | 9.11 |
+| Helper preparation and other measured orchestration | 215.157 | 3.59 |
+| **Production plus tests** | **9223.797** | **153.73** |
+| Setup, uploads and remaining whole-job overhead | 1517.203 | 25.29 |
+| **Whole job** | **10741.000** | **179.02** |
+
+All **25,648 tests passed**, with zero failures, 739 ignored and 541 filtered
+out by the unchanged upstream suite. Twenty distribution files were preserved.
+These are stage wall times, not raw compile CPU, and include fresh training and
+packaging. Native objects and profiles were fresh; this successful self-hosted
+validation does not establish the duration of a cache-corrected hosted build.
+
+#### Requested NVMe 4/8/16-LP matrix: evidence status
+
+| Allocation on the custom x64 NVMe host | Available full-release timing | Status as of 30 October |
+|---|---|---|
+| 4 LP | **None for a matched NVMe scaling recipe** | Rerun required; runner offline |
+| 8 LP | **None for a matched NVMe scaling recipe** | Rerun required; runner offline |
+| 16 LP | Completed releases above | Valid individual timings; a matched new 16-LP control is needed with the 4/8-LP reruns |
+
+The four-worker **IronRDP replay** is not a four-worker **Rust release build**.
+The upstream eight-processor GitHub try job is also not an eight-processor
+observation on this custom host. The earlier **4/8/16 study was ordinary
+Arm64**; x64 had HDD-backed 4/16 observations, not the requested NVMe matrix.
+The runner inventory was checked on 30 October and reported this host offline.
+No replacement timings are inferred, and no new builds are claimed to have run.
+
+The requested follow-up is sequential fresh **4/8/16-LP** production on this
+same NVMe host, one pinned same-tools recipe, full qualification, recorded
+affinity/topology, and separately reported setup, PGO, distribution, tests and
+uploads. Changing worker count must not change source, tool binaries, recipe
+or cache policy. The first set would be descriptive; repetitions would be
+needed for a stable scaling estimate. Do not extrapolate the old HDD results.
+
+Evidence: [two fresh NVMe pairs](X64-PGO-COMPARISON.md),
+[fixed-profile NVMe study](X64-PGO-1991.md),
+[25 October complete validation](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40170434889),
+and [persistent later evidence](later-pgo-evidence.zip).
+
 ## 7. Test production-throughput ideas, including negative results
 
 The supporting throughput work distinguished component opportunities from
@@ -328,7 +463,7 @@ Evidence: [local component probes](release-throughput/README.md),
 [upstream-equivalent scheduling study](upstream-release-throughput/README.md),
 [controlled crossover results](upstream-release-throughput/crossover1-results.json).
 
-## 8. Public reference, incomplete work and final status
+## 8. Public reference and later upstream validation
 
 The public four-LP reference requested to contextualize x64 scaling landed on
 an **AMD EPYC 7763 with 16 GiB RAM**, not Intel. Run **39110448524** completed both
@@ -365,19 +500,111 @@ This completes the requested x64 toolchain-benefit/CI-cost comparison. It does
 not complete the older hosted-release reference or GB300 scaling study.
 See the [final report, limits and permanent evidence](X64-PGO-COMPARISON.md).
 
+### Current-PR release validation completed on 25 October
+
+The PR's static-LLVM rebuild exposed an independent bootstrap dry-run
+prerequisite: the read-only Clang profiling-runtime lookup must execute during
+the dry run. The exact upstream panic was reproduced without that one-line
+fix and disappeared with it; formatting, 271 bootstrap tests and the opt-dist
+build passed. A fresh same-tools full Windows release then passed all extracted
+tests on the 16-LP NVMe runner, as detailed in section 6.2. This was release
+qualification, **not an additional downstream performance experiment**.
+
+### Actual upstream artifact checked on 26 October
+
+The requested upstream Rust 1.101.0-nightly try artifact
+`51dae83933ec0602516d385a07cea7c692d15261` was compared with its exact first parent,
+`dc44e7f2c436b6041742e138b9c2176f093196d5`. Two cold five-command IronRDP blocks
+per compiler used the same host, four-CPU affinity, the parent Cargo and each
+compiler's own bundled standard library. There was no excluded warmup or
+statistical qualification. Setup/downloads/correctness were untimed.
+
+| Compiler | Mean offline wall | Mean descendant CPU |
+|---|---:|---:|
+| Exact parent | 630.066s | 2443.008s |
+| Requested upstream try artifact | 628.713s | 2439.039s |
+| Reduction | **0.21%** | **0.16%** |
+
+This **did not reproduce the earlier approximately 13% gain**. The final parent
+block initially failed reading a Cargo registry source file with Windows
+`os error 87`; only that block was repeated after source/compiler verification.
+All three completed original blocks and the failure evidence were retained.
+The completed set contains 20 successful measured commands. See the
+[original run](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40403546509)
+and [successful continuation](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40409913485).
+
+### Cache diagnosis: strong evidence, not yet recovered end-to-end performance
+
+The actual parent/try reproducibility profiles were inspected:
+
+| LLVM query | Parent functions / active | Try functions / active |
+|---|---:|---:|
+| `X86TargetLowering` | 0 / 0 | 273 / 176 |
+| `InstCombine` | 0 / 0 | 980 / 631 |
+
+Training therefore restored coverage. However, the
+[upstream producer log](https://triage.rust-lang.org/gha-logs/rust-lang/rust/121229977135)
+at **25 October 19:10:06 UTC**, under `sccache stats`, reports:
+
+```text
+Cache hits (c [msvc])                212
+Cache hits (c++ [msvc])            10341
+Cache misses                          88
+Cache misses (rust)                   88
+Cache hits rate (c [msvc])        100.00 %
+Cache hits rate (c++ [msvc])      100.00 %
+Forced recaches                        0
+Non-cacheable compilations             0
+```
+
+These are **whole-job aggregate** counters, not a per-object provenance trace.
+The final command requested the newly generated LLVM profile at 18:25:33 UTC;
+CMake enabled that profile and the sccache native compiler launchers.
+
+The pinned sccache 0.10.0 MSVC handler does not hash profile contents for the
+bare `-fprofile-instr-use=<path>` spelling emitted by this LLVM CMake version.
+A session-local reproduction using the exact CI sccache binary, actual
+parent/try profiles and local Clang 23.1.4 targeting x64 (upstream used Clang
+22.1.8) confirmed a cache hit after replacing the valid profile at the same
+path. A profile-hash cache-buster, the `-clang:` wrapped flag, and
+`SCCACHE_EXTRAFILES` each correctly invalidated that reuse.
+
+The likely chain is **new profile -> stale native LLVM objects -> newly linked
+rustc without the expected gain**. PGO optimization occurs during native
+compilation here; the final Microsoft linker cannot redo the missed work.
+This establishes a cache-key defect and a strong explanation of the upstream
+result. It does **not** identify the historical profile behind every cached
+object or prove that correcting the cache restores 13%.
+
+The smallest proposed mitigation is to include the merged LLVM profile in
+`SCCACHE_EXTRAFILES` only for the Windows profile-use build, preserving existing
+entries and all earlier-stage caches. A global purge would add unrelated cold
+build work; a one-off global cache-buster would not fix recurring invalidation.
+New profiles may differ on every build, so correct final-stage cache misses
+must be budgeted rather than assumed to disappear after one run.
+
+The cached upstream job took **2h19m30s** on `windows-2025-8core-32gb`.
+That leaves nominal headroom below GitHub-hosted jobs' six-hour limit, but the
+corrected cold final-stage duration is **unmeasured**. Require a complete
+cache-corrected release, qualification and IronRDP replay before claiming
+official adoption/performance recovery. If necessary, evaluate a larger runner
+or artifact-verified job split; neither is an established result here.
+
+Evidence: [late validation, replay and cache-reproduction records](later-pgo-evidence.zip).
+
 ## 9. Conclusions and prioritized follow-up
 
 | Priority | Action if work is resumed | Evidence / acceptance condition |
 |---|---|---|
-| 1 | Apply effective PGO where absent; retain Microsoft linking as the simpler option | Strongest observed compiler-throughput lever; verify actual backend counters and downstream correctness |
-| 2 | Control storage and profile processing before interpreting x64 scaling | Use NVMe, matched source/tools, counterbalanced repetitions and phase CPU/I/O telemetry |
-| 3 | Optimize packaging as its own release bottleneck | Preserve full tools/docs/MSI and unpacked payloads; include archive-size and transfer costs |
-| 4 | Separate individual Rust-LTO, LLVM-LTO and linker contributions | Build on the existing matched combined-ThinLTO result; hold profiles fixed where feasible |
-| 5 | Qualify a complete hosted production strategy | Include fresh training, handoff/setup, packaging and extracted tests; report segmented versus continuous time explicitly |
+| 1 | Make final Windows LLVM native-cache keys profile-aware, then validate the shipped artifact | Correct training is insufficient if stale objects are reused; require full release/correctness and downstream recovery within the runner budget |
+| 2 | Apply effective PGO while retaining Microsoft linking tools | Use isolated x64 profile evidence and explicitly labelled Arm64 no-PGO pilots; do not imply a same-tools LTO gain |
+| 3 | Complete the missing custom x64 NVMe 4/8/16-LP production matrix when the runner is online | Match source/tools/recipe/cache policy; report each phase and whole job; retain the old HDD observations separately |
+| 4 | Measure the incremental Rust-only ThinLTO benefit with Microsoft tools retained on x64 and Arm64 | Hold profiles/source/tools fixed; qualify full packages; the older LLVM-linked 7.6% result is not this estimate |
+| 5 | Optimize packaging and qualify a complete hosted production strategy | Preserve tools/docs/MSI, include training/setup/transfers/tests, and report segmented versus continuous time explicitly |
 
 The evidence does **not** establish blanket ineffectiveness of upstream x64 PGO,
 a universal OS or architecture factor, application-runtime gains, stable x64
-scaling, or a completed public x64 fresh-training release duration. The compiler
+scaling, or a completed cold, cache-corrected public x64 release duration. The compiler
 benefits are real on the measured workloads; production feasibility and
 infrastructure must be evaluated independently rather than hidden in one number.
 
@@ -388,8 +615,35 @@ infrastructure must be evaluated independently rather than hidden in one number.
 | Shipping comparison and matched compiler controls | Rust 1.94.1, `e408947bfd200af42db322daf0fadfe7e26d3bd1` |
 | Matched full-release pilots and CPU scaling | `7db17d9b5bbe6b16be2dc86b4bfae81d6e1ae238`, with declared common experimental repairs |
 | Upstream-equivalent scheduling study | Unmodified `76c90957b7e422c4b9c45192b0197214d7de5a54` |
+| Rust 1.99.1 profile-only revalidation | `58cf8f9c35b355199727627d07ae34a4e2846d67`, declared training prerequisite/repair |
+| Current-PR full-release qualification | `4da678aada4683607acbd67a8da37a320c791f93` plus exact dry-run prerequisite |
+| Actual upstream artifact check | Try `51dae83933ec0602516d385a07cea7c692d15261` versus parent `dc44e7f2c436b6041742e138b9c2176f093196d5` |
 
 IronRDP source: `0c5419eca6bf53563056ed252f537bca67862705`.
 The linked protocols/results preserve LLVM/tool/profile identities, qualification
 gates and run provenance. This summary integrates the findings, but does not
 pool different workloads, source revisions, controls or hardware into one estimate.
+
+### Document locations and currency
+
+The canonical report branch is **`experiment/x64-pgo-1991`** in
+**`marcpems/IronRDP-ci-benchmark`**. Every relative link in this document resolves
+within that branch unless explicitly identified as an external run/source.
+The following files are tracked together there; no branch switching is needed
+to retrieve the PowerPoint or Word reports.
+
+| Document | Currency / purpose |
+|---|---|
+| [This investigation summary](INVESTIGATION-SUMMARY.md) | Current synthesis, updated 30 October; use this for the latest limitations |
+| [Combined detailed findings](COMBINED-REPORT.md) | Historical experiment detail; links back to this current synthesis |
+| [Technical PowerPoint and report index](matched-release/Rust-Optimization-Summary-Published.pptx) | Earlier presentation; not regenerated with the late cache/scaling findings |
+| [Combined Word report](matched-release/Rust-Optimization-Combined-Report-Revised.docx) | Earlier consolidation; not regenerated with the late cache/scaling findings |
+| [Maintainer brief](matched-release/Rust-Compiler-Optimization-Maintainer-Brief.docx) | Earlier full-release proposal and pilot interpretation |
+| [Self-hosted release pilots](matched-release/Self-Hosted-Rust-Release-Pilots.docx) | Earlier x64 / ordinary Arm64 pilots |
+| [GB300 release pilot](matched-release/GB300-Rust-Release-Pilot.docx) | Earlier GB300 result, not a completed lower-core scaling study |
+| [Original Windows performance report](Windows-Rust-Performance-Summary.docx) | Earlier OS/compiler investigation |
+| [Late compact evidence](later-pgo-evidence.zip) | 25-27 October release, artifact replay and cache diagnosis; 30 October runner availability |
+
+The Office files remain historical snapshots; their embedded links and
+projections are not silently promoted to current results. The same-branch
+links above are the retrieval index for this update.
