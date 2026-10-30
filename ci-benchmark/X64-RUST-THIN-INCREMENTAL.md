@@ -101,3 +101,34 @@ If resources, stack behavior, profile audit or identity checks fail, no benchmar
 result is accepted. A resource-blocked retry must stay hosted, or wait outside
 GitHub's self-hosted queue for fresh authorization after sizing completes; never
 dispatch into a competing pending concurrency slot.
+
+## Completion collection
+
+`monitor_x64_rust_thin.py` is a single attached, read-only waiting helper with
+a maximum twelve-hour deadline, two-minute polling, bounded network retries,
+and pinned run/head/attempt/workflow identity. It downloads all terminal study
+artifacts, retains failures and raw failed-job logs, and invokes the separate
+`verify_x64_rust_thin.py` verifier only after remote success. Neither script
+dispatches, cancels, reruns, or changes any runner.
+
+The verifier hashes the actual packaged compiler/Cargo/stdlib files, checks
+paired source/config/profile/native-tool receipts, verifies all five command
+receipts and raw compiled-artifact messages, checks correctness and the CPU meter,
+and recomputes each paired wall/CPU reduction. The principal descriptive summary
+is `100 * (1 - sum(treatment) / sum(baseline))`; individual paired reductions and
+their arithmetic mean are also retained. Percentage display uses decimal
+arithmetic rounded half-up to two decimals. Warmups never enter these summaries.
+No confidence interval or full-release qualification is inferred.
+
+Example (from the isolated worktree; supply the exact launched head):
+
+```powershell
+python .github\scripts\monitor_x64_rust_thin.py `
+  --gh D:\copilot\tools\gh\bin\gh.exe `
+  --run-id 41058649059 --head 35b5f2e6ed7eb00f73aded41eeb23a1a8a4211ab `
+  --attempt 1 --hours 12 --interval 120 `
+  --output ..\thin-incremental-evidence\completion-41058649059
+```
+
+The destination must be new so a retry cannot overwrite original failure evidence.
+`monitor-failure.json` is an explicit rejection, never a performance result.
