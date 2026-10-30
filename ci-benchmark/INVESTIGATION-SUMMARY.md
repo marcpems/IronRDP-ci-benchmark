@@ -86,13 +86,14 @@ files are on the same reporting branch, but are earlier presentations, not
   time with PGO alone**, versus controlled no-PGO builds. Their LLVM/PGO/ThinLTO
   recipe saved **22.0-28.7%**. These percentages have a different denominator
   from the shipping-Rust results; they are not additional gains to add to them.
-- **The newer x64 NVMe results supersede HDD timings as the practical CI reference.**
+- **The x64 D: NVMe results provide the practical CI reference.**
   The 25 October full fresh-PGO release retained Microsoft tools and took
   **2h33m44s including extracted tests / 2h59m01s for the whole job**, at
-  **16 logical processors (8 physical cores)**. Earlier NVMe release pairs and
+  **16 logical processors (8 physical cores)**. Rust 1.94.1 and 1.99.1
   fixed-profile builds have different scopes and are listed separately below.
-  No matched NVMe x64 4/8/16 scaling curve exists; the Arm64 4/8/16 figures and
-  x64 HDD figures must not be relabelled as one.
+  No matched NVMe x64 4/8/16 scaling curve exists; the Arm64 4/8/16 figures
+  must not be relabelled as x64 results. These custom builds used no compiler
+  object-cache service; that is **not a measured 0% cache-hit rate**.
 - **The actual upstream try artifact did not reproduce the PGO gain.**
   `51dae839` averaged **628.71s versus 630.07s** for its parent: only **0.21%**
   less IronRDP wall time. Its LLVM profile has active backend coverage, but its
@@ -326,13 +327,12 @@ non-warmup paired pilot round**, not the originally planned repeated hosted stud
 
 | Machine / allocation | Rust production: no PGO, min | Rust production: MS PGO, min (+% vs no PGO) | Rust production: LLVM recipe, min (+%) | IronRDP compile saving: MS / LLVM |
 |---|---:|---:|---:|---:|
-| x64 / 4 LP | 134.1 | 548.1 (+308.7%) | 787.3 (+487.0%) | 24.6% / 28.7% |
 | Arm64 / 4 LP | 180.1 | 431.9 (+139.8%) | 656.4 (+264.5%) | 24.4% / 27.9% |
 | GB300 Arm64 / 64 LP | 138.5 | 182.6 (+31.8%) | 203.3 (+46.8%) | 21.5% / 22.0% |
 
-The LLVM recipe's extra downstream saving versus Microsoft PGO was **5.36% x64,
-4.54% ordinary Arm64 and 0.65% GB300**, at additional production costs of
-**239.16, 224.50 and 20.70 minutes**, respectively. Here linker, both LTO settings
+The LLVM recipe's extra downstream saving versus Microsoft PGO was
+**4.54% ordinary Arm64 and 0.65% GB300**, at additional production costs of
+**224.50 and 20.70 minutes**, respectively. Here linker, both LTO settings
 and fresh profiles change together; this is not the matched-profile ThinLTO
 contrast from the previous stage.
 
@@ -364,63 +364,69 @@ replay does not erase it.
 The worker allocations in this section apply to toolchain production;
 IronRDP replay worker counts are separate.
 
-### 6.1 Historical scaling: do not confuse HDD and NVMe results
+### 6.1 Arm64 full-release CPU scaling
 
 A further recipe retained Microsoft tools and fresh PGO, enabled **Rust
-ThinLTO**, and left native LLVM ThinLTO off. Six releases qualified:
+ThinLTO**, and left native LLVM ThinLTO off. Three Arm64 releases qualified:
 
 | Machine | Logical Processors | Rust-production minutes | Rust-production time saved vs same-machine 4 LP |
 |---|---:|---:|---:|
 | Arm64 | 4 | 507.79 | Baseline |
 | Arm64 | 8 | 137.13 | 73.00% |
 | Arm64 | 16 | 112.03 | 77.94% |
-| x64 | 4 | 726.81 | Baseline |
-| x64, original | 16 | 610.70 | 15.97% |
-| x64, repeat | 16 | 916.98 | -26.17% |
 
-Arm64 was **MARCPE-D4-Arm64**; x64 was **MARCPE-TEST01-X64**.
+The runner was **MARCPE-D4-Arm64**.
 These are fixed-order, single observations, not a validated scaling curve.
 Arm64's superlinear 4-to-16 ratio requires explanation and repetition; its
 self-hosted timings are not guarantees for GitHub larger runners.
 **No IronRDP replay measured the downstream benefit of this scaling recipe.**
 
-The x64 repeat was **50.15% slower than its original 16-LP run**. Investigation
-found an HDD/ReFS release volume versus an NVMe/NTFS system volume. A CPU-only
-probe scaled **2.6-3.2x** from 4 to 16 LP, whereas historical opt-dist trees averaged
-only **1.12-1.78 occupied LP**. Four LP selected two physical cores with SMT.
-Synchronous small-file writes were much slower on the HDD; profile datasets
-exceeded RAM. Profile merging alone explained only about six minutes of the
-five-hour repeat slowdown.
+**Compiler cache: not enabled.** The retained bootstrap configurations do not
+enable sccache/ccache, and the final LLVM/LLD CMake configurations have no C/C++
+compiler-cache launcher. Each release started with fresh build objects.
+There is no recorded cache-hit percentage; report **N/A (no compiler-cache
+service)** rather than an observed 0%.
 
-These are strong storage/profile-processing leads, not proof that HDD latency
-explains the entire difference or that ReFS alone is responsible.
-
-Evidence and run identities: [scaling and diagnostics](matched-release/README.md).
+Evidence and run identities: [Arm64 scaling details](matched-release/README.md).
 Arm64 4/8/16 runs: **38756702383 / 38873093226 / 38728610658**.
-X64 4/original-16/repeat-16 runs: **38869758791 / 38716997224 / 38980060732**.
 
-### 6.2 Later x64 NVMe compiler-production and CI times
+### 6.2 x64 D: NVMe compiler-production and CI times
 
 The dedicated `MARCPE-TEST01-X64` has **8 physical cores / 16 logical
-processors**, not 16 physical cores. The 20-21 October releases used C: NVMe;
-after the runner reset, the 22-25 October releases used D: ReFS on the
-**2-TB SK hynix NVMe SSD**, with correctness scratch on C: NTFS. These are not
-the E: HDD observations above, and they are not a controlled filesystem study.
+processors**, not 16 physical cores. All release timings in this subsection
+use **D: ReFS on the 2-TB SK hynix NVMe SSD**, with correctness scratch on
+C: NTFS. They are not a controlled filesystem comparison.
 
 | Rust build / scope | Build allocation | Rust-production wall | Separate extracted tests / qualification | Whole successful Rust release job |
 |---|---:|---:|---:|---:|
-| Rust 1.94.1 rebuilt upstream recipe, two fresh releases on C: NVMe | 16 LP | Mean **2h12m53s** | Mean **6m42s** | Mean **2h45m50s** |
-| Rust 1.94.1 repaired local recipe, two fresh releases on C: NVMe | 16 LP | Mean **2h16m29s** | Mean **6m24s** | Mean **2h52m27s** |
+| Rust 1.94.1 official LLVM profile, fixed-profile distribution | 16 LP | **1h15m06s** | **10m31s**, including helper/orchestration; recovered separately | No matched whole-job total: split production/qualification |
+| Rust 1.94.1 repaired LLVM profile, fixed-profile distribution | 16 LP | **1h12m17s** | **9m42s**, including helper/orchestration | No matched whole-job comparison in this recovery workflow |
 | Rust 1.99.1 official LLVM profile, fixed-profile distribution on D: NVMe | 16 LP | **1h12m17s** | **9m44s**, including separate helper | **1h52m42s** |
 | Rust 1.99.1 repaired LLVM profile, fixed-profile distribution on D: NVMe | 16 LP | **1h10m19s** | **9m41s**, including separate helper | **1h53m20s** |
 | PR `4da678aa` plus dry-run prerequisite, fresh full PGO on D: NVMe, 25 October | 16 LP | **2h24m37s**, derived by excluding the recorded test section | **9m07s** | **2h59m01s** |
 
-The first pair of rows changes native linking tools as well as the training
-recipe; it is **not the same-tools PGO estimate**. The next three rows retain
-Microsoft `link.exe`/`lib.exe` and do not add cross-crate ThinLTO.
-The fixed-profile rows exclude training: separate repaired training took
+**All five rows retain Microsoft `link.exe`/`lib.exe` and do not add cross-crate
+ThinLTO.** For 1.94.1, fixed-profile production was **4506.154s versus
+4337.160s**; the control was qualified later without rebuilding its compiler.
+These are accepted production timings, not successful uninterrupted whole-job
+measurements. The 1.99.1 fixed-profile rows likewise exclude training; that
+study's separate repaired training took
 **1h20m33s** (whole training job **1h34m52s**). Do not compare their approximately
 70-minute production directly with a fresh-training full release.
+
+**Compiler-cache status for every row above: N/A (not enabled), not a measured
+0% hit rate.** Retained bootstrap configurations and final LLVM/LLD
+`CMakeCache.txt` files show direct clang-cl compilation without a compiler-cache
+launcher; the harness also excludes inherited compiler-wrapper settings.
+Build-object trees were fresh for each distribution. The supplied PGO profiles
+in the fixed-profile studies are deliberate inputs, not cached object files.
+
+This does not mean all reuse was disabled: normal bootstrap/Cargo reuse
+within a release pipeline remains, and filesystem/OS caches are not measured
+as sccache hits. `CMakeCache.txt` stores configuration, not compiled objects.
+In contrast, the **official upstream try-build** in section 8 explicitly used
+sccache and reported **100% native C/C++ hits**; it must not be described as a
+zero-hit build.
 
 For the 25 October validation, the measured production-plus-tests interval was
 **9,223.797s (2h33m44s)**. Its non-overlapping breakdown is:
@@ -452,8 +458,8 @@ validation does not establish the duration of a cache-corrected hosted build.
 
 The four-worker **IronRDP replay** is not a four-worker **Rust release build**.
 The upstream eight-processor GitHub try job is also not an eight-processor
-observation on this custom host. The earlier **4/8/16 study was ordinary
-Arm64**; x64 had HDD-backed 4/16 observations, not the requested NVMe matrix.
+observation on this custom host. The completed **4/8/16 study was ordinary
+Arm64**, not the requested x64 NVMe matrix.
 The runner inventory was checked on 30 October and reported this host offline.
 No replacement timings are inferred, and no new builds are claimed to have run.
 
@@ -462,10 +468,12 @@ same NVMe host, one pinned same-tools recipe, full qualification, recorded
 affinity/topology, and separately reported setup, PGO, distribution, tests and
 uploads. Changing worker count must not change source, tool binaries, recipe
 or cache policy. The first set would be descriptive; repetitions would be
-needed for a stable scaling estimate. Do not extrapolate the old HDD results.
+needed for a stable scaling estimate.
 
-Evidence: [two fresh NVMe pairs](X64-PGO-COMPARISON.md),
-[fixed-profile NVMe study](X64-PGO-1991.md),
+Evidence: [1.94.1 D: NVMe study](X64-PROFILE-ONLY.md),
+[1.94.1 raw configuration/timing records](x64-profile-only-evidence.zip),
+[1.99.1 D: NVMe study](X64-PGO-1991.md),
+[1.99.1 raw configuration/timing records](x64-profile-1991-evidence.zip),
 [25 October complete validation](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40170434889),
 and [persistent later evidence](later-pgo-evidence.zip).
 
@@ -510,11 +518,8 @@ an **AMD EPYC 7763 with 16 GiB RAM**, not Intel. Run **39110448524** completed b
 PGO stages but reached its deadline in the final build. Its **5h44m18s production
 interval is unfinished**, not a completed release time.
 
-Completed PGO-gathering sections totaled **52.72 minutes publicly versus 356.60
-minutes on self-hosted x64/4**. Source pins, recipe and all 65 logged scenario
-records matched, but hardware and raw profile byte counts differed. Conversely,
-the initial instrumented-compiler build was slower publicly. This localizes a
-phase difference; it does not establish a general public-CPU speedup.
+Completed PGO-gathering sections totaled **52.72 minutes** on that public
+runner. This is a partial phase measurement, not a completed release time.
 
 The subsequent whole-workspace continuation attempt **39135351977** completed
 fresh training in **4h39m37s**, then timed out archiving; the final job did not run.
@@ -642,7 +647,7 @@ Evidence: [late validation, replay and cache-reproduction records](later-pgo-evi
 |---|---|---|
 | 1 | Make final Windows LLVM native-cache keys profile-aware, then validate the shipped artifact | Correct training is insufficient if stale objects are reused; require full release/correctness and downstream recovery within the runner budget |
 | 2 | Apply effective PGO while retaining Microsoft linking tools | Use isolated x64 profile evidence and explicitly labelled Arm64 no-PGO pilots; do not imply a same-tools LTO gain |
-| 3 | Complete the missing custom x64 NVMe 4/8/16-LP production matrix when the runner is online | Match source/tools/recipe/cache policy; report each phase and whole job; retain the old HDD observations separately |
+| 3 | Complete the missing custom x64 NVMe 4/8/16-LP production matrix when the runner is online | Match source/tools/recipe/cache policy; report each phase and whole job |
 | 4 | Measure the incremental Rust-only ThinLTO benefit with Microsoft tools retained on x64 and Arm64 | Hold profiles/source/tools fixed; qualify full packages; the older LLVM-linked 7.6% result is not this estimate |
 | 5 | Optimize packaging and qualify a complete hosted production strategy | Preserve tools/docs/MSI, include training/setup/transfers/tests, and report segmented versus continuous time explicitly |
 
