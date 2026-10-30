@@ -23,7 +23,8 @@ files are on the same reporting branch, but are earlier presentations, not
 
 ## TL;DR
 
-- **The reported Windows compilation penalty was reproduced with IronRDP:**
+- **The reported Windows compilation penalty was reproduced when building
+  IronRDP, not Rust itself:**
   Windows/Linux native-compilation wall-time ratios were **1.82x on x64**
   and **1.69x on Arm64** on standard GitHub runners. Mac was not benchmarked.
 - **The primary workload bottleneck was compiler execution.** On the graphics
@@ -123,22 +124,30 @@ and the gateway native-TLS plus smartcard variant. Dependencies are fetched
 before timing; measured commands use `--frozen` and an offline Cargo environment.
 Correctness tests execute outside the compilation clock.
 
+**Two different builds are measured throughout this report:**
+**building IronRDP with a Rust toolchain** measures the toolchain's benefit to
+developers; **building the Rust compiler and its distribution** measures the
+cost of producing that toolchain. A percentage improvement in one is not an
+improvement in the other. Neither endpoint measures application runtime.
+
 | Quantity | What its time includes |
 |---|---|
 | IronRDP compilation | Five Cargo command wall times; excludes setup, dependency downloads, test execution, verification and uploads |
 | Full Rust production | Helper construction, fresh PGO training/merging and complete distribution production; excludes initial setup, post-build qualification and uploads |
-| Whole release job | Successful job start-to-finish, including setup, qualification, uploads and applicable cleanup; excludes queues and separate failed/recovery jobs |
+| Whole Rust release job | Successful compiler/distribution job start-to-finish, including setup, qualification, uploads and applicable cleanup; excludes queues and separate failed/recovery jobs |
 | Component wall scope | Non-overlapping recorded steps, including links, waits and I/O; **not** raw compile CPU time |
 
 Full Rust production logs contain dependency downloads: unlike the IronRDP
 replay, **full production is not an offline compile-only measurement**.
 LP means **Logical Processors**, not necessarily physical cores.
 
-## 2. Reproduce the gap, then isolate compiler execution
+## 2. Building IronRDP: reproduce the OS gap and isolate compiler execution
 
+**Measured build: IronRDP's five-command offline Cargo workload, using an
+already-built Rust toolchain. These are not times to build Rust itself.**
 Three independent standard GitHub jobs per OS/architecture reproduced the gap:
 
-| Architecture | Linux native total, seconds | Windows native total, seconds | Windows/Linux |
+| Architecture | IronRDP on Linux, seconds | IronRDP on Windows, seconds | Windows/Linux IronRDP time |
 |---|---:|---:|---:|
 | x64 | 555.030 | 1,008.888 | 1.818x |
 | Arm64 | 424.245 | 714.955 | 1.685x |
@@ -148,8 +157,8 @@ compilation explained approximately **75-79% of the excess native time**;
 gateway feature variants accounted for another **18-21%**. Windows compiled
 fewer workspace units, so simply counting more crates did not explain the gap.
 
-The next stage measured `ironrdp-graphics` builds and direct `yuv` rustc
-invocations with one/four-processor affinity, native/shared-WASM targets,
+The next stage narrowed the IronRDP workload to `ironrdp-graphics` builds and
+direct `yuv` rustc invocations with one/four-processor affinity, native/shared-WASM targets,
 metadata-only/full code generation, and process-tree/compiler-own CPU accounting.
 Rustc consumed **97.7-99.1% of project CPU**, explaining **99.3-99.6% of Windows'
 additional CPU**. The gap persisted without Cargo or an external linker.
@@ -164,7 +173,12 @@ Evidence: [original measurement and native breakdown](REPORT.md),
 [36764734498](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36764734498)
 and [36771187101](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36771187101).
 
-## 3. Audit release optimizations and validate effective training
+## 3. Building Rust: audit release optimizations and validate PGO training
+
+**Subject: the recipe used to produce the Rust compiler, and whether its
+training profiles contain useful coverage.** Coverage counts are not build
+times. The performance benefits cited below are measured separately by
+building IronRDP with the resulting compilers.
 
 For the measured **Rust 1.94.1** release, Windows x64 configured both rustc and
 LLVM PGO; Windows Arm64 configured neither. Neither Windows architecture enabled
@@ -197,12 +211,15 @@ Evidence: [release audit and training repair](COMBINED-REPORT.md),
 
 ### 3.1 Adoption view: keep the Windows tool stack
 
+**Benefit endpoint: reduced IronRDP compilation time**, not reduced time to
+build Rust. Rows marked feasibility or unmeasured do not supply a speedup.
+
 The preferred delivery path retains **clang-cl, Microsoft `link.exe` and
 `lib.exe`**, and ships a normal complete Rust toolchain. This is an adoption
 and maintenance preference, not a claim that alternative tools cannot work.
 It does not require users to transplant compiler components between releases.
 
-| Optimization, with Windows native tools unchanged | x64 evidence | Arm64 evidence | What can be claimed |
+| Optimization, with Windows native tools unchanged | x64 IronRDP benefit / status | Arm64 IronRDP benefit / status | What can be claimed |
 |---|---|---|---|
 | Repair LLVM PGO; retain Rust-side profiles and existing LTO settings | **13.73%** less IronRDP wall on 1.94.1; **12.93%** on 1.99.1 | No equivalent profile-only estimate | Isolated x64 LLVM-profile benefit, not a linker gain |
 | Enable fresh PGO in the release recipe; no added cross-crate LTO | **24.62%**: 737.35 to 555.78s | **24.44%**: 1348.55 to 1018.93s on ordinary Arm64; GB300 **21.46%** | Same-tools PGO-recipe benefit versus controlled **no-PGO** builds; one accepted pilot per machine, not additional savings over shipping x64 Rust |
@@ -243,7 +260,7 @@ compared shipping Rust with optimized compilers. Windows compiler ordering was
 counterbalanced; confidence intervals resample whole VMs and preserve pairing.
 Original correctness commands passed outside timing.
 
-| Windows architecture | Shipping Rust, seconds | Optimized, seconds | Wall-time reduction | 95% interval |
+| Windows architecture | IronRDP using shipping Rust, seconds | IronRDP using optimized Rust, seconds | IronRDP wall-time reduction | 95% interval |
 |---|---:|---:|---:|---:|
 | x64 | 957.41 | 730.64 | 23.7% | 21.7-25.3% |
 | Arm64 | 709.64 | 595.99 | 16.0% | 15.4-16.7% |
@@ -266,7 +283,11 @@ Principal native runs:
 [37001433534](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/37001433534)
 and [36871453828](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/36871453828).
 
-## 5. Qualify full releases and measure their production cost
+## 5. Building Rust distributions: production cost versus IronRDP benefit
+
+**Cost endpoint: building and packaging Rust itself.** Where a table also
+reports an IronRDP saving, that is a separate downstream compilation
+measurement using the resulting toolchain, not a release-build speedup.
 
 A [completed-log CI audit](https://github.com/marcpems/IronRDP-ci-benchmark/blob/96e8f5d65ffd6d50955c9480b3ae8bdcfe3251ff/ci-benchmark/build-time/README.md)
 covered 313 upstream CI jobs. Stock Arm64 distribution jobs took **117-127
@@ -296,7 +317,7 @@ DLL-import and MIR stack-scope repairs. The baseline is the same-revision
 **no-PGO compiler, not shipping x64 Rust**. Each machine has **one accepted
 non-warmup paired pilot round**, not the originally planned repeated hosted study.
 
-| Machine / allocation | No-PGO production, min | MS PGO production, min (+% vs no PGO) | LLVM recipe production, min (+%) | IronRDP saving: MS / LLVM |
+| Machine / allocation | Rust production: no PGO, min | Rust production: MS PGO, min (+% vs no PGO) | Rust production: LLVM recipe, min (+%) | IronRDP compile saving: MS / LLVM |
 |---|---:|---:|---:|---:|
 | x64 / 4 LP | 134.1 | 548.1 (+308.7%) | 787.3 (+487.0%) | 24.6% / 28.7% |
 | Arm64 / 4 LP | 180.1 | 431.9 (+139.8%) | 656.4 (+264.5%) | 24.4% / 27.9% |
@@ -310,7 +331,7 @@ contrast from the previous stage.
 
 Production decomposition exposed substantial non-compilation work. On GB300:
 
-| Exclusive production scope, minutes | No PGO | MS PGO | LLVM recipe |
+| Exclusive Rust-production scope, minutes | No PGO | MS PGO | LLVM recipe |
 |---|---:|---:|---:|
 | Assembly/compression | 102.21 | 102.91 | 103.38 |
 | Compiler/std/backends | 7.79 | 13.14 | 17.09 |
@@ -330,14 +351,18 @@ Accepted replays: x64 **38636440191**, Arm64 **38695519744**, GB300 **3844190937
 The earlier GB300 UDP correctness timeout remains unexplained; a fresh accepted
 replay does not erase it.
 
-## 6. Investigate capacity, storage and CPU scaling
+## 6. Building Rust distributions: storage and CPU scaling
+
+**Measured build: Rust compiler/distribution production, not IronRDP.**
+The worker allocations in this section apply to toolchain production;
+IronRDP replay worker counts are separate.
 
 ### 6.1 Historical scaling: do not confuse HDD and NVMe results
 
 A further recipe retained Microsoft tools and fresh PGO, enabled **Rust
 ThinLTO**, and left native LLVM ThinLTO off. Six releases qualified:
 
-| Machine | Logical Processors | Production minutes | Time saved vs same-machine 4 LP |
+| Machine | Logical Processors | Rust-production minutes | Rust-production time saved vs same-machine 4 LP |
 |---|---:|---:|---:|
 | Arm64 | 4 | 507.79 | Baseline |
 | Arm64 | 8 | 137.13 | 73.00% |
@@ -375,7 +400,7 @@ after the runner reset, the 22-25 October releases used D: ReFS on the
 **2-TB SK hynix NVMe SSD**, with correctness scratch on C: NTFS. These are not
 the E: HDD observations above, and they are not a controlled filesystem study.
 
-| Study / build scope | Build allocation | Production wall | Separate extracted tests / qualification | Whole successful release job |
+| Rust build / scope | Build allocation | Rust-production wall | Separate extracted tests / qualification | Whole successful Rust release job |
 |---|---:|---:|---:|---:|
 | Rust 1.94.1 rebuilt upstream recipe, two fresh releases on C: NVMe | 16 LP | Mean **2h12m53s** | Mean **6m42s** | Mean **2h45m50s** |
 | Rust 1.94.1 repaired local recipe, two fresh releases on C: NVMe | 16 LP | Mean **2h16m29s** | Mean **6m24s** | Mean **2h52m27s** |
@@ -393,7 +418,7 @@ The fixed-profile rows exclude training: separate repaired training took
 For the 25 October validation, the measured production-plus-tests interval was
 **9,223.797s (2h33m44s)**. Its non-overlapping breakdown is:
 
-| Component | Seconds | Minutes |
+| Rust release-build component | Seconds | Minutes |
 |---|---:|---:|
 | Rust-side PGO stage, including its builds and profile collection | 4066.980 | 67.78 |
 | LLVM PGO stage, including instrumented compiler and profile collection | 1435.190 | 23.92 |
@@ -437,7 +462,11 @@ Evidence: [two fresh NVMe pairs](X64-PGO-COMPARISON.md),
 [25 October complete validation](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40170434889),
 and [persistent later evidence](later-pgo-evidence.zip).
 
-## 7. Test production-throughput ideas, including negative results
+## 7. Building Rust/LLVM: production-throughput probes and negative results
+
+**Measured work: compiler-production components, packaging, and release
+continuations.** These are not IronRDP compilation measurements; a faster
+packaging or LLVM-build step does not itself establish a faster shipped compiler.
 
 The supporting throughput work distinguished component opportunities from
 demonstrated full-release improvements:
@@ -463,7 +492,11 @@ Evidence: [local component probes](release-throughput/README.md),
 [upstream-equivalent scheduling study](upstream-release-throughput/README.md),
 [controlled crossover results](upstream-release-throughput/crossover1-results.json).
 
-## 8. Public reference and later upstream validation
+## 8. Rust-release validation and the separate IronRDP artifact check
+
+The public reference and release validations below measure **building Rust
+distributions**. The explicitly labelled upstream-artifact check instead
+measures **building IronRDP with those already-built distributions**.
 
 The public four-LP reference requested to contextualize x64 scaling landed on
 an **AMD EPYC 7763 with 16 GiB RAM**, not Intel. Run **39110448524** completed both
@@ -486,7 +519,7 @@ storage and runner-disconnection failures; its qualified 64-LP pilots remain val
 See the [preserved phase evidence and recovery history](matched-release/README.md).
 Incomplete attempts are never successful totals, zero-gain samples or forecasts.
 
-### Requested x64 PGO follow-up completed on 21 October
+### 21 October: Rust-production cost and separate IronRDP compilation benefit
 
 The separately resumed x64 comparison completed **four fresh full releases**
 on the dedicated NVMe runner, using opposite order in two pairs, and replayed
@@ -500,7 +533,7 @@ This completes the requested x64 toolchain-benefit/CI-cost comparison. It does
 not complete the older hosted-release reference or GB300 scaling study.
 See the [final report, limits and permanent evidence](X64-PGO-COMPARISON.md).
 
-### Current-PR release validation completed on 25 October
+### 25 October: building and qualifying the current-PR Rust distribution
 
 The PR's static-LLVM rebuild exposed an independent bootstrap dry-run
 prerequisite: the read-only Clang profiling-runtime lookup must execute during
@@ -510,7 +543,7 @@ build passed. A fresh same-tools full Windows release then passed all extracted
 tests on the 16-LP NVMe runner, as detailed in section 6.2. This was release
 qualification, **not an additional downstream performance experiment**.
 
-### Actual upstream artifact checked on 26 October
+### 26 October: building IronRDP with the actual upstream Rust artifact
 
 The requested upstream Rust 1.101.0-nightly try artifact
 `51dae83933ec0602516d385a07cea7c692d15261` was compared with its exact first parent,
@@ -519,7 +552,7 @@ per compiler used the same host, four-CPU affinity, the parent Cargo and each
 compiler's own bundled standard library. There was no excluded warmup or
 statistical qualification. Setup/downloads/correctness were untimed.
 
-| Compiler | Mean offline wall | Mean descendant CPU |
+| Toolchain used to build IronRDP | Mean IronRDP offline wall | Mean IronRDP descendant CPU |
 |---|---:|---:|
 | Exact parent | 630.066s | 2443.008s |
 | Requested upstream try artifact | 628.713s | 2439.039s |
@@ -534,6 +567,10 @@ The completed set contains 20 successful measured commands. See the
 and [successful continuation](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/40409913485).
 
 ### Cache diagnosis: strong evidence, not yet recovered end-to-end performance
+
+**Cache scope: native C/C++ compilation while producing Rust/LLVM**, not
+Cargo's cache when building IronRDP. The missing performance gain is the
+separate IronRDP result above.
 
 The actual parent/try reproducibility profiles were inspected:
 
