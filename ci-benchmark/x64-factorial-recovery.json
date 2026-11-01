@@ -1,0 +1,20 @@
+{
+  "reason": "The both-thin job failed before compilation because GitHub could not be reached while fetching the pinned rustc-perf submodule. No timings or failed compiler outputs are being selected away.",
+  "original_run": "41116552933",
+  "original_attempt": "1",
+  "original_harness": "73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0",
+  "failed_job": 124272158863,
+  "baseline_metadata_sha256": "00b45459a5ebdd006e19df4bff2ec94322d959b0efae29389153bf8cd6028305",
+  "retained_metadata_sha256": {
+    "baseline": "00b45459a5ebdd006e19df4bff2ec94322d959b0efae29389153bf8cd6028305",
+    "rust-thin": "25fd4eff13e100af7a21bee3a03ac2dd4cd794035fe1daafa0813938d9ce8d6b",
+    "llvm-thin": "40cd5629494ed4d383e5977f67faaf95770e7f9dda80065500bbaa35b9a291c3"
+  },
+  "retained_archive_sha256": {
+    "baseline": "ef2d7743e5d1a9669e0ddccbe4b05f8d5147fb4ad9aa2b6fddb67ad2510203fb",
+    "rust-thin": "c2cc49eec1fbc71b9dfc6b5822a6d7ca0a67f59456b393fa4d0320cc55fef81b",
+    "llvm-thin": "933d62f14fd0744d5c099188781152c578ef9b73a067bc7a272987926fde2404"
+  },
+  "scope": "Replace only the missing both-thin producer, preserving the original source/profile/config/native input/image identities. Freeze its exact package and per-arm run provenance before an explicitly recorded consumer continuation can accept the mixed-run set.",
+  "performance_protocol": "Unchanged x64-factorial-thin.json; no performance sample exists from the failed setup job"
+}

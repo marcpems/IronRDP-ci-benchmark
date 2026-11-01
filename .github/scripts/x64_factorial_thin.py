@@ -269,11 +269,19 @@ if __name__ == "__main__":
     parser.add_argument("--source", type=Path)
     parser.add_argument("--variant", choices=ARMS)
     parser.add_argument("--vm", type=int)
+    parser.add_argument("--reference", type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
     try:
         if args.phase == "build":
-            build(root, args.variant, PROTOCOL)
+            reference = None
+            if args.reference is not None:
+                recovery = read(PROTOCOL.with_name("x64-factorial-recovery.json"))
+                if (args.variant != "both-thin"
+                        or digest(args.reference) != recovery["baseline_metadata_sha256"]):
+                    raise RuntimeError("Recovery requires the exact frozen baseline reference")
+                reference = read(args.reference)
+            build(root, args.variant, PROTOCOL, reference)
         else:
             benchmark(root, args.source.resolve(), args.vm)
     except Exception as error:

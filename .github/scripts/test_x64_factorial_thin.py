@@ -10,7 +10,7 @@ from x64_factorial_thin import (
     ARMS, HOST, PROTOCOL, effects, file_manifest, order, prove_loaded_driver,
     share_stdlib, summarize, verify_records,
 )
-from x64_rust_thin_incremental import configuration
+from x64_rust_thin_incremental import configuration, verify_recovery_reference
 
 
 class FactorialTests(unittest.TestCase):
@@ -64,6 +64,18 @@ class FactorialTests(unittest.TestCase):
         altered["rust-thin"]["profile_use_audit"]["driver_dylib_lto_flag"] = False
         with self.assertRaises(RuntimeError):
             verify_records(altered, protocol)
+
+    def test_recovery_keeps_source_image_tools_and_recipe_but_allows_declared_factors(self):
+        records, _ = self.records()
+        verify_recovery_reference(records["both-thin"], records["baseline"])
+        for key in ("image", "native_inputs", "source_patch_sha256", "protocol"):
+            changed = {**records["both-thin"], key: "changed"}
+            with self.subTest(key=key), self.assertRaises(RuntimeError):
+                verify_recovery_reference(changed, records["baseline"])
+        changed = copy.deepcopy(records["both-thin"])
+        changed["configuration"] = changed["configuration"].replace("jobs = 4", "jobs = 8")
+        with self.assertRaises(RuntimeError):
+            verify_recovery_reference(changed, records["baseline"])
 
     def test_source_and_profile_locks_equal_the_existing_pilot(self):
         old = json.loads(PROTOCOL.with_name("x64-rust-thin-incremental.json").read_text())

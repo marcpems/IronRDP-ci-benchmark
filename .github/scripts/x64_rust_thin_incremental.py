@@ -155,7 +155,20 @@ def verify_source(source, protocol, patched=False):
         raise RuntimeError("Bootstrap prerequisite differs from the qualified exact blob")
 
 
-def build(root, variant, protocol_path=PROTOCOL):
+def verify_recovery_reference(record, reference):
+    for key in ("protocol", "source_patch_sha256", "native_inputs", "image"):
+        if record[key] != reference[key]:
+            raise RuntimeError(f"Recovery differs from frozen producer reference: {key}")
+    if not equivalent_tools(record["tools"], reference["tools"]):
+        raise RuntimeError("Recovery native tool binaries differ from frozen reference")
+    configs = [tomllib.loads(value["configuration"]) for value in (record, reference)]
+    for config in configs:
+        config["rust"]["lto"], config["llvm"]["thin-lto"] = "thin-local", False
+    if configs[0] != configs[1]:
+        raise RuntimeError("Recovery configuration differs beyond the declared LTO factors")
+
+
+def build(root, variant, protocol_path=PROTOCOL, reference=None):
     hosted_only()
     protocol = read(protocol_path)
     factorial = protocol.get("lto_factors")
@@ -210,6 +223,12 @@ def build(root, variant, protocol_path=PROTOCOL):
         "qualification": "Pending compiler smoke; no full extracted-distribution qualification",
         "cache": {"enabled": False, "hit_rate": None},
     }
+    if reference is not None:
+        verify_recovery_reference(record, reference)
+        record["recovery_reference"] = {
+            "run_id": reference["run_id"], "attempt": reference["attempt"],
+            "harness_sha": reference["harness_sha"], "archive_sha256": reference["archive_sha256"],
+        }
     save(output / "result.json", record)
     deadline = float(os.environ["THIN_JOB_STARTED"]) + protocol["build_budget_minutes"] * 60
     remaining = deadline - time.time()
@@ -278,6 +297,8 @@ def build(root, variant, protocol_path=PROTOCOL):
     for name in ("COPYRIGHT", "LICENSE-APACHE", "LICENSE-MIT"):
         shutil.copy2(source / name, package / name)
     record["stage0_cargo_sha256"] = digest(cargo)
+    if reference is not None and record["stage0_cargo_sha256"] != reference["stage0_cargo_sha256"]:
+        raise RuntimeError("Recovery stage0 Cargo differs from the frozen reference")
     std = package / "lib/rustlib" / HOST / "lib"
     record["stdlib"] = {p.name: digest(p) for p in sorted(std.iterdir()) if p.is_file()}
     if not any(name.startswith("libstd-") and name.endswith(".rlib") for name in record["stdlib"]):

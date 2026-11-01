@@ -46,6 +46,18 @@ references, not samples to pool into this matrix.
 The remaining sections describe the earlier two-arm method and its recovery,
 not the new four-way protocol.
 
+**1 November setup recovery:** original run 41116552933 successfully built
+baseline, Rust-only and LLVM-only. The both-thin job failed fetching the pinned
+rustc-perf submodule before compilation, due to a GitHub connection failure.
+No four-way consumer ran. The
+[recovery manifest](x64-factorial-recovery.json) freezes the three successful
+packages and records that failure. A build-only workflow replaces the missing
+arm, checks the exact original hosted image and source/tool/native inputs
+before compilation, and retries interrupted setup downloads. It does not
+rebuild the successful arms or change the performance protocol. A subsequent
+consumer continuation must freeze all four packages and their per-arm
+provenance explicitly; the original same-run gate is not silently relaxed.
+
 This is a **limited experimental compiler/sysroot pilot**, not a qualified full
 release or an actual rebuilt combined-PR shipped artifact. No performance result
 exists until `thin-incremental-consumer-evidence/index.json` has `complete: true`.
