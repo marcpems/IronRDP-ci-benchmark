@@ -15,6 +15,7 @@ from x64_factorial_thin import (
     share_stdlib, summarize, verify_records,
 )
 from x64_rust_thin_incremental import configuration, verify_recovery_reference
+from verify_x64_factorial_thin import verify_consumer_source
 
 
 class FactorialTests(unittest.TestCase):
@@ -130,6 +131,30 @@ class FactorialTests(unittest.TestCase):
                 self.assertEqual({row[position] for row in orders}, set(ARMS))
             pairs = [(row[i], row[i + 1]) for row in orders for i in range(3)]
             self.assertEqual(len(set(pairs)), 12)
+
+    def test_cross_run_consumer_recovery_requires_exact_frozen_receipts(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "index.json"
+            index = {"run_id": "old", "harness_sha": "old-head", "attempt": "1"}
+            path.write_text(json.dumps(index))
+            source = {**index, "index_sha256": digest(path),
+                      "correctness_environment": {"PUBLIC": r"C:\Users\Public"}}
+            manifest = {"schema_version": 1, "protocol_sha256": digest(PROTOCOL),
+                        "vms": {str(vm): copy.deepcopy(source) for vm in range(1, 5)}}
+            with self.assertRaises(RuntimeError):
+                verify_consumer_source(path, index, 1, "new", "new-head", 1, None)
+            self.assertEqual(verify_consumer_source(path, index, 1, "new", "new-head", 1, manifest),
+                             source["correctness_environment"])
+            self.assertEqual(verify_consumer_source(path, index, 1, "old", "old-head", 1, None),
+                             source["correctness_environment"])
+            for key in ("run_id", "harness_sha", "attempt", "index_sha256", "correctness_environment"):
+                changed = copy.deepcopy(manifest)
+                changed["vms"]["1"][key] = "changed"
+                with self.subTest(key=key), self.assertRaises(RuntimeError):
+                    verify_consumer_source(path, index, 1, "new", "new-head", 1, changed)
+            manifest["vms"].pop("4")
+            with self.assertRaises(RuntimeError):
+                verify_consumer_source(path, index, 1, "new", "new-head", 1, manifest)
 
     def test_interaction_is_not_subtraction_of_unrelated_gains(self):
         values = effects(dict(zip(ARMS, (100, 90, 80, 72))))

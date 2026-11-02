@@ -66,7 +66,7 @@ def tools(identity):
     }
 
 
-def verify_block(directory, correctness):
+def verify_block(directory, correctness, correctness_environment=None):
     result = read(directory / "results.json")
     require(result["complete"] is True and result["correctness"] is correctness,
             f"Incomplete or wrong-scope block: {directory}")
@@ -86,7 +86,8 @@ def verify_block(directory, correctness):
         require(row["command"] == expected, f"Unexpected command: {row['command']}")
         require(row["exit_code"] == 0, f"Failed command: {name}")
         require(row.get("correctness_environment", {}) ==
-                ({"PUBLIC": r"C:\Users\Public"} if correctness else {}),
+                ((correctness_environment if correctness_environment is not None
+                  else {"PUBLIC": r"C:\Users\Public"}) if correctness else {}),
                 "Correctness-only environment changed or leaked into timing")
         require(row["affinity"] == [0, 1, 2, 3], f"Wrong affinity: {name}")
         for key in ("wall_seconds", "cpu_seconds"):

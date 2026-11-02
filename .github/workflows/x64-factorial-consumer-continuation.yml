@@ -1,6 +1,12 @@
 name: x64 factorial ThinLTO frozen consumer continuation
 on:
   workflow_dispatch:
+    inputs:
+      vms:
+        description: "VM IDs to retry; partial runs require frozen cross-run consumer verification"
+        type: string
+        default: "[1,2,3,4]"
+        required: true
   push:
     branches: [experiment/x64-factorial-consumers]
 permissions:
@@ -8,7 +14,7 @@ permissions:
   actions: read
 concurrency:
   # Keep the earlier surviving VM as diagnostic evidence; retry a complete matched matrix.
-  group: x64-factorial-consumer-native-probe
+  group: x64-factorial-consumer-native-probe-${{ github.ref }}
   cancel-in-progress: false
 defaults:
   run:
@@ -22,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        vm: [1, 2, 3, 4]
+        vm: ${{ fromJSON(inputs.vms || '[1,2,3,4]') }}
     steps:
       - name: Require independent matching hosted allocation
         run: |
@@ -109,6 +115,7 @@ jobs:
           compression-level: 1
   analyze:
     needs: consumer
+    if: ${{ !inputs.vms || inputs.vms == '[1,2,3,4]' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     defaults:
@@ -154,6 +161,7 @@ jobs:
           python .github/scripts/verify_x64_factorial_thin.py --artifacts evidence \
             --run-id "$GITHUB_RUN_ID" --head "$GITHUB_SHA" --attempt "$GITHUB_RUN_ATTEMPT" \
             --continuation ci-benchmark/x64-factorial-continuation.json \
+            --serial-correctness \
             --output factorial-results.json
       - uses: actions/upload-artifact@v6
         with:

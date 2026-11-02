@@ -8,7 +8,7 @@ import re
 import statistics
 
 from verify_x64_rust_thin import equal_number, require, verify_block
-from x64_factorial_thin import ARMS, HOST, PROTOCOL, order, read, summarize, verify_records
+from x64_factorial_thin import ARMS, HOST, PROTOCOL, digest, order, read, summarize, verify_records
 
 
 def verify_producers(artifacts, run_id, head, attempt, continuation=None):
@@ -62,7 +62,33 @@ def verify_producers(artifacts, run_id, head, attempt, continuation=None):
     return records
 
 
-def verify(artifacts, run_id, head, attempt, continuation=None):
+def verify_consumer_source(path, index, vm, run_id, head, attempt, consumer_sources,
+                           serial_correctness=False):
+    if consumer_sources is None:
+        require(index["run_id"] == run_id and index["harness_sha"] == head
+                and index["attempt"] == str(attempt), "Consumer run/head/attempt mismatch")
+        environment = {"PUBLIC": r"C:\Users\Public"}
+        if serial_correctness:
+            environment["RUST_TEST_THREADS"] = "1"
+        return environment
+    require(consumer_sources["schema_version"] == 1
+            and consumer_sources["protocol_sha256"] == digest(PROTOCOL)
+            and set(consumer_sources["vms"]) == {"1", "2", "3", "4"},
+            "Invalid frozen consumer provenance")
+    source = consumer_sources["vms"][str(vm)]
+    require(digest(path) == source["index_sha256"]
+            and read(path) == index
+            and all(index[key] == source[key] for key in ("run_id", "harness_sha", "attempt")),
+            "Frozen consumer identity differs")
+    environment = source["correctness_environment"]
+    require(environment in ({"PUBLIC": r"C:\Users\Public"},
+                            {"PUBLIC": r"C:\Users\Public", "RUST_TEST_THREADS": "1"}),
+            "Undeclared correctness environment")
+    return environment
+
+
+def verify(artifacts, run_id, head, attempt, continuation=None, consumer_sources=None,
+           serial_correctness=False):
     protocol = read(PROTOCOL)
     records = verify_producers(artifacts, run_id, head, attempt, continuation)
     vm_means, identities, expected_lock = [], [], None
@@ -71,12 +97,13 @@ def verify(artifacts, run_id, head, attempt, continuation=None):
     prefix = f"lib/rustlib/{HOST}/lib/"
     for vm in range(1, 5):
         root = artifacts / f"factorial-consumer-{vm}"
-        index = read(root / "index.json")
+        index_path = root / "index.json"
+        index = read(index_path)
         require(index["complete"] is True and index["full_release_qualified"] is False
                 and index["vm"] == vm and index["protocol"] == protocol, "Wrong/incomplete consumer")
         require(not (root / "failure.json").exists(), "Consumer failure exists")
-        require(index["run_id"] == run_id and index["harness_sha"] == head
-                and index["attempt"] == str(attempt), "Consumer run/head/attempt mismatch")
+        correctness_environment = verify_consumer_source(
+            index_path, index, vm, run_id, head, attempt, consumer_sources, serial_correctness)
         require(index["compilers"] == records, "Consumer did not use this producer matrix")
         require(index.get("continuation") == continuation, "Consumer continuation manifest differs")
         require(index["cargo_sha256"] == records["baseline"]["stage0_cargo_sha256"], "Wrong Cargo")
@@ -98,7 +125,8 @@ def verify(artifacts, run_id, head, attempt, continuation=None):
                     "Wrong/unobserved runtime driver")
             for name in ("bin/rustc.exe", records[arm]["driver"]):
                 require(identity["files"][name] == records[arm]["files"][name], "Driver/exe hash differs")
-            counts = verify_block(root / f"correctness-{arm}", True)["native_test_counts"]
+            counts = verify_block(root / f"correctness-{arm}", True,
+                                  correctness_environment)["native_test_counts"]
             require({name: row["passed"] for name, row in counts.items()} == expected_tests,
                     "Pinned native correctness counts differ")
         expected_runs = [(round_index, arm, pos) for round_index in range(4)
@@ -127,6 +155,7 @@ def verify(artifacts, run_id, head, attempt, continuation=None):
     require(len({row["Runner"] for row in identities}) == 4, "Consumers are not distinct runner allocations")
     return {"complete": True, "run_id": run_id, "head": head, "attempt": str(attempt),
             "continuation": continuation,
+            "consumer_sources": consumer_sources,
             "protocol": protocol, "vm_means": vm_means, "hardware": identities,
             "effects": summarize(vm_means),
             "qualification": "Native correctness and loaded drivers verified; compiler-only isolation with shared stdlib, not full releases"}
@@ -140,8 +169,12 @@ if __name__ == "__main__":
     parser.add_argument("--attempt", required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--continuation", type=Path)
+    parser.add_argument("--consumer-sources", type=Path)
+    parser.add_argument("--serial-correctness", action="store_true")
     args = parser.parse_args()
     result = verify(args.artifacts, args.run_id, args.head, args.attempt,
-                    read(args.continuation) if args.continuation else None)
+                    read(args.continuation) if args.continuation else None,
+                    read(args.consumer_sources) if args.consumer_sources else None,
+                    args.serial_correctness)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result["effects"], indent=2))

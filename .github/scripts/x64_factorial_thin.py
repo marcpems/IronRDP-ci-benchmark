@@ -256,7 +256,7 @@ def benchmark(root, source, vm, continuation=None):
     lock = digest(source / "Cargo.lock")
     index["workload_lock_sha256"] = lock
     validate_meter(output / "meter-validation")
-    correctness_env = {"PUBLIC": os.environ["PUBLIC"]}
+    correctness_env = {"PUBLIC": os.environ["PUBLIC"], "RUST_TEST_THREADS": "1"}
     if not Path(correctness_env["PUBLIC"]).is_dir():
         raise RuntimeError("Correctness requires the actual Windows public-user directory")
     for arm in order(vm, 0):

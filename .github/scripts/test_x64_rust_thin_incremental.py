@@ -127,7 +127,7 @@ class IncrementalThinTests(unittest.TestCase):
                 }) as measured:
             with self.assertRaisesRegex(RuntimeError, "Consumer command failed"):
                 block(self.root, output, Path("rustc.exe"), Path("cargo.exe"),
-                      {"cores": 4}, {}, correctness_env={"PUBLIC": r"C:\Users\Public"})
+                      {"cores": 4}, {}, correctness_env={"PUBLIC": r"C:\Users\Public", "RUST_TEST_THREADS": "1"})
         result = json.loads((output / "results.json").read_text())
         self.assertFalse(result["complete"])
         self.assertEqual(result["rows"][0]["exit_code"], 7)
@@ -136,6 +136,7 @@ class IncrementalThinTests(unittest.TestCase):
                                    "--timings", "--message-format=json"])
         self.assertEqual(measured.call_args.args[2]["CARGO_NET_OFFLINE"], "true")
         self.assertNotIn("PUBLIC", measured.call_args.args[2])
+        self.assertNotIn("RUST_TEST_THREADS", measured.call_args.args[2])
         self.assertTrue((output / "target").exists())
 
     def test_correctness_excludes_doctests_but_not_native_feature_tests(self):
@@ -152,7 +153,7 @@ class IncrementalThinTests(unittest.TestCase):
                 patch("x64_rust_thin_incremental.measure", side_effect=fake_measure):
             result = block(self.root, self.root / "correctness", Path("rustc.exe"),
                            Path("cargo.exe"), {"cores": 4}, {}, correctness=True,
-                           correctness_env={"PUBLIC": r"C:\Users\Public"})
+                           correctness_env={"PUBLIC": r"C:\Users\Public", "RUST_TEST_THREADS": "1"})
         self.assertTrue(result["complete"])
         self.assertEqual(len(commands), 5)
         self.assertEqual(commands[1], ["cargo.exe", "test", "--workspace",
@@ -162,6 +163,7 @@ class IncrementalThinTests(unittest.TestCase):
         self.assertTrue(all("--no-run" not in command for command in commands))
         self.assertIn("native-tls,smartcard", commands[-1])
         self.assertTrue(all(env["PUBLIC"] == r"C:\Users\Public" for env in environments))
+        self.assertTrue(all(env["RUST_TEST_THREADS"] == "1" for env in environments))
 
 
 if __name__ == "__main__":
