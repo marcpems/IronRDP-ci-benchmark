@@ -197,6 +197,25 @@ correctness requirements and timed commands unchanged. Failed receipts are
 preserved. A single surviving VM could provide preliminary contrasts but
 would not satisfy the planned VM-level replication and uncertainty analysis.
 
+**Selective correctness recovery:** the direct driver probes succeeded, but
+VM 3 of 41416787160 subsequently failed
+`windows::file::tests::create_applies_allocation_size_and_deletes_on_close`
+with `STATUS_OBJECT_NAME_COLLISION` during Rust-only correctness. The pinned
+test fixture names temporary files using only PID and `SystemTime::now()`;
+concurrent tests can therefore reuse a name when clock readings coincide.
+LLVM-only and both-mode correctness had already passed on this VM.
+
+[Selective retry 41422268136](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41422268136)
+reruns **only VM 3**, with `RUST_TEST_THREADS=1` confined to correctness.
+No test is skipped, no workload source is patched, and Cargo compilation
+parallelism and every timed command/environment remain unchanged. The other
+three VMs continue; their successful receipts will not be discarded merely
+because this VM needed recovery. Final cross-run verification requires an
+explicit frozen manifest of each VM's index SHA256, run, harness, attempt and
+correctness environment, as well as all existing raw timing, test-count and
+compiler-identity checks. The original same-run verification remains the
+default. Partial retries do not publish factorial estimates by themselves.
+
 ## Consumer measurement and correctness
 
 Pinned IronRDP `0c5419eca6bf53563056ed252f537bca67862705`; one hosted Windows

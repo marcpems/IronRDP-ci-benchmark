@@ -296,6 +296,11 @@ launched at **08:57 UTC** with direct Windows module inspection instead of
 the failing PowerShell subprocess. The four frozen compiler packages, exact
 driver identity gates and original balanced timing protocol remain unchanged.
 Four-way performance results are still pending.
+The direct probes succeeded, but retry VM 3 later hit a native correctness
+temporary-file name collision. [Only VM 3 is being recovered](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41422268136)
+with serialized test execution outside timing; the other VMs continue.
+No tests are skipped and no compiler or timed workload changes. Final
+cross-run aggregation requires frozen per-VM provenance and raw verification.
 
 Evidence: [profile-only 1.94.1](X64-PROFILE-ONLY.md),
 [profile-only 1.99.1](X64-PGO-1991.md),
