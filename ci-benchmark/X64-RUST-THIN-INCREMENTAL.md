@@ -174,6 +174,29 @@ driver DLL identities are observed outside timing and compiler hashes are
 recorded around every block. This is not an untouched-package comparison or
 full release. **No four-way performance result is available yet.**
 
+**Consumer probe repair, 2 November:** VMs 1, 3 and 4 of continuation
+41412682516 failed before timed blocks, when the PowerShell process querying
+loaded DLLs exceeded its 30-second timeout. VM 2 remained running at the
+retry decision; it is retained as diagnostic evidence, not substituted for
+the four independent VMs required by the protocol.
+
+[Retry 41416787160](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41416787160)
+was launched at **08:57 UTC**, harness
+`d8fc41b08c9869993091adb270b7b4629e95ce8b`. It replaces PowerShell module
+inspection with direct Windows `EnumProcessModulesEx` / `GetModuleFileNameExW`
+calls. Exact loaded-driver paths and executable hashes remain mandatory;
+access errors fail closed, with a bounded retry only for loader-initialization
+`ERROR_PARTIAL_COPY`. The regression suite includes an actual loaded child DLL
+and wrong-driver rejection. This removes the failed subprocess boundary rather
+than merely extending its timeout; the internal cause of the PowerShell stall
+has not been isolated.
+
+The full four-VM matrix is retried under one harness/run identity, keeping
+all four compiler archives, profiles, common libraries, Cargo, ordering,
+correctness requirements and timed commands unchanged. Failed receipts are
+preserved. A single surviving VM could provide preliminary contrasts but
+would not satisfy the planned VM-level replication and uncertainty analysis.
+
 ## Consumer measurement and correctness
 
 Pinned IronRDP `0c5419eca6bf53563056ed252f537bca67862705`; one hosted Windows

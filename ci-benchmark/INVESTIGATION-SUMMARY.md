@@ -288,8 +288,14 @@ records and package bytes have now been verified.
 [Four hosted consumer VMs](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41412682516)
 started at **08:23 UTC on 2 November** with
 [frozen per-arm provenance](https://github.com/marcpems/IronRDP-ci-benchmark/blob/2cc0821788dcae7e13ac7d5193e6d0cf6a9c5664/ci-benchmark/x64-factorial-continuation.json).
-The original balanced performance protocol is unchanged. All four passed
-the matching-image and setup gates; four-way performance results remain pending.
+All four passed matching-image and setup gates, but three then failed before
+timing: the PowerShell loaded-driver query exceeded 30 seconds. The remaining
+VM is diagnostic, not a replacement for four-VM replication.
+[Retry 41416787160](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41416787160)
+launched at **08:57 UTC** with direct Windows module inspection instead of
+the failing PowerShell subprocess. The four frozen compiler packages, exact
+driver identity gates and original balanced timing protocol remain unchanged.
+Four-way performance results are still pending.
 
 Evidence: [profile-only 1.94.1](X64-PROFILE-ONLY.md),
 [profile-only 1.99.1](X64-PGO-1991.md),
