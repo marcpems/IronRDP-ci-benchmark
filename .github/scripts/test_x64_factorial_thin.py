@@ -84,6 +84,40 @@ class FactorialTests(unittest.TestCase):
                     "training_result_sha256", "training_provenance_sha256", "fixed_helper_git_blob"):
             self.assertEqual(old[key], new[key], key)
 
+    def test_continuation_accepts_only_frozen_cross_run_metadata(self):
+        records, protocol = self.records()
+        records["both-thin"].update(run_id="2", harness_sha="recovery")
+        with self.assertRaises(RuntimeError):
+            verify_records(records, protocol)
+        with tempfile.TemporaryDirectory() as directory:
+            paths = {}
+            manifest = {"schema_version": 1, "protocol_sha256": digest(PROTOCOL), "arms": {}}
+            for arm, record in records.items():
+                record["archive_sha256"] = arm
+                paths[arm] = Path(directory) / f"{arm}.json"
+                paths[arm].write_text(json.dumps(record))
+                manifest["arms"][arm] = {
+                    key: record[key] for key in ("run_id", "attempt", "harness_sha", "archive_sha256")
+                }
+                manifest["arms"][arm]["metadata_sha256"] = digest(paths[arm])
+            verify_records(records, protocol, manifest, paths)
+            for key in ("run_id", "attempt", "harness_sha", "archive_sha256", "metadata_sha256"):
+                altered = copy.deepcopy(manifest)
+                altered["arms"]["both-thin"][key] = "wrong"
+                with self.subTest(key=key), self.assertRaises(RuntimeError):
+                    verify_records(records, protocol, altered, paths)
+            with self.assertRaises(RuntimeError):
+                verify_records(records, protocol, manifest)
+            paths["both-thin"].write_text(paths["both-thin"].read_text() + "\n")
+            with self.assertRaises(RuntimeError):
+                verify_records(records, protocol, manifest, paths)
+            manifest["arms"]["both-thin"]["metadata_sha256"] = digest(paths["both-thin"])
+            records["both-thin"]["image"] = "different-image"
+            paths["both-thin"].write_text(json.dumps(records["both-thin"]))
+            manifest["arms"]["both-thin"]["metadata_sha256"] = digest(paths["both-thin"])
+            with self.assertRaisesRegex(RuntimeError, "Unmatched producer identity: image"):
+                verify_records(records, protocol, manifest, paths)
+
     def test_order_balances_positions_and_preceding_treatments(self):
         for round_index in range(4):
             orders = [order(vm, round_index) for vm in range(1, 5)]

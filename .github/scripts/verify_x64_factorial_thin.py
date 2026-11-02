@@ -11,13 +11,15 @@ from verify_x64_rust_thin import equal_number, require, verify_block
 from x64_factorial_thin import ARMS, HOST, PROTOCOL, order, read, summarize, verify_records
 
 
-def verify(artifacts, run_id, head, attempt):
+def verify_producers(artifacts, run_id, head, attempt, continuation=None):
     protocol = read(PROTOCOL)
-    records = {arm: read(artifacts / f"factorial-{arm}-evidence/result.json") for arm in ARMS}
-    verify_records(records, protocol)
+    paths = {arm: artifacts / f"factorial-{arm}-evidence/result.json" for arm in ARMS}
+    records = {arm: read(path) for arm, path in paths.items()}
+    verify_records(records, protocol, continuation, paths)
     for arm, record in records.items():
-        require(record["run_id"] == run_id and record["harness_sha"] == head
-                and record["attempt"] == str(attempt), "Producer run/head/attempt mismatch")
+        if continuation is None:
+            require(record["run_id"] == run_id and record["harness_sha"] == head
+                    and record["attempt"] == str(attempt), "Producer run/head/attempt mismatch")
         evidence = artifacts / f"factorial-{arm}-evidence"
         require(not (evidence / "failure.json").exists(), "Producer failure exists")
         require((evidence / "bootstrap.toml").read_text() == record["configuration"], "Config changed")
@@ -57,6 +59,12 @@ def verify(artifacts, run_id, head, attempt):
         production = read(evidence / "fixed-profile-dist.json")
         require(production == record["production"] and production["exit_code"] == 0
                 and production["affinity"] == [0, 1, 2, 3], "Unqualified compiler build")
+    return records
+
+
+def verify(artifacts, run_id, head, attempt, continuation=None):
+    protocol = read(PROTOCOL)
+    records = verify_producers(artifacts, run_id, head, attempt, continuation)
     vm_means, identities, expected_lock = [], [], None
     expected_tests = {"workspace-tests": 3604, "native-tls-tests": 1,
                       "gateway-native-tls-tests": 10, "gateway-smartcard-tests": 13}
@@ -70,6 +78,7 @@ def verify(artifacts, run_id, head, attempt):
         require(index["run_id"] == run_id and index["harness_sha"] == head
                 and index["attempt"] == str(attempt), "Consumer run/head/attempt mismatch")
         require(index["compilers"] == records, "Consumer did not use this producer matrix")
+        require(index.get("continuation") == continuation, "Consumer continuation manifest differs")
         require(index["cargo_sha256"] == records["baseline"]["stage0_cargo_sha256"], "Wrong Cargo")
         if expected_lock is None:
             expected_lock = index["workload_lock_sha256"]
@@ -117,6 +126,7 @@ def verify(artifacts, run_id, head, attempt):
         identities.append(read(root / "hardware.json"))
     require(len({row["Runner"] for row in identities}) == 4, "Consumers are not distinct runner allocations")
     return {"complete": True, "run_id": run_id, "head": head, "attempt": str(attempt),
+            "continuation": continuation,
             "protocol": protocol, "vm_means": vm_means, "hardware": identities,
             "effects": summarize(vm_means),
             "qualification": "Native correctness and loaded drivers verified; compiler-only isolation with shared stdlib, not full releases"}
@@ -129,7 +139,9 @@ if __name__ == "__main__":
     parser.add_argument("--head", required=True)
     parser.add_argument("--attempt", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--continuation", type=Path)
     args = parser.parse_args()
-    result = verify(args.artifacts, args.run_id, args.head, args.attempt)
+    result = verify(args.artifacts, args.run_id, args.head, args.attempt,
+                    read(args.continuation) if args.continuation else None)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result["effects"], indent=2))

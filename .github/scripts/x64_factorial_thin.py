@@ -29,9 +29,22 @@ def order(vm, round_index):
     return [ARMS[i] for i in SEQUENCES[(vm - 1 + round_index) % 4]]
 
 
-def verify_records(records, protocol):
+def verify_records(records, protocol, continuation=None, metadata_paths=None):
     if set(records) != set(ARMS):
         raise RuntimeError("A complete four-arm producer matrix is required")
+    if continuation is not None:
+        if (continuation["schema_version"] != 1
+                or continuation["protocol_sha256"] != digest(PROTOCOL)
+                or set(continuation["arms"]) != set(ARMS)
+                or metadata_paths is None or set(metadata_paths) != set(ARMS)):
+            raise RuntimeError("Invalid frozen producer continuation")
+        for arm in ARMS:
+            expected = continuation["arms"][arm]
+            if (digest(metadata_paths[arm]) != expected["metadata_sha256"]
+                    or read(metadata_paths[arm]) != records[arm]
+                    or any(records[arm][key] != expected[key] for key in
+                           ("run_id", "attempt", "harness_sha", "archive_sha256"))):
+                raise RuntimeError(f"Frozen continuation identity differs: {arm}")
     baseline = records["baseline"]
     expected_config = None
     for arm in ARMS:
@@ -42,6 +55,8 @@ def verify_records(records, protocol):
             raise RuntimeError("Wrong or incomplete factorial producer")
         for key in ("run_id", "attempt", "harness_sha", "source_patch_sha256",
                     "native_inputs", "stage0_cargo_sha256", "image"):
+            if continuation is not None and key in ("run_id", "attempt", "harness_sha"):
+                continue
             if record[key] != baseline[key]:
                 raise RuntimeError(f"Unmatched producer identity: {key}")
         if not equivalent_tools(record["tools"], baseline["tools"]):
@@ -149,7 +164,7 @@ def prove_loaded_driver(package, record, env, output):
             process.communicate(timeout=30)
 
 
-def benchmark(root, source, vm):
+def benchmark(root, source, vm, continuation=None):
     hosted_only()
     protocol = read(PROTOCOL)
     order(vm, 0)
@@ -158,9 +173,10 @@ def benchmark(root, source, vm):
         raise RuntimeError("Wrong IronRDP source")
     subprocess.run(["git", "-C", source, "diff", "--exit-code", "HEAD"], check=True)
     records = {arm: unpack(root / "artifacts" / f"factorial-{arm}-package", root / arm) for arm in ARMS}
-    verify_records(records, protocol)
+    metadata_paths = {arm: root / "artifacts" / f"factorial-{arm}-package/result.json" for arm in ARMS}
+    verify_records(records, protocol, continuation, metadata_paths)
     baseline = records["baseline"]
-    if (baseline["run_id"] != os.environ["GITHUB_RUN_ID"]
+    if continuation is None and (baseline["run_id"] != os.environ["GITHUB_RUN_ID"]
             or baseline["attempt"] != os.environ["GITHUB_RUN_ATTEMPT"]
             or baseline["harness_sha"] != os.environ["GITHUB_SHA"]):
         raise RuntimeError("Producer run/head/attempt differs from the consumer")
@@ -182,6 +198,7 @@ def benchmark(root, source, vm):
         "attempt": os.environ["GITHUB_RUN_ATTEMPT"], "harness_sha": os.environ["GITHUB_SHA"],
         "compilers": records, "evaluated_packages": evaluated, "tools": tools,
         "cargo_sha256": digest(cargo), "runs": [],
+        "continuation": continuation,
     }
     save(output / "index.json", index)
     for arm in ARMS:
@@ -270,6 +287,7 @@ if __name__ == "__main__":
     parser.add_argument("--variant", choices=ARMS)
     parser.add_argument("--vm", type=int)
     parser.add_argument("--reference", type=Path)
+    parser.add_argument("--continuation", type=Path)
     args = parser.parse_args()
     root = args.root.resolve()
     try:
@@ -283,7 +301,8 @@ if __name__ == "__main__":
                 reference = read(args.reference)
             build(root, args.variant, PROTOCOL, reference)
         else:
-            benchmark(root, args.source.resolve(), args.vm)
+            benchmark(root, args.source.resolve(), args.vm,
+                      read(args.continuation) if args.continuation else None)
     except Exception as error:
         save(root / "e/failure.json", {"phase": args.phase, "type": type(error).__name__,
                                      "message": str(error)})

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "protocol_sha256": "4c79b618a4ba74cb39c8969df2df37a13c0fc7edb497013dc78c990b50ff20bc",
+  "reason": "Original both-thin producer failed fetching pinned source before compilation. Recover only that arm; preserve the three original packages byte-for-byte. Consumer protocol unchanged.",
+  "arms": {
+    "baseline": {
+      "run_id": "41116552933",
+      "attempt": "1",
+      "harness_sha": "73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0",
+      "archive_sha256": "ef2d7743e5d1a9669e0ddccbe4b05f8d5147fb4ad9aa2b6fddb67ad2510203fb",
+      "metadata_sha256": "00b45459a5ebdd006e19df4bff2ec94322d959b0efae29389153bf8cd6028305"
+    },
+    "rust-thin": {
+      "run_id": "41116552933",
+      "attempt": "1",
+      "harness_sha": "73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0",
+      "archive_sha256": "c2cc49eec1fbc71b9dfc6b5822a6d7ca0a67f59456b393fa4d0320cc55fef81b",
+      "metadata_sha256": "25fd4eff13e100af7a21bee3a03ac2dd4cd794035fe1daafa0813938d9ce8d6b"
+    },
+    "llvm-thin": {
+      "run_id": "41116552933",
+      "attempt": "1",
+      "harness_sha": "73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0",
+      "archive_sha256": "933d62f14fd0744d5c099188781152c578ef9b73a067bc7a272987926fde2404",
+      "metadata_sha256": "40cd5629494ed4d383e5977f67faaf95770e7f9dda80065500bbaa35b9a291c3"
+    },
+    "both-thin": {
+      "run_id": "41295055576",
+      "attempt": "1",
+      "harness_sha": "1bb4eddc40bcae382ca038ddbd6eefc615e89ae0",
+      "archive_sha256": "b8c187b755a7656aba5561d15433ddd51fee066ddfb930a56fcbb173e52bdd2e",
+      "metadata_sha256": "8e83dd885673b096a3e061fd555574093d582e042c01df94c1020ea2113b01a5"
+    }
+  }
+}
