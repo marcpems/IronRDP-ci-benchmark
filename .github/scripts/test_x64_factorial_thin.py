@@ -1,13 +1,17 @@
 import copy
 import json
+import os
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import Mock, patch
 
 from build_arm_compilers import digest
 from x64_factorial_thin import (
-    ARMS, HOST, PROTOCOL, effects, file_manifest, order, prove_loaded_driver,
+    ARMS, HOST, PROTOCOL, effects, file_manifest, loaded_driver_paths, order, prove_loaded_driver,
     share_stdlib, summarize, verify_records,
 )
 from x64_rust_thin_incremental import configuration, verify_recovery_reference
@@ -166,8 +170,8 @@ class FactorialTests(unittest.TestCase):
             process.poll.return_value = None
             process.communicate.return_value = (b"", b"")
             with patch("x64_factorial_thin.subprocess.Popen", return_value=process), \
-                    patch("x64_factorial_thin.subprocess.check_output",
-                          return_value=json.dumps(str(root / "wrong/rustc_driver-456.dll"))):
+                    patch("x64_factorial_thin.loaded_driver_paths",
+                          return_value=[str(root / "wrong/rustc_driver-456.dll")]):
                 with self.assertRaisesRegex(RuntimeError, "Wrong or unobserved"):
                     prove_loaded_driver(root, record, {}, root / "proof")
             process.kill.assert_called_once()
@@ -183,13 +187,59 @@ class FactorialTests(unittest.TestCase):
             process.poll.side_effect = [None, 0]
             process.communicate.return_value = (b"", b"")
             with patch("x64_factorial_thin.subprocess.Popen", return_value=process), \
-                    patch("x64_factorial_thin.subprocess.check_output",
-                          return_value=json.dumps(str(root / record["driver"]))):
+                    patch("x64_factorial_thin.loaded_driver_paths",
+                          return_value=[str(root / record["driver"])]):
                 prove_loaded_driver(root, record, {}, root / "proof")
             proof = json.loads((root / "proof/identity.json").read_text())
             self.assertEqual(proof["files"][record["driver"]], digest(root / record["driver"]))
             self.assertEqual(proof["loaded_driver"], str(root / record["driver"]))
             process.kill.assert_not_called()
+
+    def test_native_inspection_retries_only_loader_initialization_errors(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "bin").mkdir()
+            for name in ("rustc.exe", "rustc_driver-123.dll"):
+                (root / "bin" / name).write_text(name)
+            record = {"driver": "bin/rustc_driver-123.dll", "files": file_manifest(root)}
+            for code in (299, 5):
+                process = Mock(pid=1234, returncode=0)
+                process.poll.return_value = None
+                process.communicate.return_value = (b"", b"")
+                error = OSError("module query")
+                error.winerror = code
+                with self.subTest(code=code), \
+                        patch("x64_factorial_thin.subprocess.Popen", return_value=process), \
+                        patch("x64_factorial_thin.time.sleep"), \
+                        patch("x64_factorial_thin.loaded_driver_paths",
+                              side_effect=[error, [str(root / record["driver"])]]) as query:
+                    if code == 299:
+                        prove_loaded_driver(root, record, {}, root / "retry")
+                        self.assertEqual(query.call_count, 2)
+                    else:
+                        with self.assertRaises(OSError):
+                            prove_loaded_driver(root, record, {}, root / "denied")
+                        self.assertEqual(query.call_count, 1)
+                process.kill.assert_called_once()
+
+    @unittest.skipUnless(os.name == "nt", "Windows module inspection")
+    def test_native_inspection_observes_actual_child_module_and_rejects_invalid_pid(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            driver = Path(temporary) / "rustc_driver-fixture.dll"
+            shutil.copy2(Path(os.environ["SYSTEMROOT"]) / "System32/version.dll", driver)
+            script = ("import ctypes,sys; library=ctypes.WinDLL(sys.argv[1]); "
+                      "print('loaded',flush=True); sys.stdin.read()")
+            process = subprocess.Popen([sys.executable, "-c", script, str(driver)],
+                                       stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, text=True)
+            try:
+                self.assertEqual(process.stdout.readline().strip(), "loaded")
+                self.assertEqual([Path(p).resolve() for p in loaded_driver_paths(process.pid)],
+                                 [driver.resolve()])
+            finally:
+                process.communicate("", timeout=30)
+            with self.assertRaises(OSError):
+                loaded_driver_paths(0)
 
 
 if __name__ == "__main__":

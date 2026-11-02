@@ -121,6 +121,53 @@ def compiler_identity(package, record):
             "driver_path": str(package / record["driver"])}
 
 
+def loaded_driver_paths(pid):
+    """Read loaded modules directly, without starting PowerShell in the build environment."""
+    import ctypes as c
+    from ctypes import wintypes as w
+
+    kernel = c.WinDLL("kernel32", use_last_error=True)
+    psapi = c.WinDLL("psapi", use_last_error=True)
+    kernel.OpenProcess.argtypes = [w.DWORD, w.BOOL, w.DWORD]
+    kernel.OpenProcess.restype = w.HANDLE
+    kernel.CloseHandle.argtypes = [w.HANDLE]
+    kernel.CloseHandle.restype = w.BOOL
+    psapi.EnumProcessModulesEx.argtypes = [
+        w.HANDLE, c.POINTER(w.HMODULE), w.DWORD, c.POINTER(w.DWORD), w.DWORD,
+    ]
+    psapi.EnumProcessModulesEx.restype = w.BOOL
+    psapi.GetModuleFileNameExW.argtypes = [w.HANDLE, w.HMODULE, w.LPWSTR, w.DWORD]
+    psapi.GetModuleFileNameExW.restype = w.DWORD
+    process = kernel.OpenProcess(0x0400 | 0x0010, False, pid)
+    if not process:
+        raise c.WinError(c.get_last_error())
+    try:
+        capacity = 256
+        while True:
+            modules = (w.HMODULE * capacity)()
+            needed = w.DWORD()
+            if not psapi.EnumProcessModulesEx(process, modules, c.sizeof(modules), c.byref(needed), 3):
+                raise c.WinError(c.get_last_error())
+            if needed.value <= c.sizeof(modules):
+                break
+            capacity = needed.value // c.sizeof(w.HMODULE) + 32
+        loaded = []
+        for module in modules[:needed.value // c.sizeof(w.HMODULE)]:
+            path = c.create_unicode_buffer(32768)
+            length = psapi.GetModuleFileNameExW(process, module, path, len(path))
+            if not length:
+                raise c.WinError(c.get_last_error())
+            if length >= len(path):
+                raise RuntimeError("Loaded module path was truncated")
+            name = Path(path.value).name.lower()
+            if name.startswith("rustc_driver-") and name.endswith(".dll"):
+                loaded.append(path.value)
+        return loaded
+    finally:
+        if not kernel.CloseHandle(process):
+            raise c.WinError(c.get_last_error())
+
+
 def prove_loaded_driver(package, record, env, output):
     """Keep rustc waiting for stdin so its actual loaded driver can be inspected."""
     identity = compiler_identity(package, record)
@@ -135,18 +182,15 @@ def prove_loaded_driver(package, record, env, output):
         while time.monotonic() < deadline:
             if process.poll() is not None:
                 raise RuntimeError("Compiler exited before loaded-driver inspection")
-            query = (
-                "$ErrorActionPreference='Stop'; "
-                f"@(Get-Process -Id {process.pid}).Modules | "
-                "Where-Object { $_.ModuleName -like 'rustc_driver-*.dll' } | "
-                "Select-Object -ExpandProperty FileName | ConvertTo-Json -Compress"
-            )
-            text = subprocess.check_output(
-                ["powershell.exe", "-NoProfile", "-Command", query],
-                text=True, timeout=30, env=env).strip()
-            if text:
-                value = json.loads(text)
-                loaded = [value] if isinstance(value, str) else value
+            try:
+                loaded = loaded_driver_paths(process.pid)
+            except OSError as error:
+                if error.winerror != 299:
+                    raise
+                print(f"Driver inspection waiting for loader initialization: {error}", flush=True)
+                time.sleep(0.1)
+                continue
+            if loaded:
                 break
             time.sleep(0.1)
         if len(loaded) != 1 or Path(loaded[0]).resolve() != Path(identity["driver_path"]).resolve():
@@ -157,7 +201,8 @@ def prove_loaded_driver(package, record, env, output):
         if process.returncode != 0:
             raise RuntimeError(f"Identity smoke failed: {stderr.decode(errors='replace')}")
         save(output / "identity.json", {**identity, "loaded_driver": loaded[0],
-                                       "pid": process.pid, "exit_code": process.returncode})
+                                       "pid": process.pid, "exit_code": process.returncode,
+                                       "inspection": "Win32 EnumProcessModulesEx/GetModuleFileNameExW"})
     finally:
         if process.poll() is None:
             process.kill()
@@ -202,7 +247,9 @@ def benchmark(root, source, vm, continuation=None):
     }
     save(output / "index.json", index)
     for arm in ARMS:
+        print(f"START loaded-driver verification: {arm}", flush=True)
         prove_loaded_driver(root / arm, records[arm], env, output / f"identity-{arm}")
+        print(f"DONE loaded-driver verification: {arm}", flush=True)
     execute([cargo, "fetch", "--locked", "--target", HOST], source,
             {**env, "RUSTC": str(root / "baseline/bin/rustc.exe")}, output,
             "fetch-outside-measurement", timeout=1200, cores=4)
