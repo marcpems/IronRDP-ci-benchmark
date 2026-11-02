@@ -16,7 +16,9 @@ were recovered and all three releases independently verified on 1 November:
 16 LP reduced production wall by **40.35% versus 4 LP**, or **18.95% versus 8 LP**.
 A separate hosted Rust-only ThinLTO pilot completed on 30 October and found
 no meaningful incremental IronRDP wall-time gain. Arm64 and GB300 experiments
-remain stopped.
+remain stopped. The four-way ThinLTO follow-up completed on 2 November:
+**5.24% less IronRDP wall with LLVM-only, 7.07% with both; Rust-only 0.86%
+with an interval spanning zero**, with LLD fixed across all four arms.
 
 Presentation and document versions:
 [technical PowerPoint with linked report index](matched-release/Rust-Optimization-Summary-Published.pptx)
@@ -45,6 +47,13 @@ See [Document locations and currency](#document-locations-and-currency).
   build pair on one consumer VM, not full-release qualification. Arm64's
   incremental effect remains unmeasured.
   See the [adoption evidence matrix](#31-adoption-view-keep-the-windows-tool-stack).
+- **The ThinLTO attribution gap is now resolved in a controlled four-way test.**
+  With fixed source/profiles and LLD tools, LLVM-only saved **5.24%**
+  (95% paired-VM bootstrap 3.69-6.33%) and both modes **7.07%** (6.48-7.57%).
+  Rust-only saved **0.86%** (-1.62 to 2.24%), not a demonstrated standalone gain.
+  The earlier approximately 7.6% expectation incorrectly attributed a combined
+  intervention to Rust-only. This is compiler/sysroot evidence, not a same-
+  Microsoft-tools or full-distribution qualification.
 - **Historical broader optimized bundles improved the original offline IronRDP workload versus
   shipping Rust 1.94.1:** **23.7% less wall time on x64** and **16.0% on Arm64**.
   These compilers used rustc/LLVM PGO, Rust/LLVM ThinLTO and LLVM linking tools.
@@ -269,7 +278,7 @@ PGO against PGO plus **Rust-only** ThinLTO at the same source revision with
 identical frozen profiles and matching native tools. Three measured pairs gave
 wall reductions of **0.69%, 0.05%, -0.88%**: no meaningful incremental gain.
 Native correctness passed for both arms. Full-distribution qualification,
-multiple independent consumer VMs and the Arm64 incremental comparison remain
+multiple independent Microsoft-linked consumer VMs and the Arm64 incremental comparison remain
 separate work; release-production scaling does not answer those questions.
 
 The [discrepancy audit](X64-RUST-THIN-INCREMENTAL.md#why-this-differs-from-the-earlier-76-result)
@@ -277,8 +286,8 @@ confirmed effective DLL ThinLTO flags and different executable code in the new
 packages. It also recomputed the old gain on every VM, including two with the
 new consumer's CPU model. The old contrast changed **both LTO modes while
 retaining LLD in both arms**. Expecting that gain from Rust-only ThinLTO
-overstated the original attribution; LLVM's contribution and cross-version
-effects remain unseparated, not measured explanations. The authorized
+overstated the original attribution. The follow-up below now separates the
+current LLVM contribution; historical cross-version effects remain unisolated. The authorized
 [four-way hosted follow-up](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41116552933)
 built three compilers successfully; its both-ThinLTO arm failed during a
 GitHub source fetch, before compilation. The [missing-arm recovery](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41295055576)
@@ -295,12 +304,24 @@ VM is diagnostic, not a replacement for four-VM replication.
 launched at **08:57 UTC** with direct Windows module inspection instead of
 the failing PowerShell subprocess. The four frozen compiler packages, exact
 driver identity gates and original balanced timing protocol remain unchanged.
-Four-way performance results are still pending.
+The four-way results are now complete:
+**739.521 / 733.196 / 700.759 / 687.273 seconds** for baseline / Rust-only /
+LLVM-only / both, respectively. LLVM-only saves **5.24%**; both save **7.07%**.
+Rust-only's **0.86%** interval spans zero. Rust added after LLVM saves **1.92%**
+(0.99-3.08%), while the multiplicative interaction interval spans zero:
+additional synergy is not established. All four VMs improve with both modes.
 The direct probes succeeded, but retry VM 3 later hit a native correctness
-temporary-file name collision. [Only VM 3 is being recovered](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41422268136)
-with serialized test execution outside timing; the other VMs continue.
+temporary-file name collision. [Only VM 3 was recovered](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41422268136)
+with serialized test execution outside timing; the other successful VMs were retained.
 No tests are skipped and no compiler or timed workload changes. Final
-cross-run aggregation requires frozen per-VM provenance and raw verification.
+cross-run aggregation passed frozen per-VM provenance and raw verification.
+The last accepted consumer completed at **13:55:35 UTC on 2 November**.
+The accepted matrix includes 48 measured blocks / 240 commands and passing
+native correctness for all 16 VM/arm combinations. See the
+[full findings and limits](X64-RUST-THIN-INCREMENTAL.md#completed-four-way-follow-up-the-attribution-gap-is-resolved),
+[verified results](x64-factorial-thin-results.json),
+[frozen VM provenance](x64-factorial-consumer-sources.json), and
+[persistent raw evidence](x64-factorial-thin-evidence.zip).
 
 Evidence: [profile-only 1.94.1](X64-PROFILE-ONLY.md),
 [profile-only 1.99.1](X64-PGO-1991.md),
@@ -743,12 +764,18 @@ profiles; it did not build/qualify all release tools or measure application
 runtime. Raw receipts, recovery history and limitations are preserved in
 [compact evidence](x64-rust-thin-incremental-evidence.zip).
 
+The completed four-VM LLD-linked factorial follow-up explains the attribution
+gap: LLVM-only saves **5.24%**, both modes **7.07%**, while Rust-only's **0.86%**
+interval spans zero. Rust added after LLVM saves **1.92%**; extra synergy is
+not established. This supports qualifying LLVM/both ThinLTO if LLD adoption
+is acceptable, not promising the combined gain with Microsoft link/lib.
+
 | Priority | Action if work is resumed | Evidence / acceptance condition |
 |---|---|---|
 | 1 | Make final Windows LLVM native-cache keys profile-aware, then validate the shipped artifact | Correct training is insufficient if stale objects are reused; require full release/correctness and downstream recovery within the runner budget |
 | 2 | Apply effective PGO while retaining Microsoft linking tools | Use isolated x64 profile evidence and explicitly labelled Arm64 no-PGO pilots; do not imply a same-tools LTO gain |
 | 3 | Use the completed NVMe sizing result; repeat if a stable or price-optimal estimate is needed | 16 LP fastest observed; 40.35% less production wall than 4 LP; one pass, explicit SMT topology |
-| 4 | Reassess Rust-only ThinLTO after the null x64 pilot; Arm64 remains unmeasured | Require repeatable benefit and full-package qualification before adoption; the older LLVM-linked 7.6% result is not this estimate |
+| 4 | If adopting LLD, qualify the measured LLVM/both-ThinLTO benefit in complete distributions | Four-way pilot: LLVM-only 5.24%, both 7.07%; Rust-only gain unestablished; Arm64 incremental effect still unmeasured |
 | 5 | Optimize packaging and qualify a complete hosted production strategy | Preserve tools/docs/MSI, include training/setup/transfers/tests, and report segmented versus continuous time explicitly |
 
 The evidence does **not** establish blanket ineffectiveness of upstream x64 PGO,
@@ -786,15 +813,16 @@ to retrieve the PowerPoint or Word reports.
 |---|---|
 | [This investigation summary](INVESTIGATION-SUMMARY.md) | Current synthesis, updated 2 November; use this for the latest limitations |
 | [Combined detailed findings](COMBINED-REPORT.md) | Historical experiment detail; links back to this current synthesis |
-| [Technical PowerPoint and report index](matched-release/Rust-Optimization-Summary-Published.pptx) | Updated 2 November; 15 slides, completed NVMe matrix and ThinLTO pilot |
-| [Combined Word report](matched-release/Rust-Optimization-Combined-Report-30Oct2026.docx) | Updated 2 November; eleven-page consolidation, current evidence and limitations |
+| [Technical PowerPoint and report index](matched-release/Rust-Optimization-Summary-Published.pptx) | Updated 2 November; 16 slides, completed NVMe and four-way ThinLTO findings |
+| [Combined Word report](matched-release/Rust-Optimization-Combined-Report-30Oct2026.docx) | Updated 2 November; twelve-page consolidation, current evidence and limitations |
 | [Maintainer brief](matched-release/Rust-Compiler-Optimization-Maintainer-Brief.docx) | Earlier full-release proposal and pilot interpretation |
 | [Self-hosted release pilots](matched-release/Self-Hosted-Rust-Release-Pilots.docx) | Earlier x64 / ordinary Arm64 pilots |
 | [GB300 release pilot](matched-release/GB300-Rust-Release-Pilot.docx) | Earlier GB300 result, not a completed lower-core scaling study |
 | [Original Windows performance report](Windows-Rust-Performance-Summary.docx) | Earlier OS/compiler investigation |
 | [Late compact evidence](later-pgo-evidence.zip) | 25-27 October release, artifact replay and cache diagnosis; 30 October runner availability |
-| [Incremental x64 Rust-only ThinLTO](X64-RUST-THIN-INCREMENTAL.md) | 30 October completed compiler/sysroot pilot; no meaningful IronRDP wall benefit |
+| [Incremental x64 ThinLTO and four-way follow-up](X64-RUST-THIN-INCREMENTAL.md) | 2 November: larger LLVM contribution explains the attribution gap; original Rust-only pilot preserved |
 | [ThinLTO pilot evidence](x64-rust-thin-incremental-evidence.zip) | Verified inputs, raw timing/correctness outputs, failure history and reproduction scripts |
+| [Four-way ThinLTO results and evidence](x64-factorial-thin-results.json) | Four accepted VMs, frozen cross-run provenance and [compact raw evidence](x64-factorial-thin-evidence.zip) |
 | [NVMe scaling results](x64-nvme-scaling-results.json) | Qualified 4/8/16-LP phases, CPU, topology, tests and distribution manifests |
 | [NVMe scaling evidence](x64-nvme-scaling-evidence.zip) | Compact raw receipts; fresh-profile hashes verified; no cached compiler service |
 

@@ -1,8 +1,95 @@
 # Incremental Rust-only ThinLTO over repaired x64 PGO
 
-Updated 30 October 2026. **No meaningful incremental IronRDP wall-time benefit
-was observed in this pilot.** This measures building IronRDP using an
+Updated 2 November 2026. **The four-way follow-up is complete: native LLVM
+ThinLTO supplies the larger measured contribution; Rust-only remains small
+and uncertain.** The original 30 October Microsoft-linked pilot below remains
+unchanged. Both studies measure building IronRDP using an
 already-built compiler, not building Rust or application runtime.
+
+## Completed four-way follow-up: the attribution gap is resolved
+
+The four accepted hosted consumer VMs finished on **2 November, 13:55:35 UTC**.
+All original compiler packages, effective LTO flags, loaded-driver identities,
+native correctness, balanced rounds and raw command receipts passed final
+verification. VMs 1/2/4 come from
+[41416787160](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41416787160);
+only the failed VM 3 was replaced by
+[41422268136](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41422268136).
+The first run remains red because its original VM 3 failed; the accepted
+matrix is explicitly cross-run, not a claim that that whole run succeeded.
+
+Same Rust/LLVM source, frozen repaired PGO, Clang 20.1.3, LLD/llvm-lib,
+baseline native standard libraries and stage0 Cargo throughout. Baseline Rust
+LTO is `thin-local`, not "all optimization off". Only the declared Rust and
+native LLVM ThinLTO factors change.
+
+| Compiler arm | Mean IronRDP wall, seconds | Wall reduction vs baseline (95% paired-VM bootstrap) | Mean CPU, seconds | CPU reduction |
+|---|---:|---:|---:|---:|
+| Baseline: Rust thin-local, LLVM off | 739.521 | Reference | 2850.665 | Reference |
+| Rust-only ThinLTO | 733.196 | **0.86% (-1.62 to 2.24%)** | 2829.797 | 0.73% |
+| LLVM-only ThinLTO | 700.759 | **5.24% (3.69 to 6.33%)** | 2692.294 | 5.56% |
+| Both ThinLTO modes | 687.273 | **7.07% (6.48 to 7.57%)** | 2642.410 | 7.31% |
+
+The combined benefit reproduces the **scale**, not the exact conditions, of
+the historical **7.64%** result. The earlier expectation that Rust-only
+ThinLTO should deliver that combined gain was the attribution error.
+LLVM-only provides a clear larger benefit in this controlled comparison.
+Adding Rust ThinLTO **after LLVM ThinLTO** saves a further **1.92%**
+(0.99 to 3.08%); adding LLVM after Rust saves **6.26%** (5.27 to 8.01%).
+These conditional reductions have different denominators; do not add them.
+
+The multiplicative interaction estimate is **-1.08%**, with interval
+**-4.45 to +1.00%**: an extra synergistic effect is **not established**.
+Rust-only's interval includes zero, so neither a repeatable standalone gain
+nor a regression is established. It also varied across VMs:
+
+| VM | CPU model | Rust-only wall reduction | LLVM-only wall reduction | Combined wall reduction |
+|---|---|---:|---:|---:|
+| 1 | AMD EPYC 9V74 | 1.98% | 5.36% | 7.13% |
+| 2 | AMD EPYC 7763 | 2.38% | 6.36% | 7.75% |
+| 3, recovered | AMD EPYC 9V74 | 1.83% | 6.29% | 7.01% |
+| 4 | AMD EPYC 9V74 | -2.86% | 2.74% | 6.29% |
+
+**What this does not establish:** these are LLD-linked compiler/sysroot
+packages with deliberately shared native standard libraries, not full Rust
+distributions or unchanged deployment packages. Native LLVM ThinLTO still
+requires LLVM-bitcode-capable linking in the tested pipeline; the result is
+not a 7% drop-in gain while retaining Microsoft link/lib. Nor does it isolate
+every version/profile/layout difference from the historical study, establish
+build-to-build variability, or measure Rust-production/application-runtime
+speed. The earlier Microsoft-linked Rust-only null result remains valid.
+
+**Measurement and qualification:** all four VMs used four logical processors,
+one excluded warmup and three measured rounds for every arm in the prescribed
+Williams ordering. This gives **48 measured blocks / 240 measured commands**;
+16 warmup blocks / 80 commands are excluded. All 16 VM/arm combinations passed
+**3,604 workspace + 1 TLS + 10 gateway + 13 smartcard tests**, zero failed,
+six workspace ignores. Setup, fetches, driver probes and correctness are
+outside timing. VM 3's recovered correctness uses one test thread to avoid
+the pinned fixture's temporary-name collision; the measured environment is
+unchanged. No tests or failed timing observations were silently discarded.
+
+Rounds are averaged within each VM, then VM means equally weighted;
+contrasts are ratios of those arm means. Intervals use 10,000 resamples of
+whole paired VMs with fixed seed 20261030. Four VMs are a limited sample and
+one producer per arm means the interval excludes compiler build-to-build
+variance. CPU intervals and all conditional effects are in the raw results.
+
+Persistent evidence:
+[verified factorial results](x64-factorial-thin-results.json),
+[frozen per-VM provenance](x64-factorial-consumer-sources.json), and
+[complete compact raw evidence](x64-factorial-thin-evidence.zip).
+The ZIP includes successful receipts, preserved failures, per-file hashes,
+protocols and verification scripts. Original compiler archive bytes and every
+member were rehashed locally; bulky compiler archives are not duplicated in
+the compact ZIP. The final verifier is pinned at
+`486ab75de9853ba13f916cbb0a97dbe6c6d3fb2f`.
+The final audit also checks consumer tool hashes and CPU/affinity meter
+self-tests. All four lockfile hashes match the exact pinned Cargo.lock with
+Windows CRLF checkout line endings; that byte-level difference from the LF
+Git blob is recorded explicitly, not treated as a dependency change.
+
+## Original 30 October Microsoft-linked Rust-only pilot
 
 | Three measured rounds, mean per five-command block | Repaired PGO | Same + Rust-only ThinLTO | Reduction |
 |---|---:|---:|---:|
@@ -122,9 +209,9 @@ VM; these observations do not establish universal zero benefit or a regression.
 The earlier failed correctness attempts did not alter compiler packages or
 timed commands, so their fixes do not explain this difference.
 
-### What remains unexplained, and the discriminating experiment
+### The discriminating experiment: rationale recorded before completion
 
-The leading **untested explanation** is that native LLVM ThinLTO, or its
+The leading **then-untested explanation** was that native LLVM ThinLTO, or its
 interaction with Rust ThinLTO, supplied much of the earlier combined gain.
 Rust-side ThinLTO cannot apply cross-module optimization to the already-native
 LLVM objects used in the new pilot. PGO and one codegen unit already optimize
@@ -145,7 +232,7 @@ the old combined gain still does not reproduce. A repeat of the present
 Microsoft-linked pair on additional VMs can establish repeatability, but
 cannot by itself explain the historical combined effect.
 
-**Authorized follow-up, recovered producers and running consumers:** the four-way
+**Recovery history (now complete):** the four-way
 [run 41116552933](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41116552933)
 started at **19:35 UTC on 30 October**, harness
 `73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0`. Three producers succeeded; both-thin
@@ -172,7 +259,7 @@ explicitly uses common baseline native standard libraries and stage0 Cargo
 to isolate compiler effects, after verifying the original packages. Loaded
 driver DLL identities are observed outside timing and compiler hashes are
 recorded around every block. This is not an untouched-package comparison or
-full release. **No four-way performance result is available yet.**
+full release. The completed four-way results are reported at the top of this document.
 
 **Consumer probe repair, 2 November:** VMs 1, 3 and 4 of continuation
 41412682516 failed before timed blocks, when the PowerShell process querying
@@ -206,11 +293,11 @@ concurrent tests can therefore reuse a name when clock readings coincide.
 LLVM-only and both-mode correctness had already passed on this VM.
 
 [Selective retry 41422268136](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41422268136)
-reruns **only VM 3**, with `RUST_TEST_THREADS=1` confined to correctness.
+reran **only VM 3**, with `RUST_TEST_THREADS=1` confined to correctness.
 No test is skipped, no workload source is patched, and Cargo compilation
-parallelism and every timed command/environment remain unchanged. The other
-three VMs continue; their successful receipts will not be discarded merely
-because this VM needed recovery. Final cross-run verification requires an
+parallelism and every timed command/environment remained unchanged. The other
+three VMs continued and their successful receipts were retained.
+Final cross-run verification used an
 explicit frozen manifest of each VM's index SHA256, run, harness, attempt and
 correctness environment, as well as all existing raw timing, test-count and
 compiler-identity checks. The original same-run verification remains the

@@ -1,0 +1,391 @@
+{
+  "complete": true,
+  "run_id": "41422268136",
+  "head": "486ab75de9853ba13f916cbb0a97dbe6c6d3fb2f",
+  "attempt": "1",
+  "continuation": {
+    "schema_version": 1,
+    "protocol_sha256": "4c79b618a4ba74cb39c8969df2df37a13c0fc7edb497013dc78c990b50ff20bc",
+    "reason": "Original both-thin producer failed fetching pinned source before compilation. Recover only that arm; preserve the three original packages byte-for-byte. Consumer protocol unchanged.",
+    "arms": {
+      "baseline": {
+        "run_id": "41116552933",
+        "attempt": "1",
+        "harness_sha": "73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0",
+        "archive_sha256": "ef2d7743e5d1a9669e0ddccbe4b05f8d5147fb4ad9aa2b6fddb67ad2510203fb",
+        "metadata_sha256": "00b45459a5ebdd006e19df4bff2ec94322d959b0efae29389153bf8cd6028305"
+      },
+      "rust-thin": {
+        "run_id": "41116552933",
+        "attempt": "1",
+        "harness_sha": "73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0",
+        "archive_sha256": "c2cc49eec1fbc71b9dfc6b5822a6d7ca0a67f59456b393fa4d0320cc55fef81b",
+        "metadata_sha256": "25fd4eff13e100af7a21bee3a03ac2dd4cd794035fe1daafa0813938d9ce8d6b"
+      },
+      "llvm-thin": {
+        "run_id": "41116552933",
+        "attempt": "1",
+        "harness_sha": "73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0",
+        "archive_sha256": "933d62f14fd0744d5c099188781152c578ef9b73a067bc7a272987926fde2404",
+        "metadata_sha256": "40cd5629494ed4d383e5977f67faaf95770e7f9dda80065500bbaa35b9a291c3"
+      },
+      "both-thin": {
+        "run_id": "41295055576",
+        "attempt": "1",
+        "harness_sha": "1bb4eddc40bcae382ca038ddbd6eefc615e89ae0",
+        "archive_sha256": "b8c187b755a7656aba5561d15433ddd51fee066ddfb930a56fcbb173e52bdd2e",
+        "metadata_sha256": "8e83dd885673b096a3e061fd555574093d582e042c01df94c1020ea2113b01a5"
+      }
+    }
+  },
+  "consumer_sources": {
+    "schema_version": 1,
+    "protocol_sha256": "4c79b618a4ba74cb39c8969df2df37a13c0fc7edb497013dc78c990b50ff20bc",
+    "reason": "Preserve successful VMs 1, 2, 4; replace only VM 3 after an untimed native test filename collision",
+    "vms": {
+      "1": {
+        "run_id": "41416787160",
+        "harness_sha": "d8fc41b08c9869993091adb270b7b4629e95ce8b",
+        "attempt": "1",
+        "index_sha256": "a1bfa916288068e6e5ede61f259fe2e36f571a5f86631826b7bddecd9b0ea4f9",
+        "correctness_environment": {
+          "PUBLIC": "C:\\Users\\Public"
+        }
+      },
+      "2": {
+        "run_id": "41416787160",
+        "harness_sha": "d8fc41b08c9869993091adb270b7b4629e95ce8b",
+        "attempt": "1",
+        "index_sha256": "03b1fd237e04f7c89e6af63c2afbd4c0eabd85961e35b495a70c9094053efccd",
+        "correctness_environment": {
+          "PUBLIC": "C:\\Users\\Public"
+        }
+      },
+      "3": {
+        "run_id": "41422268136",
+        "harness_sha": "486ab75de9853ba13f916cbb0a97dbe6c6d3fb2f",
+        "attempt": "1",
+        "index_sha256": "e0eccf313f66551c3d04a6611956eeeb5a680157a0dd07dc98a58229e055aef8",
+        "correctness_environment": {
+          "PUBLIC": "C:\\Users\\Public",
+          "RUST_TEST_THREADS": "1"
+        }
+      },
+      "4": {
+        "run_id": "41416787160",
+        "harness_sha": "d8fc41b08c9869993091adb270b7b4629e95ce8b",
+        "attempt": "1",
+        "index_sha256": "d58e4b4ee6ac4ce19b2c75c6668bb37bc73584983d29105e97180d090e8ea596",
+        "correctness_environment": {
+          "PUBLIC": "C:\\Users\\Public"
+        }
+      }
+    }
+  },
+  "protocol": {
+    "schema": 1,
+    "study": "x64-fixed-pgo-lld-rust-llvm-thin-factorial",
+    "rust_sha": "4da678aada4683607acbd67a8da37a320c791f93",
+    "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+    "rustc_perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
+    "rust_version": "1.101.0-nightly",
+    "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+    "host": "x86_64-pc-windows-msvc",
+    "cores": 4,
+    "profile_run": "40170434889",
+    "profile_attempt": "1",
+    "profile_artifact_id": 12593394360,
+    "training_result_sha256": "9cca3f391cc4307a7c06a2d9fc648f6992296c79b85bbc52bc36667d60f7a7b9",
+    "training_provenance_sha256": "23fe75fe2c668f357dcf954c996b7100d8b1d21f2460463158e12dbebc96843c",
+    "fixed_helper_git_blob": "6aa5fc0bf36a9de34e4ae88ec7da4aef333273f6",
+    "clang_installer_sha256": "0a18ea761147a7de69d6dd60ef81b70496e5255aec6caff22d45da85188614af",
+    "profiles": {
+      "rustc": "4ec2e78c722c9967d367e3a8d95c78e6f74d0acf0c98b4de631af43bf8ec38c2",
+      "rustdoc": "d1cae078d0410692ddf2d60e0104a9dff8d17df66721eef280164d7df01a4c81",
+      "clippy": "5ae935dddceb48f7c53e5622f4e7d1bfaf39f7306749e297b188399eb909c14e",
+      "cranelift": "fc6d8db0d560b6fb9ce98a3078573a7576684486bda18aa880d494ebecbaf0eb",
+      "llvm": "37a69d1e0a186b2ccdccc816d6f739cfce266dd848035fc98d72dd3f1f2fe53d"
+    },
+    "used_profiles": [
+      "rustc",
+      "llvm"
+    ],
+    "variants": [
+      "baseline",
+      "rust-thin",
+      "llvm-thin",
+      "both-thin"
+    ],
+    "lto_factors": {
+      "baseline": [
+        false,
+        false
+      ],
+      "rust-thin": [
+        true,
+        false
+      ],
+      "llvm-thin": [
+        false,
+        true
+      ],
+      "both-thin": [
+        true,
+        true
+      ]
+    },
+    "native_tools": "Clang 20.1.3, lld-link and llvm-lib in ALL four arms",
+    "warmup_rounds": 1,
+    "measured_rounds": 3,
+    "independent_benchmark_vms": 4,
+    "build_budget_minutes": 330,
+    "scope": "Compiler/sysroot pilot; not a full release or deployment recommendation",
+    "cache_policy": "No compiler-cache service, N/A hit rate; fresh objects per producer and fresh targets per consumer block",
+    "cargo_policy": "Common checksum-identical stage0 Cargo from baseline",
+    "stdlib_policy": "Explicit compiler-isolation control: verify originals then use baseline native target libraries for all four arms; retain original compiler drivers and publish evaluated manifests. Not an untouched-package comparison.",
+    "order": "Four-sequence Williams design, rotate sequence by VM and round; each arm occupies each position equally across VMs",
+    "qualification": "Own-package compiler smoke, loaded-driver identity, shared-stdlib compiler smoke and native IronRDP correctness per arm/VM, workspace --tests honoring test=false; no doctests/full distribution qualification",
+    "measurement": "Five original offline frozen Cargo commands, four-LP inherited affinity; setup, identity checks, copies, correctness and transfers outside timers",
+    "analysis": "Average rounds within VM, equal-weight VM means, 10000 seeded paired whole-VM bootstrap draws; four VMs and one build per arm do not estimate build-to-build variance",
+    "contrasts": "baseline->rust,baseline->llvm,rust->both,llvm->both,baseline->both; multiplicative interaction 100*(both*baseline/(rust*llvm)-1), negative means extra benefit beyond multiplicative independence",
+    "exclusions": "Fixed warmup only; reject failed/incomplete matrices, mixed attempts, identity mismatches; no slow-sample trimming",
+    "production": "Separate hosted build times are provenance only, not isolated production gains",
+    "interpretation": "Identify Rust/LLVM contributions and interaction on this fixed version; do not subtract from historical 1.94.1 or Microsoft-linked estimates"
+  },
+  "vm_means": [
+    {
+      "wall_seconds": {
+        "baseline": 613.582732233334,
+        "rust-thin": 601.4623899666676,
+        "llvm-thin": 580.7060457000001,
+        "both-thin": 569.8376093000003
+      },
+      "cpu_seconds": {
+        "baseline": 2355.03125,
+        "rust-thin": 2311.7395833333335,
+        "llvm-thin": 2222.140625,
+        "both-thin": 2178.2708333333335
+      }
+    },
+    {
+      "wall_seconds": {
+        "baseline": 822.8460554333324,
+        "rust-thin": 803.294025733333,
+        "llvm-thin": 770.529733433333,
+        "both-thin": 759.0344401999986
+      },
+      "cpu_seconds": {
+        "baseline": 3181.8177083333335,
+        "rust-thin": 3110.1614583333335,
+        "llvm-thin": 2967.0833333333335,
+        "both-thin": 2923.6875
+      }
+    },
+    {
+      "wall_seconds": {
+        "baseline": 791.9911015999996,
+        "rust-thin": 777.4751247999993,
+        "llvm-thin": 742.1475575333328,
+        "both-thin": 736.4666405666663
+      },
+      "cpu_seconds": {
+        "baseline": 3055.046875,
+        "rust-thin": 3002.46875,
+        "llvm-thin": 2851.5416666666665,
+        "both-thin": 2844.2864583333335
+      }
+    },
+    {
+      "wall_seconds": {
+        "baseline": 729.6632549666668,
+        "rust-thin": 750.5525672000003,
+        "llvm-thin": 709.6509478000007,
+        "both-thin": 683.7538169333324
+      },
+      "cpu_seconds": {
+        "baseline": 2810.765625,
+        "rust-thin": 2894.8177083333335,
+        "llvm-thin": 2728.4114583333335,
+        "both-thin": 2623.3958333333335
+      }
+    }
+  ],
+  "hardware": [
+    {
+      "Runner": "GitHub Actions 1000001467",
+      "Image": "20261026.347.1",
+      "System": {
+        "NumberOfLogicalProcessors": 4,
+        "TotalPhysicalMemory": 17174360064
+      },
+      "Cpu": [
+        {
+          "Name": "AMD EPYC 9V74 80-Core Processor                ",
+          "NumberOfCores": 2,
+          "NumberOfLogicalProcessors": 4
+        }
+      ]
+    },
+    {
+      "Cpu": [
+        {
+          "Name": "AMD EPYC 7763 64-Core Processor                ",
+          "NumberOfCores": 2,
+          "NumberOfLogicalProcessors": 4
+        }
+      ],
+      "Image": "20261026.347.1",
+      "System": {
+        "NumberOfLogicalProcessors": 4,
+        "TotalPhysicalMemory": 17174360064
+      },
+      "Runner": "GitHub Actions 1000001470"
+    },
+    {
+      "Image": "20261026.347.1",
+      "System": {
+        "NumberOfLogicalProcessors": 4,
+        "TotalPhysicalMemory": 17174360064
+      },
+      "Runner": "GitHub Actions 1000001471",
+      "Cpu": [
+        {
+          "Name": "AMD EPYC 9V74 80-Core Processor                ",
+          "NumberOfCores": 2,
+          "NumberOfLogicalProcessors": 4
+        }
+      ]
+    },
+    {
+      "Image": "20261026.347.1",
+      "Runner": "GitHub Actions 1000001468",
+      "Cpu": [
+        {
+          "Name": "AMD EPYC 9V74 80-Core Processor                ",
+          "NumberOfCores": 2,
+          "NumberOfLogicalProcessors": 4
+        }
+      ],
+      "System": {
+        "NumberOfLogicalProcessors": 4,
+        "TotalPhysicalMemory": 17174360064
+      }
+    }
+  ],
+  "effects": {
+    "wall_seconds": {
+      "means": {
+        "baseline": 739.5207860583332,
+        "rust-thin": 733.1960269250001,
+        "llvm-thin": 700.7585711166666,
+        "both-thin": 687.2731267499994
+      },
+      "effects": {
+        "rust_without_llvm": {
+          "percent": 0.8552510291217508,
+          "paired_vm_bootstrap_95": [
+            -1.6153059028700234,
+            2.244177551797477
+          ]
+        },
+        "llvm_without_rust": {
+          "percent": 5.2415314988332184,
+          "paired_vm_bootstrap_95": [
+            3.686050682226505,
+            6.326326194670129
+          ]
+        },
+        "llvm_with_rust": {
+          "percent": 6.263386391712977,
+          "paired_vm_bootstrap_95": [
+            5.267335475479518,
+            8.00850089198949
+          ]
+        },
+        "rust_with_llvm": {
+          "percent": 1.9244066248348624,
+          "paired_vm_bootstrap_95": [
+            0.9942895835209686,
+            3.0759517765664546
+          ]
+        },
+        "combined": {
+          "percent": 7.065069744261732,
+          "paired_vm_bootstrap_95": [
+            6.482858622310994,
+            7.574209167961032
+          ]
+        },
+        "multiplicative_interaction": {
+          "percent": -1.078378438405403,
+          "paired_vm_bootstrap_95": [
+            -4.447313331919434,
+            0.995198271280695
+          ]
+        }
+      }
+    },
+    "cpu_seconds": {
+      "means": {
+        "baseline": 2850.6653645833335,
+        "rust-thin": 2829.796875,
+        "llvm-thin": 2692.2942708333335,
+        "both-thin": 2642.41015625
+      },
+      "effects": {
+        "rust_without_llvm": {
+          "percent": 0.7320567977779358,
+          "paired_vm_bootstrap_95": [
+            -1.73737401216012,
+            2.1233036387444892
+          ]
+        },
+        "llvm_without_rust": {
+          "percent": 5.555583468954383,
+          "paired_vm_bootstrap_95": [
+            3.9222967305503675,
+            6.705926956486897
+          ]
+        },
+        "llvm_with_rust": {
+          "percent": 6.621914117068917,
+          "paired_vm_bootstrap_95": [
+            5.455062016106959,
+            8.484716276761207
+          ]
+        },
+        "rust_with_llvm": {
+          "percent": 1.8528477783334218,
+          "paired_vm_bootstrap_95": [
+            0.6090455981932474,
+            3.214064714687026
+          ]
+        },
+        "combined": {
+          "percent": 7.305494742409834,
+          "paired_vm_bootstrap_95": [
+            6.787298576852452,
+            7.85447875267502
+          ]
+        },
+        "multiplicative_interaction": {
+          "percent": -1.1290563140532561,
+          "paired_vm_bootstrap_95": [
+            -4.69523743089304,
+            1.1561202928608516
+          ]
+        }
+      }
+    }
+  },
+  "qualification": "Native correctness and loaded drivers verified; compiler-only isolation with shared stdlib, not full releases",
+  "consumer_audit": {
+    "lock_git_blob_sha256": "0dd7b71a6c0e0fe89fa21199af4eecbecabfc125c4b54d62453f63cb8b5a02f9",
+    "lock_crlf_checkout_sha256": "2d2191b7753c0f0a27c238d941a30fb91a8bf38c4b6f878d3f99104127a8067b",
+    "all_four_locks_match_pinned_crlf_checkout": true,
+    "all_four_native_tools_match": true,
+    "all_four_cpu_affinity_meters_pass": true
+  },
+  "analysis_harness_sha": "486ab75de9853ba13f916cbb0a97dbe6c6d3fb2f",
+  "limits": "Four independent hosted consumer VMs; one producer per compiler arm. Shared baseline native stdlib and stage0 Cargo, LLD tools throughout. Compiler/sysroot isolation, not full-release or application-runtime qualification. VM 3 recovered with serialized correctness only; other VMs retained. VM-cluster bootstrap intervals do not include compiler build-to-build variance."
+}

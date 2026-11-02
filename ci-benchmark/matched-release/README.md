@@ -21,6 +21,10 @@ IronRDP wall gain. The fresh x64 4/8/16-LP study qualified, taking
 See [verified results](../x64-nvme-scaling-results.json) and
 [compact evidence](../x64-nvme-scaling-evidence.zip). The earlier Word revision is
 retained unchanged as a historical version.
+The current Office reports also include the completed four-way ThinLTO study:
+**LLVM-only 5.24% / both modes 7.07% less IronRDP wall**, with LLD fixed;
+Rust-only's 0.86% estimate is uncertain. These are compiler/sysroot results,
+not new full-release or Microsoft-linker qualification.
 
 ## Release-only Microsoft-retained PGO + Rust ThinLTO scaling
 

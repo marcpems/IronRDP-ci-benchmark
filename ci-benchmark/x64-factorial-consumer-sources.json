@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "protocol_sha256": "4c79b618a4ba74cb39c8969df2df37a13c0fc7edb497013dc78c990b50ff20bc",
+  "reason": "Preserve successful VMs 1, 2, 4; replace only VM 3 after an untimed native test filename collision",
+  "vms": {
+    "1": {
+      "run_id": "41416787160",
+      "harness_sha": "d8fc41b08c9869993091adb270b7b4629e95ce8b",
+      "attempt": "1",
+      "index_sha256": "a1bfa916288068e6e5ede61f259fe2e36f571a5f86631826b7bddecd9b0ea4f9",
+      "correctness_environment": {
+        "PUBLIC": "C:\\Users\\Public"
+      }
+    },
+    "2": {
+      "run_id": "41416787160",
+      "harness_sha": "d8fc41b08c9869993091adb270b7b4629e95ce8b",
+      "attempt": "1",
+      "index_sha256": "03b1fd237e04f7c89e6af63c2afbd4c0eabd85961e35b495a70c9094053efccd",
+      "correctness_environment": {
+        "PUBLIC": "C:\\Users\\Public"
+      }
+    },
+    "3": {
+      "run_id": "41422268136",
+      "harness_sha": "486ab75de9853ba13f916cbb0a97dbe6c6d3fb2f",
+      "attempt": "1",
+      "index_sha256": "e0eccf313f66551c3d04a6611956eeeb5a680157a0dd07dc98a58229e055aef8",
+      "correctness_environment": {
+        "PUBLIC": "C:\\Users\\Public",
+        "RUST_TEST_THREADS": "1"
+      }
+    },
+    "4": {
+      "run_id": "41416787160",
+      "harness_sha": "d8fc41b08c9869993091adb270b7b4629e95ce8b",
+      "attempt": "1",
+      "index_sha256": "d58e4b4ee6ac4ce19b2c75c6668bb37bc73584983d29105e97180d090e8ea596",
+      "correctness_environment": {
+        "PUBLIC": "C:\\Users\\Public"
+      }
+    }
+  }
+}

@@ -6,6 +6,11 @@ evidence matrix, the upstream artifact's missing gain and the cache diagnosis.
 The completed [incremental x64 Rust-only ThinLTO pilot](X64-RUST-THIN-INCREMENTAL.md)
 found no meaningful IronRDP wall gain (0.05% slower; CPU 0.36% lower); it is
 compiler/sysroot evidence, not full-release qualification.
+The completed four-way follow-up now separates the factors with LLD fixed:
+**5.24% less IronRDP wall from LLVM-only ThinLTO, 7.07% from both**;
+Rust-only is **0.86%**, with an interval spanning zero. The older approximately
+7.6% combined gain was not a Rust-only estimate. See the
+[four-VM results, qualification and limitations](X64-RUST-THIN-INCREMENTAL.md).
 The fresh x64 NVMe 4/8/16-LP comparison has completed and qualified:
 **4h01m15s / 2h57m33s / 2h23m54s** production excluding tests, respectively.
 These select 2/4/8 physical cores with SMT. The 16-LP cell used **40.35% less
