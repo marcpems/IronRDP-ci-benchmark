@@ -4,7 +4,7 @@ For one end-to-end account of the problem, investigation stages and results,
 see the [Windows Rust investigation summary](../INVESTIGATION-SUMMARY.md).
 This page retains the detailed release, scaling and recovery evidence.
 
-**30 October update:** the [current summary](../INVESTIGATION-SUMMARY.md)
+**2 November update:** the [current summary](../INVESTIGATION-SUMMARY.md)
 adds later x64 NVMe full-release times, current-PR qualification and the
 upstream cache diagnosis. The older x64 CPU-scaling observations below used
 the HDD; they are not an NVMe 4/8/16-LP matrix. The same-tools PGO versus
@@ -12,11 +12,14 @@ Rust-ThinLTO attribution and missing measurements are explicit in that summary.
 
 Download the [technical PowerPoint with linked report index](Rust-Optimization-Summary-Published.pptx)
 or the [combined Word report](Rust-Optimization-Combined-Report-30Oct2026.docx).
-Both were refreshed on 30 October with the later NVMe timings, same-tools
+Both were refreshed on 2 November with the completed NVMe matrix, same-tools
 PGO/LTO attribution, upstream cache findings and the completed
 [incremental x64 ThinLTO pilot](../X64-RUST-THIN-INCREMENTAL.md): no meaningful
-IronRDP wall gain. The new x64 16/8/4-LP study is running; its 16-LP reference
-qualified and the remaining comparison results are pending. The earlier Word revision is
+IronRDP wall gain. The fresh x64 4/8/16-LP study qualified, taking
+**4h01m15s / 2h57m33s / 2h23m54s** production excluding tests. These use
+2/4/8 physical cores with SMT; the observed 4-to-16 wall reduction is **40.35%**.
+See [verified results](../x64-nvme-scaling-results.json) and
+[compact evidence](../x64-nvme-scaling-evidence.zip). The earlier Word revision is
 retained unchanged as a historical version.
 
 ## Release-only Microsoft-retained PGO + Rust ThinLTO scaling

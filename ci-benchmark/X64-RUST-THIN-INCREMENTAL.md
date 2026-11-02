@@ -145,11 +145,26 @@ the old combined gain still does not reproduce. A repeat of the present
 Microsoft-linked pair on additional VMs can establish repeatability, but
 cannot by itself explain the historical combined effect.
 
-**Authorized follow-up now running:** the four-way
+**Authorized follow-up, recovered producers and running consumers:** the four-way
 [run 41116552933](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41116552933)
 started at **19:35 UTC on 30 October**, harness
-`73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0`. Four fresh hosted compiler builds
-feed four independent hosted consumers, each measuring all four arms in three
+`73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0`. Three producers succeeded; both-thin
+failed fetching pinned source from GitHub before compilation. Only that arm
+was rebuilt in [recovery 41295055576](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41295055576),
+harness `1bb4eddc40bcae382ca038ddbd6eefc615e89ae0`. Its actual package bytes,
+raw final-driver flags and native LLVM configuration passed the independent
+four-producer audit; source/image/tools/profile identities and normalized
+configuration match the original reference. The three original packages
+remain byte-for-byte unchanged.
+
+[Consumer continuation 41412682516](https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41412682516)
+started **08:23 UTC on 2 November**, harness
+`2cc0821788dcae7e13ac7d5193e6d0cf6a9c5664`. Its
+[immutable continuation manifest](https://github.com/marcpems/IronRDP-ci-benchmark/blob/2cc0821788dcae7e13ac7d5193e6d0cf6a9c5664/ci-benchmark/x64-factorial-continuation.json)
+pins each arm's run/head/attempt plus exact metadata/archive SHA256. The
+default same-run gates remain mandatory without that manifest; cross-run
+recovery does not relax image, source, native-tool or recipe matching.
+Four independent hosted consumers each measure all four arms in three
 rounds after a fixed warmup. Source, profiles and LLD tools are fixed;
 position and preceding-arm effects are counterbalanced. The
 [frozen protocol](https://github.com/marcpems/IronRDP-ci-benchmark/blob/73fef6b52452f744a84d5b2f9f2e6eb6c1236ff0/ci-benchmark/x64-factorial-thin.json)

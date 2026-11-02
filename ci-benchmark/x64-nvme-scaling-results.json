@@ -1,0 +1,860 @@
+{
+  "complete": true,
+  "run_id": "41054163612",
+  "head": "595bce661841b26836cc46d61ecf7b86646e24a1",
+  "scope": "Single-pass fresh Rust release production; not IronRDP performance",
+  "cells": [
+    {
+      "workers": 16,
+      "production_seconds": 8634.268417500001,
+      "qualification_seconds": 538.42,
+      "production_and_tests_seconds": 9172.688417500001,
+      "command_wall_seconds": 9172.407929499983,
+      "command_cpu_seconds": 66047.1875,
+      "top_level_sections": {
+        "Stage 5 (final build)": 2921.47,
+        "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)": 4047.54,
+        "Run tests": 538.42,
+        "Stage 2 (LLVM PGO)": 1437.03
+      },
+      "compiler_cache_status": {
+        "compiler_cache": "not enabled",
+        "hit_rate": null,
+        "native_launchers": {
+          "llvm": {
+            "CMAKE_C_COMPILER_LAUNCHER": "",
+            "CMAKE_CXX_COMPILER_LAUNCHER": "",
+            "RULE_LAUNCH_COMPILE": ""
+          },
+          "lld": {
+            "CMAKE_C_COMPILER_LAUNCHER": "",
+            "CMAKE_CXX_COMPILER_LAUNCHER": "",
+            "RULE_LAUNCH_COMPILE": ""
+          }
+        },
+        "note": "Fresh initial objects; normal within-pipeline bootstrap reuse remains."
+      },
+      "profiles": {
+        "rustc": {
+          "sha256": "25d17c802c3cdee68c3c7e81693a69e9baffdbff2143a60f967df7b992c603f1",
+          "bytes": 56497032
+        },
+        "rustdoc": {
+          "sha256": "805c5baeba61b1112880405fe372524382afeaf4a98b57b107060904df247076",
+          "bytes": 60573224
+        },
+        "clippy": {
+          "sha256": "b57fc9e5e02aae453bd7d3a742d8241037402f4cbd3c3b3b8bd00d2d7dd785e2",
+          "bytes": 62711312
+        },
+        "cranelift": {
+          "sha256": "a44a023fbf8772fcb552a5e430a82c67fd7322879aef9c614f79cece8ff4d124",
+          "bytes": 61651352
+        },
+        "llvm": {
+          "sha256": "64628654a7f2060cdc50e38d2cff81931888fc71f24f8b8a3e60056f0bff4092",
+          "bytes": 54650568
+        }
+      },
+      "whole_job_seconds": 10961.0,
+      "outside_production_and_tests_seconds": 1788.3115824999986,
+      "job_url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41054163612/job/124057359358",
+      "physical_cores_selected": 8,
+      "effective_command_cores": 7.200637826800235,
+      "sections": [
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO instrumented rustc and LLVM",
+          "started_utc": "2026-10-30T12:32:32.429Z",
+          "start_line": 574,
+          "finished_utc": "2026-10-30T13:09:58.681Z",
+          "wall_seconds": 2246.25,
+          "status": "OK",
+          "end_line": 5794
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustc profiles",
+          "started_utc": "2026-10-30T13:09:58.681Z",
+          "start_line": 5795,
+          "finished_utc": "2026-10-30T13:18:45.883Z",
+          "wall_seconds": 527.2,
+          "status": "OK",
+          "end_line": 5865
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustdoc profiles",
+          "started_utc": "2026-10-30T13:18:45.883Z",
+          "start_line": 5866,
+          "finished_utc": "2026-10-30T13:20:04.692Z",
+          "wall_seconds": 78.81,
+          "status": "OK",
+          "end_line": 5917
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather clippy profiles",
+          "started_utc": "2026-10-30T13:20:04.692Z",
+          "start_line": 5918,
+          "finished_utc": "2026-10-30T13:21:53.292Z",
+          "wall_seconds": 108.6,
+          "status": "OK",
+          "end_line": 5970
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather cranelift profiles",
+          "started_utc": "2026-10-30T13:21:53.292Z",
+          "start_line": 5971,
+          "finished_utc": "2026-10-30T13:23:57.154Z",
+          "wall_seconds": 123.86,
+          "status": "OK",
+          "end_line": 6015
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO optimized rustc",
+          "started_utc": "2026-10-30T13:23:57.154Z",
+          "start_line": 6017,
+          "finished_utc": "2026-10-30T13:39:59.966Z",
+          "wall_seconds": 962.81,
+          "status": "OK",
+          "end_line": 10527
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)",
+          "started_utc": "2026-10-30T12:32:32.428Z",
+          "start_line": 573,
+          "finished_utc": "2026-10-30T13:39:59.966Z",
+          "wall_seconds": 4047.54,
+          "status": "OK",
+          "end_line": 10528
+        },
+        {
+          "name": "Stage 2 (LLVM PGO) > Build PGO instrumented LLVM",
+          "started_utc": "2026-10-30T13:40:00.807Z",
+          "start_line": 10533,
+          "finished_utc": "2026-10-30T13:57:22.939Z",
+          "wall_seconds": 1042.13,
+          "status": "OK",
+          "end_line": 11922
+        },
+        {
+          "name": "Stage 2 (LLVM PGO) > Gather profiles",
+          "started_utc": "2026-10-30T13:57:22.939Z",
+          "start_line": 11923,
+          "finished_utc": "2026-10-30T14:03:56.262Z",
+          "wall_seconds": 393.32,
+          "status": "OK",
+          "end_line": 11974
+        },
+        {
+          "name": "Stage 2 (LLVM PGO)",
+          "started_utc": "2026-10-30T13:39:59.966Z",
+          "start_line": 10529,
+          "finished_utc": "2026-10-30T14:03:57.000Z",
+          "wall_seconds": 1437.03,
+          "status": "OK",
+          "end_line": 11979
+        },
+        {
+          "name": "Stage 5 (final build)",
+          "started_utc": "2026-10-30T14:03:57.000Z",
+          "start_line": 11980,
+          "finished_utc": "2026-10-30T14:52:38.472Z",
+          "wall_seconds": 2921.47,
+          "status": "OK",
+          "end_line": 22278
+        },
+        {
+          "name": "Run tests",
+          "started_utc": "2026-10-30T14:52:38.472Z",
+          "start_line": 22279,
+          "finished_utc": "2026-10-30T15:01:36.892Z",
+          "wall_seconds": 538.42,
+          "status": "OK",
+          "end_line": 22517
+        }
+      ],
+      "helper_and_other_production_seconds": 228.22841750000043,
+      "qualification_tests": {
+        "passed": 25648,
+        "failed": 0,
+        "ignored": 739,
+        "measured": 0,
+        "filtered": 541
+      },
+      "distribution_manifest": [
+        {
+          "name": "bootstrap-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 8151112,
+          "sha256": "28e150d64b3265d9cb8922bcbe1754618605a0f47ae2a9fbb3dd715a183e465a"
+        },
+        {
+          "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10038532,
+          "sha256": "83d97db68c286e220aa1ee21dc715feb69dc003858fbb8533f5469c98799075d"
+        },
+        {
+          "name": "clippy-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3956892,
+          "sha256": "2e08b26d03c852f68630b778dcb478db2905a453898197fc3fed95e90b6d34c3"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 1011252,
+          "sha256": "073d299e436b3a9fcab48dab9844c33dc6884076f761f62881579a716c7c8fe1"
+        },
+        {
+          "name": "llvm-tools-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 74461676,
+          "sha256": "5537559233d0b3ce51e3dde6fc08e367c5a0a3746f19ce7c56d6182b64a30a99"
+        },
+        {
+          "name": "miri-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2712276,
+          "sha256": "59993a9761be3f4976e66efc8aa8bde60fe3f273e70c75cecaf6df870e1811b0"
+        },
+        {
+          "name": "reproducible-artifacts-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 29510472,
+          "sha256": "02674afd5e5068a152d88e701223f84302cb05157b6dbaa418bb9e88a7acad7c"
+        },
+        {
+          "name": "rust-analysis-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 13696,
+          "sha256": "c0ef0ee89ae69c75e05c2022ae1f477e20e207370a10f4b9913299e87165ad78"
+        },
+        {
+          "name": "rust-analyzer-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10117832,
+          "sha256": "7a39612edd628375bb910825b4cb4ac869d3fa365c2ba794798d6d47e2fa6c69"
+        },
+        {
+          "name": "rust-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 536696256,
+          "sha256": "3c863d82f08545edbf15e3589c47f67532484f923bea3a5514e3a40270af8d1c"
+        },
+        {
+          "name": "rust-docs-json-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 6541720,
+          "sha256": "e4499a18b05256387518a343d93fe504cb3cb392492422dead9a5538dcff54a5"
+        },
+        {
+          "name": "rust-docs-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 32212148,
+          "sha256": "db1d3464c261a6d38654e3b25b6cabaf6d4a3258d86b3cd7b4859d8f8aed6c2b"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.msi",
+          "bytes": 329956468,
+          "sha256": "8a8d47485e98e8d864edfead5ac9baf893b2aad80754187ee0ef639431c36257"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 264212876,
+          "sha256": "0e5da0cb38a512d1540064edad7af5d5b2253fc3fc28404799d422562aab53c4"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6682948,
+          "sha256": "db256faf7de54bd710cad9732bb7f000d348160282b62fa71fd6caaa00b8e6ce"
+        },
+        {
+          "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24564576,
+          "sha256": "19ae5831572cb78af79f5d566aaa173784da9a5b30d815b296b2615966f8ec67"
+        },
+        {
+          "name": "rustc-codegen-cranelift-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3277920,
+          "sha256": "241ccf5e9e088ea7d1163f47915d62b35a6c1be88ecdff36f8406d26c2265029"
+        },
+        {
+          "name": "rustc-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 152434252,
+          "sha256": "c8a16b0d60637afb24421c21f242017c42c130542190e7a4212f49a60a477166"
+        },
+        {
+          "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 93724528,
+          "sha256": "0c4e53bc41e7de6cfc3249429d003e417fe43930de3094e89f4bfa8fd5878885"
+        },
+        {
+          "name": "rustfmt-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2673972,
+          "sha256": "3d507924c44094f42a3aeb0f69868a645ef50bee40ae13ce61707b6ebb66400b"
+        }
+      ]
+    },
+    {
+      "workers": 8,
+      "production_seconds": 10652.721306600008,
+      "qualification_seconds": 599.73,
+      "production_and_tests_seconds": 11252.451306600007,
+      "command_wall_seconds": 11252.17547940003,
+      "command_cpu_seconds": 56444.03125,
+      "top_level_sections": {
+        "Stage 5 (final build)": 3489.43,
+        "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)": 5024.02,
+        "Run tests": 599.73,
+        "Stage 2 (LLVM PGO)": 1891.77
+      },
+      "compiler_cache_status": {
+        "compiler_cache": "not enabled",
+        "hit_rate": null,
+        "native_launchers": {
+          "llvm": {
+            "CMAKE_C_COMPILER_LAUNCHER": "",
+            "CMAKE_CXX_COMPILER_LAUNCHER": "",
+            "RULE_LAUNCH_COMPILE": ""
+          },
+          "lld": {
+            "CMAKE_C_COMPILER_LAUNCHER": "",
+            "CMAKE_CXX_COMPILER_LAUNCHER": "",
+            "RULE_LAUNCH_COMPILE": ""
+          }
+        },
+        "note": "Fresh initial objects; normal within-pipeline bootstrap reuse remains."
+      },
+      "profiles": {
+        "rustc": {
+          "sha256": "63ec5490a9eb9fbf8abe719a3b27ee6a06a35b4cac52aa6feff68fb1ead06624",
+          "bytes": 56496856
+        },
+        "rustdoc": {
+          "sha256": "fa483be5406371b2eddc621fdf369a385ab8234dacbd2e34a3fd5ac43835b032",
+          "bytes": 60573368
+        },
+        "clippy": {
+          "sha256": "c7323abe1e49572206e4712d7d87f6564b7831776825b668d9aaa792eedc8268",
+          "bytes": 62711456
+        },
+        "cranelift": {
+          "sha256": "8402a3ce76816dc0f01c585e5d84e2e28e013dd787642e80da29d4615f156227",
+          "bytes": 61650296
+        },
+        "llvm": {
+          "sha256": "23f8800433b82bd5a0682424e4d8259eb26513aaf65c29aad78e9b28e4d6fdab",
+          "bytes": 54604776
+        }
+      },
+      "whole_job_seconds": 12867.0,
+      "outside_production_and_tests_seconds": 1614.5486933999928,
+      "job_url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41054163612/job/124145115124",
+      "physical_cores_selected": 4,
+      "effective_command_cores": 5.016277194870908,
+      "sections": [
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO instrumented rustc and LLVM",
+          "started_utc": "2026-10-30T15:34:44.224Z",
+          "start_line": 574,
+          "finished_utc": "2026-10-30T16:22:56.911Z",
+          "wall_seconds": 2892.69,
+          "status": "OK",
+          "end_line": 5794
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustc profiles",
+          "started_utc": "2026-10-30T16:22:56.911Z",
+          "start_line": 5795,
+          "finished_utc": "2026-10-30T16:33:58.282Z",
+          "wall_seconds": 661.37,
+          "status": "OK",
+          "end_line": 5865
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustdoc profiles",
+          "started_utc": "2026-10-30T16:33:58.282Z",
+          "start_line": 5866,
+          "finished_utc": "2026-10-30T16:35:34.444Z",
+          "wall_seconds": 96.16,
+          "status": "OK",
+          "end_line": 5917
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather clippy profiles",
+          "started_utc": "2026-10-30T16:35:34.444Z",
+          "start_line": 5918,
+          "finished_utc": "2026-10-30T16:37:44.748Z",
+          "wall_seconds": 130.3,
+          "status": "OK",
+          "end_line": 5970
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather cranelift profiles",
+          "started_utc": "2026-10-30T16:37:44.748Z",
+          "start_line": 5971,
+          "finished_utc": "2026-10-30T16:40:10.954Z",
+          "wall_seconds": 146.21,
+          "status": "OK",
+          "end_line": 6015
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO optimized rustc",
+          "started_utc": "2026-10-30T16:40:10.955Z",
+          "start_line": 6017,
+          "finished_utc": "2026-10-30T16:58:28.248Z",
+          "wall_seconds": 1097.29,
+          "status": "OK",
+          "end_line": 10527
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)",
+          "started_utc": "2026-10-30T15:34:44.224Z",
+          "start_line": 573,
+          "finished_utc": "2026-10-30T16:58:28.248Z",
+          "wall_seconds": 5024.02,
+          "status": "OK",
+          "end_line": 10528
+        },
+        {
+          "name": "Stage 2 (LLVM PGO) > Build PGO instrumented LLVM",
+          "started_utc": "2026-10-30T16:58:29.066Z",
+          "start_line": 10533,
+          "finished_utc": "2026-10-30T17:21:45.418Z",
+          "wall_seconds": 1396.35,
+          "status": "OK",
+          "end_line": 11922
+        },
+        {
+          "name": "Stage 2 (LLVM PGO) > Gather profiles",
+          "started_utc": "2026-10-30T17:21:45.418Z",
+          "start_line": 11923,
+          "finished_utc": "2026-10-30T17:29:59.018Z",
+          "wall_seconds": 493.6,
+          "status": "OK",
+          "end_line": 11974
+        },
+        {
+          "name": "Stage 2 (LLVM PGO)",
+          "started_utc": "2026-10-30T16:58:28.248Z",
+          "start_line": 10529,
+          "finished_utc": "2026-10-30T17:30:00.019Z",
+          "wall_seconds": 1891.77,
+          "status": "OK",
+          "end_line": 11979
+        },
+        {
+          "name": "Stage 5 (final build)",
+          "started_utc": "2026-10-30T17:30:00.019Z",
+          "start_line": 11980,
+          "finished_utc": "2026-10-30T18:28:09.446Z",
+          "wall_seconds": 3489.43,
+          "status": "OK",
+          "end_line": 22278
+        },
+        {
+          "name": "Run tests",
+          "started_utc": "2026-10-30T18:28:09.446Z",
+          "start_line": 22279,
+          "finished_utc": "2026-10-30T18:38:09.176Z",
+          "wall_seconds": 599.73,
+          "status": "OK",
+          "end_line": 22517
+        }
+      ],
+      "helper_and_other_production_seconds": 247.5013066000065,
+      "qualification_tests": {
+        "passed": 25648,
+        "failed": 0,
+        "ignored": 739,
+        "measured": 0,
+        "filtered": 541
+      },
+      "distribution_manifest": [
+        {
+          "name": "bootstrap-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 8155840,
+          "sha256": "812c9ba1b9dc81676aef7249eb6f4cb5ce0145464cfe3c54439a662aef88db21"
+        },
+        {
+          "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10033156,
+          "sha256": "e9972400c410cf4dc465b31c1b88775e13f6a3a8fac990482d0d695c12a859bb"
+        },
+        {
+          "name": "clippy-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3955828,
+          "sha256": "f02d8073bf95705ebc6e44e4e3ad6cfe7d3302900a38632c5b57baa07c396155"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 1009832,
+          "sha256": "0ff61911b12af8a70dc76161c574879b5bd04d0245a6163346d08d85368571f1"
+        },
+        {
+          "name": "llvm-tools-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 74472316,
+          "sha256": "ef9a56f757f24031cd30f90171f8aa30763b9153962d22d3b2ec56e960694556"
+        },
+        {
+          "name": "miri-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2712896,
+          "sha256": "1dc210210332e973c5548b3af794b85be6af459913aff1183b4ede4ef5176d15"
+        },
+        {
+          "name": "reproducible-artifacts-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 29505536,
+          "sha256": "5d9e8a1847e0c2f6ced5e4bd27dbaaf4a120ec60a9770ef86a2c117d83ad681f"
+        },
+        {
+          "name": "rust-analysis-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 13700,
+          "sha256": "5f39ef3cf2e0fbff2296f6293fb91c8a9fc4115647f7eeae58f5a9efb7c53d3c"
+        },
+        {
+          "name": "rust-analyzer-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10122416,
+          "sha256": "b37372b5e81c559a1e9e0a1fdf0a6567012d2256b5d1bde93624e6b3d2d019a8"
+        },
+        {
+          "name": "rust-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 536779596,
+          "sha256": "682517832274fbd474dc0d82edd32e131d1cbabadc6b9f95db4e2dddcf809a6d"
+        },
+        {
+          "name": "rust-docs-json-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 6541672,
+          "sha256": "f80cdca5c13cef5f8d046feb397387a27317e49d802692da2932f3638eedda9c"
+        },
+        {
+          "name": "rust-docs-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 32206576,
+          "sha256": "0c8dd0ee6a28a4b81a209bd6375efeceb602e726a75ef62377efa9607bd02ade"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.msi",
+          "bytes": 329186420,
+          "sha256": "411400b0da174d2c6b6ea18c1414bae5a1abc591306e319b931be4fa80ea4350"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 263954416,
+          "sha256": "4df80d93e99b41d60bbc07b202543097dc5a5d47664f5eb365ccd2e4b818dc9f"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6683052,
+          "sha256": "383810a40c7934083cb1bfaa9c5f162380cf301a4ece853c9f2ab0f7579050a4"
+        },
+        {
+          "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24566148,
+          "sha256": "5b9e0e8dc4f2bbb69b1baa9e99865ed47a103bba0637a972cc0acfe5ba1c5d62"
+        },
+        {
+          "name": "rustc-codegen-cranelift-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3278188,
+          "sha256": "4df325ef015385be02a5dca7ce6fe5abf4c8b4543cfe8c3a1355071b4c7f4480"
+        },
+        {
+          "name": "rustc-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 153406640,
+          "sha256": "5e62f081897029464db7f41f98faee9281a774a9cf867eb5dc959f98b4e5ea1f"
+        },
+        {
+          "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 93502392,
+          "sha256": "fc18ba6b7eb0530ae6009b9bd44f03e7ad5ff04100433d3d3644620724bcc732"
+        },
+        {
+          "name": "rustfmt-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2663368,
+          "sha256": "6db27a302bc833d640a26aab3263ab9dc9049f24556224d3149ab931c895bcf2"
+        }
+      ]
+    },
+    {
+      "workers": 4,
+      "production_seconds": 14475.182895200005,
+      "qualification_seconds": 847.06,
+      "production_and_tests_seconds": 15322.242895200005,
+      "command_wall_seconds": 15321.941762299975,
+      "command_cpu_seconds": 48084.03125,
+      "top_level_sections": {
+        "Stage 5 (final build)": 4422.87,
+        "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)": 6878.56,
+        "Run tests": 847.06,
+        "Stage 2 (LLVM PGO)": 2846.83
+      },
+      "compiler_cache_status": {
+        "compiler_cache": "not enabled",
+        "hit_rate": null,
+        "native_launchers": {
+          "llvm": {
+            "CMAKE_C_COMPILER_LAUNCHER": "",
+            "CMAKE_CXX_COMPILER_LAUNCHER": "",
+            "RULE_LAUNCH_COMPILE": ""
+          },
+          "lld": {
+            "CMAKE_C_COMPILER_LAUNCHER": "",
+            "CMAKE_CXX_COMPILER_LAUNCHER": "",
+            "RULE_LAUNCH_COMPILE": ""
+          }
+        },
+        "note": "Fresh initial objects; normal within-pipeline bootstrap reuse remains."
+      },
+      "profiles": {
+        "rustc": {
+          "sha256": "870b09a6e38475202d0cbf99fec9af24710a14769b6b99dfe8ad2539fb29b8c9",
+          "bytes": 56496824
+        },
+        "rustdoc": {
+          "sha256": "fd69bbc248596f4862b5fe90547adeb17337055b3f503492030e0f77a585e74c",
+          "bytes": 60573272
+        },
+        "clippy": {
+          "sha256": "4595db4293d2544bbfffb145a75e0f597338afbaedbb34c91d9aed80e5202cd3",
+          "bytes": 62711616
+        },
+        "cranelift": {
+          "sha256": "aa89df01a512f092b2220a1a82e79714e43cf3dcdf65ae76207e33a936299ece",
+          "bytes": 61650152
+        },
+        "llvm": {
+          "sha256": "c9486a870176bb48188c420435897116e4e6f5e97af159bee95a167799613a69",
+          "bytes": 54606808
+        }
+      },
+      "whole_job_seconds": 17062.0,
+      "outside_production_and_tests_seconds": 1739.7571047999954,
+      "job_url": "https://github.com/marcpems/IronRDP-ci-benchmark/actions/runs/41054163612/job/124252456083",
+      "physical_cores_selected": 2,
+      "effective_command_cores": 3.1382465744852244,
+      "sections": [
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO instrumented rustc and LLVM",
+          "started_utc": "2026-10-30T19:11:08.811Z",
+          "start_line": 574,
+          "finished_utc": "2026-10-30T20:18:18.562Z",
+          "wall_seconds": 4029.75,
+          "status": "OK",
+          "end_line": 5794
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustc profiles",
+          "started_utc": "2026-10-30T20:18:18.562Z",
+          "start_line": 5795,
+          "finished_utc": "2026-10-30T20:33:49.047Z",
+          "wall_seconds": 930.49,
+          "status": "OK",
+          "end_line": 5865
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather rustdoc profiles",
+          "started_utc": "2026-10-30T20:33:49.047Z",
+          "start_line": 5866,
+          "finished_utc": "2026-10-30T20:36:07.583Z",
+          "wall_seconds": 138.54,
+          "status": "OK",
+          "end_line": 5917
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather clippy profiles",
+          "started_utc": "2026-10-30T20:36:07.583Z",
+          "start_line": 5918,
+          "finished_utc": "2026-10-30T20:39:06.754Z",
+          "wall_seconds": 179.17,
+          "status": "OK",
+          "end_line": 5970
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Gather cranelift profiles",
+          "started_utc": "2026-10-30T20:39:06.754Z",
+          "start_line": 5971,
+          "finished_utc": "2026-10-30T20:42:43.120Z",
+          "wall_seconds": 216.37,
+          "status": "OK",
+          "end_line": 6015
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO) > Build PGO optimized rustc",
+          "started_utc": "2026-10-30T20:42:43.120Z",
+          "start_line": 6017,
+          "finished_utc": "2026-10-30T21:05:47.367Z",
+          "wall_seconds": 1384.25,
+          "status": "OK",
+          "end_line": 10527
+        },
+        {
+          "name": "Stage 1 (Rustc + rustdoc + cargo + clippy PGO)",
+          "started_utc": "2026-10-30T19:11:08.811Z",
+          "start_line": 573,
+          "finished_utc": "2026-10-30T21:05:47.367Z",
+          "wall_seconds": 6878.56,
+          "status": "OK",
+          "end_line": 10528
+        },
+        {
+          "name": "Stage 2 (LLVM PGO) > Build PGO instrumented LLVM",
+          "started_utc": "2026-10-30T21:05:48.214Z",
+          "start_line": 10533,
+          "finished_utc": "2026-10-30T21:41:04.145Z",
+          "wall_seconds": 2115.93,
+          "status": "OK",
+          "end_line": 11922
+        },
+        {
+          "name": "Stage 2 (LLVM PGO) > Gather profiles",
+          "started_utc": "2026-10-30T21:41:04.145Z",
+          "start_line": 11923,
+          "finished_utc": "2026-10-30T21:53:13.210Z",
+          "wall_seconds": 729.07,
+          "status": "OK",
+          "end_line": 11974
+        },
+        {
+          "name": "Stage 2 (LLVM PGO)",
+          "started_utc": "2026-10-30T21:05:47.367Z",
+          "start_line": 10529,
+          "finished_utc": "2026-10-30T21:53:14.201Z",
+          "wall_seconds": 2846.83,
+          "status": "OK",
+          "end_line": 11979
+        },
+        {
+          "name": "Stage 5 (final build)",
+          "started_utc": "2026-10-30T21:53:14.202Z",
+          "start_line": 11980,
+          "finished_utc": "2026-10-30T23:06:57.071Z",
+          "wall_seconds": 4422.87,
+          "status": "OK",
+          "end_line": 22278
+        },
+        {
+          "name": "Run tests",
+          "started_utc": "2026-10-30T23:06:57.071Z",
+          "start_line": 22279,
+          "finished_utc": "2026-10-30T23:21:04.129Z",
+          "wall_seconds": 847.06,
+          "status": "OK",
+          "end_line": 22517
+        }
+      ],
+      "helper_and_other_production_seconds": 326.92289520000486,
+      "qualification_tests": {
+        "passed": 25648,
+        "failed": 0,
+        "ignored": 739,
+        "measured": 0,
+        "filtered": 541
+      },
+      "distribution_manifest": [
+        {
+          "name": "bootstrap-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 8145400,
+          "sha256": "4331a10f9f6d4c8f6e443d31771891caf5c7d70b500df960a7adee11b23f757c"
+        },
+        {
+          "name": "cargo-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10029720,
+          "sha256": "df11d3c06169151213646c5458af79569bc710f67d00bf798073faabe1cc1e5f"
+        },
+        {
+          "name": "clippy-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3951528,
+          "sha256": "d8e06a9575ad78d1f8d733af82307b45ce7004ea15e246ae1f01afa2b3dc0f01"
+        },
+        {
+          "name": "llvm-bitcode-linker-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 1011484,
+          "sha256": "6897bb07dc1b743ad1f0da8928aa04ada99c474330c67ffeb8081bc7cb249b82"
+        },
+        {
+          "name": "llvm-tools-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 74510068,
+          "sha256": "a13609148c940081976060dd6a4089f01d6f6973c93e3dcf58e29651bf968905"
+        },
+        {
+          "name": "miri-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2706784,
+          "sha256": "378d39bab0dccc49fedf6210ee0e1b1a2d335ccf9d6d2988f142a18e993b7d07"
+        },
+        {
+          "name": "reproducible-artifacts-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 29506804,
+          "sha256": "02bb6197c522663fc28a0d7644107b77cf73b2d51fbf84341f74102a26319efb"
+        },
+        {
+          "name": "rust-analysis-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 13700,
+          "sha256": "28375c29ac66ed4839b6a383f995353ecd7d8ff4756669d9c7e0d491668af4a9"
+        },
+        {
+          "name": "rust-analyzer-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 10114628,
+          "sha256": "0f7e376edfbfc38d106a327b196163a1a22e909f1f65b7eef9826a68743834df"
+        },
+        {
+          "name": "rust-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 536775508,
+          "sha256": "c53e9b0331acd46cc0218381d95daf95d330d95d7003066eda1c968bb57555bc"
+        },
+        {
+          "name": "rust-docs-json-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 6541672,
+          "sha256": "14a8f890b65ef42844743d4ca1b562274a1780fd2a30f13d469eb3913a380919"
+        },
+        {
+          "name": "rust-docs-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 32229888,
+          "sha256": "6836a4a902021e9e686f003256ade6bb31209d577ad82e4f3272e7667565cf7d"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.msi",
+          "bytes": 329215092,
+          "sha256": "20755d677180ab28f860f00c9bf575c26b9ba975fcda820242e13e485e1fb705"
+        },
+        {
+          "name": "rust-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 263791004,
+          "sha256": "43611c3e9bee791b7bee3d8847a140a7a6f172ba9c0821f38ce52c2a94326e04"
+        },
+        {
+          "name": "rust-src-nightly.tar.xz",
+          "bytes": 6683096,
+          "sha256": "542d6d771b7915d63596d96642098bcc5e03f21adea932728ce95a0b4678c05d"
+        },
+        {
+          "name": "rust-std-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 24564896,
+          "sha256": "f15c6ada87fa92e36bf0141a94a94731689f41c68f95ae28faac48e3ccc92ab6"
+        },
+        {
+          "name": "rustc-codegen-cranelift-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 3276188,
+          "sha256": "420396a0db3ebdf347ae601bc05a744656aef1b68167026bbcf88f518d5e4894"
+        },
+        {
+          "name": "rustc-dev-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 153432372,
+          "sha256": "3f452e5fd068b9269b7748cdf4049f4720a1d0f7fbe3dd97209b0d506d3baccc"
+        },
+        {
+          "name": "rustc-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 93165036,
+          "sha256": "e7db2b5d81533a16618c6dba82bcf024561008f3136adcc053694747670f07be"
+        },
+        {
+          "name": "rustfmt-nightly-x86_64-pc-windows-msvc.tar.xz",
+          "bytes": 2673116,
+          "sha256": "1002eb3385accab634addaf32902e64aa3e2faca8640290a118fe5c08d2623e3"
+        }
+      ]
+    }
+  ],
+  "contrasts": {
+    "4lp_to_8lp": {
+      "production_wall_reduction_percent": 26.407000286452565,
+      "production_speedup": 1.3588248935257277,
+      "whole_job_wall_reduction_percent": 24.586801078419885
+    },
+    "8lp_to_16lp": {
+      "production_wall_reduction_percent": 18.947767720624142,
+      "production_speedup": 1.233772311850879,
+      "whole_job_wall_reduction_percent": 14.813087743840835
+    },
+    "4lp_to_16lp": {
+      "production_wall_reduction_percent": 40.35123093081512,
+      "production_speedup": 1.6764805302857615,
+      "whole_job_wall_reduction_percent": 35.757824405110775
+    }
+  },
+  "limits": "Fixed order 16/8/4, one observation each, fresh profiles per cell; descriptive, no confidence interval. First N logical CPUs select 8/4/2 physical cores respectively, with both SMT siblings. Same NVMe filesystem throughout, not an isolated storage speedup. CPU receipts include qualification and measured helpers, not pure compiler CPU. Rust production, not IronRDP consumer performance. Distribution archive bytes remain in GitHub artifacts; their recorded hashes and passing extracted tests are preserved, not a new local extraction of every archive."
+}

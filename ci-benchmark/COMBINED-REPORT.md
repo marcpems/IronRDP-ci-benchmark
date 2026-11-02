@@ -1,14 +1,16 @@
 # IronRDP / Rust compiler performance: combined findings
 
-**30 October update:** the [current investigation summary](INVESTIGATION-SUMMARY.md)
+**2 November update:** the [current investigation summary](INVESTIGATION-SUMMARY.md)
 now includes later x64 NVMe release timings, a same-Windows-tools PGO/LTO
 evidence matrix, the upstream artifact's missing gain and the cache diagnosis.
 The completed [incremental x64 Rust-only ThinLTO pilot](X64-RUST-THIN-INCREMENTAL.md)
 found no meaningful IronRDP wall gain (0.05% slower; CPU 0.36% lower); it is
 compiler/sysroot evidence, not full-release qualification.
-The restored runner is executing a fresh x64 NVMe 16/8/4-LP comparison;
-completed matched timings remain pending. The linked PowerPoint and combined
-Word report were also refreshed on 30 October.
+The fresh x64 NVMe 4/8/16-LP comparison has completed and qualified:
+**4h01m15s / 2h57m33s / 2h23m54s** production excluding tests, respectively.
+These select 2/4/8 physical cores with SMT. The 16-LP cell used **40.35% less
+production wall than 4 LP**; one fixed-order pass, not a stable scaling law.
+The linked PowerPoint and combined Word report were refreshed on 2 November.
 This document retains the historical experiments below; their
 LLVM-linked ThinLTO gains are not same-Microsoft-tools LTO estimates.
 
