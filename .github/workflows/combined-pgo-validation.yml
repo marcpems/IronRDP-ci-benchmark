@@ -27,7 +27,7 @@ jobs:
     name: Linux opt-dist and bootstrap regression
     if: github.repository == 'marcpems/IronRDP-ci-benchmark' && github.run_attempt == 1
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 59
     env:
       PYTHONDONTWRITEBYTECODE: "1"
       GIT_CONFIG_COUNT: "1"
@@ -51,11 +51,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          mkdir evidence
+          trap 'git -C rust-source diff --binary --abbrev=11 HEAD > evidence/tested-source.patch' EXIT
           python harness/.github/scripts/combined_pgo_validation.py prepare --source rust-source --variant candidate
           git -C rust-source submodule update --init --depth 1 library/backtrace src/tools/cargo
           printf '[build]\nsubmodules = false\njobs = 4\n[rust]\ndownload-rustc = false\n[llvm]\ndownload-ci-llvm = false\n' > rust-source/bootstrap.toml
-          mkdir evidence
-          git -C rust-source diff --binary HEAD > evidence/tested-source.patch
       - name: Build opt-dist and run bootstrap regression tests
         shell: bash
         run: |

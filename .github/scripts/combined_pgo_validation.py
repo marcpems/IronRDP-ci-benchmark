@@ -30,7 +30,8 @@ def protocol():
 
 def source_diff(source):
     return subprocess.check_output(
-        ["git", "-C", source, "diff", "--binary", "--ignore-submodules=dirty", "HEAD"],
+        ["git", "-C", source, "diff", "--binary", "--abbrev=11",
+         "--ignore-submodules=dirty", "HEAD"],
     )
 
 

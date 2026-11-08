@@ -12,7 +12,7 @@ jobs:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark' && github.run_attempt == 1
     name: ${{ inputs.variant }} full Windows distribution
     runs-on: [self-hosted, Windows, X64]
-    timeout-minutes: 360
+    timeout-minutes: ${{ inputs.variant == 'control' && 357 || 360 }}
     env:
       PYTHONDONTWRITEBYTECODE: "1"
       VSCMD_SKIP_SENDTELEMETRY: "1"

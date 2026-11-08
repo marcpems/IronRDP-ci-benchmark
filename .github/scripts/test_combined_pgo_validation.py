@@ -14,6 +14,27 @@ from combined_pgo_replay import extract_distribution, verify_pair
 
 
 class CombinedValidationTests(unittest.TestCase):
+    def test_patch_bytes_do_not_depend_on_clone_abbreviation_settings(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            subprocess.run(["git", "init", "--quiet", root], check=True)
+            path = root / "probe.txt"
+            path.write_text("before\n")
+            subprocess.run(["git", "-C", root, "add", "probe.txt"], check=True)
+            subprocess.run(
+                ["git", "-C", root, "-c", "user.name=Harness Test",
+                 "-c", "user.email=harness@example.invalid", "-c", "commit.gpgsign=false",
+                 "commit", "--quiet", "-m", "Fixture",
+                 "-m", "Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>"],
+                check=True,
+            )
+            path.write_text("after\n")
+            results = []
+            for width in ("7", "12"):
+                subprocess.run(["git", "-C", root, "config", "core.abbrev", width], check=True)
+                results.append(validation.source_diff(root))
+            self.assertEqual(*results)
+
     def test_candidate_applies_only_the_reviewed_patch(self):
         reviewed = (validation.INPUTS / "reviewed.patch").read_bytes()
         with patch.object(validation.subprocess, "check_output",
