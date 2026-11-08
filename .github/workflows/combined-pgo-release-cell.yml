@@ -1,0 +1,128 @@
+name: Reviewed combined PGO release cell
+on:
+  workflow_call:
+    inputs:
+      variant:
+        type: string
+        required: true
+permissions:
+  contents: read
+jobs:
+  release:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark' && github.run_attempt == 1
+    name: ${{ inputs.variant }} full Windows distribution
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 360
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      VSCMD_SKIP_SENDTELEMETRY: "1"
+      VALIDATION_VARIANT: ${{ inputs.variant }}
+    steps:
+      - name: Record bounded job start
+        shell: powershell
+        run: |
+          "VALIDATION_STARTED=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" >> $env:GITHUB_ENV
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - name: Reserve isolated build and correctness paths
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:RUNNER_NAME -ne 'MARCPE-TEST01-X64') { throw 'Unexpected runner' }
+          if ($env:VALIDATION_VARIANT -notin @('control','candidate')) { throw 'Unexpected variant' }
+          $volume = Get-Volume -DriveLetter D
+          $disk = Get-Disk -Number (Get-Partition -DriveLetter D).DiskNumber
+          if ($volume.FileSystem -ne 'ReFS' -or $disk.FriendlyName -ne 'NVMe HFS002TFM9X189N-SKhynix') { throw 'Build storage changed' }
+          if ($volume.SizeRemaining -lt 250GB) { throw 'Insufficient build capacity' }
+          if ((Get-Volume -DriveLetter C).FileSystem -ne 'NTFS') { throw 'Correctness requires NTFS' }
+          $arm = if ($env:VALIDATION_VARIANT -eq 'control') { 'b' } else { 'c' }
+          $suffix = $env:GITHUB_RUN_ID.Substring($env:GITHUB_RUN_ID.Length - 8) + $arm
+          $root = "D:\q$suffix"
+          $scratch = "C:\pq$suffix"
+          if ((Test-Path -LiteralPath $root) -or (Test-Path -LiteralPath $scratch)) { throw 'Refusing existing paths' }
+          New-Item -ItemType Directory "$root\e","$root\git-hooks","$root\tools",$scratch | Out-Null
+          "$env:GITHUB_RUN_ID/$env:GITHUB_RUN_ATTEMPT/$env:VALIDATION_VARIANT" | Set-Content "$root\owner-run.txt"
+          "VALIDATION_ROOT=$root" >> $env:GITHUB_ENV
+          "CORRECTNESS_TEMP=$scratch" >> $env:GITHUB_ENV
+          "GIT_CONFIG_COUNT=3" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_0=core.autocrlf" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_0=false" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_1=core.longpaths" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_1=true" >> $env:GITHUB_ENV
+          "GIT_CONFIG_KEY_2=core.hooksPath" >> $env:GITHUB_ENV
+          "GIT_CONFIG_VALUE_2=$root\git-hooks" >> $env:GITHUB_ENV
+      - name: Verify idle runner hardware and storage
+        shell: powershell
+        run: harness\.github\scripts\x64_pgo_preflight.ps1 -Output "$env:VALIDATION_ROOT\e\readiness.json"
+      - name: Fetch pinned upstream source and submodules
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $source = "$env:VALIDATION_ROOT\r"
+          if ((git config --get core.hooksPath) -ne "$env:VALIDATION_ROOT\git-hooks") { throw 'Hook isolation failed' }
+          if (@(Get-ChildItem -Force "$env:VALIDATION_ROOT\git-hooks").Count) { throw 'Hook directory is not empty' }
+          git init --quiet $source
+          if ($LASTEXITCODE) { throw 'Source init failed' }
+          git -C $source remote add origin https://github.com/rust-lang/rust.git
+          if ($LASTEXITCODE) { throw 'Source remote failed' }
+          git -C $source fetch --quiet --depth 1 origin 76c90957b7e422c4b9c45192b0197214d7de5a54
+          if ($LASTEXITCODE) { throw 'Source fetch failed' }
+          git -C $source checkout --quiet --detach FETCH_HEAD
+          if ($LASTEXITCODE) { throw 'Source checkout failed' }
+          git -C $source submodule update --init --recursive --depth 1 --jobs 4
+          if ($LASTEXITCODE) { throw 'Submodule checkout failed' }
+      - name: Extract isolated upstream Clang, WiX, and sccache
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tools = "$env:VALIDATION_ROOT\r\citools"
+          New-Item -ItemType Directory "$tools\clang-rust","$env:VALIDATION_ROOT\r\wix\bin" | Out-Null
+          curl.exe --fail --location https://ci-mirrors.rust-lang.org/rustc/LLVM-22.1.8-win64.exe --output "$tools\clang.exe"
+          if ($LASTEXITCODE) { throw 'Clang download failed' }
+          7z x "-o$tools\clang-rust" "$tools\clang.exe" -y | Out-Null
+          if ($LASTEXITCODE) { throw 'Clang extraction failed' }
+          curl.exe --fail --location https://ci-mirrors.rust-lang.org/rustc/wix311-binaries.zip --output "$tools\wix.zip"
+          if ($LASTEXITCODE) { throw 'WiX download failed' }
+          7z x "-o$env:VALIDATION_ROOT\r\wix\bin" "$tools\wix.zip" -y | Out-Null
+          if ($LASTEXITCODE) { throw 'WiX extraction failed' }
+          curl.exe --fail --location https://ci-mirrors.rust-lang.org/rustc/2025-02-24-sccache-v0.10.0-x86_64-pc-windows-msvc.exe --output "$env:VALIDATION_ROOT\tools\sccache.exe"
+          if ($LASTEXITCODE) { throw 'sccache download failed' }
+          if ((Get-FileHash "$env:VALIDATION_ROOT\tools\sccache.exe").Hash.ToLowerInvariant() -ne 'f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7') { throw 'sccache checksum mismatch' }
+      - name: Build fresh profiles, full distribution, and run upstream qualification
+        shell: powershell
+        run: |
+          $arguments = @('release','--root',$env:VALIDATION_ROOT,'--scratch',$env:CORRECTNESS_TEMP,'--variant',$env:VALIDATION_VARIANT)
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\combined_pgo_validation.py @arguments
+      - name: Preserve bounded evidence and diagnostics
+        if: always() && env.VALIDATION_ROOT != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: combined-${{ inputs.variant }}-evidence
+          path: |
+            ${{ env.VALIDATION_ROOT }}/e/*.json
+            ${{ env.VALIDATION_ROOT }}/e/*.jsonl
+            ${{ env.VALIDATION_ROOT }}/e/*.txt
+            ${{ env.VALIDATION_ROOT }}/e/*.toml
+            ${{ env.VALIDATION_ROOT }}/e/*.cmake
+            ${{ env.VALIDATION_ROOT }}/e/*.patch
+            ${{ env.VALIDATION_ROOT }}/e/*.profdata
+            ${{ env.VALIDATION_ROOT }}/e/*.stdout
+            ${{ env.VALIDATION_ROOT }}/e/*.stderr
+            ${{ env.VALIDATION_ROOT }}/e/*-cache/*
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 1
+      - name: Preserve qualified full distribution
+        uses: actions/upload-artifact@v6
+        with:
+          name: combined-${{ inputs.variant }}-dist
+          path: ${{ env.VALIDATION_ROOT }}/r/build/dist
+          if-no-files-found: error
+          retention-days: 30
+          compression-level: 0

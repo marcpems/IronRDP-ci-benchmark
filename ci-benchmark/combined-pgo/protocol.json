@@ -1,0 +1,23 @@
+{
+  "base_sha": "76c90957b7e422c4b9c45192b0197214d7de5a54",
+  "patch_sha256": "df9e3e3f09d2ea743a0971c7f9bd401294009c889bf1763efbe731cbbd20cdef",
+  "llvm_sha": "aab11ee0ea5ea9a1d462ad0bc1fae9d9bb643019",
+  "perf_sha": "208d929efe770996eb02cd3d2712623ea48b7646",
+  "sccache_sha256": "f3eff6014d973578498dbabcf1510fec2a624043d4035e15f2dc660fb35200d7",
+  "clang_version": "22.1.8",
+  "source_sha": "0c5419eca6bf53563056ed252f537bca67862705",
+  "rust_version": "1.101.0-nightly",
+  "variants": ["control", "candidate"],
+  "production_cores": 16,
+  "cores": 4,
+  "warmup_rounds": 1,
+  "measured_rounds": 3,
+  "limits_minutes": {"control": 360, "candidate": 360, "linux": 60, "replay": 180},
+  "scope": "Reviewed combined patch applied to pinned upstream source in isolated test checkouts; no Rust commit or PR updates",
+  "cache_scope": "Separate fresh local sccache per release, persistent across its phases. Cross-build same-path profile invalidation is established separately by the recorded A/B/B micro-reproduction, not by cold release comparison.",
+  "release_scope": "Fresh full windows-ci PGO, tools, docs, MSI, complete distribution and unmodified extracted-distribution tests; Microsoft native linkers; no added ThinLTO",
+  "linux_scope": "Build opt-dist and run existing bootstrap/tool tests; not a full shared-LLVM release",
+  "replay_scope": "One hosted Windows VM, each distribution's own rustc, Cargo and stdlib; one warmup and three measured rounds; native correctness outside timing",
+  "limits": "Single producer per arm; no upstream private cache; dedicated 16-LP hardware does not prove upstream 8-LP timeout compliance. No automatic job retries.",
+  "review": "Local diff approved by the user; contribution prose and Rust commit messages remain human-authored; upstream publication remains gated"
+}

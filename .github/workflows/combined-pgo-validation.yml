@@ -1,0 +1,120 @@
+name: Reviewed combined Windows PGO validation
+on:
+  push:
+    branches: [experiment/combined-pgo-validation-20261108]
+    paths:
+      - .github/workflows/combined-pgo*.yml
+      - .github/scripts/combined_pgo*.py
+      - ci-benchmark/combined-pgo/**
+permissions:
+  contents: read
+concurrency:
+  group: combined-pgo-validation
+  cancel-in-progress: false
+jobs:
+  control:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark' && github.run_attempt == 1
+    uses: ./.github/workflows/combined-pgo-release-cell.yml
+    with:
+      variant: control
+  candidate:
+    needs: control
+    if: always() && !cancelled() && github.repository == 'marcpems/IronRDP-ci-benchmark' && github.run_attempt == 1
+    uses: ./.github/workflows/combined-pgo-release-cell.yml
+    with:
+      variant: candidate
+  linux:
+    name: Linux opt-dist and bootstrap regression
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark' && github.run_attempt == 1
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: core.autocrlf
+      GIT_CONFIG_VALUE_0: "false"
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: rust-lang/rust
+          ref: 76c90957b7e422c4b9c45192b0197214d7de5a54
+          path: rust-source
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Apply exact reviewed patch and initialize test dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          python harness/.github/scripts/combined_pgo_validation.py prepare --source rust-source --variant candidate
+          git -C rust-source submodule update --init --depth 1 library/backtrace src/tools/cargo
+          printf '[build]\nsubmodules = false\njobs = 4\n[rust]\ndownload-rustc = false\n[llvm]\ndownload-ci-llvm = false\n' > rust-source/bootstrap.toml
+          mkdir evidence
+          git -C rust-source diff --binary HEAD > evidence/tested-source.patch
+      - name: Build opt-dist and run bootstrap regression tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd rust-source
+          python x.py build opt-dist 2>&1 | tee ../evidence/opt-dist-build.log
+          python x.py test src/tools/opt-dist src/bootstrap 2>&1 | tee ../evidence/bootstrap-tests.log
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: combined-linux-regression
+          path: evidence
+          if-no-files-found: error
+          retention-days: 30
+  replay:
+    name: Hosted untouched-distribution IronRDP replay
+    needs: [control, candidate]
+    runs-on: windows-2022
+    timeout-minutes: 180
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      BENCHMARK_HOST: x86_64-pc-windows-msvc
+      BENCHMARK_REPLICATE: "1"
+      BENCHMARK_PLATFORM: windows-x64
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: harness
+          persist-credentials: false
+      - uses: actions/checkout@v6
+        with:
+          repository: Devolutions/IronRDP
+          ref: 0c5419eca6bf53563056ed252f537bca67862705
+          path: workload
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          architecture: x64
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: combined-*-evidence
+          path: artifacts
+      - uses: actions/download-artifact@v6
+        with:
+          pattern: combined-*-dist
+          path: artifacts
+      - name: Measure qualified distributions with original native tests
+        shell: pwsh
+        run: |
+          $arguments = @('--source',"$pwd\workload",'--artifacts',"$pwd\artifacts",'--output',"$pwd\evidence")
+          harness\.github\scripts\invoke_msvc_experiment.ps1 -Architecture x64 -Script harness\.github\scripts\combined_pgo_replay.py @arguments
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: combined-ironrdp-replay
+          path: |
+            evidence/*.json
+            evidence/round-*/*
+            evidence/meter-validation/*
+          if-no-files-found: error
+          retention-days: 30
