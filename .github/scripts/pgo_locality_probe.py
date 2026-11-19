@@ -127,10 +127,8 @@ def main():
             if started:
                 run([xperf, "-stop", "NT Kernel Logger"], "trace-stop")
                 run([xperf, "-merge", str(OUT / "raw.etl"), str(OUT / "capture.etl")], "trace-merge")
-                for action in ("tracestats", "pagefault", "hardfault", "profile"):
-                    run([xperf, "-i", str(OUT / "capture.etl"), "-a", action, "-detail"]
-                        if action in ("tracestats", "pagefault", "profile")
-                        else [xperf, "-i", str(OUT / "capture.etl"), "-a", action], action)
+                run([xperf, "-i", str(OUT / "capture.etl"), "-a", "tracestats"],
+                    "trace-loss", timeout=60)
         shutil.rmtree(target)
         if row["exit_code"]:
             record["blocked"] = "Compile or trace wrapper failed; exclude failed sample"
@@ -138,6 +136,7 @@ def main():
     if perf and (OUT / "perf.data").exists():
         run([perf, "report", "--stdio", "--header", "-i", str(OUT / "perf.data")], "perf-report")
     save()
+    print(json.dumps(record, indent=2))
 
 
 if __name__ == "__main__":
