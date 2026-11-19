@@ -1,0 +1,41 @@
+name: Bounded PGO training locality feasibility
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: pgo-locality-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  probe:
+    if: github.repository == 'marcpems/IronRDP-ci-benchmark'
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        include:
+          - runner: windows-11-arm
+            host: aarch64-pc-windows-msvc
+          - runner: windows-2025
+            host: x86_64-pc-windows-msvc
+          - runner: ubuntu-24.04-arm
+            host: aarch64-unknown-linux-gnu
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    env:
+      EXPERIMENT_HOST: ${{ matrix.host }}
+      EXPERIMENT_RUNNER: ${{ matrix.runner }}
+      PYTHONDONTWRITEBYTECODE: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Pinned public-source compiler and tracing feasibility
+        shell: pwsh
+        run: python .github/scripts/pgo_locality_probe.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: locality-${{ matrix.host }}
+          path: locality-evidence
+          retention-days: 7
