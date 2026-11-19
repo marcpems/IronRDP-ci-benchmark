@@ -1,0 +1,332 @@
+"""Process-tree CPU accounting and inherited CPU affinity."""
+
+from contextlib import contextmanager
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import time
+
+
+@contextmanager
+def measurement_session(background_executables=()):
+    """Retain explicitly approved background tools across a block, counting their CPU."""
+    state = {"job": None, "close_job": None, "active": True,
+             "background_executables": {os.path.normcase(str(Path(p).resolve())) for p in background_executables}}
+    try:
+        yield state
+    finally:
+        state["active"] = False
+        if state["close_job"] is not None:
+            state["close_job"]()
+
+
+def measure(command, cwd, env, cores, prefix, session=None, timeout=None):
+    prefix = Path(prefix)
+    with prefix.with_suffix(".stdout").open("wb") as stdout, \
+            prefix.with_suffix(".stderr").open("wb") as stderr:
+        if os.name == "nt":
+            result = windows_measure(command, cwd, env, cores, stdout, stderr, session, timeout)
+        else:
+            allowed = sorted(os.sched_getaffinity(0))
+            if cores > len(allowed):
+                raise RuntimeError("requested CPU affinity exceeds available CPUs")
+            start = time.perf_counter()
+            process = subprocess.Popen(
+                command, cwd=cwd, env=env, stdout=stdout, stderr=stderr,
+                preexec_fn=lambda: os.sched_setaffinity(0, allowed[:cores]),
+                close_fds=False,
+            )
+            if timeout is None:
+                _, status, usage = os.wait4(process.pid, 0)
+            else:
+                while True:
+                    pid, status, usage = os.wait4(process.pid, os.WNOHANG)
+                    if pid:
+                        break
+                    if time.perf_counter() - start >= timeout:
+                        process.kill()
+                        _, status, _ = os.wait4(process.pid, 0)
+                        process.returncode = os.waitstatus_to_exitcode(status)
+                        raise subprocess.TimeoutExpired(command, timeout)
+                    time.sleep(0.02)
+            elapsed = time.perf_counter() - start
+            process.returncode = os.waitstatus_to_exitcode(status)
+            result = {
+                "wall_seconds": elapsed, "user_seconds": usage.ru_utime,
+                "kernel_seconds": usage.ru_stime, "exit_code": process.returncode,
+                "affinity": allowed[:cores], "accounting": "wait4 process plus waited descendants",
+            }
+    result["cpu_seconds"] = result["user_seconds"] + result["kernel_seconds"]
+    result["effective_cores"] = result["cpu_seconds"] / result["wall_seconds"]
+    result["command"] = command
+    return result
+
+
+def windows_measure(command, cwd, env, cores, stdout, stderr, session=None, timeout=None):
+    import ctypes as c
+    from ctypes import wintypes as w
+    import msvcrt
+
+    size = c.c_size_t
+    handle = w.HANDLE
+
+    class BasicLimits(c.Structure):
+        _fields_ = [
+            ("process_time", c.c_int64), ("job_time", c.c_int64),
+            ("flags", w.DWORD), ("min_working", size), ("max_working", size),
+            ("active_limit", w.DWORD), ("affinity", size),
+            ("priority", w.DWORD), ("scheduling", w.DWORD),
+        ]
+
+    class IoCounters(c.Structure):
+        _fields_ = [(name, c.c_uint64) for name in
+                    ("read_ops", "write_ops", "other_ops", "read_bytes", "write_bytes", "other_bytes")]
+
+    class Limits(c.Structure):
+        _fields_ = [("basic", BasicLimits), ("io", IoCounters),
+                    ("process_memory", size), ("job_memory", size),
+                    ("peak_process_memory", size), ("peak_job_memory", size)]
+
+    class Accounting(c.Structure):
+        _fields_ = [
+            ("user", c.c_int64), ("kernel", c.c_int64),
+            ("period_user", c.c_int64), ("period_kernel", c.c_int64),
+            ("faults", w.DWORD), ("processes", w.DWORD),
+            ("active", w.DWORD), ("terminated", w.DWORD),
+        ]
+
+    class Startup(c.Structure):
+        _fields_ = [
+            ("cb", w.DWORD), ("reserved", w.LPWSTR), ("desktop", w.LPWSTR),
+            ("title", w.LPWSTR), ("x", w.DWORD), ("y", w.DWORD),
+            ("x_size", w.DWORD), ("y_size", w.DWORD), ("x_chars", w.DWORD),
+            ("y_chars", w.DWORD), ("fill", w.DWORD), ("flags", w.DWORD),
+            ("show", w.WORD), ("reserved_size", w.WORD),
+            ("reserved_data", c.c_void_p), ("stdin", handle),
+            ("stdout", handle), ("stderr", handle),
+        ]
+
+    class ProcessInfo(c.Structure):
+        _fields_ = [("process", handle), ("thread", handle),
+                    ("pid", w.DWORD), ("tid", w.DWORD)]
+
+    kernel = c.WinDLL("kernel32", use_last_error=True)
+    signatures = {
+        "CreateJobObjectW": ([c.c_void_p, w.LPCWSTR], handle),
+        "SetInformationJobObject": ([handle, c.c_int, c.c_void_p, w.DWORD], w.BOOL),
+        "QueryInformationJobObject": ([handle, c.c_int, c.c_void_p, w.DWORD, c.c_void_p], w.BOOL),
+        "AssignProcessToJobObject": ([handle, handle], w.BOOL),
+        "GetCurrentProcess": ([], handle),
+        "GetProcessAffinityMask": ([handle, c.POINTER(size), c.POINTER(size)], w.BOOL),
+        "SetHandleInformation": ([handle, w.DWORD, w.DWORD], w.BOOL),
+        "CreateProcessW": ([w.LPCWSTR, w.LPWSTR, c.c_void_p, c.c_void_p, w.BOOL,
+                            w.DWORD, c.c_void_p, w.LPCWSTR,
+                            c.POINTER(Startup), c.POINTER(ProcessInfo)], w.BOOL),
+        "ResumeThread": ([handle], w.DWORD),
+        "WaitForSingleObject": ([handle, w.DWORD], w.DWORD),
+        "GetExitCodeProcess": ([handle, c.POINTER(w.DWORD)], w.BOOL),
+        "OpenProcess": ([w.DWORD, w.BOOL, w.DWORD], handle),
+        "QueryFullProcessImageNameW": ([handle, w.DWORD, w.LPWSTR, c.POINTER(w.DWORD)], w.BOOL),
+        "TerminateProcess": ([handle, w.UINT], w.BOOL),
+        "TerminateJobObject": ([handle, w.UINT], w.BOOL),
+        "CloseHandle": ([handle], w.BOOL),
+        "CreateIoCompletionPort": ([handle, handle, size, w.DWORD], handle),
+        "GetQueuedCompletionStatus": ([handle, c.POINTER(w.DWORD), c.POINTER(size),
+                                       c.POINTER(c.c_void_p), w.DWORD], w.BOOL),
+    }
+    for name, (args, result_type) in signatures.items():
+        function = getattr(kernel, name)
+        function.argtypes, function.restype = args, result_type
+
+    def check(result):
+        if not result:
+            raise c.WinError(c.get_last_error())
+
+    own_mask, system_mask = size(), size()
+    check(kernel.GetProcessAffinityMask(
+        kernel.GetCurrentProcess(), c.byref(own_mask), c.byref(system_mask),
+    ))
+    allowed = [i for i in range(c.sizeof(size) * 8) if own_mask.value & (1 << i)]
+    from windows_job_affinity import requires_group_affinity
+    multi_group = requires_group_affinity(cores)
+    if not multi_group and cores > len(allowed):
+        raise RuntimeError("requested CPU affinity exceeds available CPUs")
+    if session is not None and not session["active"]:
+        raise RuntimeError("Measurement session is already closed")
+    if session is not None and session["job"] and session["cores"] != cores:
+        raise RuntimeError("Cannot change affinity within a measurement session")
+    new_job = session is None or session["job"] is None
+    job = kernel.CreateJobObjectW(None, None) if new_job else session["job"]
+    check(job)
+    if not new_job:
+        raise RuntimeError("Phase-two identity meter requires a fresh Job Object per command")
+    port = kernel.CreateIoCompletionPort(handle(-1), None, 0, 1)
+    check(port)
+    class Association(c.Structure):
+        _fields_ = [("key", c.c_void_p), ("port", handle)]
+    association = Association(1, port)
+    check(kernel.SetInformationJobObject(job, 7, c.byref(association), c.sizeof(association)))
+    owned_handles = {} if session is None else session.setdefault("process_handles", {})
+    def snapshot():
+        accounting = Accounting()
+        check(kernel.QueryInformationJobObject(
+            job, 1, c.byref(accounting), c.sizeof(accounting), None,
+        ))
+        return accounting
+
+    def close_job():
+        try:
+            current = snapshot()
+            if current.active:
+                active_processes(current.active)
+            check(kernel.TerminateJobObject(job, 0))
+            for process in owned_handles.values():
+                if kernel.WaitForSingleObject(process, 10000) != 0:
+                    raise RuntimeError("Owned measurement process did not terminate")
+        finally:
+            for process in owned_handles.values():
+                kernel.CloseHandle(process)
+            owned_handles.clear()
+            check(kernel.CloseHandle(job))
+            check(kernel.CloseHandle(port))
+
+    if session is not None and new_job:
+        session.update({"job": job, "cores": cores, "close_job": close_job})
+
+    def active_processes(count):
+        class ProcessIds(c.Structure):
+            _fields_ = [("assigned", w.DWORD), ("count", w.DWORD),
+                        ("ids", size * max(64, count * 2))]
+        ids = ProcessIds()
+        check(kernel.QueryInformationJobObject(job, 3, c.byref(ids), c.sizeof(ids), None))
+        active = []
+        for pid in ids.ids[:ids.count]:
+            process = kernel.OpenProcess(0x101000, False, pid)
+            image = c.create_unicode_buffer(32768)
+            length = w.DWORD(len(image))
+            if process:
+                try:
+                    found = kernel.QueryFullProcessImageNameW(process, 0, image, c.byref(length))
+                    active.append({"pid": pid, "image": image.value if found else "unavailable"})
+                finally:
+                    if pid not in owned_handles:
+                        owned_handles[pid] = process
+                    else:
+                        kernel.CloseHandle(process)
+            else:
+                active.append({"pid": pid, "image": "exited or inaccessible"})
+        return active
+
+    info = ProcessInfo()
+    completed = False
+    group_affinity = session.get("group_affinity") if session is not None else None
+    try:
+        if new_job:
+            limits = Limits()
+            limits.basic.flags = 0x2000 | (0 if multi_group else 0x10)
+            limits.basic.affinity = 0 if multi_group else sum(1 << i for i in allowed[:cores])
+            check(kernel.SetInformationJobObject(job, 9, c.byref(limits), c.sizeof(limits)))
+            if multi_group:
+                from windows_job_affinity import configure_job_groups
+                group_affinity = configure_job_groups(job, cores)
+                if session is not None:
+                    session["group_affinity"] = group_affinity
+        startup = Startup()
+        startup.cb, startup.flags = c.sizeof(startup), 0x100
+        with open(os.devnull, "rb") as stdin:
+            for field, stream in (("stdin", stdin), ("stdout", stdout), ("stderr", stderr)):
+                value = msvcrt.get_osfhandle(stream.fileno())
+                check(kernel.SetHandleInformation(value, 1, 1))
+                setattr(startup, field, value)
+            executable = shutil.which(str(command[0]), path=env.get("PATH"))
+            if not executable:
+                raise FileNotFoundError(command[0])
+            cmdline = c.create_unicode_buffer(subprocess.list2cmdline(command))
+            environment = c.create_unicode_buffer(
+                "\0".join(f"{k}={v}" for k, v in sorted(env.items(), key=lambda p: p[0].upper()))
+                + "\0\0"
+            )
+            before = snapshot()
+            start = time.perf_counter()
+            check(kernel.CreateProcessW(
+                executable, cmdline, None, None, True, 0x4 | 0x400,
+                environment, str(cwd), c.byref(startup), c.byref(info),
+            ))
+            # Assignment before resuming prevents any child escaping CPU accounting.
+            check(kernel.AssignProcessToJobObject(job, info.process))
+            if multi_group:
+                from windows_job_affinity import verify_job_groups
+                verify_job_groups(job, group_affinity)
+            if kernel.ResumeThread(info.thread) == 0xFFFFFFFF:
+                raise c.WinError(c.get_last_error())
+            wait_status = kernel.WaitForSingleObject(
+                info.process, 0xFFFFFFFF if timeout is None else int(timeout * 1000),
+            )
+            if wait_status == 0x102:
+                raise subprocess.TimeoutExpired(command, timeout)
+            if wait_status != 0:
+                raise c.WinError(c.get_last_error())
+            elapsed = time.perf_counter() - start
+        code = w.DWORD()
+        check(kernel.GetExitCodeProcess(info.process, c.byref(code)))
+        deadline = time.perf_counter() + 2
+        active = []
+        while True:
+            accounting = snapshot()
+            if not accounting.active:
+                active = []
+                break
+            active = active_processes(accounting.active)
+            if (session is not None and len(active) == accounting.active
+                    and all(os.path.normcase(str(Path(p["image"]).resolve()))
+                            in session["background_executables"] for p in active)):
+                break
+            if time.perf_counter() >= deadline:
+                raise RuntimeError(f"measured command left running descendants: {active}")
+            time.sleep(0.01)
+        peak = Limits()
+        check(kernel.QueryInformationJobObject(job, 9, c.byref(peak), c.sizeof(peak), None))
+        completed = True
+        measured_wall = time.perf_counter() - start
+        messages = []
+        deadline = time.monotonic() + 2
+        expected = accounting.processes - before.processes
+        while True:
+            message, key, process_id = w.DWORD(), size(), c.c_void_p()
+            received = kernel.GetQueuedCompletionStatus(
+                port, c.byref(message), c.byref(key), c.byref(process_id), 10)
+            if received:
+                messages.append({"message": message.value, "pid": process_id.value})
+            elif c.get_last_error() != 258:
+                raise c.WinError(c.get_last_error())
+            actual = sum(x["message"] == 6 for x in messages)
+            if actual == expected and not received:
+                break
+            if time.monotonic() >= deadline:
+                raise RuntimeError(f"Job process notification mismatch: {actual} != {expected}")
+        return {
+            "wall_seconds": measured_wall, "root_process_wall_seconds": elapsed,
+            "user_seconds": (accounting.user - before.user) / 10_000_000,
+            "kernel_seconds": (accounting.kernel - before.kernel) / 10_000_000,
+            "exit_code": code.value, "processes": accounting.processes - before.processes,
+            "affinity": ([row["group"] * 64 + cpu for row in group_affinity for cpu in row["cpus"]]
+                         if multi_group else allowed[:cores]),
+            "affinity_groups": group_affinity,
+            "accounting": "Windows Job Object CPU delta over measured command interval",
+            "background_processes_at_completion": active,
+            "peak_job_memory_bytes": peak.peak_job_memory,
+            "peak_process_memory_bytes": peak.peak_process_memory,
+            "root_pid": info.pid,
+            "job_notifications": messages,
+            "job_new_process_notifications": expected,
+        }
+    finally:
+        if info.process and not completed:
+            kernel.TerminateProcess(info.process, 1)
+            kernel.WaitForSingleObject(info.process, 10000)
+        for value in (info.thread, info.process):
+            if value:
+                kernel.CloseHandle(value)
+        if session is None:
+            close_job()

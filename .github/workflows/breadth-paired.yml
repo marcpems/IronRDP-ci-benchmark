@@ -1,41 +1,41 @@
-name: Bounded PGO training locality feasibility
+name: Bounded retained x64 training-profile replay
 on:
   workflow_dispatch:
 permissions:
   contents: read
+  actions: read
 concurrency:
   group: pgo-locality-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   probe:
     if: github.repository == 'marcpems/IronRDP-ci-benchmark'
-    strategy:
-      fail-fast: false
-      max-parallel: 2
-      matrix:
-        include:
-          - runner: windows-11-arm
-            host: aarch64-pc-windows-msvc
-          - runner: windows-2025
-            host: x86_64-pc-windows-msvc
-          - runner: ubuntu-24.04-arm
-            host: aarch64-unknown-linux-gnu
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 15
+    runs-on: windows-2025
+    timeout-minutes: 20
     env:
-      EXPERIMENT_HOST: ${{ matrix.host }}
-      EXPERIMENT_RUNNER: ${{ matrix.runner }}
       PYTHONDONTWRITEBYTECODE: "1"
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Pinned public-source compiler and tracing feasibility
+      - uses: actions/download-artifact@v4
+        with:
+          name: x64-profile-official-compiler
+          run-id: 39771158637
+          github-token: ${{ github.token }}
+          path: downloaded-compilers/official
+      - uses: actions/download-artifact@v4
+        with:
+          name: x64-profile-repaired-compiler
+          run-id: 39771158637
+          github-token: ${{ github.token }}
+          path: downloaded-compilers/repaired
+      - name: Retained same-source compiler pair and sequential traces
         shell: pwsh
-        run: python .github/scripts/pgo_locality_probe.py
+        run: python .github/scripts/x64_profile_locality.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: locality-${{ matrix.host }}
-          path: locality-evidence
+          name: retained-x64-profile-locality
+          path: profile-locality-evidence
           retention-days: 7
